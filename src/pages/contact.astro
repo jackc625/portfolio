@@ -1,14 +1,77 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactChannel from "../components/ContactChannel.astro";
 ---
 
 <BaseLayout
   title="Contact"
   description="Get in touch with Jack Cutrara via email, LinkedIn, or GitHub."
 >
-  <section class="py-[var(--token-space-section)] px-4 md:px-6">
-    <h1 class="font-display text-[length:var(--token-text-display)]">
-      Contact
-    </h1>
+  <section class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">Get in Touch</h1>
+      <p class="font-body text-[length:var(--token-text-base)] text-text-secondary mt-[var(--token-space-md)] max-w-2xl">I'm always open to hearing about new opportunities, interesting projects, or just connecting with other engineers.</p>
+
+      <div class="flex items-center gap-[var(--token-space-sm)] mt-[var(--token-space-lg)] mb-[var(--token-space-2xl)]">
+        <span class="availability-dot" aria-hidden="true"></span>
+        <span class="font-body text-[length:var(--token-text-sm)] text-text-secondary">Currently open to opportunities</span>
+      </div>
+    </div>
   </section>
+
+  <section aria-label="Contact information" class="pb-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]">
+    <div class="max-w-lg mx-auto">
+      <div class="flex flex-col gap-[var(--token-space-md)]">
+        <ContactChannel
+          href="mailto:jack@jackcutrara.com"
+          label="Email"
+          value="jack@jackcutrara.com"
+          icon="email"
+        />
+        <ContactChannel
+          href="https://linkedin.com/in/jackcutrara"
+          label="LinkedIn"
+          value="linkedin.com/in/jackcutrara"
+          icon="linkedin"
+          external={true}
+        />
+        <ContactChannel
+          href="https://github.com/jackc625"
+          label="GitHub"
+          value="github.com/jackc625"
+          icon="github"
+          external={true}
+        />
+      </div>
+    </div>
+  </section>
+
+  <style is:global>
+    .availability-dot {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--token-accent);
+      flex-shrink: 0;
+    }
+    .availability-dot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background-color: var(--token-accent);
+      animation: pulse-ring 2s ease-out infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .availability-dot::before {
+        animation: none;
+        display: none;
+      }
+    }
+  </style>
 </BaseLayout>

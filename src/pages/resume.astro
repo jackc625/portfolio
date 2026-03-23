@@ -1,14 +1,59 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import CTAButton from "../components/CTAButton.astro";
+import ResumeEntry from "../components/ResumeEntry.astro";
 ---
 
 <BaseLayout
   title="Resume"
-  description="View Jack Cutrara's software engineering resume and professional experience."
+  description="View and download Jack Cutrara's software engineering resume."
 >
-  <section class="py-[var(--token-space-section)] px-4 md:px-6">
-    <h1 class="font-display text-[length:var(--token-text-display)]">
-      Resume
-    </h1>
+  <section class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">Resume</h1>
+      <div class="mt-[var(--token-space-lg)]">
+        <CTAButton href="/resume.pdf" label="Download PDF" download={true} showDownloadIcon={true} />
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Resume summary" class="pb-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]">
+    <div class="max-w-3xl mx-auto">
+      <div class="bg-bg-secondary border border-border rounded-lg p-[var(--token-space-lg)] md:p-[var(--token-space-xl)]">
+
+        <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold border-b border-border pb-[var(--token-space-sm)] mb-[var(--token-space-lg)]">Experience</h2>
+        <ResumeEntry
+          title="Software Engineering Intern"
+          organization="Tech Company"
+          date="Summer 2025"
+          bullets={[
+            "Built and deployed internal tool reducing manual data processing by 40%",
+            "Collaborated with senior engineers on REST API design and implementation",
+            "Wrote unit and integration tests achieving 85% code coverage",
+          ]}
+        />
+        <ResumeEntry
+          title="Freelance Web Developer"
+          organization="Self-employed"
+          date="2024 — Present"
+          bullets={[
+            "Designed and built responsive websites for local businesses using modern frameworks",
+            "Managed full project lifecycle from requirements gathering to deployment",
+          ]}
+        />
+
+        <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold border-b border-border pb-[var(--token-space-sm)] mb-[var(--token-space-lg)] mt-[var(--token-space-2xl)]">Education</h2>
+        <ResumeEntry
+          title="B.S. Computer Science"
+          organization="University"
+          date="2025"
+          description="Relevant coursework: Data Structures, Algorithms, Database Systems, Software Engineering, Operating Systems"
+        />
+
+        <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold border-b border-border pb-[var(--token-space-sm)] mb-[var(--token-space-lg)] mt-[var(--token-space-2xl)]">Technical Skills</h2>
+        <p class="font-body text-[length:var(--token-text-base)] text-text-primary">TypeScript, JavaScript, Python, React, Next.js, Astro, Node.js, PostgreSQL, Docker, Git, REST APIs, CI/CD</p>
+
+      </div>
+    </div>
   </section>
 </BaseLayout>
