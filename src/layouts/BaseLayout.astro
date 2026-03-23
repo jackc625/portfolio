@@ -3,6 +3,8 @@ import { Font } from "astro:assets";
 import { SEO } from "astro-seo";
 import { ClientRouter } from "astro:transitions";
 import SkipToContent from "../components/SkipToContent.astro";
+import Header from "../components/Header.astro";
+import MobileMenu from "../components/MobileMenu.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 
@@ -74,7 +76,8 @@ const currentUrl = canonicalUrl ?? `${siteUrl}${Astro.url.pathname}`;
     class="bg-bg-primary text-text-primary font-body min-h-screen antialiased flex flex-col"
   >
     <SkipToContent />
-    <!-- Header will be added in Plan 02 -->
+    <Header />
+    <MobileMenu />
     <main id="main-content" class="flex-1 pt-16">
       <slot />
     </main>

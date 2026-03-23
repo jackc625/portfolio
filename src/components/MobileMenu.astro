@@ -1,0 +1,171 @@
+---
+const currentPath = Astro.url.pathname;
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/projects", label: "Projects" },
+  { href: "/resume", label: "Resume" },
+  { href: "/contact", label: "Contact" },
+];
+---
+
+<div
+  id="mobile-menu"
+  class="fixed inset-0 z-40 hidden flex-col items-center justify-center bg-bg-primary/[0.98]"
+  role="dialog"
+  aria-label="Navigation menu"
+  aria-modal="true"
+>
+  <button
+    id="menu-close"
+    class="absolute top-0 right-0 m-4 flex items-center justify-center w-11 h-11 text-text-primary focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded"
+    aria-label="Close menu"
+  >
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <line x1="4" y1="4" x2="16" y2="16"></line>
+      <line x1="16" y1="4" x2="4" y2="16"></line>
+    </svg>
+  </button>
+
+  <nav aria-label="Mobile navigation" class="flex flex-col items-center gap-12">
+    {
+      navLinks.map((link, index) => {
+        const isActive =
+          link.href === "/"
+            ? currentPath === "/"
+            : currentPath.startsWith(link.href);
+        return (
+          <a
+            href={link.href}
+            class:list={[
+              "font-body font-semibold text-[length:var(--token-text-heading)] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded px-4 py-2 mobile-menu-link",
+              isActive
+                ? "text-accent"
+                : "text-text-primary hover:text-accent",
+            ]}
+            aria-current={isActive ? "page" : undefined}
+            style={`--link-index: ${index}`}
+          >
+            {link.label}
+          </a>
+        );
+      })
+    }
+  </nav>
+</div>
+
+<style>
+  #mobile-menu.menu-open .mobile-menu-link {
+    animation: menuLinkIn 300ms ease-out forwards;
+    animation-delay: calc(var(--link-index) * 50ms);
+    opacity: 0;
+  }
+  @keyframes menuLinkIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  #mobile-menu.menu-closing {
+    animation: menuFadeOut 150ms ease-in forwards;
+  }
+  @keyframes menuFadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  function initMobileMenu() {
+    const trigger = document.getElementById("menu-trigger");
+    const menu = document.getElementById("mobile-menu");
+    const closeBtn = document.getElementById("menu-close");
+    if (!trigger || !menu || !closeBtn) return;
+
+    function openMenu() {
+      menu!.classList.remove("hidden");
+      menu!.classList.add("flex", "menu-open");
+      menu!.classList.remove("menu-closing");
+      trigger!.setAttribute("aria-expanded", "true");
+      trigger!.setAttribute("aria-label", "Close menu");
+      document.body.style.overflow = "hidden";
+      closeBtn!.focus();
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    function closeMenu(returnFocus = true) {
+      menu!.classList.add("hidden");
+      menu!.classList.remove("flex", "menu-open");
+      trigger!.setAttribute("aria-expanded", "false");
+      trigger!.setAttribute("aria-label", "Open menu");
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", handleKeyDown);
+      if (returnFocus) trigger!.focus();
+    }
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        closeMenu();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const focusable = menu!.querySelectorAll<HTMLElement>(
+        'a[href], button, [tabindex]:not([tabindex="-1"])',
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    // Trigger open/close
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger!.getAttribute("aria-expanded") === "true";
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    // Close button
+    closeBtn.addEventListener("click", () => closeMenu());
+
+    // Close on nav link click
+    menu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => closeMenu(false));
+    });
+
+    // Reset menu state on page load (View Transitions)
+    menu.classList.add("hidden");
+    menu.classList.remove("flex", "menu-open", "menu-closing");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-label", "Open menu");
+    document.body.style.overflow = "";
+  }
+
+  document.addEventListener("astro:page-load", initMobileMenu);
+</script>
