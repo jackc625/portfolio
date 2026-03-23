@@ -37,7 +37,7 @@ Plans:
 - [x] 01-02-PLAN.md -- Create design token system (colors, typography, spacing) and BaseLayout
 - [x] 01-03-PLAN.md -- Create projects content collection schema and sample MDX
 - [x] 01-04-PLAN.md -- Git init, deployment config, GitHub repo, and Cloudflare Pages setup
-- [ ] 01-05-PLAN.md -- Fix Font import path and add favicon link (UAT gap closure)
+- [x] 01-05-PLAN.md -- Fix Font import path and add favicon link (UAT gap closure)
 **UI hint**: yes
 
 ### Phase 2: Site Shell & Navigation
