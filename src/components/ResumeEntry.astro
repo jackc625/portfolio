@@ -1,0 +1,27 @@
+---
+interface Props {
+  title: string;
+  organization: string;
+  date: string;
+  description?: string;
+  bullets?: string[];
+}
+const { title, organization, date, description, bullets } = Astro.props;
+---
+
+<div class="mb-[var(--token-space-xl)]">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-[var(--token-space-xs)]">
+    <h3 class="font-body text-[length:var(--token-text-base)] font-semibold text-text-primary">{title}</h3>
+    <span class="font-mono text-[length:var(--token-text-sm)] text-text-secondary">{organization} &middot; {date}</span>
+  </div>
+  {description && (
+    <p class="font-body text-[length:var(--token-text-base)] text-text-secondary mt-[var(--token-space-md)]">{description}</p>
+  )}
+  {bullets && bullets.length > 0 && (
+    <ul class="mt-[var(--token-space-md)] space-y-1">
+      {bullets.map((bullet) => (
+        <li class="font-body text-[length:var(--token-text-base)] text-text-secondary">&mdash; {bullet}</li>
+      ))}
+    </ul>
+  )}
+</div>
