@@ -1,0 +1,125 @@
+/* ============================================
+ * LAYER 1: Design Tokens (dark-first, theme-switchable)
+ * Architecture: RESEARCH.md Pattern 2
+ *   - :root = dark theme (default, no attribute needed)
+ *   - [data-theme="light"] = light overrides (Phase 5)
+ *   - @theme bridge = Tailwind utilities auto-switch
+ * ============================================ */
+
+:root {
+  /* === COLOR TOKENS (dark default) === */
+
+  /* Core Palette (60-30-10 rule) */
+  --token-bg-primary: oklch(0.13 0.005 260);
+  --token-bg-secondary: oklch(0.18 0.005 260);
+  --token-accent: oklch(0.72 0.12 178);
+  --token-accent-hover: oklch(0.78 0.14 178);
+
+  /* Text Colors */
+  --token-text-primary: oklch(0.93 0.005 260);
+  --token-text-secondary: oklch(0.62 0.01 260);
+  --token-text-muted: oklch(0.45 0.01 260);
+
+  /* Border & Divider */
+  --token-border: oklch(0.25 0.005 260);
+  --token-border-hover: oklch(0.35 0.005 260);
+
+  /* Semantic Colors */
+  --token-destructive: oklch(0.63 0.2 25);
+  --token-success: oklch(0.72 0.15 155);
+  --token-warning: oklch(0.78 0.15 85);
+
+  /* === TYPOGRAPHY TOKENS === */
+  /* Fluid type scale per UI-SPEC Type Scale table */
+  --token-text-sm: clamp(0.8125rem, 0.75rem + 0.3vw, 0.875rem);
+  --token-text-base: clamp(0.9375rem, 0.875rem + 0.3vw, 1rem);
+  --token-text-heading: clamp(1.25rem, 1rem + 1.25vw, 2rem);
+  --token-text-display: clamp(2.25rem, 1.5rem + 3.75vw, 5rem);
+
+  /* === SPACING TOKENS === */
+  --token-space-xs: 0.25rem;
+  --token-space-sm: 0.5rem;
+  --token-space-md: 1rem;
+  --token-space-lg: 1.5rem;
+  --token-space-xl: 2rem;
+  --token-space-2xl: 3rem;
+  --token-space-3xl: 4rem;
+  --token-space-section: clamp(4rem, 3rem + 5vw, 8rem);
+}
+
+/* Phase 5: Light theme override (DSGN-02/DSGN-03)
+ * Add [data-theme="light"] block here to override color tokens.
+ * Typography and spacing tokens are theme-independent -- no overrides needed.
+ * The @theme bridge (Layer 2) references var(--token-*), so Tailwind
+ * utility classes automatically respect whichever theme is active.
+ *
+ * [data-theme="light"] {
+ *   --token-bg-primary: oklch(0.98 0.005 260);
+ *   --token-bg-secondary: oklch(0.94 0.005 260);
+ *   --token-text-primary: oklch(0.15 0.01 260);
+ *   --token-text-secondary: oklch(0.40 0.02 260);
+ *   --token-text-muted: oklch(0.60 0.01 260);
+ *   --token-accent: oklch(0.55 0.12 178);
+ *   --token-accent-hover: oklch(0.48 0.14 178);
+ *   --token-border: oklch(0.85 0.005 260);
+ *   --token-border-hover: oklch(0.75 0.005 260);
+ * }
+ */
+
+/* ============================================
+ * LAYER 2: Tailwind @theme Bridge
+ * Maps CSS custom properties to Tailwind utility classes.
+ * All color values use var(--token-*) references so theme
+ * changes propagate automatically (RESEARCH.md Pitfall 4).
+ * ============================================ */
+
+@import "tailwindcss";
+
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+
+  /* Color tokens -> Tailwind utilities */
+  --color-bg-primary: var(--token-bg-primary);
+  --color-bg-secondary: var(--token-bg-secondary);
+  --color-text-primary: var(--token-text-primary);
+  --color-text-secondary: var(--token-text-secondary);
+  --color-text-muted: var(--token-text-muted);
+  --color-accent: var(--token-accent);
+  --color-accent-hover: var(--token-accent-hover);
+  --color-border: var(--token-border);
+  --color-border-hover: var(--token-border-hover);
+  --color-destructive: var(--token-destructive);
+  --color-success: var(--token-success);
+  --color-warning: var(--token-warning);
+
+  /* Font family tokens -> Tailwind utilities */
+  /* Note: these reference the CSS vars set by Astro Fonts API <Font /> component */
+  --font-display: var(--font-heading), ui-serif, serif;
+  --font-body: var(--font-sans), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-code), ui-monospace, monospace;
+}
+
+@theme inline {
+  --font-display: var(--font-heading), ui-serif, serif;
+  --font-body: var(--font-sans), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-code), ui-monospace, monospace;
+}
+
+/* ============================================
+ * Base Element Styles
+ * ============================================ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--token-text-base);
+  line-height: 1.6;
+  color: var(--token-text-primary);
+  background-color: var(--token-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
