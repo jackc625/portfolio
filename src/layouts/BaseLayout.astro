@@ -1,5 +1,5 @@
 ---
-import { Font } from "astro:assets";
+import Font from "astro/components/Font.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -19,6 +19,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <Font cssVariable="--font-heading" />
     <Font cssVariable="--font-sans" />
     <Font cssVariable="--font-code" />
