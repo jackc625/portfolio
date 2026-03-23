@@ -9,17 +9,17 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Identity & Navigation
 
-- [ ] **IDNV-01**: Site displays Jack's name, role, and one-liner value proposition above the fold within 3 seconds of page load
-- [ ] **IDNV-02**: Sticky/fixed navigation with clear labels (Home, About, Projects, Resume, Contact) on all pages
-- [ ] **IDNV-03**: Mobile hamburger menu that is accessible and smooth on all breakpoints
+- [x] **IDNV-01**: Site displays Jack's name, role, and one-liner value proposition above the fold within 3 seconds of page load
+- [x] **IDNV-02**: Sticky/fixed navigation with clear labels (Home, About, Projects, Resume, Contact) on all pages
+- [x] **IDNV-03**: Mobile hamburger menu that is accessible and smooth on all breakpoints
 - [x] **IDNV-04**: Site served over HTTPS on a custom domain
 
 ### Home Page
 
-- [ ] **HOME-01**: Hero section with name, role positioning, brief intro, and primary CTA (view projects)
-- [ ] **HOME-02**: Featured projects preview section highlighting 2-3 top projects with links to detail pages
-- [ ] **HOME-03**: Brief intro/about teaser that drives visitors to the About page
-- [ ] **HOME-04**: Prominent links to resume and contact information
+- [x] **HOME-01**: Hero section with name, role positioning, brief intro, and primary CTA (view projects)
+- [x] **HOME-02**: Featured projects preview section highlighting 2-3 top projects with links to detail pages
+- [x] **HOME-03**: Brief intro/about teaser that drives visitors to the About page
+- [x] **HOME-04**: Prominent links to resume and contact information
 
 ### About Page
 
@@ -80,8 +80,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **SEOA-01**: Unique title tag and meta description per page
 - [ ] **SEOA-02**: Open Graph tags for link previews on LinkedIn, Slack, and social platforms
 - [ ] **SEOA-03**: JSON-LD structured data (Person schema on home/about, CreativeWork on project pages)
-- [ ] **SEOA-04**: Semantic HTML throughout (proper heading hierarchy, landmarks, labels)
-- [ ] **SEOA-05**: Full keyboard navigation with visible focus indicators
+- [x] **SEOA-04**: Semantic HTML throughout (proper heading hierarchy, landmarks, labels)
+- [x] **SEOA-05**: Full keyboard navigation with visible focus indicators
 - [ ] **SEOA-06**: Skip-to-content link for screen reader users
 - [ ] **SEOA-07**: Alt text on all images
 
@@ -126,14 +126,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| IDNV-01 | Phase 2 | Pending |
-| IDNV-02 | Phase 2 | Pending |
-| IDNV-03 | Phase 2 | Pending |
+| IDNV-01 | Phase 2 | Complete |
+| IDNV-02 | Phase 2 | Complete |
+| IDNV-03 | Phase 2 | Complete |
 | IDNV-04 | Phase 1 | Complete |
-| HOME-01 | Phase 3 | Pending |
-| HOME-02 | Phase 3 | Pending |
-| HOME-03 | Phase 3 | Pending |
-| HOME-04 | Phase 3 | Pending |
+| HOME-01 | Phase 3 | Complete |
+| HOME-02 | Phase 3 | Complete |
+| HOME-03 | Phase 3 | Complete |
+| HOME-04 | Phase 3 | Complete |
 | ABUT-01 | Phase 3 | Pending |
 | ABUT-02 | Phase 3 | Pending |
 | ABUT-03 | Phase 3 | Pending |
@@ -167,8 +167,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SEOA-01 | Phase 2 | Pending |
 | SEOA-02 | Phase 2 | Pending |
 | SEOA-03 | Phase 5 | Pending |
-| SEOA-04 | Phase 2 | Pending |
-| SEOA-05 | Phase 2 | Pending |
+| SEOA-04 | Phase 2 | Complete |
+| SEOA-05 | Phase 2 | Complete |
 | SEOA-06 | Phase 2 | Pending |
 | SEOA-07 | Phase 2 | Pending |
 

@@ -71,7 +71,7 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Home page with CTAButton, FeaturedProjectItem, and sample MDX content
+- [x] 03-01-PLAN.md -- Home page with CTAButton, FeaturedProjectItem, and sample MDX content
 - [ ] 03-02-PLAN.md -- About page with SkillGroup component and editorial narrative
 - [ ] 03-03-PLAN.md -- Resume and Contact pages with ResumeEntry, ContactChannel, and placeholder PDF
 - [ ] 03-04-PLAN.md -- Human verification of all four core pages
