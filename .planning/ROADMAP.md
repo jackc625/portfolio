@@ -30,10 +30,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. CSS custom properties for color tokens, typography scale, and spacing are defined and usable in any component
   3. A content collection schema for projects exists with Zod validation, and a sample MDX file passes schema validation at build time
   4. Site builds and can be previewed over HTTPS (local or staging) on the custom domain path
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md -- Scaffold Astro 6 project with all dependencies and build tooling
+- [ ] 01-02-PLAN.md -- Create design token system (colors, typography, spacing) and BaseLayout
+- [ ] 01-03-PLAN.md -- Create projects content collection schema and sample MDX
+- [ ] 01-04-PLAN.md -- Git init, deployment config, GitHub repo, and Cloudflare Pages setup
 **UI hint**: yes
 
 ### Phase 2: Site Shell & Navigation
@@ -122,7 +125,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Design System | 0/? | Not started | - |
+| 1. Foundation & Design System | 0/4 | Planning complete | - |
 | 2. Site Shell & Navigation | 0/? | Not started | - |
 | 3. Core Pages | 0/? | Not started | - |
 | 4. Project System & Case Studies | 0/? | Not started | - |
