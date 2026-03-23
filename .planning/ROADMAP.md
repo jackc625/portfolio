@@ -72,8 +72,8 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md -- Home page with CTAButton, FeaturedProjectItem, and sample MDX content
-- [ ] 03-02-PLAN.md -- About page with SkillGroup component and editorial narrative
-- [ ] 03-03-PLAN.md -- Resume and Contact pages with ResumeEntry, ContactChannel, and placeholder PDF
+- [x] 03-02-PLAN.md -- About page with SkillGroup component and editorial narrative
+- [x] 03-03-PLAN.md -- Resume and Contact pages with ResumeEntry, ContactChannel, and placeholder PDF
 - [ ] 03-04-PLAN.md -- Human verification of all four core pages
 **UI hint**: yes
 
@@ -133,7 +133,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 4/5 | UAT gap closure planned | - |
 | 2. Site Shell & Navigation | 0/3 | Planned | - |
-| 3. Core Pages | 1/4 | In Progress|  |
+| 3. Core Pages | 3/4 | In Progress|  |
 | 4. Project System & Case Studies | 0/? | Not started | - |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |

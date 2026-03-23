@@ -44,13 +44,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Resume
 
-- [ ] **RESM-01**: Resume page with viewable content rendered on-page
-- [ ] **RESM-02**: PDF download button above the fold
+- [x] **RESM-01**: Resume page with viewable content rendered on-page
+- [x] **RESM-02**: PDF download button above the fold
 - [ ] **RESM-03**: Print-friendly @media print stylesheet that produces clean output
 
 ### Contact
 
-- [ ] **CNTC-01**: Contact section with direct email, LinkedIn, and GitHub links
+- [x] **CNTC-01**: Contact section with direct email, LinkedIn, and GitHub links
 - [ ] **CNTC-02**: Contact links accessible from every page (footer and/or dedicated page)
 
 ### Design System
@@ -146,10 +146,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CASE-03 | Phase 4 | Pending |
 | CASE-04 | Phase 4 | Pending |
 | CASE-05 | Phase 4 | Pending |
-| RESM-01 | Phase 3 | Pending |
-| RESM-02 | Phase 3 | Pending |
+| RESM-01 | Phase 3 | Complete |
+| RESM-02 | Phase 3 | Complete |
 | RESM-03 | Phase 5 | Pending |
-| CNTC-01 | Phase 3 | Pending |
+| CNTC-01 | Phase 3 | Complete |
 | CNTC-02 | Phase 2 | Pending |
 | DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 5 | Pending |
