@@ -55,7 +55,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Design System
 
-- [ ] **DSGN-01**: CSS custom properties for color tokens, typography scale, and spacing
+- [x] **DSGN-01**: CSS custom properties for color tokens, typography scale, and spacing
 - [ ] **DSGN-02**: Dark/light mode with OS preference detection (prefers-color-scheme) and manual toggle
 - [ ] **DSGN-03**: Theme preference persisted in localStorage with no flash of wrong theme
 - [ ] **DSGN-04**: Both themes independently pass WCAG AA contrast ratios (4.5:1+)
@@ -151,7 +151,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RESM-03 | Phase 5 | Pending |
 | CNTC-01 | Phase 3 | Pending |
 | CNTC-02 | Phase 2 | Pending |
-| DSGN-01 | Phase 1 | Pending |
+| DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 5 | Pending |
 | DSGN-03 | Phase 5 | Pending |
 | DSGN-04 | Phase 5 | Pending |
