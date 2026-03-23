@@ -27,6 +27,7 @@ const {
 const siteUrl =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://jackcutrara.com";
 const currentUrl = canonicalUrl ?? `${siteUrl}${Astro.url.pathname}`;
+const ogTitle = title || "Jack Cutrara | Software Engineer";
 ---
 
 <html lang="en">
@@ -43,7 +44,7 @@ const currentUrl = canonicalUrl ?? `${siteUrl}${Astro.url.pathname}`;
       canonical={currentUrl}
       openGraph={{
         basic: {
-          title,
+          title: ogTitle,
           type: ogType,
           image: `${siteUrl}${ogImage}`,
           url: currentUrl,
@@ -55,16 +56,16 @@ const currentUrl = canonicalUrl ?? `${siteUrl}${Astro.url.pathname}`;
         image: {
           width: 1200,
           height: 630,
-          alt: `${title} - Jack Cutrara Portfolio`,
+          alt: `${ogTitle} - Jack Cutrara Portfolio`,
           type: "image/png",
         },
       }}
       twitter={{
         card: "summary_large_image",
-        title,
+        title: ogTitle,
         description,
         image: `${siteUrl}${ogImage}`,
-        imageAlt: `${title} - Jack Cutrara Portfolio`,
+        imageAlt: `${ogTitle} - Jack Cutrara Portfolio`,
       }}
     />
     <Font cssVariable="--font-heading" />
