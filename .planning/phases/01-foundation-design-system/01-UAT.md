@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: resolved
 phase: 01-foundation-design-system
 source: [01-01-SUMMARY.md, 01-02-SUMMARY.md, 01-03-SUMMARY.md, 01-04-SUMMARY.md]
 started: 2026-03-23T05:00:00Z
-updated: 2026-03-23T05:06:00Z
+updated: 2026-03-23T06:00:00Z
 ---
 
 ## Current Test
@@ -52,7 +52,7 @@ blocked: 0
 ## Gaps
 
 - truth: "Font files served as self-hosted .woff2 from localhost for Instrument Serif, Instrument Sans, and JetBrains Mono"
-  status: failed
+  status: resolved
   reason: "User reported: I dont see any fonts being loaded..."
   severity: major
   test: 2
@@ -65,7 +65,7 @@ blocked: 0
   debug_session: ""
 
 - truth: "Browser tab shows JC initials favicon (dark background, teal-colored text)"
-  status: failed
+  status: resolved
   reason: "User reported: No i do not"
   severity: major
   test: 5
