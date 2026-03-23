@@ -1,32 +1,83 @@
 ---
-import Font from "astro/components/Font.astro";
+import { Font } from "astro:assets";
+import { SEO } from "astro-seo";
+import { ClientRouter } from "astro:transitions";
+import SkipToContent from "../components/SkipToContent.astro";
+import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 
 interface Props {
-  title?: string;
-  description?: string;
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: string;
+  canonicalUrl?: string;
 }
 
 const {
-  title = "Jack Cutrara",
-  description = "Software engineer portfolio showcasing projects and technical ability.",
+  title,
+  description,
+  ogImage = "/og-default.png",
+  ogType = "website",
+  canonicalUrl,
 } = Astro.props;
+
+const siteUrl =
+  Astro.site?.toString().replace(/\/$/, "") ?? "https://jackcutrara.com";
+const currentUrl = canonicalUrl ?? `${siteUrl}${Astro.url.pathname}`;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <SEO
+      title={title}
+      titleTemplate="%s | Jack Cutrara"
+      titleDefault="Jack Cutrara | Software Engineer"
+      description={description}
+      canonical={currentUrl}
+      openGraph={{
+        basic: {
+          title,
+          type: ogType,
+          image: `${siteUrl}${ogImage}`,
+          url: currentUrl,
+        },
+        optional: {
+          siteName: "Jack Cutrara",
+          description,
+        },
+        image: {
+          width: 1200,
+          height: 630,
+          alt: `${title} - Jack Cutrara Portfolio`,
+          type: "image/png",
+        },
+      }}
+      twitter={{
+        card: "summary_large_image",
+        title,
+        description,
+        image: `${siteUrl}${ogImage}`,
+        imageAlt: `${title} - Jack Cutrara Portfolio`,
+      }}
+    />
     <Font cssVariable="--font-heading" />
     <Font cssVariable="--font-sans" />
     <Font cssVariable="--font-code" />
+    <ClientRouter />
   </head>
   <body
-    class="bg-bg-primary text-text-primary font-body min-h-screen antialiased"
+    class="bg-bg-primary text-text-primary font-body min-h-screen antialiased flex flex-col"
   >
-    <slot />
+    <SkipToContent />
+    <!-- Header will be added in Plan 02 -->
+    <main id="main-content" class="flex-1 pt-16">
+      <slot />
+    </main>
+    <Footer />
   </body>
 </html>
