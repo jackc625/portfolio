@@ -50,10 +50,12 @@ Plans:
   3. Mobile hamburger menu opens, closes, and navigates correctly across all breakpoints
   4. Every page has a unique title tag, meta description, and Open Graph tags visible in page source
   5. A keyboard-only user can navigate the entire site using Tab, Enter, and Escape, with visible focus indicators and a skip-to-content link
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md -- BaseLayout with SEO meta, Footer with contact links, SkipToContent, OG image, and 5 stub pages
+- [ ] 02-02-PLAN.md -- Header with scroll-reveal nav, desktop links, hamburger trigger, and full-screen mobile menu overlay
+- [ ] 02-03-PLAN.md -- Human verification of complete site shell at desktop and mobile
 **UI hint**: yes
 
 ### Phase 3: Core Pages
@@ -127,7 +129,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 4/5 | UAT gap closure planned | - |
-| 2. Site Shell & Navigation | 0/? | Not started | - |
+| 2. Site Shell & Navigation | 0/3 | Planned | - |
 | 3. Core Pages | 0/? | Not started | - |
 | 4. Project System & Case Studies | 0/? | Not started | - |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
