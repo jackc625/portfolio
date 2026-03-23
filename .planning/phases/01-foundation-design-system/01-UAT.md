@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 01-foundation-design-system
 source: [01-01-SUMMARY.md, 01-02-SUMMARY.md, 01-03-SUMMARY.md, 01-04-SUMMARY.md]
 started: 2026-03-23T05:00:00Z
@@ -56,9 +56,12 @@ blocked: 0
   reason: "User reported: I dont see any fonts being loaded..."
   severity: major
   test: 2
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "BaseLayout.astro imports Font from 'astro:assets' but Font is not exported there. Font component must be imported from 'astro/components/Font.astro' as a default import. The wrong import resolves to undefined, so all three <Font> calls are no-ops — no @font-face blocks injected, no woff2 files requested."
+  artifacts:
+    - path: "src/layouts/BaseLayout.astro"
+      issue: "Line 2: import { Font } from 'astro:assets' — wrong import path"
+  missing:
+    - "Change import to: import Font from 'astro/components/Font.astro'"
   debug_session: ""
 
 - truth: "Browser tab shows JC initials favicon (dark background, teal-colored text)"
@@ -66,7 +69,10 @@ blocked: 0
   reason: "User reported: No i do not"
   severity: major
   test: 5
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "No <link rel='icon'> tag exists in BaseLayout.astro <head>. The public/favicon.svg file exists and is valid, but the HTML never tells the browser where to find it. Browsers default to requesting /favicon.ico which doesn't exist."
+  artifacts:
+    - path: "src/layouts/BaseLayout.astro"
+      issue: "Missing <link rel='icon'> tag in <head>"
+  missing:
+    - "Add <link rel='icon' href='/favicon.svg' type='image/svg+xml' /> to <head> in BaseLayout.astro"
   debug_session: ""
