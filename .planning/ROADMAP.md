@@ -68,13 +68,15 @@ Plans:
   3. Resume page renders viewable content on-page with a PDF download button visible above the fold
   4. Contact page (or section) displays direct email, LinkedIn, and GitHub links that open correctly
   5. All four pages are responsive and render correctly on mobile, tablet, and desktop
-**Plans**: 4 plans
+**Plans**: 6 plans
 
 Plans:
 - [x] 03-01-PLAN.md -- Home page with CTAButton, FeaturedProjectItem, and sample MDX content
 - [x] 03-02-PLAN.md -- About page with SkillGroup component and editorial narrative
 - [x] 03-03-PLAN.md -- Resume and Contact pages with ResumeEntry, ContactChannel, and placeholder PDF
-- [ ] 03-04-PLAN.md -- Human verification of all four core pages
+- [x] 03-04-PLAN.md -- Human verification of all four core pages
+- [ ] 03-05-PLAN.md -- UAT gap closure: Redesign Home page with unique editorial layout (non-generic)
+- [ ] 03-06-PLAN.md -- UAT gap closure: Redesign About page with unique editorial layout (non-generic)
 **UI hint**: yes
 
 ### Phase 4: Project System & Case Studies
@@ -131,9 +133,9 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Design System | 4/5 | UAT gap closure planned | - |
-| 2. Site Shell & Navigation | 0/3 | Planned | - |
-| 3. Core Pages | 3/4 | In Progress|  |
+| 1. Foundation & Design System | 5/5 | Complete | - |
+| 2. Site Shell & Navigation | 3/3 | Complete | - |
+| 3. Core Pages | 4/6 | UAT gap closure planned | |
 | 4. Project System & Case Studies | 0/? | Not started | - |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |
