@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 Plans:
 - [x] 01-01-PLAN.md -- Scaffold Astro 6 project with all dependencies and build tooling
-- [ ] 01-02-PLAN.md -- Create design token system (colors, typography, spacing) and BaseLayout
+- [x] 01-02-PLAN.md -- Create design token system (colors, typography, spacing) and BaseLayout
 - [x] 01-03-PLAN.md -- Create projects content collection schema and sample MDX
 - [ ] 01-04-PLAN.md -- Git init, deployment config, GitHub repo, and Cloudflare Pages setup
 **UI hint**: yes
