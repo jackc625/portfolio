@@ -126,57 +126,57 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| IDNV-01 | — | Pending |
-| IDNV-02 | — | Pending |
-| IDNV-03 | — | Pending |
-| IDNV-04 | — | Pending |
-| HOME-01 | — | Pending |
-| HOME-02 | — | Pending |
-| HOME-03 | — | Pending |
-| HOME-04 | — | Pending |
-| ABUT-01 | — | Pending |
-| ABUT-02 | — | Pending |
-| ABUT-03 | — | Pending |
-| PROJ-01 | — | Pending |
-| PROJ-02 | — | Pending |
-| PROJ-03 | — | Pending |
-| PROJ-04 | — | Pending |
-| CASE-01 | — | Pending |
-| CASE-02 | — | Pending |
-| CASE-03 | — | Pending |
-| CASE-04 | — | Pending |
-| CASE-05 | — | Pending |
-| RESM-01 | — | Pending |
-| RESM-02 | — | Pending |
-| RESM-03 | — | Pending |
-| CNTC-01 | — | Pending |
-| CNTC-02 | — | Pending |
-| DSGN-01 | — | Pending |
-| DSGN-02 | — | Pending |
-| DSGN-03 | — | Pending |
-| DSGN-04 | — | Pending |
-| PERF-01 | — | Pending |
-| PERF-02 | — | Pending |
-| PERF-03 | — | Pending |
-| PERF-04 | — | Pending |
-| PERF-05 | — | Pending |
-| ANIM-01 | — | Pending |
-| ANIM-02 | — | Pending |
-| ANIM-03 | — | Pending |
-| ANIM-04 | — | Pending |
-| SEOA-01 | — | Pending |
-| SEOA-02 | — | Pending |
-| SEOA-03 | — | Pending |
-| SEOA-04 | — | Pending |
-| SEOA-05 | — | Pending |
-| SEOA-06 | — | Pending |
-| SEOA-07 | — | Pending |
+| IDNV-01 | Phase 2 | Pending |
+| IDNV-02 | Phase 2 | Pending |
+| IDNV-03 | Phase 2 | Pending |
+| IDNV-04 | Phase 1 | Pending |
+| HOME-01 | Phase 3 | Pending |
+| HOME-02 | Phase 3 | Pending |
+| HOME-03 | Phase 3 | Pending |
+| HOME-04 | Phase 3 | Pending |
+| ABUT-01 | Phase 3 | Pending |
+| ABUT-02 | Phase 3 | Pending |
+| ABUT-03 | Phase 3 | Pending |
+| PROJ-01 | Phase 4 | Pending |
+| PROJ-02 | Phase 4 | Pending |
+| PROJ-03 | Phase 4 | Pending |
+| PROJ-04 | Phase 4 | Pending |
+| CASE-01 | Phase 4 | Pending |
+| CASE-02 | Phase 4 | Pending |
+| CASE-03 | Phase 4 | Pending |
+| CASE-04 | Phase 4 | Pending |
+| CASE-05 | Phase 4 | Pending |
+| RESM-01 | Phase 3 | Pending |
+| RESM-02 | Phase 3 | Pending |
+| RESM-03 | Phase 5 | Pending |
+| CNTC-01 | Phase 3 | Pending |
+| CNTC-02 | Phase 2 | Pending |
+| DSGN-01 | Phase 1 | Pending |
+| DSGN-02 | Phase 5 | Pending |
+| DSGN-03 | Phase 5 | Pending |
+| DSGN-04 | Phase 5 | Pending |
+| PERF-01 | Phase 6 | Pending |
+| PERF-02 | Phase 6 | Pending |
+| PERF-03 | Phase 6 | Pending |
+| PERF-04 | Phase 6 | Pending |
+| PERF-05 | Phase 6 | Pending |
+| ANIM-01 | Phase 5 | Pending |
+| ANIM-02 | Phase 5 | Pending |
+| ANIM-03 | Phase 5 | Pending |
+| ANIM-04 | Phase 5 | Pending |
+| SEOA-01 | Phase 2 | Pending |
+| SEOA-02 | Phase 2 | Pending |
+| SEOA-03 | Phase 5 | Pending |
+| SEOA-04 | Phase 2 | Pending |
+| SEOA-05 | Phase 2 | Pending |
+| SEOA-06 | Phase 2 | Pending |
+| SEOA-07 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 45 total
-- Mapped to phases: 0
-- Unmapped: 45 ⚠️
+- Mapped to phases: 45
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-22*
-*Last updated: 2026-03-22 after initial definition*
+*Last updated: 2026-03-22 after roadmap creation*
