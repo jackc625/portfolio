@@ -54,7 +54,7 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md -- BaseLayout with SEO meta, Footer with contact links, SkipToContent, OG image, and 5 stub pages
-- [ ] 02-02-PLAN.md -- Header with scroll-reveal nav, desktop links, hamburger trigger, and full-screen mobile menu overlay
+- [x] 02-02-PLAN.md -- Header with scroll-reveal nav, desktop links, hamburger trigger, and full-screen mobile menu overlay
 - [ ] 02-03-PLAN.md -- Human verification of complete site shell at desktop and mobile
 **UI hint**: yes
 
