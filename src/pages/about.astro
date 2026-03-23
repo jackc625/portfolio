@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SkillGroup from "../components/SkillGroup.astro";
+---
+
+<BaseLayout
+  title="About"
+  description="Learn about Jack Cutrara's background, education, and path into software engineering."
+>
+  <!-- Page Header -->
+  <section
+    class="py-[var(--token-space-section)] pb-[var(--token-space-2xl)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
+  >
+    <div class="max-w-5xl mx-auto">
+      <h1
+        class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]"
+      >
+        About
+      </h1>
+    </div>
+  </section>
+
+  <!-- Narrative Section -->
+  <section
+    aria-label="Background"
+    class="pb-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
+  >
+    <div class="max-w-2xl mx-auto">
+      <p
+        class="font-body text-[length:var(--token-text-base)] text-text-primary leading-[1.6] mb-[var(--token-space-md)]"
+      >
+        I'm Jack Cutrara, a software engineer based in New York. I got into
+        programming because I wanted to build things &mdash; not just read about
+        them.
+      </p>
+      <p
+        class="font-body text-[length:var(--token-text-base)] text-text-primary leading-[1.6] mb-[var(--token-space-md)]"
+      >
+        I studied computer science at university, where I discovered that the
+        best way to learn was to ship real projects. That mindset stuck. Every
+        project in my portfolio exists because I saw a problem and decided to
+        solve it.
+      </p>
+      <p
+        class="font-body text-[length:var(--token-text-base)] text-text-primary leading-[1.6] mb-[var(--token-space-md)]"
+      >
+        Outside of code, I enjoy exploring new technologies, contributing to
+        open source, and finding creative solutions to everyday problems. I'm
+        drawn to work that's technically interesting and meaningfully useful.
+      </p>
+      <p
+        class="font-body text-[length:var(--token-text-base)] text-text-primary leading-[1.6] mb-[var(--token-space-md)]"
+      >
+        I'm currently looking for a software engineering role where I can
+        contribute to a team building something that matters.
+      </p>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section
+    aria-label="Skills"
+    class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
+  >
+    <div class="max-w-5xl mx-auto">
+      <h2
+        class="font-body text-[length:var(--token-text-heading)] font-semibold mb-[var(--token-space-xl)]"
+      >
+        What I Work With
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-[var(--token-space-lg)]">
+        <SkillGroup
+          title="Languages"
+          skills={["TypeScript", "JavaScript", "Python", "SQL", "HTML", "CSS"]}
+        />
+        <SkillGroup
+          title="Frameworks"
+          skills={["React", "Next.js", "Astro", "Node.js", "Express"]}
+        />
+        <SkillGroup
+          title="Tools"
+          skills={["Git", "Docker", "PostgreSQL", "VS Code", "Linux"]}
+        />
+        <SkillGroup
+          title="Concepts"
+          skills={[
+            "REST APIs",
+            "CI/CD",
+            "Testing",
+            "Responsive Design",
+            "Accessibility",
+          ]}
+        />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
