@@ -1,0 +1,29 @@
+---
+interface Props {
+  title: string;
+  tagline: string;
+  techStack: string[];
+  slug: string;
+}
+const { title, tagline, techStack, slug } = Astro.props;
+---
+
+<a
+  href={`/projects/${slug}`}
+  class="group block border-b border-border py-[var(--token-space-lg)]
+         transition-colors duration-200
+         hover:border-border-hover
+         focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 focus-visible:rounded"
+>
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+    <span class="font-display text-[length:var(--token-text-heading)] font-normal text-text-primary group-hover:text-accent transition-colors duration-200">
+      {title}
+    </span>
+    <span class="font-body text-[length:var(--token-text-sm)] text-text-secondary mt-1 md:mt-0">
+      {tagline}
+    </span>
+  </div>
+  <span class="font-mono text-[length:var(--token-text-sm)] text-text-muted mt-[var(--token-space-sm)] block">
+    {techStack.join(", ")}
+  </span>
+</a>
