@@ -1,0 +1,31 @@
+---
+import { Font } from "astro:assets";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Jack Cutrara",
+  description = "Software engineer portfolio showcasing projects and technical ability.",
+} = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <Font cssVariable="--font-heading" />
+    <Font cssVariable="--font-sans" />
+    <Font cssVariable="--font-code" />
+  </head>
+  <body
+    class="bg-bg-primary text-text-primary font-body min-h-screen antialiased"
+  >
+    <slot />
+  </body>
+</html>
