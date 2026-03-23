@@ -12,7 +12,9 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Modern, high-performance tech stack (research-driven selection) — Validated in Phase 1: Astro 6 + Tailwind v4 + TypeScript strict
+- [x] Custom domain support — Validated in Phase 1: Cloudflare Pages with jackcutrara.com configured
+- [x] Placeholder content system for project details to be filled in later — Validated in Phase 1: Content collection schema with sample MDX
 
 ### Active
 
@@ -25,12 +27,9 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - [ ] Contact page with email, LinkedIn, GitHub links
 - [ ] Responsive design across desktop and mobile
 - [ ] Two reading modes: fast scan (recruiters) and deep review (engineers)
-- [ ] Modern, high-performance tech stack (research-driven selection)
 - [ ] Professional, high-end visual design (all design decisions via frontend-design skill)
-- [ ] Placeholder content system for project details to be filled in later
 - [ ] SEO/meta structure for discoverability
 - [ ] Accessibility best practices
-- [ ] Custom domain support
 
 ### Out of Scope
 
@@ -49,7 +48,7 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - Site must position Jack as someone who builds real projects, has initiative, and is polished/employable
 - Content for 5-6 projects will be added after site structure is built — use placeholder content initially
 - Jack has a custom domain available
-- Deployment platform to be decided later (not a blocker)
+- Deployed on Cloudflare Pages with push-to-deploy CI/CD
 - Tech stack should prioritize modern tooling and best performance — explicitly NOT optimized for code simplicity
 - All UI/UX/visual/design decisions must be routed through the frontend-design skill
 
@@ -64,11 +63,11 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Research-driven tech stack | Jack wants modern + best performance, not simplicity-optimized | — Pending |
-| 5-6 projects with placeholder content | Build structure first, fill details later | — Pending |
-| All design via frontend-design skill | Ensures consistent, high-quality visual decisions | — Pending |
-| Custom domain (available) | Professional presence | — Pending |
-| Deployment platform TBD | Not blocking v1 development | — Pending |
+| Research-driven tech stack | Jack wants modern + best performance, not simplicity-optimized | Astro 6 + Tailwind v4 + TypeScript (Phase 1) |
+| 5-6 projects with placeholder content | Build structure first, fill details later | Content collection schema + sample MDX (Phase 1) |
+| All design via frontend-design skill | Ensures consistent, high-quality visual decisions | UI-SPEC produced, design tokens implemented (Phase 1) |
+| Custom domain (available) | Professional presence | jackcutrara.com on Cloudflare Pages (Phase 1) |
+| Deployment platform: Cloudflare Pages | Unlimited bandwidth, fastest edge, Astro-owned | Live at portfolio-5wl.pages.dev (Phase 1) |
 
 ## Evolution
 
@@ -88,4 +87,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-22 after initialization*
+*Last updated: 2026-03-23 after Phase 1 completion*
