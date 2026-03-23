@@ -15,17 +15,17 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - [x] Modern, high-performance tech stack (research-driven selection) — Validated in Phase 1: Astro 6 + Tailwind v4 + TypeScript strict
 - [x] Custom domain support — Validated in Phase 1: Cloudflare Pages with jackcutrara.com configured
 - [x] Placeholder content system for project details to be filled in later — Validated in Phase 1: Content collection schema with sample MDX
+- [x] Multi-page site with Home, About, Projects, Resume, and Contact pages — Validated in Phase 3: All four core pages built
+- [x] Home page that communicates who Jack is within seconds and drives exploration — Validated in Phase 3: Hero + featured projects + about teaser + quick links
+- [x] About page with background, education, interests, and path into engineering — Validated in Phase 3: First-person narrative + 4-group skills grid
+- [x] Resume page with viewable content and PDF download — Validated in Phase 3: Styled summary + PDF download CTA
+- [x] Contact page with email, LinkedIn, GitHub links — Validated in Phase 3: Channel cards + availability badge
+- [x] Responsive design across desktop and mobile — Validated in Phase 3: Human-verified at mobile/desktop widths
 
 ### Active
 
-- [ ] Multi-page site with Home, About, Projects, Resume, and Contact pages
-- [ ] Home page that communicates who Jack is within seconds and drives exploration
-- [ ] About page with background, education, interests, and path into engineering
 - [ ] Projects page displaying 5-6 projects in a clean, scan-friendly format
 - [ ] Project detail/case study pages with technical depth (overview, tech stack, challenges, architecture, lessons learned)
-- [ ] Resume page with viewable content and PDF download
-- [ ] Contact page with email, LinkedIn, GitHub links
-- [ ] Responsive design across desktop and mobile
 - [ ] Two reading modes: fast scan (recruiters) and deep review (engineers)
 - [ ] Professional, high-end visual design (all design decisions via frontend-design skill)
 - [ ] SEO/meta structure for discoverability
@@ -87,4 +87,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-23 after Phase 1 completion*
+*Last updated: 2026-03-23 after Phase 3 completion*
