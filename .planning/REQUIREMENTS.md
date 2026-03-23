@@ -12,7 +12,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **IDNV-01**: Site displays Jack's name, role, and one-liner value proposition above the fold within 3 seconds of page load
 - [ ] **IDNV-02**: Sticky/fixed navigation with clear labels (Home, About, Projects, Resume, Contact) on all pages
 - [ ] **IDNV-03**: Mobile hamburger menu that is accessible and smooth on all breakpoints
-- [ ] **IDNV-04**: Site served over HTTPS on a custom domain
+- [x] **IDNV-04**: Site served over HTTPS on a custom domain
 
 ### Home Page
 
@@ -129,7 +129,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | IDNV-01 | Phase 2 | Pending |
 | IDNV-02 | Phase 2 | Pending |
 | IDNV-03 | Phase 2 | Pending |
-| IDNV-04 | Phase 1 | Pending |
+| IDNV-04 | Phase 1 | Complete |
 | HOME-01 | Phase 3 | Pending |
 | HOME-02 | Phase 3 | Pending |
 | HOME-03 | Phase 3 | Pending |
