@@ -133,7 +133,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 4/5 | UAT gap closure planned | - |
 | 2. Site Shell & Navigation | 0/3 | Planned | - |
-| 3. Core Pages | 0/4 | Planned | - |
+| 3. Core Pages | 1/4 | In Progress|  |
 | 4. Project System & Case Studies | 0/? | Not started | - |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |

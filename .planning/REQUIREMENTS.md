@@ -23,9 +23,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### About Page
 
-- [ ] **ABUT-01**: Background narrative covering education, path into engineering, and interests
-- [ ] **ABUT-02**: Professional but human tone — shows personality without being unprofessional
-- [ ] **ABUT-03**: Technology/skills presentation grouped by context (not progress bars)
+- [x] **ABUT-01**: Background narrative covering education, path into engineering, and interests
+- [x] **ABUT-02**: Professional but human tone — shows personality without being unprofessional
+- [x] **ABUT-03**: Technology/skills presentation grouped by context (not progress bars)
 
 ### Projects System
 
@@ -134,9 +134,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOME-02 | Phase 3 | Complete |
 | HOME-03 | Phase 3 | Complete |
 | HOME-04 | Phase 3 | Complete |
-| ABUT-01 | Phase 3 | Pending |
-| ABUT-02 | Phase 3 | Pending |
-| ABUT-03 | Phase 3 | Pending |
+| ABUT-01 | Phase 3 | Complete |
+| ABUT-02 | Phase 3 | Complete |
+| ABUT-03 | Phase 3 | Complete |
 | PROJ-01 | Phase 4 | Pending |
 | PROJ-02 | Phase 4 | Pending |
 | PROJ-03 | Phase 4 | Pending |
