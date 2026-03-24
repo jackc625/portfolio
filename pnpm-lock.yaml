@@ -23,6 +23,9 @@ importers:
       astro-seo:
         specifier: ^1.1.0
         version: 1.1.0(prettier-plugin-astro@0.14.1)(prettier@3.8.1)(typescript@5.9.3)
+      gsap:
+        specifier: ^3.14.2
+        version: 3.14.2
       tailwindcss:
         specifier: ^4.2.2
         version: 4.2.2
@@ -1393,6 +1396,9 @@ packages:
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+
+  gsap@3.14.2:
+    resolution: {integrity: sha512-P8/mMxVLU7o4+55+1TCnQrPmgjPKnwkzkXOK1asnR9Jg2lna4tEY5qBJjMmAaOBDDZWtlRjBXjLa0w53G/uBLA==}
 
   h3@1.15.10:
     resolution: {integrity: sha512-YzJeWSkDZxAhvmp8dexjRK5hxziRO7I9m0N53WhvYL5NiWfkUkzssVzY9jvGu0HBoLFW6+duYmNSn6MaZBCCtg==}
@@ -4055,6 +4061,8 @@ snapshots:
   globals@16.5.0: {}
 
   graceful-fs@4.2.11: {}
+
+  gsap@3.14.2: {}
 
   h3@1.15.10:
     dependencies:
