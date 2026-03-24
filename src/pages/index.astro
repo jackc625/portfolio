@@ -2,7 +2,6 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import CTAButton from "../components/CTAButton.astro";
-import FeaturedProjectItem from "../components/FeaturedProjectItem.astro";
 
 const featuredProjects = (
   await getCollection("projects", ({ data }) => data.featured === true)
@@ -13,71 +12,389 @@ const featuredProjects = (
   title=""
   description="Software engineer who builds real projects. Explore my work, background, and how to get in touch."
 >
+  <!-- HERO: Asymmetric full-viewport composition -->
   <section
     aria-label="Introduction"
-    class="min-h-[calc(100vh-4rem)] flex flex-col justify-center px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
+    class="min-h-[calc(100vh-4rem)] relative grid hero-grid items-end pb-12 md:pb-16 lg:pb-20"
   >
-    <div class="max-w-5xl mx-auto w-full">
-      <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">
-        Jack Cutrara
-      </h1>
-      <p class="font-body text-[length:var(--token-text-heading)] font-normal text-text-secondary uppercase tracking-[0.1em] mt-[var(--token-space-lg)]">
-        SOFTWARE ENGINEER
-      </p>
-      <p class="font-body text-[length:var(--token-text-base)] text-text-secondary mt-[var(--token-space-md)] max-w-2xl">
-        I build things that work. Full-stack developer with a bias for shipping real projects and learning by doing.
-      </p>
-      <div class="mt-[var(--token-space-xl)]">
-        <CTAButton href="/projects" label="View Projects" />
-      </div>
+    <!-- Role label — positioned independently in upper-right area on desktop -->
+    <p class="hero-role font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.2em] self-start pt-8 md:pt-12 lg:pt-16 md:text-right">
+      Software Engineer
+    </p>
+
+    <!-- Name — extreme typographic scale, owns the viewport width -->
+    <h1
+      class="hero-name font-display leading-[0.85] tracking-[-0.04em] text-text-primary"
+      style="font-size: clamp(3.5rem, 2rem + 10vw, 13rem);"
+    >
+      Jack<br />Cutrara
+    </h1>
+
+    <!-- Tagline — offset from name, narrower measure -->
+    <p class="hero-tagline font-body text-[length:var(--token-text-base)] text-text-secondary max-w-[38ch] leading-relaxed mt-6 md:mt-0">
+      I build things that work. Full-stack developer with a bias for shipping real projects and learning by doing.
+    </p>
+
+    <!-- CTA — positioned in its own grid area -->
+    <div class="hero-cta mt-8 md:mt-0 pb-4">
+      <CTAButton href="/projects" label="View Projects" />
     </div>
   </section>
 
+  <!-- PROJECTS: Typographic list with varied horizontal positioning -->
   <section
     aria-label="Selected work"
-    class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
+    class="py-[var(--token-space-section)]"
   >
-    <div class="max-w-5xl mx-auto">
-      <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold mb-[var(--token-space-xl)]">
-        Selected Work
-      </h2>
-      {featuredProjects.length > 0 ? (
-        <div>
-          {featuredProjects.map((project) => (
-            <FeaturedProjectItem
-              title={project.data.title}
-              tagline={project.data.tagline}
-              techStack={project.data.techStack}
-              slug={project.id}
-            />
-          ))}
-        </div>
-      ) : (
-        <p class="text-text-secondary font-body text-[length:var(--token-text-base)]">
-          Projects coming soon. Check back for updates on what I'm building.
-        </p>
-      )}
-    </div>
+    {featuredProjects.length > 0 ? (
+      <div class="space-y-0">
+        {featuredProjects.map((project, i) => (
+          <a
+            href={`/projects/${project.id}`}
+            class:list={[
+              "group block border-t border-border transition-colors duration-200 hover:border-border-hover",
+              "focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 focus-visible:rounded",
+              "project-row py-8 md:py-10",
+            ]}
+          >
+            <div class:list={[
+              "project-inner grid gap-2 md:gap-4",
+              i === 0 ? "project-layout-a" : "",
+              i === 1 ? "project-layout-b" : "",
+              i === 2 ? "project-layout-c" : "",
+            ]}>
+              <h3
+                class="font-display text-text-primary group-hover:text-accent transition-colors duration-200 leading-[0.95] tracking-[-0.02em]"
+                style="font-size: clamp(1.5rem, 0.8rem + 3.5vw, 3.5rem);"
+              >
+                {project.data.title}
+              </h3>
+              <p class="font-body text-[length:var(--token-text-sm)] text-text-secondary max-w-[40ch]">
+                {project.data.tagline}
+              </p>
+              <span class="font-mono text-[length:var(--token-text-sm)] text-text-muted tracking-wide">
+                {project.data.techStack.join(" / ")}
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="text-text-secondary font-body text-[length:var(--token-text-base)] px-6">
+        Projects coming soon. Check back for updates on what I'm building.
+      </p>
+    )}
   </section>
 
+  <!-- ABOUT TEASER: Pull-quote in narrow offset column -->
   <section
     aria-label="About"
-    class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
+    class="py-[var(--token-space-section)] about-teaser"
   >
-    <div class="max-w-2xl mx-auto">
-      <p class="font-body text-[length:var(--token-text-base)] text-text-secondary">
-        I'm a software engineer who got here by building things — not by waiting for permission. Curious about the full story? <a href="/about" class="text-accent hover:text-accent-hover transition-colors duration-200">About me</a>
+    <div class="about-inner">
+      <p
+        class="font-display text-text-primary leading-[1.15] tracking-[-0.02em]"
+        style="font-size: clamp(1.25rem, 0.8rem + 2.5vw, 2.5rem);"
+      >
+        I got here by building things&mdash;not by waiting for permission.
       </p>
+      <a
+        href="/about"
+        class="inline-block mt-6 font-mono text-[length:var(--token-text-sm)] text-text-muted hover:text-accent transition-colors duration-200 uppercase tracking-[0.15em]"
+      >
+        Read more &rarr;
+      </a>
     </div>
   </section>
 
+  <!-- QUICK LINKS: Typographic links as part of the grid rhythm -->
   <section
     aria-label="Quick links"
-    class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
+    class="py-[var(--token-space-section)] border-t border-border quick-links"
   >
-    <div class="max-w-5xl mx-auto flex flex-wrap gap-[var(--token-space-xl)]">
-      <a href="/resume" class="font-body text-[length:var(--token-text-heading)] font-semibold text-text-primary hover:text-accent transition-colors duration-200">Resume</a>
-      <a href="/contact" class="font-body text-[length:var(--token-text-heading)] font-semibold text-text-primary hover:text-accent transition-colors duration-200">Get in Touch</a>
+    <div class="quick-links-inner flex flex-col gap-4 md:flex-row md:gap-16">
+      <a
+        href="/resume"
+        class="font-display text-text-primary hover:text-accent transition-colors duration-200 leading-[0.95] tracking-[-0.02em]"
+        style="font-size: clamp(1.5rem, 1rem + 2.5vw, 3rem);"
+      >
+        Resume
+      </a>
+      <a
+        href="/contact"
+        class="font-display text-text-primary hover:text-accent transition-colors duration-200 leading-[0.95] tracking-[-0.02em]"
+        style="font-size: clamp(1.5rem, 1rem + 2.5vw, 3rem);"
+      >
+        Get in Touch
+      </a>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* === HERO GRID: Asymmetric spatial composition === */
+  .hero-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto auto;
+    grid-template-areas:
+      "role"
+      "name"
+      "tagline"
+      "cta";
+    padding-left: var(--token-space-md);
+    padding-right: var(--token-space-md);
+  }
+
+  .hero-role {
+    grid-area: role;
+  }
+  .hero-name {
+    grid-area: name;
+    align-self: end;
+  }
+  .hero-tagline {
+    grid-area: tagline;
+  }
+  .hero-cta {
+    grid-area: cta;
+  }
+
+  /* Desktop: 12-column asymmetric grid */
+  @media (min-width: 768px) {
+    .hero-grid {
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas:
+        ".    .    .    .    .    .    .    .    role role role role"
+        "name name name name name name name name name .    .    ."
+        ".    .    .    tag  tag  tag  tag  .    .    .    cta  cta";
+      padding-left: var(--token-space-lg);
+      padding-right: var(--token-space-lg);
+      column-gap: 1rem;
+    }
+
+    .hero-role {
+      text-align: right;
+    }
+    .hero-name {
+      align-self: end;
+    }
+    .hero-tagline {
+      grid-area: tag;
+      align-self: end;
+    }
+    .hero-cta {
+      grid-area: cta;
+      align-self: end;
+      justify-self: end;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      padding-left: clamp(2rem, 4vw, 5rem);
+      padding-right: clamp(2rem, 4vw, 5rem);
+    }
+  }
+
+  /* === PROJECT ROWS: Varied horizontal positions === */
+  .project-row {
+    padding-left: var(--token-space-md);
+    padding-right: var(--token-space-md);
+  }
+
+  .project-inner {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 768px) {
+    .project-row {
+      padding-left: var(--token-space-lg);
+      padding-right: var(--token-space-lg);
+    }
+
+    /* Each project has a different grid layout for horizontal variation */
+    .project-layout-a {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+    .project-layout-a h3 {
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+      align-self: center;
+    }
+    .project-layout-a p {
+      grid-column: 2 / 3;
+      text-align: right;
+      justify-self: end;
+    }
+    .project-layout-a span {
+      grid-column: 2 / 3;
+      text-align: right;
+      justify-self: end;
+    }
+
+    .project-layout-b {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    }
+    .project-layout-b h3 {
+      grid-column: 2 / 3;
+      text-align: right;
+    }
+    .project-layout-b p {
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+      align-self: end;
+    }
+    .project-layout-b span {
+      grid-column: 1 / 2;
+    }
+
+    .project-layout-c {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .project-layout-c h3 {
+      grid-column: 1 / 3;
+    }
+    .project-layout-c p {
+      grid-column: 3 / 4;
+      align-self: center;
+    }
+    .project-layout-c span {
+      grid-column: 3 / 4;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .project-row {
+      padding-left: clamp(2rem, 4vw, 5rem);
+      padding-right: clamp(2rem, 4vw, 5rem);
+    }
+
+    .project-layout-a {
+      grid-template-columns: 3fr 2fr;
+    }
+
+    .project-layout-b {
+      grid-template-columns: 1fr 3fr;
+      padding-left: 8%;
+    }
+
+    .project-layout-c {
+      grid-template-columns: 2fr 1fr 2fr;
+      padding-right: 5%;
+    }
+  }
+
+  /* === ABOUT TEASER: Offset narrow column === */
+  .about-teaser {
+    padding-left: var(--token-space-md);
+    padding-right: var(--token-space-md);
+  }
+
+  .about-inner {
+    max-width: 55ch;
+  }
+
+  @media (min-width: 768px) {
+    .about-teaser {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .about-inner {
+      margin-left: 35%;
+      margin-right: var(--token-space-lg);
+      max-width: 45ch;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .about-inner {
+      margin-left: 40%;
+      margin-right: clamp(2rem, 6vw, 6rem);
+    }
+  }
+
+  /* === QUICK LINKS: Asymmetric positioning === */
+  .quick-links {
+    padding-left: var(--token-space-md);
+    padding-right: var(--token-space-md);
+  }
+
+  @media (min-width: 768px) {
+    .quick-links {
+      padding-left: var(--token-space-lg);
+      padding-right: var(--token-space-lg);
+    }
+
+    .quick-links-inner {
+      padding-left: 10%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .quick-links {
+      padding-left: clamp(2rem, 4vw, 5rem);
+      padding-right: clamp(2rem, 4vw, 5rem);
+    }
+  }
+</style>
+
+<script>
+  function initHomeAnimations() {
+    // Simple entrance animations — opacity and y transforms only
+    const elements = document.querySelectorAll(
+      ".hero-role, .hero-name, .hero-tagline, .hero-cta, .project-row, .about-inner, .quick-links-inner"
+    );
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      elements.forEach((el) => {
+        (el as HTMLElement).style.opacity = "1";
+      });
+      return;
+    }
+
+    // Set initial state
+    elements.forEach((el) => {
+      (el as HTMLElement).style.opacity = "0";
+      (el as HTMLElement).style.transform = "translateY(20px)";
+    });
+
+    // Stagger reveal
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+            el.style.opacity = "1";
+            el.style.transform = "translateY(0)";
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    // Stagger hero elements with delay
+    const heroEls = document.querySelectorAll(
+      ".hero-role, .hero-name, .hero-tagline, .hero-cta"
+    );
+    heroEls.forEach((el, i) => {
+      setTimeout(() => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.transition = "opacity 0.7s ease, transform 0.7s ease";
+        htmlEl.style.opacity = "1";
+        htmlEl.style.transform = "translateY(0)";
+      }, 150 + i * 120);
+    });
+
+    // Observe below-fold elements
+    document
+      .querySelectorAll(".project-row, .about-inner, .quick-links-inner")
+      .forEach((el) => observer.observe(el));
+  }
+
+  document.addEventListener("astro:page-load", initHomeAnimations);
+</script>
