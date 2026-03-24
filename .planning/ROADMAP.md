@@ -135,7 +135,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 5/5 | Complete | - |
 | 2. Site Shell & Navigation | 3/3 | Complete | - |
-| 3. Core Pages | 4/6 | UAT gap closure planned | |
+| 3. Core Pages | 4/6 | BLOCKED — Home/About redesign failed multiple attempts | |
 | 4. Project System & Case Studies | 0/? | Not started | - |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |
