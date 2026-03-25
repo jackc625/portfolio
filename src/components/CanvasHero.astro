@@ -1,0 +1,186 @@
+---
+// CanvasHero.astro — Full-viewport generative art canvas with content overlay
+// Uses simplex-noise flow field for procedural visuals unique on every page load
+// Canvas is decorative (aria-hidden), content overlays via <slot />
+---
+
+<section class="relative w-full h-screen overflow-hidden" aria-label="Introduction">
+  <canvas id="hero-canvas" class="absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
+  <div class="relative z-10 flex flex-col justify-end h-full pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
+    <slot />
+  </div>
+</section>
+
+<script>
+  import { createNoise2D } from 'simplex-noise';
+
+  interface Particle {
+    x: number;
+    y: number;
+    prevX: number;
+    prevY: number;
+  }
+
+  function initCanvas(): (() => void) | undefined {
+    const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return undefined;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return undefined;
+
+    const noise2D = createNoise2D();
+    let animationId: number;
+    let time = 0;
+    const noiseScale = 0.003;
+    const speed = 1.5;
+
+    // Determine particle count based on viewport
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 400 : 1000;
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let particles: Particle[] = [];
+
+    // Extract background color RGB for trail effect
+    // Fallback to near-black matching --token-bg-primary
+    const bgColor = getComputedStyle(document.documentElement)
+      .getPropertyValue('--token-bg-primary')
+      .trim();
+    // Use a near-black RGBA for the trail — matches the dark bg
+    const trailColor = 'rgba(10, 10, 14, 0.03)';
+
+    // Extract accent color for stroke, or fallback
+    const accentEl = document.createElement('div');
+    accentEl.style.color = 'var(--token-accent)';
+    document.body.appendChild(accentEl);
+    const computedAccent = getComputedStyle(accentEl).color;
+    document.body.removeChild(accentEl);
+
+    // Parse the computed accent color to get RGBA values
+    function parseColor(color: string): { r: number; g: number; b: number } {
+      const match = color.match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+      if (match) {
+        return { r: parseInt(match[1]), g: parseInt(match[2]), b: parseInt(match[3]) };
+      }
+      // Fallback: muted blue matching accent token
+      return { r: 130, g: 150, b: 220 };
+    }
+
+    const accent = parseColor(computedAccent);
+    const strokeColor = `rgba(${accent.r}, ${accent.g}, ${accent.b}, 0.15)`;
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas!.width = width * dpr;
+      canvas!.height = height * dpr;
+      canvas!.style.width = width + 'px';
+      canvas!.style.height = height + 'px';
+      ctx!.scale(dpr, dpr);
+      initParticles();
+    }
+
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        particles.push({ x, y, prevX: x, prevY: y });
+      }
+    }
+
+    function draw() {
+      // Semi-transparent fill creates trail effect
+      ctx!.fillStyle = trailColor;
+      ctx!.fillRect(0, 0, width, height);
+
+      ctx!.strokeStyle = strokeColor;
+      ctx!.lineWidth = 0.5;
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.prevX = p.x;
+        p.prevY = p.y;
+
+        const angle = noise2D(p.x * noiseScale, p.y * noiseScale + time * 0.0001) * Math.PI * 2;
+        p.x += Math.cos(angle) * speed;
+        p.y += Math.sin(angle) * speed;
+
+        // Wrap around edges
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx!.beginPath();
+        ctx!.moveTo(p.prevX, p.prevY);
+        ctx!.lineTo(p.x, p.y);
+        ctx!.stroke();
+      }
+
+      time++;
+      animationId = requestAnimationFrame(draw);
+    }
+
+    function drawStaticFrame() {
+      // For reduced-motion users: draw a single static noise-based pattern
+      ctx!.fillStyle = trailColor.replace('0.03', '1');
+      ctx!.fillRect(0, 0, width, height);
+
+      ctx!.strokeStyle = strokeColor;
+      ctx!.lineWidth = 0.5;
+
+      // Draw scattered dots based on noise values
+      for (let i = 0; i < particleCount; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const noiseVal = noise2D(x * noiseScale, y * noiseScale);
+        const opacity = Math.abs(noiseVal) * 0.3;
+
+        ctx!.fillStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${opacity})`;
+        ctx!.beginPath();
+        ctx!.arc(x, y, 1 + Math.abs(noiseVal) * 2, 0, Math.PI * 2);
+        ctx!.fill();
+      }
+    }
+
+    // Initialize
+    resize();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      drawStaticFrame();
+    } else {
+      animationId = requestAnimationFrame(draw);
+    }
+
+    // Resize handler
+    const onResize = () => {
+      resize();
+      if (prefersReducedMotion) {
+        drawStaticFrame();
+      }
+    };
+    window.addEventListener('resize', onResize);
+
+    // Return cleanup function for View Transitions
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', onResize);
+    };
+  }
+
+  // View Transitions lifecycle — initialize on page load, clean up before navigation
+  let cleanup: (() => void) | undefined;
+
+  document.addEventListener('astro:page-load', () => {
+    cleanup?.();
+    cleanup = initCanvas() || undefined;
+  });
+
+  document.addEventListener('astro:before-preparation', () => {
+    cleanup?.();
+    cleanup = undefined;
+  });
+</script>
