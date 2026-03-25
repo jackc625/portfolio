@@ -72,7 +72,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md -- Update design tokens (colors, typography, spacing) and font stack to match shiyunlu.com
-- [ ] 03-02-PLAN.md -- Rewrite site shell (Header, Footer, MobileMenu) to match shiyunlu.com navigation patterns
+- [x] 03-02-PLAN.md -- Rewrite site shell (Header, Footer, MobileMenu) to match shiyunlu.com navigation patterns
 - [ ] 03-03-PLAN.md -- Home page with generative canvas hero (simplex-noise) and shiyunlu.com spatial structure
 - [ ] 03-04-PLAN.md -- About page with narrative and skills in new design system
 - [ ] 03-05-PLAN.md -- Resume and Contact pages rebuilt within new design system
@@ -135,7 +135,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 5/5 | Complete | - |
 | 2. Site Shell & Navigation | 3/3 | Complete | - |
-| 3. Core Pages | 0/6 | REPLANNED — shiyunlu.com clone approach | |
+| 3. Core Pages | 2/6 | In Progress|  |
 | 4. Project System & Case Studies | 0/? | Not started | - |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |
