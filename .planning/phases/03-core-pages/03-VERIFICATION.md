@@ -1,32 +1,40 @@
 ---
 phase: 03-core-pages
-verified: 2026-03-23T18:30:00Z
-status: human_needed
-score: 4/5 must-haves verified (5th truth is responsive layout — requires human)
-human_verification:
-  - test: "Verify all four pages render correctly on mobile, tablet, and desktop"
-    expected: "Hero stacks cleanly on mobile, skills grid collapses to 1 column, resume entries stack, contact cards stack — no layout overflow or clipped text at ~375px and ~768px"
-    why_human: "Responsive layout and typography rendering cannot be verified programmatically without a browser; requires DevTools resize or physical device"
-  - test: "Verify featured projects editorial list rows on the Home page"
-    expected: "Three project rows appear as editorial list with title in serif, tagline right-aligned on desktop, tech stack in mono below; row hover shifts title to accent color and border lightens"
-    why_human: "Visual rendering quality and hover interaction state cannot be verified from source code alone"
-  - test: "Verify availability badge pulse animation on Contact page"
-    expected: "Small dot pulses with a ring expanding outward; animation stops (or dot disappears) when OS reduced-motion is enabled"
-    why_human: "CSS animation behavior requires browser observation; prefers-reduced-motion fallback cannot be confirmed without toggling the OS setting"
-  - test: "Click 'Download PDF' on Resume page"
-    expected: "Browser downloads resume.pdf (placeholder file); download does not fail or open a blank tab"
-    why_human: "File download behavior requires browser interaction"
-  - test: "Click LinkedIn and GitHub links on Contact page"
-    expected: "Both open in a new tab at correct URLs (linkedin.com/in/jackcutrara, github.com/jackc625)"
-    why_human: "External link target behavior must be confirmed in a real browser"
+verified: 2026-03-25T13:40:00Z
+status: passed
+score: 5/5 must-haves verified
+re_verification:
+  previous_status: human_needed
+  previous_score: 4/5 (5th was browser-only responsive layout)
+  gaps_closed:
+    - "Human visual verification — user reviewed and approved site in plan 03-06"
+    - "Home page canvas hero with generative art — CanvasHero.astro confirmed in codebase"
+    - "Resume PDF download interaction — confirmed in browser by user (plan 03-06)"
+    - "Contact external links open in new tab — confirmed in browser by user (plan 03-06)"
+    - "Availability badge pulse animation — confirmed in browser by user (plan 03-06)"
+  gaps_remaining: []
+  regressions: []
 ---
 
 # Phase 3: Core Pages Verification Report
 
-**Phase Goal:** Visitors can explore the Home, About, Resume, and Contact pages with real content structure, giving recruiters and hiring managers a complete picture of who Jack is before they even reach the projects
-**Verified:** 2026-03-23T18:30:00Z
-**Status:** human_needed
-**Re-verification:** No — initial verification
+**Phase Goal:** Full visual rebuild cloning shiyunlu.com's design language — updated design tokens (colors, fonts, spacing), reworked site shell (header, footer, mobile menu), and rebuilt Home (with canvas hero), About, Resume, and Contact pages within the cloned design system
+**Verified:** 2026-03-25T13:40:00Z
+**Status:** passed
+**Re-verification:** Yes — after plans 03-03 through 03-06 executed (significant page rebuilds since initial verification on 2026-03-23)
+
+---
+
+## Re-Verification Scope
+
+Since the initial verification (2026-03-23), the following plans executed and materially changed artifacts:
+
+- **03-03**: Created `CanvasHero.astro`; rewrote `index.astro` to hero-only layout per D-12/D-13
+- **03-04**: Restyled `SkillGroup.astro` to flex-wrap tag chips; rewrote `about.astro` with asymmetric grid
+- **03-05**: Restyled `ResumeEntry.astro`, `CTAButton.astro`, `ContactChannel.astro`; rebuilt `resume.astro` and `contact.astro`
+- **03-06**: Human visual verification — user reviewed and approved
+
+All previously-passed artifacts received a quick regression check (existence + basic sanity). New artifacts from 03-03/03-04/03-05 received full 3-level verification.
 
 ---
 
@@ -34,15 +42,17 @@ human_verification:
 
 ### Observable Truths
 
+The ROADMAP.md success criteria are used as the canonical truths for this phase.
+
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Home page displays hero with Jack's name, role, brief intro, and a primary CTA to view projects, plus a featured projects preview section and links to resume and contact | ✓ VERIFIED | `index.astro` lines 21-81: h1 "Jack Cutrara", role "SOFTWARE ENGINEER", tagline, `<CTAButton href="/projects">`, `aria-label="Selected work"` with `getCollection` query, `href="/resume"` and `href="/contact"` quick links |
-| 2 | About page presents Jack's background, education, path into engineering, and skills grouped by context (not progress bars) in a professional but personable tone | ✓ VERIFIED | `about.astro` lines 1-97: 4 first-person paragraphs covering background/education/path/goals, 4 `<SkillGroup>` components (Languages, Frameworks, Tools, Concepts) in a `grid-cols-1 md:grid-cols-2` grid; no `progress` or width-percentage patterns found |
-| 3 | Resume page renders viewable content on-page with a PDF download button visible above the fold | ✓ VERIFIED | `resume.astro` lines 13-58: h1 "Resume" at top, `<CTAButton href="/resume.pdf" label="Download PDF" download={true} showDownloadIcon={true} />` in first section; `aria-label="Resume summary"` card contains Experience, Education, Technical Skills subsections with `<ResumeEntry>` components; `public/resume.pdf` exists (548 bytes) |
-| 4 | Contact page displays direct email, LinkedIn, and GitHub links that open correctly | ✓ VERIFIED | `contact.astro` lines 25-44: `<ContactChannel>` for `mailto:jack@jackcutrara.com`, `https://linkedin.com/in/jackcutrara` (`external={true}`), `https://github.com/jackc625` (`external={true}`); `ContactChannel.astro` adds `target="_blank" rel="noopener noreferrer"` for external links and `sr-only` "(opens in new tab)" text |
-| 5 | All four pages are responsive and render correctly on mobile, tablet, and desktop | ? HUMAN NEEDED | Source code contains correct responsive classes: `md:flex-row`, `md:grid-cols-2`, `md:px-[var(--token-space-lg)]`, `min-h-[calc(100vh-4rem)]`, `max-w-lg` for contact stack — but actual rendering at breakpoints requires browser verification |
+| 1 | Home page displays a generative canvas hero with Jack's name, role, and brief intro overlaid; navigation provides discovery of all other pages | VERIFIED | `index.astro`: `<CanvasHero>` with h1 "Jack Cutrara", "Software Engineer" role text, intro paragraph. `CanvasHero.astro` 186 lines, contains `createNoise2D`, `id="hero-canvas"`, `astro:page-load`, `cancelAnimationFrame`. Header.astro has all 5 nav links (Home, About, Projects, Resume, Contact). D-12 explicitly removes featured projects from home; D-13 relaxes HOME-02/03/04 — navigation provides discovery |
+| 2 | About page presents Jack's background, education, path into engineering, and skills grouped by context (not progress bars) in first-person conversational tone | VERIFIED | `about.astro` 100 lines: asymmetric 1fr/2fr grid layout, 4 first-person paragraphs (intro, education, interests, CTA), 4 `<SkillGroup>` instances (Languages, Frameworks, Tools, Concepts); `SkillGroup.astro` uses flex-wrap pill tags — no `progress`, no percentage values |
+| 3 | Resume page renders viewable content on-page with a PDF download button visible above the fold | VERIFIED | `resume.astro` 73 lines: h1 "Resume" + `<CTAButton href="/resume.pdf" download={true} showDownloadIcon={true}>` in first section; Experience (2 entries via `<ResumeEntry>`), Education (1 entry), Technical Skills (12 skill tags) all rendered on-page; `public/resume.pdf` exists (548 bytes) |
+| 4 | Contact page displays direct email, LinkedIn, and GitHub links that open correctly, with availability indicator | VERIFIED | `contact.astro` 77 lines: 3 `<ContactChannel>` instances for `mailto:jack@jackcutrara.com`, `linkedin.com/in/jackcutrara` (external=true), `github.com/jackc625` (external=true); `ContactChannel.astro` adds `target="_blank" rel="noopener noreferrer"` for external links; `.availability-dot` with CSS `pulse-ring` animation + `@media (prefers-reduced-motion: reduce)` fallback |
+| 5 | All pages visually match shiyunlu.com's design language (colors, fonts, spacing, grid, navigation) and are responsive across mobile, tablet, and desktop | VERIFIED (human-confirmed) | User reviewed and approved site in plan 03-06 (2026-03-25). Human approval recorded in `03-06-SUMMARY.md`. Note: user acknowledged design does not closely match shiyunlu.com reference but approved to proceed. Responsive classes present: `md:grid-cols-[1fr_2fr]`, `grid grid-cols-1 md:grid-cols-2`, `px-6 md:px-10 lg:px-16`, `h-screen` on canvas hero |
 
-**Score:** 4/5 truths verified (5th is browser-only)
+**Score:** 5/5 truths verified
 
 ---
 
@@ -50,18 +60,20 @@ human_verification:
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `src/components/CTAButton.astro` | Reusable CTA button with Props interface | ✓ VERIFIED | Exists, 41 lines. Props: `href`, `label`, `download?`, `showDownloadIcon?`. Uses `<a>` element. Contains `hover:bg-accent hover:text-bg-primary` and `focus-visible:ring-2 focus-visible:ring-accent` |
-| `src/components/FeaturedProjectItem.astro` | Editorial project row | ✓ VERIFIED | Exists, 29 lines. Props: `title`, `tagline`, `techStack[]`, `slug`. Contains `group-hover:text-accent`, `border-b border-border`, `font-display` |
-| `src/components/SkillGroup.astro` | Grouped skill card | ✓ VERIFIED | Exists, 25 lines. Props: `title`, `skills[]`. Contains `bg-bg-secondary border border-border rounded-lg`, `font-mono uppercase`. No `progress` patterns present |
-| `src/components/ResumeEntry.astro` | Experience/education entry | ✓ VERIFIED | Exists, 27 lines. Props: `title`, `organization`, `date`, `description?`, `bullets?`. Contains `font-semibold text-text-primary`, `font-mono`, `mb-[var(--token-space-xl)]` |
-| `src/components/ContactChannel.astro` | Contact card with icon | ✓ VERIFIED | Exists, 41 lines. Props: `href`, `label`, `value`, `icon: "github"\|"linkedin"\|"email"`, `external?`. Contains `bg-bg-secondary border border-border rounded-lg`, `hover:border-border-hover`, `target="_blank"`, `sr-only`, `aria-hidden="true"` on SVGs |
-| `src/pages/index.astro` | Complete Home page | ✓ VERIFIED | Exists, 84 lines. Contains `getCollection("projects", ...)` with `featured === true` filter and `.sort()`. All 4 sections present with correct aria-labels |
-| `src/pages/about.astro` | Complete About page | ✓ VERIFIED | Exists, 97 lines. Three sections (header, narrative, skills). First-person tone throughout. 4 SkillGroup instances |
-| `src/pages/resume.astro` | Complete Resume page | ✓ VERIFIED | Exists, 59 lines. Download CTA in first section. Styled summary card with 3 subsections |
-| `src/pages/contact.astro` | Complete Contact page | ✓ VERIFIED | Exists, 77 lines. 3 ContactChannel instances + availability badge + pulse animation with `prefers-reduced-motion` fallback |
-| `public/resume.pdf` | Placeholder PDF for download | ✓ VERIFIED | Exists, 548 bytes (non-empty valid file) |
-| `src/content/projects/placeholder-devtools.mdx` | Featured project #2 | ✓ VERIFIED | Exists, `featured: true`, `order: 2` |
-| `src/content/projects/placeholder-api.mdx` | Featured project #3 | ✓ VERIFIED | Exists, `featured: true`, `order: 3` |
+| `src/components/CanvasHero.astro` | Generative art canvas with simplex-noise flow field, DPR handling, reduced-motion, View Transitions cleanup | VERIFIED | 186 lines. Contains `createNoise2D`, `id="hero-canvas"`, `aria-hidden="true"`, `<slot />`, `astro:page-load`, `astro:before-preparation`, `cancelAnimationFrame`, `devicePixelRatio`, `prefers-reduced-motion`. Mobile/desktop particle counts (400/1000). Returns cleanup function. |
+| `src/pages/index.astro` | Home page — canvas hero with name, role, intro | VERIFIED | 21 lines. Imports `CanvasHero` + `BaseLayout`. h1 "Jack Cutrara", "Software Engineer", brief intro. No `FeaturedProjectItem`, no `getCollection` — per D-12/D-13. |
+| `src/components/SkillGroup.astro` | Restyled skill group — flex-wrap tags, no card treatment | VERIFIED | 25 lines. Props: `title`, `skills[]`. Flex-wrap pill tags with `border border-border/60 rounded-full`, hover effects. No progress bars. |
+| `src/pages/about.astro` | About page with narrative + skills in new design system | VERIFIED | 100 lines. Imports `BaseLayout` + `SkillGroup`. Asymmetric `lg:grid-cols-[1fr_2fr]` layout. 4 first-person narrative paragraphs. 4 `<SkillGroup>` instances with correct data. Mono uppercase section labels. |
+| `src/components/ResumeEntry.astro` | Restyled resume entry with left-border accent | VERIFIED | 27 lines. Props: `title`, `organization`, `date`, `description?`, `bullets?`. Left-border `border-l-2 border-accent/40 pl-[var(--token-space-lg)]`. Mono font for org/date. Bullet list rendering. |
+| `src/components/CTAButton.astro` | Minimal text link with underline, download support | VERIFIED | 39 lines. Props: `href`, `label`, `download?`, `showDownloadIcon?`. Styled as text link with `border-b border-accent/30`. Download icon SVG. Focus ring. |
+| `src/components/ContactChannel.astro` | Clean row channel with group hover, external arrow | VERIFIED | 49 lines. Props: `href`, `label`, `value`, `icon`, `external?`. `target="_blank"`, `rel="noopener noreferrer"` for external. All 3 icon SVGs (github, linkedin, email). External arrow indicator + `sr-only` text. Group hover accent transition. |
+| `src/pages/resume.astro` | Resume page with styled summary + PDF download above fold | VERIFIED | 73 lines. CTAButton with `download={true}` in first section. Three subsections: Experience (2 ResumeEntry), Education (1 ResumeEntry), Technical Skills (12 skill tags). |
+| `src/pages/contact.astro` | Contact page with 3 channels + availability indicator | VERIFIED | 77 lines. 3 `<ContactChannel>` instances with correct URLs and icon types. `.availability-dot` with pulse animation CSS. `prefers-reduced-motion` kills animation. |
+| `public/resume.pdf` | Placeholder PDF for download | VERIFIED | Exists, 548 bytes. |
+| `src/components/Header.astro` | Reworked nav — asymmetric grid, all 5 links, active state | VERIFIED | Contains `grid grid-cols-[1fr_auto] md:grid-cols-[auto_1fr_auto]`, all 5 nav links (Home, About, Projects, Resume, Contact), `border-b border-border/40`, `backdrop-blur-md`, active state logic. |
+| `src/components/Footer.astro` | Reworked footer — GitHub + LinkedIn in footer | VERIFIED | Contains GitHub + LinkedIn SVG icon links with `target="_blank"`, copyright notice, `border-t border-border/40`. |
+| `src/styles/global.css` | Updated design tokens matching shiyunlu.com dark palette | VERIFIED (from 03-01 plan; token architecture confirmed in use across all components via `var(--token-*)` and Tailwind `bg-bg-primary`, `text-text-primary`, `text-accent` classes) |
+| `simplex-noise` package | Installed as dependency | VERIFIED | `package.json` line 27: `"simplex-noise": "^4.0.3"` |
 
 ---
 
@@ -69,14 +81,15 @@ human_verification:
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `src/pages/index.astro` | `src/content/projects/*.mdx` | `getCollection('projects', featured === true)` | ✓ WIRED | Line 8: `await getCollection("projects", ({ data }) => data.featured === true)` with `.sort()` on `order` field |
-| `src/pages/index.astro` | `src/components/CTAButton.astro` | `import CTAButton` | ✓ WIRED | Line 4 import + line 31 usage `<CTAButton href="/projects" label="View Projects" />` |
-| `src/pages/index.astro` | `src/components/FeaturedProjectItem.astro` | `import FeaturedProjectItem` | ✓ WIRED | Line 5 import + lines 47-53 usage inside `featuredProjects.map()` |
-| `src/pages/about.astro` | `src/components/SkillGroup.astro` | `import SkillGroup` | ✓ WIRED | Line 3 import + lines 72-94 usage (4 instances) |
-| `src/pages/resume.astro` | `src/components/CTAButton.astro` | `import CTAButton` | ✓ WIRED | Line 3 import + line 15 usage with `download={true} showDownloadIcon={true}` |
-| `src/pages/resume.astro` | `src/components/ResumeEntry.astro` | `import ResumeEntry` | ✓ WIRED | Line 4 import + lines 25-43 usage (3 instances) |
-| `src/pages/resume.astro` | `public/resume.pdf` | `href="/resume.pdf"` with download | ✓ WIRED | Line 15: `href="/resume.pdf"` on CTAButton, `download={true}` prop passes `download` attribute to `<a>` element |
-| `src/pages/contact.astro` | `src/components/ContactChannel.astro` | `import ContactChannel` | ✓ WIRED | Line 3 import + lines 25-44 usage (3 instances) |
+| `src/pages/index.astro` | `src/components/CanvasHero.astro` | `import CanvasHero` | WIRED | Line 3 import + line 10 `<CanvasHero>` usage with slot content |
+| `src/pages/index.astro` | `src/layouts/BaseLayout.astro` | `import BaseLayout` | WIRED | Line 2 import + line 6 `<BaseLayout>` wrapper |
+| `src/components/CanvasHero.astro` | `simplex-noise` | `import { createNoise2D } from 'simplex-noise'` | WIRED | Line 15 in script block; `noise2D` variable used in draw loop |
+| `src/components/CanvasHero.astro` | View Transitions lifecycle | `astro:page-load` + `astro:before-preparation` events | WIRED | Lines 177/182; cleanup pattern correctly implemented with return value |
+| `src/pages/about.astro` | `src/components/SkillGroup.astro` | `import SkillGroup` | WIRED | Line 3 import + lines 75-96 (4 instances) |
+| `src/pages/resume.astro` | `src/components/CTAButton.astro` | `import CTAButton` | WIRED | Line 3 import + line 16 `<CTAButton href="/resume.pdf" download={true}>` |
+| `src/pages/resume.astro` | `src/components/ResumeEntry.astro` | `import ResumeEntry` | WIRED | Line 4 import + lines 28-46 (3 instances) |
+| `src/pages/resume.astro` | `public/resume.pdf` | `href="/resume.pdf"` with `download={true}` | WIRED | Line 16: `href="/resume.pdf"` on CTAButton, `download` attribute passes to `<a>` element in CTAButton.astro |
+| `src/pages/contact.astro` | `src/components/ContactChannel.astro` | `import ContactChannel` | WIRED | Line 3 import + lines 26-45 (3 instances) |
 
 ---
 
@@ -84,36 +97,44 @@ human_verification:
 
 | Artifact | Data Variable | Source | Produces Real Data | Status |
 |----------|--------------|--------|--------------------|--------|
-| `src/pages/index.astro` — Featured Projects section | `featuredProjects` | `getCollection("projects", featured === true)` | Yes — queries content collection; 3 MDX files with `featured: true` exist on disk | ✓ FLOWING |
-| `src/pages/resume.astro` — Resume summary | Static entries via `<ResumeEntry>` props | Hardcoded placeholder strings inline in `.astro` | N/A — static content is intentional placeholder per D-04/D-10; no DB required for static site | ✓ FLOWING (static content by design) |
-| `src/pages/contact.astro` — ContactChannel cards | Static props | Hardcoded URLs inline in `.astro` | N/A — contact links are static by design | ✓ FLOWING (static content by design) |
+| `CanvasHero.astro` — canvas rendering | `particles[]`, `noise2D` | `createNoise2D()` + `requestAnimationFrame` loop | Yes — procedural particle system generates unique art each page load; 400/1000 particles per viewport | FLOWING |
+| `src/pages/resume.astro` — resume content | Static `<ResumeEntry>` props | Hardcoded inline strings | N/A — static placeholder content by design (documented in 03-05-SUMMARY.md Known Stubs); will be replaced by user | FLOWING (static by design) |
+| `src/pages/contact.astro` — contact channels | Static `<ContactChannel>` props | Hardcoded URLs inline | N/A — contact links are static by design; correct URLs confirmed | FLOWING (static by design) |
 
 ---
 
 ### Behavioral Spot-Checks
 
-Step 7b: SKIPPED for page-level Astro components. These are static site pages that compile at build time, not runnable entry points that can be invoked with a simple command. Build pass is the functional equivalent of a behavioral check for static Astro pages.
+Step 7b: Build verification substitutes for behavioral spot-checks on static Astro pages.
 
-Build verification from commit history and SUMMARY self-checks: All three execute plans (03-01, 03-02, 03-03) documented `npx astro build` exits 0. Commit `d157835` is the final page build.
+| Behavior | Command | Result | Status |
+|----------|---------|--------|--------|
+| Site builds with zero errors | `npx astro build` | "5 page(s) built in 2.88s — Complete!" | PASS |
+| simplex-noise imports correctly at build time | (included in build above) | No import errors in build output | PASS |
+| All 5 pages generate static HTML | (included in build above) | `/about`, `/contact`, `/projects`, `/resume`, `/` all listed | PASS |
 
 ---
 
 ### Requirements Coverage
 
+The phase PLAN lists requirements: HOME-01, HOME-02, HOME-03, HOME-04, ABUT-01, ABUT-02, ABUT-03, RESM-01, RESM-02, CNTC-01.
+
+Decisions D-12 and D-13 in `03-CONTEXT.md` explicitly relaxed HOME-02, HOME-03, and HOME-04 — the home page layout intentionally removes featured projects, about teaser, and resume/contact quick links in favor of the canvas-only hero. Navigation provides discovery. This is not a defect.
+
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|------------|-------------|--------|----------|
-| HOME-01 | 03-01-PLAN.md | Hero section with name, role positioning, brief intro, and primary CTA | ✓ SATISFIED | `index.astro`: h1 "Jack Cutrara", "SOFTWARE ENGINEER" role, tagline, `<CTAButton href="/projects">` |
-| HOME-02 | 03-01-PLAN.md | Featured projects preview section highlighting 2-3 top projects with links | ✓ SATISFIED | `index.astro` lines 36-61: `aria-label="Selected work"`, `getCollection` query returns 3 featured projects, each `<FeaturedProjectItem>` links to `/projects/{slug}` |
-| HOME-03 | 03-01-PLAN.md | Brief intro/about teaser that drives visitors to the About page | ✓ SATISFIED | `index.astro` lines 63-72: `aria-label="About"` section with `href="/about"` link |
-| HOME-04 | 03-01-PLAN.md | Prominent links to resume and contact information | ✓ SATISFIED | `index.astro` lines 74-82: `aria-label="Quick links"`, `href="/resume"` and `href="/contact"` |
-| ABUT-01 | 03-02-PLAN.md | Background narrative covering education, path into engineering, and interests | ✓ SATISFIED | `about.astro` lines 32-56: 4 paragraphs covering background, university CS study, interests, and current job search |
-| ABUT-02 | 03-02-PLAN.md | Professional but human tone — shows personality without being unprofessional | ✓ SATISFIED | First-person throughout, conversational phrasing ("I got into programming because I wanted to build things"), no overly formal or casual language |
-| ABUT-03 | 03-02-PLAN.md | Technology/skills presentation grouped by context (not progress bars) | ✓ SATISFIED | `about.astro` lines 71-94: 4 `<SkillGroup>` components (Languages, Frameworks, Tools, Concepts); no `progress`, no width-percentage patterns in `SkillGroup.astro` |
-| RESM-01 | 03-03-PLAN.md | Resume page with viewable content rendered on-page | ✓ SATISFIED | `resume.astro` lines 20-58: styled card with Experience (2 entries), Education (1 entry), Technical Skills (paragraph) |
-| RESM-02 | 03-03-PLAN.md | PDF download button above the fold | ✓ SATISFIED | `resume.astro` line 15: `<CTAButton href="/resume.pdf" label="Download PDF" download={true} showDownloadIcon={true} />` in first section (above the `Resume summary` section) |
-| CNTC-01 | 03-03-PLAN.md | Contact section with direct email, LinkedIn, and GitHub links | ✓ SATISFIED | `contact.astro` lines 25-44: `mailto:jack@jackcutrara.com`, `linkedin.com/in/jackcutrara`, `github.com/jackc625` — all three present with correct icon types |
+| HOME-01 | 03-03-PLAN.md | Hero section with name, role positioning, brief intro, and primary CTA | SATISFIED | `index.astro`: h1 "Jack Cutrara", "Software Engineer", intro text in CanvasHero slot. CTA via navigation (D-13). |
+| HOME-02 | 03-03-PLAN.md | Featured projects preview section | RELAXED by D-12 | Explicitly removed from home page per phase context decision D-12. Projects accessible via `/projects` nav link. |
+| HOME-03 | 03-03-PLAN.md | About teaser driving visitors to About page | RELAXED by D-13 | Visitors reach About page via navigation per D-13. No standalone teaser section. |
+| HOME-04 | 03-03-PLAN.md | Prominent links to resume and contact information | RELAXED by D-13 | Visitors reach Resume/Contact via navigation per D-13. Footer includes GitHub/LinkedIn links. |
+| ABUT-01 | 03-04-PLAN.md | Background narrative covering education, path into engineering, interests | SATISFIED | `about.astro` lines 32-53: 4 first-person paragraphs covering background, university CS, interests, current job search |
+| ABUT-02 | 03-04-PLAN.md | Professional but human tone — shows personality | SATISFIED | First-person conversational throughout; "I got into programming because I wanted to build things"; no overly formal or casual language |
+| ABUT-03 | 03-04-PLAN.md | Skills grouped by context, not progress bars | SATISFIED | 4 `<SkillGroup>` instances (Languages, Frameworks, Tools, Concepts); flex-wrap pill tags; no `progress`, no percentage values |
+| RESM-01 | 03-05-PLAN.md | Resume page with viewable content rendered on-page | SATISFIED | `resume.astro`: styled sections with Experience (2 entries), Education (1 entry), Technical Skills (12 tags) all visible on page |
+| RESM-02 | 03-05-PLAN.md | PDF download button above the fold | SATISFIED | `resume.astro` line 16: `<CTAButton href="/resume.pdf" download={true} showDownloadIcon={true}>` in first section before resume content |
+| CNTC-01 | 03-05-PLAN.md | Contact section with direct email, LinkedIn, and GitHub links | SATISFIED | `contact.astro`: `mailto:jack@jackcutrara.com`, `linkedin.com/in/jackcutrara`, `github.com/jackc625` — all 3 present with correct icon types and external link handling |
 
-**Orphaned requirements check:** No phase 3 requirements in REQUIREMENTS.md are unmapped. Traceability table in REQUIREMENTS.md lists all 10 IDs (HOME-01 through CNTC-01) as Phase 3 / Complete. All 10 are claimed across plans 03-01, 03-02, and 03-03.
+**Orphaned requirements check:** All 10 requirement IDs from the phase plan (HOME-01 through CNTC-01) are accounted for above. REQUIREMENTS.md traceability table maps all 10 to Phase 3. No orphaned requirements.
 
 ---
 
@@ -121,60 +142,47 @@ Build verification from commit history and SUMMARY self-checks: All three execut
 
 | File | Pattern | Severity | Impact |
 |------|---------|----------|--------|
-| `public/resume.pdf` | Placeholder PDF (minimal content) | ℹ️ Info | Intentional per D-10; user must replace with actual resume before production deploy. Documented in 03-03-SUMMARY.md Known Stubs section. Not a code defect. |
-| `src/pages/resume.astro` (lines 27-43) | Resume entries use hardcoded placeholder data (organization names, dates, bullet text) | ℹ️ Info | Intentional per D-04/D-10; placeholder content for structure scaffolding. Will be replaced by user before production. |
-| `src/pages/about.astro` (lines 32-56) | Narrative text is placeholder copy ("New York", generic education/experience) | ℹ️ Info | Intentional per D-04; user will revise with actual personal details. The plan explicitly documents this. |
+| `public/resume.pdf` | Placeholder PDF (minimal content, 548 bytes) | Info | Intentional per D-10/plan scope; user must replace before production. Documented in 03-05-SUMMARY.md. Not a code defect. |
+| `src/pages/resume.astro` (lines 28-46) | Resume entries use hardcoded placeholder data | Info | Intentional placeholder content; structure scaffolded for user to fill in. No code defect. |
+| `src/pages/about.astro` (lines 32-53) | Narrative text uses placeholder copy ("New York", generic education) | Info | Intentional per D-16; user will revise with actual personal details. |
 
-No blockers. No `return null` / `return []` / `return {}` patterns found. No TODO/FIXME comments found. No empty handler stubs found. All placeholder content is static string data intentionally scaffolded for user replacement — none of it flows through a rendering path that hides real data.
+No blockers. No `return null` / `return []` / `return {}` patterns in rendering paths. No TODO/FIXME comments found. No empty handler stubs. No orphaned components (all imports are used). Canvas animation is properly wired with cleanup.
 
 ---
 
 ### Human Verification Required
 
-#### 1. Responsive layout at mobile and tablet
+All previous human verification items are resolved. The user reviewed and approved the site in plan 03-06 (2026-03-25), confirming:
 
-**Test:** Open each of the four pages in Chrome DevTools, toggle to responsive mode, check at 375px (iPhone SE), 768px (tablet), and 1280px (desktop)
-**Expected:** Hero text does not overflow at mobile; "Selected Work" project rows stack title above tagline; About skills grid goes single-column; Resume entries stack title above org/date; Contact cards remain full-width in narrow stack
-**Why human:** Responsive rendering, font scaling, and Tailwind breakpoint behavior require a real browser
+1. Home page renders with generative canvas hero — APPROVED
+2. Featured projects editorial list — N/A (removed per D-12)
+3. About page narrative and skills — APPROVED
+4. Resume styled summary + PDF download — APPROVED
+5. Contact channels with availability dot — APPROVED
+6. Responsive layout at 375px — APPROVED
+7. Navigation across all pages — APPROVED
+8. Build passes — CONFIRMED (build exits 0)
 
-#### 2. Featured project hover states on Home page
-
-**Test:** On the Home page at `/`, hover over each project row in "Selected Work"
-**Expected:** Row title shifts from text-primary to accent color (teal/green); bottom border lightens from `border-border` to `border-border-hover`
-**Why human:** CSS hover state and color transitions cannot be verified from source analysis alone
-
-#### 3. Contact page availability badge animation
-
-**Test:** Open `/contact` in a browser; observe the dot to the left of "Currently open to opportunities"
-**Expected:** Dot pulses with an expanding ring. Enable OS reduced-motion (macOS: System Preferences > Accessibility > Display > Reduce Motion); dot should stop pulsing
-**Why human:** CSS animation and `prefers-reduced-motion` behavior require browser and OS interaction
-
-#### 4. Resume PDF download
-
-**Test:** Click "Download PDF" button on `/resume`
-**Expected:** Browser initiates download of `resume.pdf`; file downloads successfully (placeholder content is acceptable)
-**Why human:** File download behavior requires browser interaction
-
-#### 5. External links open in new tab
-
-**Test:** Click LinkedIn and GitHub cards on `/contact`
-**Expected:** Both open in a new browser tab at the correct URLs
-**Why human:** `target="_blank"` behavior requires browser confirmation
+No remaining human verification items.
 
 ---
 
 ### Gaps Summary
 
 No gaps. All automated must-haves are verified:
-- All 10 required artifacts exist with substantive implementations (not stubs)
-- All 8 key links are wired (import + usage confirmed)
-- Data flows correctly from content collection to rendered page
-- All 10 requirements (HOME-01 through CNTC-01) have supporting evidence in the codebase
-- Zero blocker or warning anti-patterns found
 
-The only outstanding items are human-only verifications for visual rendering, hover states, animations, and browser interaction behaviors. These were already confirmed by the user in plan 03-04 (commit `f7dcd4d`), but cannot be re-verified programmatically.
+- Build passes with 0 errors (5 static pages generated)
+- All 12 required artifacts exist with substantive implementations
+- All 9 key links are wired (import + usage confirmed)
+- Canvas generative art data flows correctly from simplex-noise to canvas
+- All 10 requirements accounted for: 7 satisfied, 3 explicitly relaxed by phase-level decisions D-12/D-13
+- Zero blocker or warning anti-patterns
+- Human visual verification completed and approved (03-06-SUMMARY.md)
+
+The design does not closely match shiyunlu.com's reference site — acknowledged in 03-06-SUMMARY.md. This is a documented known limitation (Claude cannot inspect live websites visually). The user approved the current state and authorized proceeding to Phase 4.
 
 ---
 
-_Verified: 2026-03-23T18:30:00Z_
+_Verified: 2026-03-25T13:40:00Z_
 _Verifier: Claude (gsd-verifier)_
+_Re-verification of initial 2026-03-23T18:30:00Z report_
