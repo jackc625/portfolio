@@ -8,21 +8,22 @@
 
 :root {
   /* === COLOR TOKENS (dark default) === */
+  /* Cloned from shiyunlu.com design language: near-black bg, muted accents */
 
   /* Core Palette (60-30-10 rule) */
-  --token-bg-primary: oklch(0.13 0.005 260);
-  --token-bg-secondary: oklch(0.18 0.005 260);
-  --token-accent: oklch(0.72 0.12 178);
-  --token-accent-hover: oklch(0.78 0.14 178);
+  --token-bg-primary: oklch(0.1 0.005 270);
+  --token-bg-secondary: oklch(0.15 0.005 270);
+  --token-accent: oklch(0.7 0.1 250);
+  --token-accent-hover: oklch(0.78 0.12 250);
 
   /* Text Colors */
-  --token-text-primary: oklch(0.93 0.005 260);
-  --token-text-secondary: oklch(0.62 0.01 260);
-  --token-text-muted: oklch(0.45 0.01 260);
+  --token-text-primary: oklch(0.95 0.005 270);
+  --token-text-secondary: oklch(0.7 0.01 270);
+  --token-text-muted: oklch(0.5 0.01 270);
 
   /* Border & Divider */
-  --token-border: oklch(0.25 0.005 260);
-  --token-border-hover: oklch(0.35 0.005 260);
+  --token-border: oklch(0.22 0.005 270);
+  --token-border-hover: oklch(0.32 0.005 270);
 
   /* Semantic Colors */
   --token-destructive: oklch(0.63 0.2 25);
@@ -30,13 +31,14 @@
   --token-warning: oklch(0.78 0.15 85);
 
   /* === TYPOGRAPHY TOKENS === */
-  /* Fluid type scale per UI-SPEC Type Scale table */
-  --token-text-sm: clamp(0.8125rem, 0.75rem + 0.3vw, 0.875rem);
-  --token-text-base: clamp(0.9375rem, 0.875rem + 0.3vw, 1rem);
+  /* Fluid type scale — generous sizing matching shiyunlu.com's editorial scale */
+  --token-text-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --token-text-base: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
   --token-text-heading: clamp(1.25rem, 1rem + 1.25vw, 2rem);
-  --token-text-display: clamp(2.25rem, 1.5rem + 3.75vw, 5rem);
+  --token-text-display: clamp(2.5rem, 1.5rem + 4.5vw, 5.5rem);
 
   /* === SPACING TOKENS === */
+  /* Generous whitespace matching shiyunlu.com's spatial rhythm */
   --token-space-xs: 0.25rem;
   --token-space-sm: 0.5rem;
   --token-space-md: 1rem;
@@ -44,7 +46,7 @@
   --token-space-xl: 2rem;
   --token-space-2xl: 3rem;
   --token-space-3xl: 4rem;
-  --token-space-section: clamp(4rem, 3rem + 5vw, 8rem);
+  --token-space-section: clamp(5rem, 3.5rem + 6vw, 10rem);
 }
 
 /* Phase 5: Light theme override (DSGN-02/DSGN-03)
@@ -95,13 +97,13 @@
 
   /* Font family tokens -> Tailwind utilities */
   /* Note: these reference the CSS vars set by Astro Fonts API <Font /> component */
-  --font-display: var(--font-heading), ui-serif, serif;
+  --font-display: var(--font-heading), ui-sans-serif, sans-serif;
   --font-body: var(--font-sans), ui-sans-serif, sans-serif;
   --font-mono: var(--font-code), ui-monospace, monospace;
 }
 
 @theme inline {
-  --font-display: var(--font-heading), ui-serif, serif;
+  --font-display: var(--font-heading), ui-sans-serif, sans-serif;
   --font-body: var(--font-sans), ui-sans-serif, sans-serif;
   --font-mono: var(--font-code), ui-monospace, monospace;
 }
