@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Foundation & Design System** - Scaffold Astro 6 project with Tailwind v4, design tokens, content collection schemas, and deployment infrastructure
 - [ ] **Phase 2: Site Shell & Navigation** - Build layouts, navigation, mobile menu, footer, and SEO meta infrastructure that wraps every page
-- [ ] **Phase 3: Core Pages** - Build Home, About, Resume, and Contact pages with real content structure
+- [ ] **Phase 3: Core Pages** - Full visual rebuild cloning shiyunlu.com's design language across all pages
 - [ ] **Phase 4: Project System & Case Studies** - Build project card grid, case study template, placeholder content, and at least 2 fully written case studies
 - [ ] **Phase 5: Dark Mode, Animations & Polish** - Add dark/light mode, scroll animations, page transitions, hover states, print styles, and structured data
 - [ ] **Phase 6: Performance Audit & Deployment** - Optimize performance, audit accessibility, deploy to Cloudflare Pages with custom domain
@@ -59,24 +59,24 @@ Plans:
 **UI hint**: yes
 
 ### Phase 3: Core Pages
-**Goal**: Visitors can explore the Home, About, Resume, and Contact pages with real content structure, giving recruiters and hiring managers a complete picture of who Jack is before they even reach the projects
+**Goal**: Full visual rebuild cloning shiyunlu.com's design language — updated design tokens (colors, fonts, spacing), reworked site shell (header, footer, mobile menu), and rebuilt Home (with canvas hero), About, Resume, and Contact pages within the cloned design system
 **Depends on**: Phase 2
 **Requirements**: HOME-01, HOME-02, HOME-03, HOME-04, ABUT-01, ABUT-02, ABUT-03, RESM-01, RESM-02, CNTC-01
 **Success Criteria** (what must be TRUE):
-  1. Home page displays a hero with Jack's name, role, brief intro, and a primary CTA to view projects, plus a featured projects preview section and links to resume and contact
-  2. About page presents Jack's background, education, path into engineering, and skills grouped by context (not progress bars) in a professional but personable tone
+  1. Home page displays a generative canvas hero with Jack's name, role, and brief intro overlaid; navigation provides discovery of all other pages
+  2. About page presents Jack's background, education, path into engineering, and skills grouped by context (not progress bars) in first-person conversational tone
   3. Resume page renders viewable content on-page with a PDF download button visible above the fold
-  4. Contact page (or section) displays direct email, LinkedIn, and GitHub links that open correctly
-  5. All four pages are responsive and render correctly on mobile, tablet, and desktop
+  4. Contact page displays direct email, LinkedIn, and GitHub links that open correctly, with availability indicator
+  5. All pages visually match shiyunlu.com's design language (colors, fonts, spacing, grid, navigation) and are responsive across mobile, tablet, and desktop
 **Plans**: 6 plans
 
 Plans:
-- [x] 03-01-PLAN.md -- Home page with CTAButton, FeaturedProjectItem, and sample MDX content
-- [x] 03-02-PLAN.md -- About page with SkillGroup component and editorial narrative
-- [x] 03-03-PLAN.md -- Resume and Contact pages with ResumeEntry, ContactChannel, and placeholder PDF
-- [x] 03-04-PLAN.md -- Human verification of all four core pages
-- [ ] 03-05-PLAN.md -- UAT gap closure: Redesign Home page with unique editorial layout (non-generic)
-- [ ] 03-06-PLAN.md -- UAT gap closure: Redesign About page with unique editorial layout (non-generic)
+- [ ] 03-01-PLAN.md -- Update design tokens (colors, typography, spacing) and font stack to match shiyunlu.com
+- [ ] 03-02-PLAN.md -- Rewrite site shell (Header, Footer, MobileMenu) to match shiyunlu.com navigation patterns
+- [ ] 03-03-PLAN.md -- Home page with generative canvas hero (simplex-noise) and shiyunlu.com spatial structure
+- [ ] 03-04-PLAN.md -- About page with narrative and skills in new design system
+- [ ] 03-05-PLAN.md -- Resume and Contact pages rebuilt within new design system
+- [ ] 03-06-PLAN.md -- Human visual verification of complete design overhaul
 **UI hint**: yes
 
 ### Phase 4: Project System & Case Studies
@@ -135,7 +135,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 5/5 | Complete | - |
 | 2. Site Shell & Navigation | 3/3 | Complete | - |
-| 3. Core Pages | 4/6 | BLOCKED — Home/About redesign failed multiple attempts | |
+| 3. Core Pages | 0/6 | REPLANNED — shiyunlu.com clone approach | |
 | 4. Project System & Case Studies | 0/? | Not started | - |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |
