@@ -71,7 +71,7 @@ Plans:
 **Plans**: 6 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- Update design tokens (colors, typography, spacing) and font stack to match shiyunlu.com
+- [x] 03-01-PLAN.md -- Update design tokens (colors, typography, spacing) and font stack to match shiyunlu.com
 - [ ] 03-02-PLAN.md -- Rewrite site shell (Header, Footer, MobileMenu) to match shiyunlu.com navigation patterns
 - [ ] 03-03-PLAN.md -- Home page with generative canvas hero (simplex-noise) and shiyunlu.com spatial structure
 - [ ] 03-04-PLAN.md -- About page with narrative and skills in new design system
