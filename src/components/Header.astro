@@ -11,20 +11,23 @@ const navLinks = [
 
 <header
   id="site-header"
-  class="fixed top-0 left-0 right-0 z-50 h-16 transition-[transform,background-color] duration-300 ease-out"
+  class="fixed top-0 left-0 right-0 z-50 border-b border-border/40"
 >
+  <div class="absolute inset-0 bg-bg-primary/80 backdrop-blur-md"></div>
   <nav
     aria-label="Main navigation"
-    class="flex items-center justify-between h-full px-4 md:px-6 max-w-5xl mx-auto"
+    class="relative grid grid-cols-[1fr_auto] md:grid-cols-[auto_1fr_auto] items-center h-14 px-6 md:px-10 lg:px-16 max-w-[90rem] mx-auto"
   >
     <a
       href="/"
-      class="font-display text-[length:var(--token-text-base)] text-text-primary hover:text-accent transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded"
+      class="font-display text-[length:var(--token-text-base)] tracking-tight text-text-primary hover:text-accent transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded"
     >
       Jack Cutrara
     </a>
 
-    <ul class="hidden md:flex items-center gap-6">
+    <div class="hidden md:block"></div>
+
+    <ul class="hidden md:flex items-center gap-8">
       {
         navLinks.map((link) => {
           const isActive =
@@ -36,10 +39,10 @@ const navLinks = [
               <a
                 href={link.href}
                 class:list={[
-                  "uppercase tracking-[0.05em] text-[length:var(--token-text-sm)] font-body transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded px-2 py-1",
+                  "text-[length:var(--token-text-sm)] font-body tracking-wide transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded px-1 py-1",
                   isActive
-                    ? "text-accent"
-                    : "text-text-secondary hover:text-text-primary",
+                    ? "text-text-primary"
+                    : "text-text-muted hover:text-text-primary",
                 ]}
                 aria-current={isActive ? "page" : undefined}
               >
@@ -53,20 +56,20 @@ const navLinks = [
 
     <button
       id="menu-trigger"
-      class="md:hidden flex items-center justify-center w-11 h-11 text-text-primary focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded"
+      class="md:hidden flex items-center justify-center w-10 h-10 text-text-primary focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded"
       aria-label="Open menu"
       aria-expanded="false"
       aria-controls="mobile-menu"
     >
-      <span class="relative w-5 h-4 flex flex-col justify-between">
+      <span class="relative w-5 h-3.5 flex flex-col justify-between">
         <span
-          class="hamburger-line block w-full h-0.5 bg-current transition-all duration-300 origin-center"
+          class="hamburger-line block w-full h-[1.5px] bg-current transition-all duration-300 origin-center"
         ></span>
         <span
-          class="hamburger-line block w-full h-0.5 bg-current transition-all duration-300 origin-center"
+          class="hamburger-line block w-full h-[1.5px] bg-current transition-all duration-300 origin-center"
         ></span>
         <span
-          class="hamburger-line block w-full h-0.5 bg-current transition-all duration-300 origin-center"
+          class="hamburger-line block w-full h-[1.5px] bg-current transition-all duration-300 origin-center"
         ></span>
       </span>
     </button>
@@ -75,62 +78,12 @@ const navLinks = [
 
 <style>
   #menu-trigger[aria-expanded="true"] .hamburger-line:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
+    transform: translateY(5px) rotate(45deg);
   }
   #menu-trigger[aria-expanded="true"] .hamburger-line:nth-child(2) {
     opacity: 0;
   }
   #menu-trigger[aria-expanded="true"] .hamburger-line:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-
-  .header-scrolled {
-    background-color: oklch(0.18 0.005 260 / 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .header-hidden {
-    transform: translateY(-100%);
+    transform: translateY(-5px) rotate(-45deg);
   }
 </style>
-
-<script>
-  function initHeader() {
-    const header = document.getElementById("site-header");
-    if (!header) return;
-
-    let lastScrollY = 0;
-    let ticking = false;
-
-    function onScroll() {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-
-          // Add/remove background based on scroll position (threshold: 50px per UI-SPEC)
-          if (currentScrollY > 50) {
-            header!.classList.add("header-scrolled");
-          } else {
-            header!.classList.remove("header-scrolled");
-          }
-
-          // Hide on scroll down, show on scroll up (threshold: 100px per UI-SPEC)
-          if (currentScrollY > lastScrollY && currentScrollY > 100) {
-            header!.classList.add("header-hidden");
-          } else {
-            header!.classList.remove("header-hidden");
-          }
-
-          lastScrollY = currentScrollY;
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-  }
-
-  // Initialize on first load and after view transitions
-  document.addEventListener("astro:page-load", initHeader);
-</script>
