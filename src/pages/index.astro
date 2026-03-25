@@ -1,83 +1,21 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
-import CTAButton from "../components/CTAButton.astro";
-import FeaturedProjectItem from "../components/FeaturedProjectItem.astro";
-
-const featuredProjects = (
-  await getCollection("projects", ({ data }) => data.featured === true)
-).sort((a, b) => a.data.order - b.data.order);
+import CanvasHero from "../components/CanvasHero.astro";
 ---
 
 <BaseLayout
   title=""
   description="Software engineer who builds real projects. Explore my work, background, and how to get in touch."
 >
-  <section
-    aria-label="Introduction"
-    class="min-h-[calc(100vh-4rem)] flex flex-col justify-center px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
-  >
-    <div class="max-w-5xl mx-auto w-full">
-      <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">
-        Jack Cutrara
-      </h1>
-      <p class="font-body text-[length:var(--token-text-heading)] font-normal text-text-secondary uppercase tracking-[0.1em] mt-[var(--token-space-lg)]">
-        SOFTWARE ENGINEER
-      </p>
-      <p class="font-body text-[length:var(--token-text-base)] text-text-secondary mt-[var(--token-space-md)] max-w-2xl">
-        I build things that work. Full-stack developer with a bias for shipping real projects and learning by doing.
-      </p>
-      <div class="mt-[var(--token-space-xl)]">
-        <CTAButton href="/projects" label="View Projects" />
-      </div>
-    </div>
-  </section>
-
-  <section
-    aria-label="Selected work"
-    class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
-  >
-    <div class="max-w-5xl mx-auto">
-      <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold mb-[var(--token-space-xl)]">
-        Selected Work
-      </h2>
-      {featuredProjects.length > 0 ? (
-        <div>
-          {featuredProjects.map((project) => (
-            <FeaturedProjectItem
-              title={project.data.title}
-              tagline={project.data.tagline}
-              techStack={project.data.techStack}
-              slug={project.id}
-            />
-          ))}
-        </div>
-      ) : (
-        <p class="text-text-secondary font-body text-[length:var(--token-text-base)]">
-          Projects coming soon. Check back for updates on what I'm building.
-        </p>
-      )}
-    </div>
-  </section>
-
-  <section
-    aria-label="About"
-    class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
-  >
-    <div class="max-w-2xl mx-auto">
-      <p class="font-body text-[length:var(--token-text-base)] text-text-secondary">
-        I'm a software engineer who got here by building things — not by waiting for permission. Curious about the full story? <a href="/about" class="text-accent hover:text-accent-hover transition-colors duration-200">About me</a>
-      </p>
-    </div>
-  </section>
-
-  <section
-    aria-label="Quick links"
-    class="py-[var(--token-space-section)] px-[var(--token-space-md)] md:px-[var(--token-space-lg)]"
-  >
-    <div class="max-w-5xl mx-auto flex flex-wrap gap-[var(--token-space-xl)]">
-      <a href="/resume" class="font-body text-[length:var(--token-text-heading)] font-semibold text-text-primary hover:text-accent transition-colors duration-200">Resume</a>
-      <a href="/contact" class="font-body text-[length:var(--token-text-heading)] font-semibold text-text-primary hover:text-accent transition-colors duration-200">Get in Touch</a>
-    </div>
-  </section>
+  <CanvasHero>
+    <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95]">
+      Jack Cutrara
+    </h1>
+    <p class="font-body text-[length:var(--token-text-heading)] text-text-secondary uppercase tracking-[0.15em] mt-[var(--token-space-lg)]">
+      Software Engineer
+    </p>
+    <p class="font-body text-[length:var(--token-text-base)] text-text-muted mt-[var(--token-space-md)] max-w-xl leading-relaxed">
+      I build things that work. Full-stack developer with a bias for shipping real projects and learning by doing.
+    </p>
+  </CanvasHero>
 </BaseLayout>
