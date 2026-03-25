@@ -3,201 +3,212 @@
 > **Audit trail only.** Do not use as input to planning, research, or execution agents.
 > Decisions are captured in CONTEXT.md — this log preserves the alternatives considered.
 
-**Date:** 2026-03-23
+**Date:** 2026-03-25
 **Phase:** 03-core-pages
-**Areas discussed:** Home page hero & layout, About page narrative & skills, Resume page format, Contact page scope
+**Areas discussed:** Design approach, Home page composition, About page composition, Scope of redo
 
 ---
 
-## Home Page Hero & Layout
+## Design Approach
 
-### Hero Style
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Bold typographic (Recommended) | Large display-font headline with name/role, short tagline, CTA button. Matches dark editorial aesthetic and reference sites. | ✓ |
-| Split hero with visual | Text on one side, abstract visual/graphic on the other. Traditional portfolio layout. | |
-| Minimal centered | Centered name + role + tagline, very clean and sparse. | |
-
-**User's choice:** Bold typographic
-**Notes:** None
-
-### Featured Projects Preview
+### Site-wide design direction
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| 2-3 compact cards (Recommended) | Small project cards with title, tagline, tech tags. | |
-| Featured list rows | Horizontal rows with project name, tagline, arrow link. | |
-| You decide | Let Claude and frontend-design skill choose. | ✓ |
+| You provide a mockup/screenshot | User creates or finds a specific design and Claude implements it faithfully | |
+| Pick a specific reference to clone | Choose ONE reference site's exact layout structure as the spatial blueprint | ✓ |
+| Describe the layout in detail | User writes out the exact spatial arrangement and Claude builds to spec | |
 
-**User's choice:** You decide
-**Notes:** None
+**User's choice:** Pick a specific reference to clone
+**Notes:** User clarified upfront that this design choice affects the entire project — every current and future page, not just Phase 3.
 
-### Home Page Section Flow
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Hero > Featured > About teaser > CTA (Recommended) | Standard flow covering HOME-01 through HOME-04 | |
-| Hero > About teaser > Featured > CTA | Personal story first, projects second | |
-| Hero > Featured only | Minimal — just hero and featured projects | |
-
-**User's choice:** Other (free text)
-**Notes:** "I do NOT WANT THIS TO BE A GENERIC VIBECODED HOMESCREEN. I dont need these generic sections. Look at this 6 or so website inspiration links I sent to you again. Do something out of the box." — User explicitly rejected conventional section-stacked layouts. Captured as strong decision D-02 in CONTEXT.md.
-
-### Hero Copy
+### Reference site selection
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Claude drafts it | Claude writes tagline and intro based on PRD positioning. | ✓ |
-| I'll provide copy | User writes hero text. Placeholder for now. | |
+| artemshcherban.com | B&W, serif/mono, GSAP text reveals, full-screen impact | |
+| bettinasosa.com | Dark high-contrast, dramatic tagline typography, grid project showcase | |
+| andrewreff.com | Dark editorial, film grain, design-tool transitions | |
+| shiyunlu.com | Muted gradient accents, asymmetric grid nav, canvas hero | ✓ |
 
-**User's choice:** Claude drafts it
-**Notes:** None
+**User's choice:** shiyunlu.com
 
-### Home Page Depth
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Full-viewport hero (Recommended) | Single impactful screen, no scroll needed. | |
-| Scroll-driven editorial | Scroll depth with content revealing through scroll. | |
-| You decide | Let frontend-design skill determine. | ✓ |
-
-**User's choice:** You decide
-**Notes:** None
-
-### Projects on Home
+### Clone fidelity
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Must have project previews | Some form of project showcase must appear on home. | |
-| Just a link to Projects | Skip preview, strong CTA to Projects page. | |
-| Creative integration | Projects woven into design in unexpected way, frontend-design skill decides how. | ✓ |
+| Near-exact clone | Replicate spatial grid, section proportions, composition as closely as possible | ✓ |
+| Structural inspiration | Use same spatial concepts but adapt freely | |
+| Cherry-pick elements | Pick specific patterns and combine with own composition | |
 
-**User's choice:** Creative integration
-**Notes:** None
+**User's choice:** Near-exact clone
+
+### Color treatment
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Keep our tokens | Only clone spatial layout, not colors | |
+| Match shiyunlu.com colors | Shift color tokens to match reference's muted gradient accent treatment | ✓ |
+| You decide | Claude uses best judgment | |
+
+**User's choice:** Match shiyunlu.com colors
+
+### Typography
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Match shiyunlu.com fonts | Update font stack to match reference (or closest free equivalents) | ✓ |
+| Keep our fonts | Keep Instrument Serif / Instrument Sans / JetBrains Mono | |
+| You decide | Claude picks fonts that complement the cloned layout | |
+
+**User's choice:** Match shiyunlu.com fonts
+
+### Navigation rework
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Rework to match | Rebuild header/nav/footer to match shiyunlu.com's navigation style | ✓ |
+| Keep current nav | Keep Phase 2 transparent overlay sticky nav, only clone page content areas | |
+| You decide | Claude determines best nav treatment | |
+
+**User's choice:** Rework to match
+
+### Animations
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Clone animations now | Replicate scroll/transition animations as part of this phase | |
+| Defer to Phase 5 | Build static layout clone now, add animations later | ✓ |
+| Basic only now | Simple CSS transitions now, complex GSAP later | |
+
+**User's choice:** Defer to Phase 5
+
+### Design flow
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Bypass frontend-design | Reference site IS the design spec, implement directly | ✓ |
+| Still use frontend-design | Have frontend-design skill analyze and produce UI-SPEC first | |
+
+**User's choice:** Bypass frontend-design
 
 ---
 
-## About Page Narrative & Skills
+## Home Page Composition
 
-### About Tone
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Professional but human (Recommended) | First person, conversational but not casual. | ✓ |
-| Third person editorial | Written about Jack, like a magazine profile. | |
-| Minimal — let work speak | Brief bio, focus on skills/experience. | |
-
-**User's choice:** Professional but human
-**Notes:** None
-
-### Skills Format
+### Content mapping
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Grouped by domain (Recommended) | Skills by area: Frontend, Backend, Tools. | |
-| Grouped by project | Skills shown in context of projects that used them. | |
-| You decide | Let Claude and frontend-design skill choose. | ✓ |
+| Adapt content to fit | Reshape content to fit reference sections | |
+| Force-fit all requirements | Keep all HOME-01 through HOME-04 in reference grid | |
+| Requirements are flexible | Requirements describe WHAT info is accessible, not WHERE — update reqs to match layout | ✓ |
 
-**User's choice:** You decide
-**Notes:** None
+**User's choice:** Requirements are flexible
+**Notes:** User asked for clarification on what this meant. Explained that if shiyunlu.com's layout doesn't have a natural spot for resume links or about teasers, visitors find those via nav instead.
 
-### About Content Scope
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Education + journey + interests | Full narrative: education, how got into SW, what excites. | ✓ |
-| Journey + interests only | Skip education, focus on WHY. | |
-| I'll write the content | User writes copy, Claude builds structure. | |
-
-**User's choice:** Education + journey + interests
-**Notes:** None
-
-### About Design Treatment
+### Hero treatment
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Editorial — same energy as home (Recommended) | Typography-driven, intentional layout, not a text wall. | ✓ |
-| Straightforward content page | Clean typography, good spacing, but less design flair. | |
-| You decide | Frontend-design skill determines balance. | |
+| Clone the canvas hero | Replicate shiyunlu.com's canvas/visual hero element | ✓ |
+| Typographic hero only | Name/role/intro in spatial grid, no canvas element | |
+| You decide | Claude determines best fit | |
 
-**User's choice:** Editorial — same energy as home
-**Notes:** None
+**User's choice:** Clone the canvas hero
+
+### Canvas content
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Abstract/generative art | Procedural visuals (particles, gradients, geometric shapes), unique on every load | ✓ |
+| Subtle animated gradient | Simpler slow-moving gradient/color wash | |
+| You decide | Claude picks visual that fits aesthetic | |
+
+**User's choice:** Abstract/generative art
+
+### Featured projects on home
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Clone shiyunlu.com's format | Replicate however reference shows projects on home | |
+| Skip projects on home | Don't force projects in — projects page via nav is enough | ✓ |
+| You decide | Claude determines best integration | |
+
+**User's choice:** Skip projects on home
 
 ---
 
-## Resume Page Format
+## About Page Composition
 
-### Resume Rendering
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Embed PDF viewer | Embed actual PDF in page via object/iframe. | |
-| HTML recreation (Recommended) | Recreate resume content in HTML/Astro with site design system. | |
-| Hybrid — styled summary + PDF | Styled summary of key highlights + prominent PDF download button. | ✓ |
-
-**User's choice:** Hybrid — styled summary + PDF
-**Notes:** None
-
-### PDF Status
+### Layout approach
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| I have a PDF ready | Resume PDF exists and can be added now. | ✓ |
-| PDF comes later | No PDF yet, placeholder download button. | |
+| Clone an inner page | Replicate shiyunlu.com's about/bio page layout | |
+| Design system rules only | Use design system (fonts, colors, grid, spacing) but compose freely | ✓ |
+| You decide | Claude determines best approach | |
 
-**User's choice:** I have a PDF ready
-**Notes:** None
+**User's choice:** Design system rules only
+**Notes:** User initially selected "Clone an inner page" then asked to go back and changed to "Design system rules only."
 
-### Resume Design Treatment
+### Content flexibility
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Editorial design | Same creative energy as home and about. | |
-| Clean functional (Recommended) | Utility page — clean, well-spaced, easy to scan. | |
-| You decide | Frontend-design skill chooses. | ✓ |
+| Same flexibility | Requirements flexible, reshape or relocate if doesn't fit | ✓ |
+| Keep skills section | Skills/tech presentation must stay on about page regardless | |
 
-**User's choice:** You decide
-**Notes:** None
+**User's choice:** Same flexibility
+
+### Narrative tone
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Keep current tone | First-person, conversational, personality-forward | ✓ |
+| Match reference tone | Shift to shiyunlu.com's writing style (likely more minimal/terse) | |
+| You decide | Claude determines best fit | |
+
+**User's choice:** Keep current tone
 
 ---
 
-## Contact Page Scope
+## Scope of Redo
 
-### Contact Page Format
-
-| Option | Description | Selected |
-|--------|-------------|----------|
-| Lightweight section, not a full page (Recommended) | Could be section on About or Home page. | |
-| Full dedicated page | Own page with links + short message. | |
-| Full page with availability status | Dedicated page + "open to opportunities" status. | ✓ |
-
-**User's choice:** Full page with availability status
-**Notes:** None
-
-### Contact Info Channels
+### Resume & Contact pages
 
 | Option | Description | Selected |
 |--------|-------------|----------|
-| Just those three | Email, LinkedIn, GitHub only. | ✓ |
-| Add Twitter/X | Include Twitter/X profile. | |
-| Add phone number | Include phone number. | |
+| Full design system | Rebuilt to follow shiyunlu.com's design system, not just color/font swap | ✓ |
+| Color/font update only | Keep current layouts, just update tokens | |
+| You decide | Claude determines appropriate level of rework | |
 
-**User's choice:** Just those three
-**Notes:** None
+**User's choice:** Full design system
+
+### Phase structure
+
+| Option | Description | Selected |
+|--------|-------------|----------|
+| Keep in Phase 3 | Phase 3 absorbs full visual overhaul — tokens, nav, all pages | ✓ |
+| New phase for overhaul | Insert dedicated phase for design system overhaul first | |
+| You decide | Claude determines best phase structure | |
+
+**User's choice:** Keep in Phase 3
 
 ---
 
 ## Claude's Discretion
 
-- Home page layout composition, depth, and section flow
-- Featured projects preview format and creative integration
-- Skills presentation format
-- Resume page design treatment
-- Contact page design treatment
+- Canvas/generative art implementation details
+- How to adapt shiyunlu.com's sections for a SWE portfolio context
+- About page layout composition within design system rules
+- Resume and Contact page layout composition
 - All copy/content drafting
-- All visual decisions via frontend-design skill
+- Exact font selections (closest free equivalents)
+- Navigation rework details
 
 ## Deferred Ideas
 
-None — discussion stayed within phase scope
+- GSAP scroll-triggered animations — Phase 5
+- Dark/light mode toggle — Phase 5
+- Featured projects on home page — revisit in Phase 4

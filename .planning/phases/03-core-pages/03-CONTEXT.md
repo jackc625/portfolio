@@ -1,50 +1,57 @@
 # Phase 3: Core Pages - Context
 
-**Gathered:** 2026-03-23
+**Gathered:** 2026-03-25
 **Status:** Ready for planning
 
 <domain>
 ## Phase Boundary
 
-Build the Home, About, Resume, and Contact pages with real content structure. Visitors get a complete picture of who Jack is — his identity, background, skills, resume, and how to reach him — before they even see projects. All four pages must be responsive and render correctly on mobile, tablet, and desktop.
+Full visual rebuild of the entire site to clone shiyunlu.com's design language. This includes updating design tokens (colors, fonts), reworking the site shell (header, footer, mobile menu, navigation), and rebuilding all four core pages (Home, About, Resume, Contact) within the cloned design system. Visitors get a complete, cohesive site that looks and feels like shiyunlu.com with Jack's content. Animations deferred to Phase 5.
 
 </domain>
 
 <decisions>
 ## Implementation Decisions
 
+### Site-Wide Design Direction
+- **D-01:** **Near-exact clone of shiyunlu.com** as the global design language for the entire portfolio — not just this phase. Every current and future page follows this design system.
+- **D-02:** Clone scope includes: spatial layout/grid system, color treatment (muted gradient accents), font stack (or closest free equivalents to shiyunlu.com's typography), and navigation patterns.
+- **D-03:** Animations are **deferred to Phase 5**. This phase builds the static layout clone. Basic CSS transitions/hovers for interactivity are acceptable, but no GSAP scroll-triggered animations yet.
+- **D-04:** **Bypass the frontend-design skill** — the reference site IS the design spec. Analyze shiyunlu.com directly and implement. No separate UI-SPEC or design interpretation layer.
+
+### Design Token Updates
+- **D-05:** Update color tokens to match shiyunlu.com's color treatment — muted gradient accents, near-black backgrounds. Replace existing oklch palette.
+- **D-06:** Update font stack to match shiyunlu.com's typography (or closest freely available equivalents). Replace Instrument Serif / Instrument Sans / JetBrains Mono.
+- **D-07:** Existing design token architecture (CSS custom properties → Tailwind @theme bridge) remains — only the values change, not the system.
+
+### Navigation & Site Shell
+- **D-08:** **Rework header/nav/footer** to match shiyunlu.com's navigation pattern (asymmetric grid nav, etc.). The Phase 2 scroll-reveal sticky nav is replaced.
+- **D-09:** Mobile menu also reworked to match shiyunlu.com's mobile navigation pattern.
+
 ### Home Page
-- **D-01:** Bold typographic hero — large display-font headline with name, role ("Software Engineer"), tagline, and primary CTA to view projects. Typography does the heavy lifting, matching the dark editorial aesthetic of reference sites (artemshcherban.com, bettinasosa.com).
-- **D-02:** **NON-GENERIC EDITORIAL DESIGN** — the home page must NOT follow a conventional section-stacked portfolio layout (hero > about teaser > featured projects > CTA). The frontend-design skill has full creative freedom to design an editorial, unexpected composition inspired by the reference sites. The requirements (HOME-01 through HOME-04) define WHAT information must be present, but HOW it's composed is the design skill's call.
-- **D-03:** Featured projects creatively integrated into the home page design — not as a separate card grid section. Projects woven into the design in an unexpected way (typographic elements, interactive list, editorial composition). Uses `featured: true` from the content schema.
-- **D-04:** Claude drafts hero tagline and intro copy based on PRD positioning (builds real projects, strong initiative, capable of backend and full-stack work). User can revise later.
+- **D-10:** Clone shiyunlu.com's home page spatial structure as closely as possible.
+- **D-11:** **Canvas hero with abstract/generative art** — procedural visuals (particles, gradients, geometric shapes) similar to shiyunlu.com. Unique on every page load.
+- **D-12:** **No featured projects on the home page.** Projects are accessed via the projects page through navigation. HOME-02 requirement is relaxed.
+- **D-13:** **Requirements are flexible** — HOME-01 through HOME-04 describe WHAT info should be accessible, not WHERE it must live. If the cloned layout doesn't naturally have room for something (e.g., resume link, about teaser), visitors find it through nav. Update requirements to match what the layout actually delivers.
 
 ### About Page
-- **D-05:** Professional but human tone — first person ("I build things because..."), conversational but not casual. Shows personality without being unprofessional. Satisfies ABUT-02.
-- **D-06:** Content covers education, journey into engineering, and interests — full narrative per ABUT-01.
-- **D-07:** Editorial design treatment — same creative energy as the home page. Typography-driven, intentional layout, not a plain text wall. Consistent with overall site aesthetic.
+- **D-14:** Follow shiyunlu.com's **design system rules** (fonts, colors, grid, spacing) but compose the about page layout **freely** within those rules. Not a direct clone of a specific shiyunlu.com inner page.
+- **D-15:** Same content flexibility as home — requirements (ABUT-01 through ABUT-03) are flexible. If the skills grid or narrative doesn't fit naturally, reshape or relocate.
+- **D-16:** **Keep the current first-person conversational tone** for copy. Visual design changes but writing style stays ("I got into programming because I wanted to build things...").
 
-### Skills Presentation
-- **D-08:** Skills format is Claude's discretion — grouped by domain, by project, or another creative approach. Must NOT use progress bars (explicit requirement ABUT-03). The frontend-design skill determines the best presentation within the editorial aesthetic.
-
-### Resume Page
-- **D-09:** Hybrid approach — styled summary of key highlights (recent role, education, key skills) rendered in the site's design system, with a prominent "Download full resume" PDF button above the fold. Not a full HTML recreation of the resume, not just an embedded PDF viewer.
-- **D-10:** PDF is ready — user has a resume PDF to include in the project. Place in `public/` directory for direct download.
-- **D-11:** Resume page design treatment is Claude's discretion — can be editorial or clean functional, whichever best serves the content.
-
-### Contact Page
-- **D-12:** Full dedicated page at /contact — not just a section on another page. Even though the footer covers the same links, /contact is expected and standard.
-- **D-13:** Availability status message — include a brief "currently open to opportunities" or similar status indicator. Signals to recruiters that Jack is actively looking.
-- **D-14:** Contact info: email, LinkedIn, GitHub only — same three channels as the footer, but presented with more context and prominence on the dedicated page.
+### Resume & Contact Pages
+- **D-17:** Resume and Contact pages get the **full design system treatment** — rebuilt to follow shiyunlu.com's design system (grid, spacing, composition), not just a color/font swap.
+- **D-18:** Resume hybrid approach (styled summary + PDF download) still valid — just rebuilt within the new design system.
+- **D-19:** Contact page (email, LinkedIn, GitHub + availability status) still valid — rebuilt within the new design system.
 
 ### Claude's Discretion
-- Home page layout, depth (single viewport vs scroll), and section composition — frontend-design skill decides
-- Featured projects preview format and creative integration approach
-- Skills presentation format (grouped by domain, project, or other creative approach)
-- Resume page design treatment (editorial vs clean functional)
-- Contact page design treatment
+- Specific canvas/generative art implementation details (algorithm, visual style within "abstract/generative")
+- How to adapt shiyunlu.com's specific sections for a SWE portfolio context
+- About page layout composition within the design system rules
+- Resume and Contact page layout composition within the design system
 - All copy/content drafting (user will revise later)
-- All specific visual decisions routed through frontend-design skill
+- Exact font selections (closest free equivalents to shiyunlu.com's type)
+- Navigation rework details within shiyunlu.com's pattern
 
 </decisions>
 
@@ -53,29 +60,24 @@ Build the Home, About, Resume, and Contact pages with real content structure. Vi
 
 **Downstream agents MUST read these before planning or implementing.**
 
+### Primary design reference (CRITICAL)
+- https://shiyunlu.com/ — **THE design spec.** Near-exact clone of this site's spatial layout, color treatment, font system, and navigation patterns. Study every page thoroughly before implementing.
+
 ### Project definition
 - `.planning/PROJECT.md` — Core value proposition, constraints, out-of-scope items
-- `.planning/REQUIREMENTS.md` — Phase 3 requirements: HOME-01, HOME-02, HOME-03, HOME-04, ABUT-01, ABUT-02, ABUT-03, RESM-01, RESM-02, CNTC-01
+- `.planning/REQUIREMENTS.md` — Phase 3 requirements: HOME-01, HOME-02, HOME-03, HOME-04, ABUT-01, ABUT-02, ABUT-03, RESM-01, RESM-02, CNTC-01 (NOTE: requirements are flexible — layout takes priority)
 - `.planning/ROADMAP.md` — Phase 3 success criteria and dependencies
 - `PRD.md` — Original product requirements document with candidate positioning and product vision
 
 ### Prior phase context
-- `.planning/phases/01-foundation-design-system/01-CONTEXT.md` — Design decisions: dark editorial minimal aesthetic, spacious whitespace, restrained palette (1-2 accent colors), 3-font system (display + body + mono), reference inspiration sites
-- `.planning/phases/02-site-shell-navigation/02-CONTEXT.md` — Shell decisions: transparent overlay nav, scroll reveal, text namemark "Jack Cutrara", role "Software Engineer" on home hero only, full-screen mobile menu, minimal footer with contact icons
+- `.planning/phases/01-foundation-design-system/01-CONTEXT.md` — Original design decisions being superseded by this overhaul. Token architecture (CSS custom properties → @theme bridge) is preserved, values are changing.
+- `.planning/phases/02-site-shell-navigation/02-CONTEXT.md` — Original shell decisions being superseded. Nav, header, footer, mobile menu all reworked.
 
 ### Tech stack
 - `CLAUDE.md` §Technology Stack — Complete stack spec (Astro 6, Tailwind CSS v4, GSAP, Content Collections, MDX)
 
-### Reference inspiration (from Phase 1 — CRITICAL for non-generic design)
-- https://andrewreff.com/ — Dark editorial, film grain, design-tool transitions
-- https://artemshcherban.com/ — B&W serif/mono, GSAP text reveals, full-screen impact
-- https://shiyunlu.com/ — Muted gradient accents, asymmetric grid, canvas hero
-- https://bettinasosa.com/ — Dark high-contrast, dramatic tagline typography
-- https://aither.co/ — Warm neutrals, horizontal scroll, blend-mode interactions
-- https://wam.global/ — Corporate clean, strong hierarchy, whitespace rhythm
-
 ### Content schema
-- `src/content.config.ts` — Project collection schema with `featured` boolean field used for home page integration
+- `src/content.config.ts` — Project collection schema (unchanged — still used for projects page in Phase 4)
 
 </canonical_refs>
 
@@ -83,47 +85,56 @@ Build the Home, About, Resume, and Contact pages with real content structure. Vi
 ## Existing Code Insights
 
 ### Reusable Assets
-- `src/layouts/BaseLayout.astro` — Full layout shell with SEO (astro-seo), Font loading, Header, MobileMenu, Footer, ClientRouter (View Transitions). All pages extend this.
-- `src/components/Header.astro` — Scroll-reveal sticky nav with transparent overlay, namemark link
-- `src/components/Footer.astro` — Minimal footer with GitHub, LinkedIn, email SVG icon links
-- `src/styles/global.css` — Design tokens (colors via oklch, fluid type scale with clamp(), spacing tokens), Tailwind @theme bridge
+- `src/layouts/BaseLayout.astro` — Layout shell with SEO, font loading, ClientRouter. Will be updated (new fonts, possibly new shell structure) but remains the central layout.
+- `src/styles/global.css` — Design token system (CSS custom properties → Tailwind @theme bridge). Architecture stays, values updated to match shiyunlu.com.
+- `src/content.config.ts` — Content collection schema. Unchanged.
+
+### Assets to Rework
+- `src/components/Header.astro` — Current scroll-reveal sticky nav. Will be rebuilt to match shiyunlu.com's navigation pattern.
+- `src/components/Footer.astro` — Current minimal footer. Will be rebuilt.
+- `src/components/MobileMenu.astro` — Current full-screen overlay. Will be rebuilt.
+- `src/components/CTAButton.astro` — May need restyling or removal depending on cloned layout.
+- `src/components/FeaturedProjectItem.astro` — No longer needed on home page (D-12). May be removed or repurposed for Phase 4.
+- `src/components/SkillGroup.astro` — May need restyling or relocation depending on about page composition.
+- `src/components/ResumeEntry.astro` — Will be restyled within new design system.
+- `src/components/ContactChannel.astro` — Will be restyled within new design system.
 
 ### Established Patterns
-- Dark-first token architecture: `:root` = dark theme, `[data-theme="light"]` placeholder for Phase 5
-- All colors use `var(--token-*)` → Tailwind `@theme` bridge — pages must follow this pattern
-- Font system: `font-display` (heading serif), `font-body` (sans), `font-mono` (monospace)
-- Fluid typography: `--token-text-display` for hero headings, `--token-text-heading` for section headings, `--token-text-base` for body
-- Section spacing: `py-[var(--token-space-section)]` pattern used in current stub pages
-- SEO props flow: page frontmatter → BaseLayout props → astro-seo component in `<head>`
+- Dark-first token architecture: `:root` = dark theme, `[data-theme="light"]` placeholder for Phase 5 — **preserved**
+- All colors use `var(--token-*)` → Tailwind `@theme` bridge — **preserved, values change**
+- Font system uses CSS variables (`--font-display`, `--font-body`, `--font-mono`) — **preserved, fonts change**
+- Navigation scripts re-initialize on `astro:page-load` for View Transitions — **pattern preserved in reworked nav**
+- SEO props flow: page frontmatter → BaseLayout → astro-seo — **unchanged**
 
 ### Integration Points
-- All 5 page stubs exist (`index.astro`, `about.astro`, `resume.astro`, `contact.astro`, `projects.astro`) — Phase 3 replaces stub content on 4 of these
-- `<main id="main-content" class="flex-1 pt-16">` in BaseLayout wraps all page content
-- Content collection at `src/content/projects/` with Zod schema — home page queries `featured: true` entries
-- Nav links already point to `/about`, `/projects`, `/resume`, `/contact`
+- All 5 page stubs exist — Phase 3 rebuilds 4 of them (index, about, resume, contact)
+- `<main id="main-content">` in BaseLayout wraps page content — structure may change with nav rework
+- Content collection at `src/content/projects/` — not used on home page anymore, still used in Phase 4
 
 </code_context>
 
 <specifics>
 ## Specific Ideas
 
-- **"NOT a generic vibecoded homescreen"** — User explicitly rejected conventional section-stacked portfolio layouts. The reference inspiration sites are the north star. Every page should feel editorially designed, not template-generated.
-- The home page hero is bold typographic, but everything beyond that is creative territory for the frontend-design skill
-- Featured projects should be "woven in" to the home design, not a separate section — think project names as typographic elements, subtle interactive lists, or editorial composition
-- About page gets the same editorial energy as home — not a plain bio page
-- Resume is more pragmatic (hybrid summary + PDF download) but design treatment is flexible
-- Contact page includes an availability/status indicator — a differentiator for active job seekers
+- **shiyunlu.com is THE north star** — not "inspired by" but "clone the spatial system." Study the reference site exhaustively before writing any code.
+- The canvas hero should use abstract/generative procedural visuals — unique on every page load
+- No featured projects on the home page — this is a deliberate simplification, not an oversight
+- The first-person conversational writing tone is preserved across the visual overhaul — the site's personality stays even though the clothes change
+- Requirements are flexible to the layout — if the cloned design doesn't have room for something, it's OK. The nav provides discovery. Don't force-fit content.
+- Previous redesign attempts failed because Claude wrote CSS descriptions of "asymmetry" and "editorial" but rendered the same generic stacked layout every time. The solution: clone a specific reference site's actual structure, not an abstract concept.
 
 </specifics>
 
 <deferred>
 ## Deferred Ideas
 
-None — discussion stayed within phase scope
+- **GSAP scroll-triggered animations** — Phase 5 (D-03 explicitly defers)
+- **Dark/light mode toggle** — Phase 5 (token architecture preserved for this)
+- **Featured projects on home page** — Revisit in Phase 4 if the projects page design suggests it. Currently dropped (D-12).
 
 </deferred>
 
 ---
 
 *Phase: 03-core-pages*
-*Context gathered: 2026-03-23*
+*Context gathered: 2026-03-25*
