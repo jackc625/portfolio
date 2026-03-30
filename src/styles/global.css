@@ -147,3 +147,48 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ============================================
+ * View Transitions (page-to-page crossfade)
+ * ============================================ */
+::view-transition-old(root) {
+  animation: vt-fade-out 200ms ease-in forwards;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in 200ms ease-out forwards;
+}
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* ============================================
+ * Hover Micro-Interactions
+ * ============================================ */
+.nav-link-hover {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  transition: background-size 300ms ease, color 200ms ease;
+}
+.nav-link-hover:hover {
+  background-size: 100% 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-link-hover {
+    transition: color 200ms ease;
+  }
+  .nav-link-hover:hover {
+    background-size: 0% 1px;
+  }
+}
