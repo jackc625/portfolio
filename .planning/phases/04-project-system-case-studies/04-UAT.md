@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 04-project-system-case-studies
 source: [04-01-SUMMARY.md, 04-02-SUMMARY.md, 04-03-SUMMARY.md, 04-04-SUMMARY.md]
 started: 2026-03-30T19:00:00Z
@@ -58,5 +58,9 @@ blocked: 0
   reason: "User reported: the divider/spacing between the grid at the top and the list below is too large"
   severity: cosmetic
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "Double spacing — featured cards section has pb-[var(--token-space-section)] and editorial section has py-[var(--token-space-section)], creating 10-20rem combined gap"
+  artifacts:
+    - path: "src/pages/projects.astro"
+      issue: "Line 30: pb-[var(--token-space-section)] on featured section, Line 47: py-[var(--token-space-section)] on editorial section"
+  missing:
+    - "Remove pb from featured cards section so only editorial section's pt controls the gap"
