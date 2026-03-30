@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+---
+
+<a
+  href={`/projects/${project.id}`}
+  class="group block focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 focus-visible:rounded"
+>
+  <!-- Thumbnail area: 16:9 aspect ratio -->
+  <div class="overflow-hidden rounded">
+    {project.data.thumbnail ? (
+      <Image
+        src={project.data.thumbnail}
+        alt={`${project.data.title} thumbnail`}
+        class="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-300"
+      />
+    ) : (
+      <div class="w-full aspect-video bg-bg-secondary flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-300">
+        <span class="font-display text-[length:var(--token-text-heading)] text-text-muted">
+          {project.data.title}
+        </span>
+      </div>
+    )}
+  </div>
+  <!-- Content below thumbnail -->
+  <div class="pt-[var(--token-space-lg)]">
+    <h3 class="font-display text-[length:var(--token-text-heading)] text-text-primary group-hover:text-accent transition-colors duration-200">
+      {project.data.title}
+    </h3>
+    <p class="font-body text-[length:var(--token-text-sm)] text-text-secondary mt-[var(--token-space-sm)] line-clamp-1">
+      {project.data.tagline}
+    </p>
+    <span class="font-mono text-[length:var(--token-text-sm)] text-text-muted mt-[var(--token-space-sm)] block">
+      {project.data.techStack.join(", ")}
+    </span>
+  </div>
+</a>
