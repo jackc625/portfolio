@@ -2,8 +2,8 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 5 UI-SPEC approved
+status: Executing
+stopped_at: Completed 05-01-PLAN.md
 last_updated: "2026-03-30T22:05:15.461Z"
 progress:
   total_phases: 6
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 04 — project-system-case-studies
+**Current focus:** Phase 05 — dark-mode-animations-polish
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 05 (dark-mode-animations-polish) — EXECUTING
+Plan: 1 of 4
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Plan: Not started
 | Phase 03 P04 | 3min | 2 tasks | 2 files |
 | Phase 04 P01 | 4min | 1 tasks | 8 files |
 | Phase 04 P02 | 2min | 1 tasks | 4 files |
+| Phase 05 P01 | 9min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,8 @@ Recent decisions affecting current work:
 - [Phase 04]: Project components use CollectionEntry<"projects"> typed props for type safety
 - [Phase 04]: ProjectCard thumbnail fallback renders bg-bg-secondary with centered title text
 - [Phase 04]: CaseStudySection provides reusable asymmetric grid via slot pattern
+- [Phase 05]: Class-based selector (.theme-toggle) instead of id for toggle buttons to support desktop + mobile instances
+- [Phase 05]: Theme transitions scoped to .theme-transitioning class (added/removed during toggle) to prevent layout thrash
 
 ### Pending Todos
 
@@ -111,6 +114,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T22:05:15.454Z
-Stopped at: Phase 5 UI-SPEC approved
-Resume file: .planning/phases/05-dark-mode-animations-polish/05-UI-SPEC.md
+Last session: 2026-03-30T23:18:58Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
