@@ -8,11 +8,17 @@ import ResumeEntry from "../components/ResumeEntry.astro";
   title="Resume"
   description="View and download Jack Cutrara's software engineering resume."
 >
+  <!-- Print-only header (visible only in @media print) -->
+  <div class="print-only-header">
+    <p class="font-display" style="font-size:16pt;font-weight:700;">Jack Cutrara — Software Engineer</p>
+    <p class="font-mono" style="font-size:9pt;color:#666;margin-top:4px;">jack@jackcutrara.com | github.com/jackc625 | linkedin.com/in/jackcutrara</p>
+  </div>
+
   <!-- Page Header with PDF Download -->
   <section class="py-[var(--token-space-section)] pb-[var(--token-space-2xl)] px-6 md:px-10 lg:px-16">
     <div class="max-w-[90rem] mx-auto">
       <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">Resume</h1>
-      <div class="mt-[var(--token-space-lg)]">
+      <div data-no-print class="mt-[var(--token-space-lg)]">
         <CTAButton href="/resume.pdf" label="Download PDF" download={true} showDownloadIcon={true} />
       </div>
     </div>

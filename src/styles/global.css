@@ -192,3 +192,127 @@ body {
     background-size: 0% 1px;
   }
 }
+
+/* ============================================
+ * Print-only header (hidden on screen)
+ * ============================================ */
+.print-only-header {
+  display: none;
+}
+
+/* ============================================
+ * Print Stylesheet (RESM-03, D-20, D-21)
+ * Scope: Resume page primarily. Strips chrome,
+ * forces black-on-white, shows link URLs.
+ * ============================================ */
+@media print {
+  /* Hide non-content elements */
+  header,
+  footer,
+  #mobile-menu,
+  .skip-to-content,
+  [data-no-print] {
+    display: none !important;
+  }
+
+  /* Force black on white — overrides both dark and light themes */
+  :root,
+  [data-theme="light"] {
+    --token-bg-primary: white;
+    --token-bg-secondary: #f5f5f5;
+    --token-text-primary: black;
+    --token-text-secondary: #333;
+    --token-text-muted: #666;
+    --token-accent: #0066cc;
+    --token-accent-hover: #0066cc;
+    --token-border: #ccc;
+    --token-border-hover: #999;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.4;
+    color: black;
+    background: white;
+  }
+
+  /* Remove background colors/shadows from all elements */
+  * {
+    background: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Override specific backgrounds that need to stay */
+  body {
+    background: white !important;
+  }
+
+  /* Page break control */
+  h2, h3 {
+    break-after: avoid;
+  }
+  section {
+    break-inside: avoid;
+  }
+
+  /* Remove max-width constraints for full-page printing */
+  .max-w-3xl,
+  .max-w-\[90rem\] {
+    max-width: none;
+  }
+
+  /* Remove padding from main content area */
+  main {
+    padding-top: 0 !important;
+  }
+
+  /* Show link URLs for external links */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+    font-family: var(--font-body);
+  }
+
+  /* Don't show URLs for internal nav links (they're hidden anyway) */
+  header a::after,
+  footer a::after,
+  nav a::after {
+    content: none !important;
+  }
+
+  /* Print-specific heading styles */
+  h1 {
+    font-size: 16pt;
+    font-weight: 700;
+    margin-bottom: 4pt;
+  }
+  h2 {
+    font-size: 13pt;
+    font-weight: 600;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 3pt;
+  }
+
+  /* Skill tags: plain text for printing */
+  .font-mono[class*="border"] {
+    border: none !important;
+    padding: 0 !important;
+    display: inline;
+  }
+  .font-mono[class*="border"]::after {
+    content: ", ";
+  }
+  .font-mono[class*="border"]:last-child::after {
+    content: "";
+  }
+
+  /* Print-only header: visible in print */
+  .print-only-header {
+    display: block;
+    margin-bottom: 16pt;
+    padding-bottom: 8pt;
+    border-bottom: 1px solid #ccc;
+  }
+}
