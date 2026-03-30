@@ -36,9 +36,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Case Studies
 
-- [ ] **CASE-01**: Structured case study template: Problem > Solution > Tech Stack > Challenges > Results > Lessons Learned
-- [ ] **CASE-02**: Each case study includes links to GitHub repo and/or live demo where available
-- [ ] **CASE-03**: Case study pages support embedded screenshots and visual media
+- [x] **CASE-01**: Structured case study template: Problem > Solution > Tech Stack > Challenges > Results > Lessons Learned
+- [x] **CASE-02**: Each case study includes links to GitHub repo and/or live demo where available
+- [x] **CASE-03**: Case study pages support embedded screenshots and visual media
 - [ ] **CASE-04**: Progressive disclosure — overview/summary visible first, technical depth on scroll
 - [ ] **CASE-05**: At least 2 fully written case studies before production deployment
 
@@ -141,9 +141,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PROJ-02 | Phase 4 | Pending |
 | PROJ-03 | Phase 4 | Pending |
 | PROJ-04 | Phase 4 | Pending |
-| CASE-01 | Phase 4 | Pending |
-| CASE-02 | Phase 4 | Pending |
-| CASE-03 | Phase 4 | Pending |
+| CASE-01 | Phase 4 | Complete |
+| CASE-02 | Phase 4 | Complete |
+| CASE-03 | Phase 4 | Complete |
 | CASE-04 | Phase 4 | Pending |
 | CASE-05 | Phase 4 | Pending |
 | RESM-01 | Phase 3 | Complete |

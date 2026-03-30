@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-30T17:04:42.430Z"
+status: Executing
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-30T17:56:53Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 14
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 03 — core-pages
+**Current focus:** Phase 04 — project-system-case-studies
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 04 (project-system-case-studies) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Plan: Not started
 | Phase 03 P02 | 6min | 3 tasks | 4 files |
 | Phase 03 P05 | 3min | 2 tasks | 5 files |
 | Phase 03 P04 | 3min | 2 tasks | 2 files |
+| Phase 04 P02 | 2min | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,9 @@ Recent decisions affecting current work:
 - [Phase 03]: SkillGroup uses flex-wrap pill/tag chips with subtle borders instead of card treatment
 - [Phase 03]: About page uses asymmetric 1fr/2fr grid layout matching shiyunlu.com spatial patterns
 - [Phase 03]: Inner page pattern: mono uppercase label + content in asymmetric grid sections
+- [Phase 04]: Project components use CollectionEntry<"projects"> typed props for type safety
+- [Phase 04]: ProjectCard thumbnail fallback renders bg-bg-secondary with centered title text
+- [Phase 04]: CaseStudySection provides reusable asymmetric grid via slot pattern
 
 ### Pending Todos
 
@@ -103,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T17:04:42.424Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-project-system-case-studies/04-CONTEXT.md
+Last session: 2026-03-30T17:56:53Z
+Stopped at: Completed 04-02-PLAN.md
+Resume file: None
