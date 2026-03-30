@@ -14,7 +14,7 @@ const projects = defineCollection({
       status: z.enum(["completed", "in-progress"]),
       githubUrl: z.string().url().optional(),
       demoUrl: z.string().url().optional(),
-      thumbnail: image(),
+      thumbnail: image().optional(),
       category: z.enum(["web-app", "cli-tool", "library", "api", "other"]),
       order: z.number().int().min(1),
     }),
