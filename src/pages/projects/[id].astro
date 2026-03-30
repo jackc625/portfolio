@@ -47,7 +47,7 @@ const { Content } = await render(project);
       </a>
 
       <!-- Title -->
-      <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95]">
+      <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95]">
         {project.data.title}
       </h1>
 
@@ -103,7 +103,7 @@ const { Content } = await render(project);
   )}
 
   <!-- MDX body content -->
-  <article class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
+  <article data-animate="section" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
     <div class="max-w-[90rem] mx-auto">
       <div class="case-study-prose max-w-3xl">
         <Content components={{ img: ArticleImage }} />

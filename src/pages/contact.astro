@@ -10,7 +10,7 @@ import ContactChannel from "../components/ContactChannel.astro";
   <!-- Page Header -->
   <section class="py-[var(--token-space-section)] pb-[var(--token-space-2xl)] px-6 md:px-10 lg:px-16">
     <div class="max-w-[90rem] mx-auto">
-      <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">Get in Touch</h1>
+      <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">Get in Touch</h1>
       <p class="font-body text-[length:var(--token-text-base)] text-text-secondary mt-[var(--token-space-md)] max-w-2xl leading-[1.6]">I'm always open to hearing about new opportunities, interesting projects, or just connecting with other engineers.</p>
 
       <div class="flex items-center gap-[var(--token-space-sm)] mt-[var(--token-space-lg)]">
@@ -21,28 +21,34 @@ import ContactChannel from "../components/ContactChannel.astro";
   </section>
 
   <!-- Contact Channels -->
-  <section aria-label="Contact information" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-xl mx-auto">
-      <ContactChannel
-        href="mailto:jack@jackcutrara.com"
-        label="Email"
-        value="jack@jackcutrara.com"
-        icon="email"
-      />
-      <ContactChannel
-        href="https://linkedin.com/in/jackcutrara"
-        label="LinkedIn"
-        value="linkedin.com/in/jackcutrara"
-        icon="linkedin"
-        external={true}
-      />
-      <ContactChannel
-        href="https://github.com/jackc625"
-        label="GitHub"
-        value="github.com/jackc625"
-        icon="github"
-        external={true}
-      />
+  <section aria-label="Contact information" data-animate="section" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
+    <div data-animate-container="stagger" class="max-w-xl mx-auto">
+      <div data-animate="stagger-item">
+        <ContactChannel
+          href="mailto:jack@jackcutrara.com"
+          label="Email"
+          value="jack@jackcutrara.com"
+          icon="email"
+        />
+      </div>
+      <div data-animate="stagger-item">
+        <ContactChannel
+          href="https://linkedin.com/in/jackcutrara"
+          label="LinkedIn"
+          value="linkedin.com/in/jackcutrara"
+          icon="linkedin"
+          external={true}
+        />
+      </div>
+      <div data-animate="stagger-item">
+        <ContactChannel
+          href="https://github.com/jackc625"
+          label="GitHub"
+          value="github.com/jackc625"
+          icon="github"
+          external={true}
+        />
+      </div>
     </div>
   </section>
 

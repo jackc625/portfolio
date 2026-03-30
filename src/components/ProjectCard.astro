@@ -11,7 +11,7 @@ const { project } = Astro.props;
 
 <a
   href={`/projects/${project.id}`}
-  class="group block focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 focus-visible:rounded"
+  class="project-card-link group block hover:shadow-[0_4px_20px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 focus-visible:rounded"
 >
   <!-- Thumbnail area: 16:9 aspect ratio -->
   <div class="overflow-hidden rounded">
@@ -42,3 +42,11 @@ const { project } = Astro.props;
     </span>
   </div>
 </a>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    .project-card-link:hover {
+      transform: none !important;
+    }
+  }
+</style>

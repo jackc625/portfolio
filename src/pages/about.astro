@@ -13,14 +13,14 @@ import SkillGroup from "../components/SkillGroup.astro";
       <p class="font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.1em] mb-[var(--token-space-lg)]">
         About
       </p>
-      <h1 class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95] max-w-4xl">
+      <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95] max-w-4xl">
         I build things that work.
       </h1>
     </div>
   </section>
 
   <!-- Narrative Section -->
-  <section aria-label="Background" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
+  <section aria-label="Background" data-animate="section" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
     <div class="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-[var(--token-space-3xl)]">
       <!-- Left column: label -->
       <div>
@@ -61,7 +61,7 @@ import SkillGroup from "../components/SkillGroup.astro";
   </div>
 
   <!-- Skills Section -->
-  <section aria-label="Skills" class="py-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
+  <section aria-label="Skills" data-animate="section" class="py-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
     <div class="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-[var(--token-space-3xl)]">
       <!-- Left column: label -->
       <div>
@@ -71,29 +71,37 @@ import SkillGroup from "../components/SkillGroup.astro";
       </div>
 
       <!-- Right column: skill groups -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-[var(--token-space-xl)] gap-y-[var(--token-space-sm)]">
-        <SkillGroup
-          title="Languages"
-          skills={["TypeScript", "JavaScript", "Python", "SQL", "HTML", "CSS"]}
-        />
-        <SkillGroup
-          title="Frameworks"
-          skills={["React", "Next.js", "Astro", "Node.js", "Express"]}
-        />
-        <SkillGroup
-          title="Tools"
-          skills={["Git", "Docker", "PostgreSQL", "VS Code", "Linux"]}
-        />
-        <SkillGroup
-          title="Concepts"
-          skills={[
-            "REST APIs",
-            "CI/CD",
-            "Testing",
-            "Responsive Design",
-            "Accessibility",
-          ]}
-        />
+      <div data-animate-container="stagger" class="grid grid-cols-1 md:grid-cols-2 gap-x-[var(--token-space-xl)] gap-y-[var(--token-space-sm)]">
+        <div data-animate="stagger-item">
+          <SkillGroup
+            title="Languages"
+            skills={["TypeScript", "JavaScript", "Python", "SQL", "HTML", "CSS"]}
+          />
+        </div>
+        <div data-animate="stagger-item">
+          <SkillGroup
+            title="Frameworks"
+            skills={["React", "Next.js", "Astro", "Node.js", "Express"]}
+          />
+        </div>
+        <div data-animate="stagger-item">
+          <SkillGroup
+            title="Tools"
+            skills={["Git", "Docker", "PostgreSQL", "VS Code", "Linux"]}
+          />
+        </div>
+        <div data-animate="stagger-item">
+          <SkillGroup
+            title="Concepts"
+            skills={[
+              "REST APIs",
+              "CI/CD",
+              "Testing",
+              "Responsive Design",
+              "Accessibility",
+            ]}
+          />
+        </div>
       </div>
     </div>
   </section>
