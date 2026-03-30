@@ -1,0 +1,53 @@
+---
+title: "TaskFlow API"
+tagline: "A RESTful task management API with real-time updates"
+description: "A full-featured REST API for task management built with Node.js and PostgreSQL, featuring JWT authentication, WebSocket notifications, and comprehensive test coverage."
+techStack: ["Node.js", "Express", "PostgreSQL", "TypeScript", "JWT", "WebSocket"]
+featured: true
+status: "completed"
+githubUrl: "https://github.com/jackc625/taskflow-api"
+category: "api"
+order: 2
+---
+
+## Problem
+
+I wanted to build something that went beyond tutorial-level CRUD. Most beginner backend projects stop at basic REST endpoints with no authentication, no real-time features, and no meaningful error handling. I wanted to build an API that I would actually trust in production, something with proper auth, data validation, real-time notifications, and a testing strategy that gave me confidence when making changes.
+
+The task management domain was deliberate. It is complex enough to require thoughtful schema design with relationships between users, projects, and tasks, but constrained enough that I could focus on engineering quality rather than business logic. The real challenge was not building a todo app. The real challenge was building it the way a professional engineering team would.
+
+## Solution & Approach
+
+I designed the API around RESTful conventions with a layered architecture. The routing layer handles HTTP concerns. The service layer contains business logic. The data access layer manages PostgreSQL queries. This separation means I can change the database or the transport protocol without rewriting business logic.
+
+Authentication uses JSON Web Tokens with a refresh token rotation pattern. Access tokens are short-lived at fifteen minutes, and refresh tokens are single-use. When a client uses a refresh token, the server issues a new pair and invalidates the old refresh token. This protects against token theft while keeping the user experience smooth.
+
+For real-time updates, I added a WebSocket layer that broadcasts task changes to connected clients. When a task is created, updated, or completed, any client subscribed to that project receives the update immediately. This required careful coordination between the REST endpoints and the WebSocket server to ensure consistency.
+
+Input validation uses a schema-based approach. Every endpoint defines an expected request shape, and the middleware rejects malformed requests before they reach the service layer. This catches bugs early and produces clear error messages for API consumers.
+
+## Tech Stack Detail
+
+I chose Node.js with Express for the runtime because the async I/O model fits well with the concurrent WebSocket connections and database queries this API handles. TypeScript adds type safety across the entire stack, from request handlers to database query results.
+
+PostgreSQL was the database choice because the data has clear relational structure. Users own projects, projects contain tasks, tasks have assignees and status transitions. A relational database with foreign keys and constraints catches data integrity issues that a document store would silently allow.
+
+The JWT implementation uses the jose library rather than the more common jsonwebtoken package. jose provides a modern API with better TypeScript support and follows current JOSE standards. Refresh token rotation required storing token metadata in the database and implementing a revocation check on every refresh request.
+
+For WebSocket support, I used the ws library directly rather than Socket.IO. The raw WebSocket protocol is simpler, has no client-side dependency requirement, and avoids the abstraction overhead of Socket.IO's features that this project did not need. Clients connect, authenticate with their JWT, and subscribe to project channels.
+
+Testing uses Vitest for unit and integration tests. I wrote tests at the service layer to verify business logic independently of HTTP concerns, and integration tests that spin up the full server with a test database. The test suite runs against a real PostgreSQL instance to catch SQL-related bugs that mocks would miss. Coverage sits above eighty percent, focused on meaningful assertion coverage rather than hitting a number.
+
+## Challenges & Lessons
+
+The hardest part was getting the refresh token rotation right. The first implementation had a race condition: if a client sent two requests with the same refresh token before the first response arrived, the second request would fail because the token had already been rotated. I solved this by adding a short grace period during which the previous refresh token remains valid, but only for the same client fingerprint.
+
+Database migrations were another area where I learned by doing. Initially I wrote raw SQL migration files and ran them manually. After the third time I forgot to run a migration and spent twenty minutes debugging, I set up a proper migration runner that applies pending migrations on startup in development and as a pre-deploy step in production.
+
+Error handling taught me the difference between errors for developers and errors for users. Internal server errors log the full stack trace and context for debugging, but the API response contains a sanitized message and an error code that the client can use to show appropriate UI. This dual-track approach came from reading how larger APIs handle error responses.
+
+I also learned to write tests before optimizing. Early on, I tried to optimize a query that listed tasks with their assignees. I broke the query, but my test suite caught it immediately. After that experience, I made it a habit to write tests for the current behavior before refactoring anything. The confidence that tests provide is worth the upfront investment.
+
+## Results
+
+The API handles concurrent connections reliably, with WebSocket notifications delivered within milliseconds of a task change. The test suite runs in under ten seconds and catches regressions before they reach any deployed environment. The codebase is structured so that adding a new resource type, like comments or labels, follows a clear pattern: define the schema, add the migration, write the service, expose the routes, add tests. That repeatability was the real goal.
