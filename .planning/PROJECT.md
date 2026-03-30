@@ -21,12 +21,11 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - [x] Resume page with viewable content and PDF download — Validated in Phase 3: Styled summary + PDF download CTA
 - [x] Contact page with email, LinkedIn, GitHub links — Validated in Phase 3: Channel cards + availability badge
 - [x] Responsive design across desktop and mobile — Validated in Phase 3: Human-verified at mobile/desktop widths
+- [x] Projects page displaying 5-6 projects in scan-friendly format — Validated in Phase 4: Hybrid featured cards + editorial list layout
+- [x] Project detail/case study pages with technical depth — Validated in Phase 4: Structured MDX case studies with Problem/Solution/Challenges/Results sections
+- [x] Two reading modes: fast scan (recruiters) and deep review (engineers) — Validated in Phase 4: Card grid for scanning, case study pages for deep dives
 
 ### Active
-
-- [ ] Projects page displaying 5-6 projects in a clean, scan-friendly format
-- [ ] Project detail/case study pages with technical depth (overview, tech stack, challenges, architecture, lessons learned)
-- [ ] Two reading modes: fast scan (recruiters) and deep review (engineers)
 - [ ] Professional, high-end visual design (all design decisions via frontend-design skill)
 - [ ] SEO/meta structure for discoverability
 - [ ] Accessibility best practices
@@ -68,6 +67,9 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 | All design via frontend-design skill | Ensures consistent, high-quality visual decisions | UI-SPEC produced, design tokens implemented (Phase 1) |
 | Custom domain (available) | Professional presence | jackcutrara.com on Cloudflare Pages (Phase 1) |
 | Deployment platform: Cloudflare Pages | Unlimited bandwidth, fastest edge, Astro-owned | Live at portfolio-5wl.pages.dev (Phase 1) |
+| Hybrid project layout | Serve both fast-scan recruiters and deep-dive engineers | Featured card grid + editorial list (Phase 4) |
+| Optional thumbnail with solid-color fallback | Avoid fake images, keep builds fast | thumbnail: image().optional() in schema (Phase 4) |
+| 2 complete case studies for v1 | Demonstrate writing quality before production deploy | Portfolio Website + TaskFlow API fully written (Phase 4) |
 
 ## Evolution
 
@@ -87,4 +89,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after Phase 3 re-execution and completion*
+*Last updated: 2026-03-30 after Phase 4 completion*
