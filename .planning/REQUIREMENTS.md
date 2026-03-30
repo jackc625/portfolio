@@ -70,10 +70,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Animations
 
-- [ ] **ANIM-01**: Subtle scroll-triggered reveal animations on page sections
-- [ ] **ANIM-02**: Smooth page transitions between routes
-- [ ] **ANIM-03**: Hover states and micro-interactions on interactive elements
-- [ ] **ANIM-04**: Animations respect prefers-reduced-motion and do not degrade performance
+- [x] **ANIM-01**: Subtle scroll-triggered reveal animations on page sections
+- [x] **ANIM-02**: Smooth page transitions between routes
+- [x] **ANIM-03**: Hover states and micro-interactions on interactive elements
+- [x] **ANIM-04**: Animations respect prefers-reduced-motion and do not degrade performance
 
 ### SEO & Accessibility
 
@@ -160,10 +160,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PERF-03 | Phase 6 | Pending |
 | PERF-04 | Phase 6 | Pending |
 | PERF-05 | Phase 6 | Pending |
-| ANIM-01 | Phase 5 | Pending |
-| ANIM-02 | Phase 5 | Pending |
-| ANIM-03 | Phase 5 | Pending |
-| ANIM-04 | Phase 5 | Pending |
+| ANIM-01 | Phase 5 | Complete |
+| ANIM-02 | Phase 5 | Complete |
+| ANIM-03 | Phase 5 | Complete |
+| ANIM-04 | Phase 5 | Complete |
 | SEOA-01 | Phase 2 | Pending |
 | SEOA-02 | Phase 2 | Pending |
 | SEOA-03 | Phase 5 | Pending |

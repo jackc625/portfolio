@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-30T22:05:15.461Z"
+status: Ready to execute
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-30T23:41:41.117Z"
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 18
-  completed_plans: 17
+  total_plans: 22
+  completed_plans: 19
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 ## Current Position
 
 Phase: 05 (dark-mode-animations-polish) — EXECUTING
-Plan: 1 of 4
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Plan: 1 of 4
 | Phase 04 P01 | 4min | 1 tasks | 8 files |
 | Phase 04 P02 | 2min | 1 tasks | 4 files |
 | Phase 05 P01 | 9min | 2 tasks | 5 files |
+| Phase 05 P02 | 13min | 3 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,9 @@ Recent decisions affecting current work:
 - [Phase 04]: CaseStudySection provides reusable asymmetric grid via slot pattern
 - [Phase 05]: Class-based selector (.theme-toggle) instead of id for toggle buttons to support desktop + mobile instances
 - [Phase 05]: Theme transitions scoped to .theme-transitioning class (added/removed during toggle) to prevent layout thrash
+- [Phase 05]: Centralized animations.ts with gsap.context() for View Transitions lifecycle management
+- [Phase 05]: data-animate attribute convention separates animation concerns from styling
+- [Phase 05]: Canvas hero per-particle depth rendering (3-layer parallax) acceptable at 400-1000 particles
 
 ### Pending Todos
 
@@ -114,6 +118,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T23:18:58Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-30T23:41:41.108Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
