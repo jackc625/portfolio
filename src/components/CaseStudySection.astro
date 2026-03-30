@@ -1,0 +1,20 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<section aria-label={label} class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
+  <div class="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-[var(--token-space-3xl)]">
+    <div>
+      <p class="font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.08em]">
+        {label}
+      </p>
+    </div>
+    <div class="max-w-2xl">
+      <slot />
+    </div>
+  </div>
+</section>

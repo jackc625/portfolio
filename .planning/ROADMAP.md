@@ -93,7 +93,7 @@ Plans:
 
 Plans:
 - [ ] 04-01-PLAN.md -- Update content schema (optional thumbnail) and create 6 project MDX files with 2 full case studies
-- [ ] 04-02-PLAN.md -- Create ProjectCard, ArticleImage, CaseStudySection, and NextProject components
+- [x] 04-02-PLAN.md -- Create ProjectCard, ArticleImage, CaseStudySection, and NextProject components
 - [ ] 04-03-PLAN.md -- Rebuild projects page (hybrid layout) and create dynamic case study route
 - [ ] 04-04-PLAN.md -- Human visual verification of complete project system
 **UI hint**: yes
@@ -139,6 +139,6 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 | 1. Foundation & Design System | 5/5 | Complete | - |
 | 2. Site Shell & Navigation | 3/3 | Complete | - |
 | 3. Core Pages | 2/6 | In Progress|  |
-| 4. Project System & Case Studies | 0/4 | Not started | - |
+| 4. Project System & Case Studies | 1/4 | In Progress|  |
 | 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |

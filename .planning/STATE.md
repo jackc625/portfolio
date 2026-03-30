@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 03 — core-pages
+**Current focus:** Phase 04 — project-system-case-studies
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 04 (project-system-case-studies) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Plan: Not started
 | Phase 03 P05 | 3min | 2 tasks | 5 files |
 | Phase 03 P04 | 3min | 2 tasks | 2 files |
 | Phase 04 P01 | 4min | 1 tasks | 8 files |
+| Phase 04 P02 | 2min | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,9 @@ Recent decisions affecting current work:
 - [Phase 04]: All 6 projects omit thumbnail field entirely, using solid-color fallback per D-11/D-12
 - [Phase 04]: Case study MDX uses H2 headings as section dividers for content portability
 - [Phase 04]: Both full case studies include optional Results section per D-08
+- [Phase 04]: Project components use CollectionEntry<"projects"> typed props for type safety
+- [Phase 04]: ProjectCard thumbnail fallback renders bg-bg-secondary with centered title text
+- [Phase 04]: CaseStudySection provides reusable asymmetric grid via slot pattern
 
 ### Pending Todos
 
