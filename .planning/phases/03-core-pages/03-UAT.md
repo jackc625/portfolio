@@ -1,9 +1,9 @@
 ---
 status: complete
 phase: 03-core-pages
-source: 03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-03-SUMMARY.md, 03-04-SUMMARY.md
-started: 2026-03-23T18:10:00Z
-updated: 2026-03-23T19:35:00Z
+source: 03-01-SUMMARY.md, 03-02-SUMMARY.md, 03-04-SUMMARY.md, 03-05-SUMMARY.md, 03-06-SUMMARY.md
+started: 2026-03-30T12:00:00Z
+updated: 2026-03-30T12:15:00Z
 ---
 
 ## Current Test
@@ -12,85 +12,68 @@ updated: 2026-03-23T19:35:00Z
 
 ## Tests
 
-### 1. Home Page Hero
-expected: Typographic hero with name and "Software Engineer" tagline using display/serif fonts
-result: issue
-reported: "Feels super generic and vibecoded. Literally nothing is unique about the entire design or layout. Multiple redesign attempts still produced the same generic AI portfolio layout with cosmetic additions (ghost numbers, grid lines, GSAP animations) but no fundamentally new design thinking."
-severity: blocker
-
-### 2. Featured Projects List
-expected: Below the hero, 3 featured projects displayed as an editorial list (not card grid) with serif titles, mono tech stack tags, and border-bottom separators. Each row should highlight on hover.
+### 1. Dark Palette & Typography
+expected: Site uses near-black backgrounds with muted blue accents (not teal). Body text and headings render in Inter. Monospace elements (nav labels, skill tags, section labels) render in IBM Plex Mono.
 result: pass
 
-### 3. About Teaser & Quick Links
-expected: Below featured projects, an about teaser paragraph with a CTA linking to the About page. Below that, quick links section with CTAs for Resume and Contact pages. CTA buttons have outline style that fills on hover.
+### 2. Header Navigation
+expected: Fixed header at top with backdrop blur effect. Site name on left, nav links on right. Header stays visible while scrolling (no hide/show behavior). Subtle border-bottom separator.
 result: pass
 
-### 4. About Page Narrative
-expected: Navigate to /about. You should see a display heading, then a 4-paragraph first-person narrative at comfortable reading width. Editorial typography treatment.
-result: issue
-reported: "Same as homepage — super generic and vibecoded. Multiple redesign attempts failed to produce anything that doesn't look like every other AI-generated portfolio. Needs complete rethink from scratch, not iteration on the same foundation."
-severity: blocker
-
-### 5. About Page Skills Grid
-expected: Below the narrative, 4 domain-grouped skill cards in a responsive 2-column grid. Each card has an uppercase mono title and a vertical list of skills. No progress bars.
+### 3. Mobile Menu
+expected: At mobile width (~375px), hamburger button opens a full-screen overlay. Nav links are left-aligned and stacked vertically. Social links (GitHub, LinkedIn, Email) appear at the bottom of the overlay. Focus is trapped inside the menu.
 result: pass
 
-### 6. Resume Page Layout
-expected: Navigate to /resume. You should see a "Download PDF" CTA button above the fold, then a styled summary card with three sections: Experience, Education, and Technical Skills. Experience entries show title, org, and date.
+### 4. Footer
+expected: Minimal footer at page bottom. Copyright text on left, social icons (GitHub, LinkedIn, Email) on right. Subtle border-top separator. Uses same wide container as header.
 result: pass
 
-### 7. Resume PDF Download
-expected: Clicking the "Download PDF" button downloads a PDF file (placeholder is fine — it should trigger a download, not 404).
+### 5. Home Page Hero
+expected: Home page displays a generative canvas hero element with your name and "Software Engineer" tagline. The canvas should show some form of generative/procedural visual (simplex noise based).
 result: pass
 
-### 8. Contact Page Channels
-expected: Navigate to /contact. You should see 3 channel cards (Email, LinkedIn, GitHub) with icons, each linking to the appropriate destination. Cards have a hover border effect.
+### 6. Home Page Featured Projects
+expected: Below the hero, 3 featured projects displayed as an editorial list (not card grid) with titles, mono tech stack tags, and border-bottom separators. Each row highlights on hover.
+result: skipped
+reason: Feature was decided against during development — home page is hero-only with no featured projects list.
+
+### 7. About Page Layout
+expected: Navigate to /about. Page header has a mono uppercase label and display heading. Content uses asymmetric grid layout — mono label on left, content on right. Lead paragraph renders at heading size for visual statement. Secondary paragraphs are smaller with muted color.
 result: pass
 
-### 9. Contact Availability Badge
-expected: On the contact page, a green pulsing availability badge is visible (e.g., "Available for opportunities"). The pulse animation should be subtle. If you have reduced-motion enabled, the pulse should not animate.
+### 8. About Page Skills
+expected: Below the narrative on /about, 4 domain-grouped skill areas displayed as flex-wrap tag chips (pill-shaped with subtle borders), not as cards with backgrounds. Tags have hover effects.
 result: pass
 
-### 10. Responsive Layout
-expected: Resize browser to mobile width (~375px). All four pages (Home, About, Resume, Contact) should stack content vertically with no horizontal overflow, readable text, and no broken layouts.
+### 9. Resume Page
+expected: Navigate to /resume. "Download PDF" text link with download icon appears above the fold. Below it, resume sections (Experience, Education, Skills) with left-border accent treatment on entries. Org names and dates in mono font.
+result: pass
+
+### 10. Resume PDF Download
+expected: Clicking the "Download PDF" link triggers a file download (placeholder PDF is fine — should not 404).
+result: pass
+
+### 11. Contact Page Channels
+expected: Navigate to /contact. 3 contact channels (Email, LinkedIn, GitHub) displayed as clean rows with bottom borders. LinkedIn and GitHub show external link arrow indicators. Hovering a row shifts text to accent color.
+result: pass
+
+### 12. Contact Availability Badge
+expected: On /contact, a green pulsing availability indicator (dot + text like "Available for opportunities"). The pulse animation is subtle. With reduced-motion enabled, the pulse should not animate.
+result: pass
+
+### 13. Responsive Layout
+expected: Resize to mobile width (~375px). All pages (Home, About, Resume, Contact) stack content vertically with no horizontal overflow, readable text, and no broken layouts. Asymmetric grids collapse to single column.
 result: pass
 
 ## Summary
 
-total: 10
-passed: 8
-issues: 2
+total: 13
+passed: 12
+issues: 0
 pending: 0
-skipped: 0
+skipped: 1
 blocked: 0
 
 ## Gaps
 
-- truth: "Home page should have a genuinely unique, non-generic design that could not be produced by prompting 'make me a portfolio'"
-  status: failed
-  reason: "User reported: Design is generic AI slop. Multiple redesign attempts (ghost numbers, grid lines, GSAP text reveals, film grain) were cosmetic additions to the same generic section-stacked layout. The 6 inspiration sites (artemshcherban.com, andrewreff.com, shiyunlu.com, bettinasosa.com, aither.co, wam.global) were never properly studied or channeled. Needs fundamental redesign from scratch."
-  severity: blocker
-  test: 1
-  root_cause: "Frontend-design skill was invoked but iterated on the same generic layout pattern instead of designing something fundamentally new. The 6 user-provided inspiration sites were not studied before designing. The problem is not animations or textures — it's the underlying layout composition and design concept."
-  artifacts:
-    - path: "src/pages/index.astro"
-      issue: "Generic section-stacked layout with cosmetic additions"
-  missing:
-    - "Fundamentally new layout concept that draws from the 6 inspiration sites"
-    - "Design process that starts from studying inspiration rather than iterating on generic patterns"
-    - "Unique spatial composition, not centered-container stacked sections"
-  debug_session: ""
-
-- truth: "About page should have a genuinely unique, non-generic design"
-  status: failed
-  reason: "User reported: Same issue as homepage — generic and vibecoded. Same underlying problem."
-  severity: blocker
-  test: 4
-  root_cause: "Same as test 1 — cosmetic iteration on generic layout rather than fundamental redesign"
-  artifacts:
-    - path: "src/pages/about.astro"
-      issue: "Generic layout with added animations but no unique design concept"
-  missing:
-    - "Fundamentally new design concept for the about page"
-  debug_session: ""
+[none]
