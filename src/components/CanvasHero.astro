@@ -19,7 +19,10 @@
     y: number;
     prevX: number;
     prevY: number;
+    depth: number; // 0.5, 0.75, or 1.0
   }
+
+  const depthValues = [0.5, 0.75, 1.0];
 
   function initCanvas(): (() => void) | undefined {
     const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
@@ -30,8 +33,8 @@
     const noise2D = createNoise2D();
     let animationId: number;
     let time = 0;
-    const noiseScale = 0.003;
-    const speed = 1.5;
+    const noiseScale = 0.0025;
+    const speed = 1.2;
 
     // Determine particle count based on viewport
     const isMobile = window.innerWidth < 768;
@@ -40,6 +43,24 @@
     let width = window.innerWidth;
     let height = window.innerHeight;
     let particles: Particle[] = [];
+
+    // Mouse influence tracking (D-24)
+    let mouseX = -1000;
+    let mouseY = -1000;
+    const mouseRadius = 150;
+    const mouseInfluenceMax = 0.3;
+
+    function onMouseMove(e: MouseEvent) {
+      const rect = canvas!.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    }
+
+    // Only add mouse tracking on hover-capable devices
+    const hasHover = window.matchMedia('(hover: hover)').matches;
+    if (hasHover) {
+      canvas.addEventListener('mousemove', onMouseMove);
+    }
 
     // Theme-aware trail color — adapts when theme switches (D-18)
     function getTrailColor(): string {
@@ -70,7 +91,6 @@
     }
 
     const accent = parseColor(computedAccent);
-    const strokeColor = `rgba(${accent.r}, ${accent.g}, ${accent.b}, 0.15)`;
 
     function resize() {
       const dpr = window.devicePixelRatio || 1;
@@ -89,7 +109,8 @@
       for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * width;
         const y = Math.random() * height;
-        particles.push({ x, y, prevX: x, prevY: y });
+        const depth = depthValues[Math.floor(Math.random() * depthValues.length)];
+        particles.push({ x, y, prevX: x, prevY: y, depth });
       }
     }
 
@@ -98,23 +119,36 @@
       ctx!.fillStyle = getTrailColor();
       ctx!.fillRect(0, 0, width, height);
 
-      ctx!.strokeStyle = strokeColor;
-      ctx!.lineWidth = 0.5;
-
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         p.prevX = p.x;
         p.prevY = p.y;
 
-        const angle = noise2D(p.x * noiseScale, p.y * noiseScale + time * 0.0001) * Math.PI * 2;
-        p.x += Math.cos(angle) * speed;
-        p.y += Math.sin(angle) * speed;
+        let angle = noise2D(p.x * noiseScale, p.y * noiseScale + time * 0.0001) * Math.PI * 2;
+
+        // Mouse influence (D-24): particles near cursor are gently pushed
+        const dx = mouseX - p.x;
+        const dy = mouseY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouseRadius) {
+          const influence = (1 - dist / mouseRadius) * mouseInfluenceMax;
+          angle += Math.atan2(dy, dx) * influence;
+        }
+
+        // Depth-scaled movement: deeper particles move slower
+        p.x += Math.cos(angle) * speed * p.depth;
+        p.y += Math.sin(angle) * speed * p.depth;
 
         // Wrap around edges
         if (p.x < 0) p.x = width;
         if (p.x > width) p.x = 0;
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
+
+        // Depth-varied stroke style and line width
+        const strokeOpacity = 0.18 * p.depth;
+        ctx!.strokeStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${strokeOpacity})`;
+        ctx!.lineWidth = p.depth === 0.5 ? 0.3 : p.depth === 0.75 ? 0.4 : 0.6;
 
         ctx!.beginPath();
         ctx!.moveTo(p.prevX, p.prevY);
@@ -131,15 +165,13 @@
       ctx!.fillStyle = getOpaqueTrailColor();
       ctx!.fillRect(0, 0, width, height);
 
-      ctx!.strokeStyle = strokeColor;
-      ctx!.lineWidth = 0.5;
-
-      // Draw scattered dots based on noise values
+      // Draw scattered dots with depth-varied opacity
       for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * width;
         const y = Math.random() * height;
+        const depth = depthValues[Math.floor(Math.random() * depthValues.length)];
         const noiseVal = noise2D(x * noiseScale, y * noiseScale);
-        const opacity = Math.abs(noiseVal) * 0.3;
+        const opacity = Math.abs(noiseVal) * 0.3 * depth;
 
         ctx!.fillStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${opacity})`;
         ctx!.beginPath();
@@ -171,6 +203,9 @@
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', onResize);
+      if (hasHover) {
+        canvas.removeEventListener('mousemove', onMouseMove);
+      }
     };
   }
 
