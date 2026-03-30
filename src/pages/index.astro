@@ -1,12 +1,24 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import CanvasHero from "../components/CanvasHero.astro";
+import JsonLd from "../components/JsonLd.astro";
 ---
 
 <BaseLayout
   title=""
   description="Software engineer who builds real projects. Explore my work, background, and how to get in touch."
 >
+  <JsonLd schema={{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Jack Cutrara",
+    "jobTitle": "Software Engineer",
+    "url": "https://jackcutrara.com",
+    "sameAs": [
+      "https://github.com/jackc625",
+      "https://linkedin.com/in/jackcutrara"
+    ]
+  }} />
   <CanvasHero>
     <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95]">
       Jack Cutrara

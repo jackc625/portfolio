@@ -1,12 +1,24 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SkillGroup from "../components/SkillGroup.astro";
+import JsonLd from "../components/JsonLd.astro";
 ---
 
 <BaseLayout
   title="About"
   description="Learn about Jack Cutrara's background, education, and path into software engineering."
 >
+  <JsonLd schema={{
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Jack Cutrara",
+    "jobTitle": "Software Engineer",
+    "url": "https://jackcutrara.com",
+    "sameAs": [
+      "https://github.com/jackc625",
+      "https://linkedin.com/in/jackcutrara"
+    ]
+  }} />
   <!-- Page Header -->
   <section class="pt-[var(--token-space-section)] pb-[var(--token-space-3xl)] px-6 md:px-10 lg:px-16">
     <div class="max-w-[90rem] mx-auto">
