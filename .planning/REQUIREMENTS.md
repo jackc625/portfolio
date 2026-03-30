@@ -31,8 +31,8 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **PROJ-01**: Projects page with scan-friendly card grid (title, one-line description, tech tags, thumbnail per card)
 - [ ] **PROJ-02**: Cards link to individual project detail/case study pages
-- [ ] **PROJ-03**: 5-6 project slots with placeholder content structure
-- [ ] **PROJ-04**: Each project card shows tech stack tags for quick scanning
+- [x] **PROJ-03**: 5-6 project slots with placeholder content structure
+- [x] **PROJ-04**: Each project card shows tech stack tags for quick scanning
 
 ### Case Studies
 
@@ -40,7 +40,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CASE-02**: Each case study includes links to GitHub repo and/or live demo where available
 - [ ] **CASE-03**: Case study pages support embedded screenshots and visual media
 - [ ] **CASE-04**: Progressive disclosure — overview/summary visible first, technical depth on scroll
-- [ ] **CASE-05**: At least 2 fully written case studies before production deployment
+- [x] **CASE-05**: At least 2 fully written case studies before production deployment
 
 ### Resume
 
@@ -139,13 +139,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ABUT-03 | Phase 3 | Pending |
 | PROJ-01 | Phase 4 | Pending |
 | PROJ-02 | Phase 4 | Pending |
-| PROJ-03 | Phase 4 | Pending |
-| PROJ-04 | Phase 4 | Pending |
+| PROJ-03 | Phase 4 | Complete |
+| PROJ-04 | Phase 4 | Complete |
 | CASE-01 | Phase 4 | Pending |
 | CASE-02 | Phase 4 | Pending |
 | CASE-03 | Phase 4 | Pending |
 | CASE-04 | Phase 4 | Pending |
-| CASE-05 | Phase 4 | Pending |
+| CASE-05 | Phase 4 | Complete |
 | RESM-01 | Phase 3 | Pending |
 | RESM-02 | Phase 3 | Pending |
 | RESM-03 | Phase 5 | Pending |
