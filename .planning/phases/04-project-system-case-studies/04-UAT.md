@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: complete
 phase: 04-project-system-case-studies
 source: [04-01-SUMMARY.md, 04-02-SUMMARY.md, 04-03-SUMMARY.md, 04-04-SUMMARY.md]
 started: 2026-03-30T19:00:00Z
@@ -14,9 +14,10 @@ updated: 2026-03-30T19:10:00Z
 
 ### 1. Projects Page Layout
 expected: Navigate to /projects. Page shows 3 featured project cards in a responsive grid at the top, followed by a divider, then 3 more projects in an editorial list format below.
-result: issue
+result: pass (fixed)
 reported: "the divider/spacing between the grid at the top and the list below is too large"
 severity: cosmetic
+fix: "Reduced featured section pb from --token-space-section to --token-space-3xl"
 
 ### 2. Project Card Appearance
 expected: Featured project cards on /projects show a solid-color background area (no image), project title, description snippet, and tech stack tags. Hovering a card shows a title color change and subtle scale effect on the thumbnail area.
@@ -45,22 +46,12 @@ result: pass
 ## Summary
 
 total: 7
-passed: 6
-issues: 1
+passed: 7
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
 
-- truth: "Projects page shows appropriate spacing between featured card grid and editorial list"
-  status: failed
-  reason: "User reported: the divider/spacing between the grid at the top and the list below is too large"
-  severity: cosmetic
-  test: 1
-  root_cause: "Double spacing — featured cards section has pb-[var(--token-space-section)] and editorial section has py-[var(--token-space-section)], creating 10-20rem combined gap"
-  artifacts:
-    - path: "src/pages/projects.astro"
-      issue: "Line 30: pb-[var(--token-space-section)] on featured section, Line 47: py-[var(--token-space-section)] on editorial section"
-  missing:
-    - "Remove pb from featured cards section so only editorial section's pt controls the gap"
+[all resolved]
