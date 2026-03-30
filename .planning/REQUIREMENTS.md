@@ -46,7 +46,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **RESM-01**: Resume page with viewable content rendered on-page
 - [x] **RESM-02**: PDF download button above the fold
-- [ ] **RESM-03**: Print-friendly @media print stylesheet that produces clean output
+- [x] **RESM-03**: Print-friendly @media print stylesheet that produces clean output
 
 ### Contact
 
@@ -79,7 +79,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **SEOA-01**: Unique title tag and meta description per page
 - [ ] **SEOA-02**: Open Graph tags for link previews on LinkedIn, Slack, and social platforms
-- [ ] **SEOA-03**: JSON-LD structured data (Person schema on home/about, CreativeWork on project pages)
+- [x] **SEOA-03**: JSON-LD structured data (Person schema on home/about, CreativeWork on project pages)
 - [x] **SEOA-04**: Semantic HTML throughout (proper heading hierarchy, landmarks, labels)
 - [x] **SEOA-05**: Full keyboard navigation with visible focus indicators
 - [ ] **SEOA-06**: Skip-to-content link for screen reader users
@@ -148,7 +148,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CASE-05 | Phase 4 | Complete |
 | RESM-01 | Phase 3 | Complete |
 | RESM-02 | Phase 3 | Complete |
-| RESM-03 | Phase 5 | Pending |
+| RESM-03 | Phase 5 | Complete |
 | CNTC-01 | Phase 3 | Complete |
 | CNTC-02 | Phase 2 | Pending |
 | DSGN-01 | Phase 1 | Complete |
@@ -166,7 +166,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ANIM-04 | Phase 5 | Complete |
 | SEOA-01 | Phase 2 | Pending |
 | SEOA-02 | Phase 2 | Pending |
-| SEOA-03 | Phase 5 | Pending |
+| SEOA-03 | Phase 5 | Complete |
 | SEOA-04 | Phase 2 | Complete |
 | SEOA-05 | Phase 2 | Complete |
 | SEOA-06 | Phase 2 | Pending |

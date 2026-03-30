@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-30T23:41:41.117Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-03-30T23:55:11.962Z"
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 22
-  completed_plans: 19
+  completed_plans: 20
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 ## Current Position
 
 Phase: 05 (dark-mode-animations-polish) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Plan: 2 of 4
 | Phase 04 P02 | 2min | 1 tasks | 4 files |
 | Phase 05 P01 | 9min | 2 tasks | 5 files |
 | Phase 05 P02 | 13min | 3 tasks | 14 files |
+| Phase 05 P03 | 7min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,8 @@ Recent decisions affecting current work:
 - [Phase 05]: Centralized animations.ts with gsap.context() for View Transitions lifecycle management
 - [Phase 05]: data-animate attribute convention separates animation concerns from styling
 - [Phase 05]: Canvas hero per-particle depth rendering (3-layer parallax) acceptable at 400-1000 particles
+- [Phase 05]: JSON-LD placed in body slot (valid per Google docs) rather than head for Astro slot simplicity
+- [Phase 05]: Print stylesheet uses .print-only-header class pattern with data-no-print attribute for hiding elements
 
 ### Pending Todos
 
@@ -118,6 +121,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T23:41:41.108Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-30T23:55:11.956Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
