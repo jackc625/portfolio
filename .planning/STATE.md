@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-30T17:04:42.430Z"
+status: Executing
+stopped_at: Phase 4 Wave 1 complete
+last_updated: "2026-03-30T18:10:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 14
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -58,6 +58,7 @@ Plan: Not started
 | Phase 03 P02 | 6min | 3 tasks | 4 files |
 | Phase 03 P05 | 3min | 2 tasks | 5 files |
 | Phase 03 P04 | 3min | 2 tasks | 2 files |
+| Phase 04 P01 | 4min | 1 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,9 @@ Recent decisions affecting current work:
 - [Phase 03]: SkillGroup uses flex-wrap pill/tag chips with subtle borders instead of card treatment
 - [Phase 03]: About page uses asymmetric 1fr/2fr grid layout matching shiyunlu.com spatial patterns
 - [Phase 03]: Inner page pattern: mono uppercase label + content in asymmetric grid sections
+- [Phase 04]: All 6 projects omit thumbnail field entirely, using solid-color fallback per D-11/D-12
+- [Phase 04]: Case study MDX uses H2 headings as section dividers for content portability
+- [Phase 04]: Both full case studies include optional Results section per D-08
 
 ### Pending Todos
 
@@ -103,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T17:04:42.424Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-project-system-case-studies/04-CONTEXT.md
+Last session: 2026-03-30T18:10:00.000Z
+Stopped at: Phase 4 Wave 1 complete
+Resume file: None
