@@ -108,10 +108,13 @@ Plans:
   3. Page sections animate in with subtle scroll-triggered reveals, and route changes use smooth page transitions
   4. Interactive elements (buttons, cards, links) have visible hover states and micro-interactions
   5. Resume page prints cleanly via browser print with a dedicated @media print stylesheet, and JSON-LD structured data (Person + CreativeWork schemas) is present in page source
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md -- Theme system: light tokens, no-flash detection, ThemeToggle component, Header integration, canvas theme awareness
+- [ ] 05-02-PLAN.md -- GSAP scroll animations, page transitions, hover micro-interactions, canvas hero enhancements
+- [ ] 05-03-PLAN.md -- Resume print stylesheet and JSON-LD structured data (Person + CreativeWork)
+- [ ] 05-04-PLAN.md -- Human visual verification of complete Phase 5 implementation
 **UI hint**: yes
 
 ### Phase 6: Performance Audit & Deployment
@@ -140,5 +143,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 | 2. Site Shell & Navigation | 3/3 | Complete | - |
 | 3. Core Pages | 2/6 | In Progress|  |
 | 4. Project System & Case Studies | 1/4 | In Progress|  |
-| 5. Dark Mode, Animations & Polish | 0/? | Not started | - |
+| 5. Dark Mode, Animations & Polish | 0/4 | Not started | - |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |
