@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "./ThemeToggle.astro";
+
 const currentPath = Astro.url.pathname;
 const navLinks = [
   { href: "/", label: "Home" },
@@ -16,7 +18,7 @@ const navLinks = [
   <div class="absolute inset-0 bg-bg-primary/80 backdrop-blur-md"></div>
   <nav
     aria-label="Main navigation"
-    class="relative grid grid-cols-[1fr_auto] md:grid-cols-[auto_1fr_auto] items-center h-14 px-6 md:px-10 lg:px-16 max-w-[90rem] mx-auto"
+    class="relative grid grid-cols-[1fr_auto_auto] md:grid-cols-[auto_1fr_auto] items-center gap-2 md:gap-0 h-14 px-6 md:px-10 lg:px-16 max-w-[90rem] mx-auto"
   >
     <a
       href="/"
@@ -52,7 +54,10 @@ const navLinks = [
           );
         })
       }
+      <li><ThemeToggle /></li>
     </ul>
+
+    <div class="md:hidden"><ThemeToggle /></div>
 
     <button
       id="menu-trigger"

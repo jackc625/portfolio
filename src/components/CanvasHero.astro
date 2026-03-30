@@ -41,13 +41,16 @@
     let height = window.innerHeight;
     let particles: Particle[] = [];
 
-    // Extract background color RGB for trail effect
-    // Fallback to near-black matching --token-bg-primary
-    const bgColor = getComputedStyle(document.documentElement)
-      .getPropertyValue('--token-bg-primary')
-      .trim();
-    // Use a near-black RGBA for the trail — matches the dark bg
-    const trailColor = 'rgba(10, 10, 14, 0.03)';
+    // Theme-aware trail color — adapts when theme switches (D-18)
+    function getTrailColor(): string {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      return isLight ? 'rgba(246, 243, 235, 0.03)' : 'rgba(10, 10, 14, 0.03)';
+    }
+
+    function getOpaqueTrailColor(): string {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      return isLight ? 'rgba(246, 243, 235, 1)' : 'rgba(10, 10, 14, 1)';
+    }
 
     // Extract accent color for stroke, or fallback
     const accentEl = document.createElement('div');
@@ -92,7 +95,7 @@
 
     function draw() {
       // Semi-transparent fill creates trail effect
-      ctx!.fillStyle = trailColor;
+      ctx!.fillStyle = getTrailColor();
       ctx!.fillRect(0, 0, width, height);
 
       ctx!.strokeStyle = strokeColor;
@@ -125,7 +128,7 @@
 
     function drawStaticFrame() {
       // For reduced-motion users: draw a single static noise-based pattern
-      ctx!.fillStyle = trailColor.replace('0.03', '1');
+      ctx!.fillStyle = getOpaqueTrailColor();
       ctx!.fillRect(0, 0, width, height);
 
       ctx!.strokeStyle = strokeColor;
@@ -174,6 +177,11 @@
   // View Transitions lifecycle — initialize on page load, clean up before navigation
   let cleanup: (() => void) | undefined;
 
+  function handleThemeChange() {
+    cleanup?.();
+    cleanup = initCanvas() || undefined;
+  }
+
   document.addEventListener('astro:page-load', () => {
     cleanup?.();
     cleanup = initCanvas() || undefined;
@@ -183,4 +191,6 @@
     cleanup?.();
     cleanup = undefined;
   });
+
+  window.addEventListener('theme-changed', handleThemeChange);
 </script>
