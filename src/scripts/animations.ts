@@ -59,6 +59,8 @@ export async function initAnimations() {
     // 3. SplitText display headings (D-11)
     // Line-by-line slide-up reveal on display-sized headings only
     gsap.utils.toArray<HTMLElement>('[data-animate="split-text"]').forEach((el) => {
+      // Parent has CSS opacity:0 — must override before animating child lines
+      gsap.set(el, { opacity: 1 });
       SplitText.create(el, {
         type: 'lines',
         mask: 'lines',
