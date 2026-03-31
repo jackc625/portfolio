@@ -145,7 +145,7 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 |-------|----------------|--------|-----------|
 | 1. Foundation & Design System | 5/5 | Complete | - |
 | 2. Site Shell & Navigation | 3/3 | Complete | - |
-| 3. Core Pages | 2/6 | In Progress|  |
-| 4. Project System & Case Studies | 1/4 | In Progress|  |
+| 3. Core Pages | 2/6 | In Progress |  |
+| 4. Project System & Case Studies | 1/4 | In Progress |  |
 | 5. Dark Mode, Animations & Polish | 6/6 | Complete | 2026-03-31 |
 | 6. Performance Audit & Deployment | 0/3 | Not started | - |
