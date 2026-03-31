@@ -9,14 +9,14 @@ const { title, skills } = Astro.props;
 
 <div class="mb-[var(--token-space-xl)]">
   <h3
-    class="font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.08em] mb-[var(--token-space-md)]"
+    class="text-text-muted mb-[var(--token-space-md)] font-mono text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase"
   >
     {title}
   </h3>
   <div class="flex flex-wrap gap-[var(--token-space-sm)]">
     {
       skills.map((skill) => (
-        <span class="font-body text-[length:var(--token-text-sm)] text-text-primary border border-border/60 rounded-full px-3 py-1 transition-colors duration-200 hover:border-border-hover hover:text-accent">
+        <span class="font-body text-text-primary border-border/60 hover:border-border-hover hover:text-accent rounded-full border px-3 py-1 text-[length:var(--token-text-sm)] transition-colors duration-200">
           {skill}
         </span>
       ))

@@ -3,5 +3,7 @@ dist/
 node_modules/
 pnpm-lock.yaml
 .planning/
+.claude/
+.ship-safe/
 CLAUDE.md
 PRD.md

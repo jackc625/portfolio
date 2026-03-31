@@ -11,14 +11,27 @@ const { src, alt } = Astro.props;
 ---
 
 <figure class="my-[var(--token-space-xl)]">
-  {typeof src === "string" ? (
-    <img src={src} alt={alt} class="w-full rounded aspect-video object-cover" loading="lazy" />
-  ) : (
-    <Image src={src} alt={alt} class="w-full rounded aspect-video object-cover" />
-  )}
-  {alt && (
-    <figcaption class="font-mono text-[length:var(--token-text-sm)] text-text-muted mt-[var(--token-space-sm)]">
-      {alt}
-    </figcaption>
-  )}
+  {
+    typeof src === "string" ? (
+      <img
+        src={src}
+        alt={alt}
+        class="aspect-video w-full rounded object-cover"
+        loading="lazy"
+      />
+    ) : (
+      <Image
+        src={src}
+        alt={alt}
+        class="aspect-video w-full rounded object-cover"
+      />
+    )
+  }
+  {
+    alt && (
+      <figcaption class="text-text-muted mt-[var(--token-space-sm)] font-mono text-[length:var(--token-text-sm)]">
+        {alt}
+      </figcaption>
+    )
+  }
 </figure>

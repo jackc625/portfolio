@@ -8,58 +8,83 @@ import JsonLd from "../components/JsonLd.astro";
   title="About"
   description="Learn about Jack Cutrara's background, education, and path into software engineering."
 >
-  <JsonLd schema={{
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Jack Cutrara",
-    "jobTitle": "Software Engineer",
-    "url": "https://jackcutrara.com",
-    "sameAs": [
-      "https://github.com/jackc625",
-      "https://linkedin.com/in/jackcutrara"
-    ]
-  }} />
+  <JsonLd
+    schema={{
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Jack Cutrara",
+      jobTitle: "Software Engineer",
+      url: "https://jackcutrara.com",
+      sameAs: [
+        "https://github.com/jackc625",
+        "https://linkedin.com/in/jackcutrara",
+      ],
+    }}
+  />
   <!-- Page Header -->
-  <section class="pt-[var(--token-space-section)] pb-[var(--token-space-3xl)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-[90rem] mx-auto">
-      <p class="font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.1em] mb-[var(--token-space-lg)]">
+  <section
+    class="px-6 pt-[var(--token-space-section)] pb-[var(--token-space-3xl)] md:px-10 lg:px-16"
+  >
+    <div class="mx-auto max-w-[90rem]">
+      <p
+        class="text-text-muted mb-[var(--token-space-lg)] font-mono text-[length:var(--token-text-sm)] tracking-[0.1em] uppercase"
+      >
         About
       </p>
-      <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95] max-w-4xl">
+      <h1
+        data-animate="split-text"
+        class="font-display max-w-4xl text-[length:var(--token-text-display)] leading-[0.95] tracking-[-0.03em]"
+      >
         I build things that work.
       </h1>
     </div>
   </section>
 
   <!-- Narrative Section -->
-  <section aria-label="Background" data-animate="section" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-[var(--token-space-3xl)]">
+  <section
+    aria-label="Background"
+    data-animate="section"
+    class="px-6 pb-[var(--token-space-section)] md:px-10 lg:px-16"
+  >
+    <div
+      class="mx-auto grid max-w-[90rem] grid-cols-1 gap-[var(--token-space-3xl)] lg:grid-cols-[1fr_2fr]"
+    >
       <!-- Left column: label -->
       <div>
-        <h2 class="font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.08em]">
+        <h2
+          class="text-text-muted font-mono text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase"
+        >
           Background
         </h2>
       </div>
 
       <!-- Right column: narrative -->
       <div class="max-w-2xl">
-        <p class="font-body text-[length:var(--token-text-heading)] text-text-primary leading-[1.5] mb-[var(--token-space-xl)]">
+        <p
+          class="font-body text-text-primary mb-[var(--token-space-xl)] text-[length:var(--token-text-heading)] leading-[1.5]"
+        >
           I'm Jack Cutrara, a software engineer based in New York. I got into
-          programming because I wanted to build things &mdash; not just read about
-          them.
+          programming because I wanted to build things &mdash; not just read
+          about them.
         </p>
-        <p class="font-body text-[length:var(--token-text-base)] text-text-secondary leading-[1.7] mb-[var(--token-space-lg)]">
+        <p
+          class="font-body text-text-secondary mb-[var(--token-space-lg)] text-[length:var(--token-text-base)] leading-[1.7]"
+        >
           I studied computer science at university, where I discovered that the
           best way to learn was to ship real projects. That mindset stuck. Every
           project in my portfolio exists because I saw a problem and decided to
           solve it.
         </p>
-        <p class="font-body text-[length:var(--token-text-base)] text-text-secondary leading-[1.7] mb-[var(--token-space-lg)]">
+        <p
+          class="font-body text-text-secondary mb-[var(--token-space-lg)] text-[length:var(--token-text-base)] leading-[1.7]"
+        >
           Outside of code, I enjoy exploring new technologies, contributing to
           open source, and finding creative solutions to everyday problems. I'm
           drawn to work that's technically interesting and meaningfully useful.
         </p>
-        <p class="font-body text-[length:var(--token-text-base)] text-text-primary leading-[1.7]">
+        <p
+          class="font-body text-text-primary text-[length:var(--token-text-base)] leading-[1.7]"
+        >
           I'm currently looking for a software engineering role where I can
           contribute to a team building something that matters.
         </p>
@@ -69,25 +94,43 @@ import JsonLd from "../components/JsonLd.astro";
 
   <!-- Divider -->
   <div class="px-6 md:px-10 lg:px-16">
-    <div class="max-w-[90rem] mx-auto border-t border-border/40"></div>
+    <div class="border-border/40 mx-auto max-w-[90rem] border-t"></div>
   </div>
 
   <!-- Skills Section -->
-  <section aria-label="Skills" data-animate="section" class="py-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-[var(--token-space-3xl)]">
+  <section
+    aria-label="Skills"
+    data-animate="section"
+    class="px-6 py-[var(--token-space-section)] md:px-10 lg:px-16"
+  >
+    <div
+      class="mx-auto grid max-w-[90rem] grid-cols-1 gap-[var(--token-space-3xl)] lg:grid-cols-[1fr_2fr]"
+    >
       <!-- Left column: label -->
       <div>
-        <h2 class="font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.08em]">
+        <h2
+          class="text-text-muted font-mono text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase"
+        >
           What I work with
         </h2>
       </div>
 
       <!-- Right column: skill groups -->
-      <div data-animate-container="stagger" class="grid grid-cols-1 md:grid-cols-2 gap-x-[var(--token-space-xl)] gap-y-[var(--token-space-sm)]">
+      <div
+        data-animate-container="stagger"
+        class="grid grid-cols-1 gap-x-[var(--token-space-xl)] gap-y-[var(--token-space-sm)] md:grid-cols-2"
+      >
         <div data-animate="stagger-item">
           <SkillGroup
             title="Languages"
-            skills={["TypeScript", "JavaScript", "Python", "SQL", "HTML", "CSS"]}
+            skills={[
+              "TypeScript",
+              "JavaScript",
+              "Python",
+              "SQL",
+              "HTML",
+              "CSS",
+            ]}
           />
         </div>
         <div data-animate="stagger-item">

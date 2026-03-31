@@ -10,27 +10,50 @@ import ResumeEntry from "../components/ResumeEntry.astro";
 >
   <!-- Print-only header (visible only in @media print) -->
   <div class="print-only-header">
-    <p class="font-display" style="font-size:16pt;font-weight:700;">Jack Cutrara — Software Engineer</p>
-    <p class="font-mono" style="font-size:9pt;color:#666;margin-top:4px;">jack@jackcutrara.com | github.com/jackc625 | linkedin.com/in/jackcutrara</p>
+    <p class="font-display" style="font-size:16pt;font-weight:700;">
+      Jack Cutrara — Software Engineer
+    </p>
+    <p class="font-mono" style="font-size:9pt;color:#666;margin-top:4px;">
+      jack@jackcutrara.com | github.com/jackc625 | linkedin.com/in/jackcutrara
+    </p>
   </div>
 
   <!-- Page Header with PDF Download -->
-  <section class="py-[var(--token-space-section)] pb-[var(--token-space-2xl)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-[90rem] mx-auto">
-      <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]">Resume</h1>
+  <section
+    class="px-6 py-[var(--token-space-section)] pb-[var(--token-space-2xl)] md:px-10 lg:px-16"
+  >
+    <div class="mx-auto max-w-[90rem]">
+      <h1
+        data-animate="split-text"
+        class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]"
+      >
+        Resume
+      </h1>
       <div data-no-print class="mt-[var(--token-space-lg)]">
-        <CTAButton href="/resume.pdf" label="Download PDF" download={true} showDownloadIcon={true} />
+        <CTAButton
+          href="/resume.pdf"
+          label="Download PDF"
+          download={true}
+          showDownloadIcon={true}
+        />
       </div>
     </div>
   </section>
 
   <!-- Resume Content -->
-  <section aria-label="Resume summary" data-animate="section" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-3xl mx-auto">
-
+  <section
+    aria-label="Resume summary"
+    data-animate="section"
+    class="px-6 pb-[var(--token-space-section)] md:px-10 lg:px-16"
+  >
+    <div class="mx-auto max-w-3xl">
       <!-- Experience -->
       <div class="mb-[var(--token-space-2xl)]">
-        <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold text-text-primary mb-[var(--token-space-lg)] pb-[var(--token-space-sm)] border-b border-border/40">Experience</h2>
+        <h2
+          class="font-body text-text-primary border-border/40 mb-[var(--token-space-lg)] border-b pb-[var(--token-space-sm)] text-[length:var(--token-text-heading)] font-semibold"
+        >
+          Experience
+        </h2>
         <ResumeEntry
           title="Software Engineering Intern"
           organization="Tech Company"
@@ -54,7 +77,11 @@ import ResumeEntry from "../components/ResumeEntry.astro";
 
       <!-- Education -->
       <div class="mb-[var(--token-space-2xl)]">
-        <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold text-text-primary mb-[var(--token-space-lg)] pb-[var(--token-space-sm)] border-b border-border/40">Education</h2>
+        <h2
+          class="font-body text-text-primary border-border/40 mb-[var(--token-space-lg)] border-b pb-[var(--token-space-sm)] text-[length:var(--token-text-heading)] font-semibold"
+        >
+          Education
+        </h2>
         <ResumeEntry
           title="B.S. Computer Science"
           organization="University"
@@ -65,14 +92,34 @@ import ResumeEntry from "../components/ResumeEntry.astro";
 
       <!-- Technical Skills -->
       <div>
-        <h2 class="font-body text-[length:var(--token-text-heading)] font-semibold text-text-primary mb-[var(--token-space-lg)] pb-[var(--token-space-sm)] border-b border-border/40">Technical Skills</h2>
+        <h2
+          class="font-body text-text-primary border-border/40 mb-[var(--token-space-lg)] border-b pb-[var(--token-space-sm)] text-[length:var(--token-text-heading)] font-semibold"
+        >
+          Technical Skills
+        </h2>
         <div class="flex flex-wrap gap-[var(--token-space-sm)]">
-          {["TypeScript", "JavaScript", "Python", "React", "Next.js", "Astro", "Node.js", "PostgreSQL", "Docker", "Git", "REST APIs", "CI/CD"].map((skill) => (
-            <span class="font-mono text-[length:var(--token-text-sm)] text-text-secondary border border-border/40 rounded px-[var(--token-space-sm)] py-1">{skill}</span>
-          ))}
+          {
+            [
+              "TypeScript",
+              "JavaScript",
+              "Python",
+              "React",
+              "Next.js",
+              "Astro",
+              "Node.js",
+              "PostgreSQL",
+              "Docker",
+              "Git",
+              "REST APIs",
+              "CI/CD",
+            ].map((skill) => (
+              <span class="text-text-secondary border-border/40 rounded border px-[var(--token-space-sm)] py-1 font-mono text-[length:var(--token-text-sm)]">
+                {skill}
+              </span>
+            ))
+          }
         </div>
       </div>
-
     </div>
   </section>
 </BaseLayout>

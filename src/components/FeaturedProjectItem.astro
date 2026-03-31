@@ -10,20 +10,23 @@ const { title, tagline, techStack, slug } = Astro.props;
 
 <a
   href={`/projects/${slug}`}
-  class="group block border-b border-border py-[var(--token-space-lg)]
-         transition-colors duration-200
-         hover:border-border-hover
-         focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 focus-visible:rounded"
+  class="group border-border hover:border-border-hover focus-visible:outline-accent block border-b py-[var(--token-space-lg)] transition-colors duration-200 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4"
 >
   <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-    <span class="font-display text-[length:var(--token-text-heading)] font-normal text-text-primary group-hover:text-accent transition-colors duration-200">
+    <span
+      class="font-display text-text-primary group-hover:text-accent text-[length:var(--token-text-heading)] font-normal transition-colors duration-200"
+    >
       {title}
     </span>
-    <span class="font-body text-[length:var(--token-text-sm)] text-text-secondary mt-1 md:mt-0">
+    <span
+      class="font-body text-text-secondary mt-1 text-[length:var(--token-text-sm)] md:mt-0"
+    >
       {tagline}
     </span>
   </div>
-  <span class="font-mono text-[length:var(--token-text-sm)] text-text-muted mt-[var(--token-space-sm)] block">
+  <span
+    class="text-text-muted mt-[var(--token-space-sm)] block font-mono text-[length:var(--token-text-sm)]"
+  >
     {techStack.join(", ")}
   </span>
 </a>

@@ -11,33 +11,41 @@ const { project } = Astro.props;
 
 <a
   href={`/projects/${project.id}`}
-  class="project-card-link group block hover:shadow-[0_4px_20px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 transition-all duration-300 focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4 focus-visible:rounded"
+  class="project-card-link group focus-visible:outline-accent block transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(0,0,0,0.15)] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4"
 >
   <!-- Thumbnail area: 16:9 aspect ratio -->
   <div class="overflow-hidden rounded">
-    {project.data.thumbnail ? (
-      <Image
-        src={project.data.thumbnail}
-        alt={`${project.data.title} thumbnail`}
-        class="w-full aspect-video object-cover group-hover:scale-[1.02] transition-transform duration-300"
-      />
-    ) : (
-      <div class="w-full aspect-video bg-bg-secondary flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-300">
-        <span class="font-display text-[length:var(--token-text-heading)] text-text-muted">
-          {project.data.title}
-        </span>
-      </div>
-    )}
+    {
+      project.data.thumbnail ? (
+        <Image
+          src={project.data.thumbnail}
+          alt={`${project.data.title} thumbnail`}
+          class="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+        />
+      ) : (
+        <div class="bg-bg-secondary flex aspect-video w-full items-center justify-center transition-transform duration-300 group-hover:scale-[1.02]">
+          <span class="font-display text-text-muted text-[length:var(--token-text-heading)]">
+            {project.data.title}
+          </span>
+        </div>
+      )
+    }
   </div>
   <!-- Content below thumbnail -->
   <div class="pt-[var(--token-space-lg)]">
-    <h3 class="font-display text-[length:var(--token-text-heading)] text-text-primary group-hover:text-accent transition-colors duration-200">
+    <h3
+      class="font-display text-text-primary group-hover:text-accent text-[length:var(--token-text-heading)] transition-colors duration-200"
+    >
       {project.data.title}
     </h3>
-    <p class="font-body text-[length:var(--token-text-sm)] text-text-secondary mt-[var(--token-space-sm)] line-clamp-1">
+    <p
+      class="font-body text-text-secondary mt-[var(--token-space-sm)] line-clamp-1 text-[length:var(--token-text-sm)]"
+    >
       {project.data.tagline}
     </p>
-    <span class="font-mono text-[length:var(--token-text-sm)] text-text-muted mt-[var(--token-space-sm)] block">
+    <span
+      class="text-text-muted mt-[var(--token-space-sm)] block font-mono text-[length:var(--token-text-sm)]"
+    >
       {project.data.techStack.join(", ")}
     </span>
   </div>

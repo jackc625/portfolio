@@ -6,10 +6,10 @@
 
 <button
   type="button"
-  class="theme-toggle w-10 h-10 flex items-center justify-center text-text-muted hover:text-text-primary transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none focus-visible:rounded"
+  class="theme-toggle text-text-muted hover:text-text-primary focus-visible:ring-accent flex h-10 w-10 items-center justify-center transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
   aria-label="Switch to light mode"
 >
-  <span class="relative w-5 h-5">
+  <span class="relative h-5 w-5">
     <!-- Sun icon (shown in dark mode) -->
     <svg
       class="theme-icon theme-icon-sun absolute inset-0"
@@ -23,15 +23,15 @@
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
     </svg>
     <!-- Moon icon (shown in light mode) -->
     <svg
@@ -46,7 +46,7 @@
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
     </svg>
   </span>
 </button>
@@ -56,12 +56,16 @@
   .theme-icon-sun {
     opacity: 1;
     transform: rotate(0deg) scale(1);
-    transition: opacity 300ms ease, transform 300ms ease;
+    transition:
+      opacity 300ms ease,
+      transform 300ms ease;
   }
   .theme-icon-moon {
     opacity: 0;
     transform: rotate(-180deg) scale(0.8);
-    transition: opacity 300ms ease, transform 300ms ease;
+    transition:
+      opacity 300ms ease,
+      transform 300ms ease;
   }
   [data-theme="light"] .theme-icon-sun {
     opacity: 0;
@@ -75,43 +79,45 @@
 
 <script>
   function initThemeToggle() {
-    const buttons = document.querySelectorAll<HTMLButtonElement>('.theme-toggle');
+    const buttons =
+      document.querySelectorAll<HTMLButtonElement>(".theme-toggle");
     if (buttons.length === 0) return;
 
     function updateLabels() {
-      const isDark = !document.documentElement.hasAttribute('data-theme') ||
-                     document.documentElement.getAttribute('data-theme') !== 'light';
-      const label = isDark ? 'Switch to light mode' : 'Switch to dark mode';
-      buttons.forEach(btn => btn.setAttribute('aria-label', label));
+      const isDark =
+        !document.documentElement.hasAttribute("data-theme") ||
+        document.documentElement.getAttribute("data-theme") !== "light";
+      const label = isDark ? "Switch to light mode" : "Switch to dark mode";
+      buttons.forEach((btn) => btn.setAttribute("aria-label", label));
     }
 
     function handleToggle() {
       const html = document.documentElement;
-      const isCurrentlyLight = html.getAttribute('data-theme') === 'light';
+      const isCurrentlyLight = html.getAttribute("data-theme") === "light";
 
       // Add transition class for smooth crossfade (D-04)
-      html.classList.add('theme-transitioning');
+      html.classList.add("theme-transitioning");
 
       if (isCurrentlyLight) {
-        html.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'dark');
+        html.removeAttribute("data-theme");
+        localStorage.setItem("theme", "dark");
       } else {
-        html.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
+        html.setAttribute("data-theme", "light");
+        localStorage.setItem("theme", "light");
       }
 
       updateLabels();
 
       // Remove transition class after animation
-      setTimeout(() => html.classList.remove('theme-transitioning'), 350);
+      setTimeout(() => html.classList.remove("theme-transitioning"), 350);
 
       // Dispatch custom event for canvas reinitialization
-      window.dispatchEvent(new CustomEvent('theme-changed'));
+      window.dispatchEvent(new CustomEvent("theme-changed"));
     }
 
-    buttons.forEach(btn => btn.addEventListener('click', handleToggle));
+    buttons.forEach((btn) => btn.addEventListener("click", handleToggle));
     updateLabels();
   }
 
-  document.addEventListener('astro:page-load', initThemeToggle);
+  document.addEventListener("astro:page-load", initThemeToggle);
 </script>

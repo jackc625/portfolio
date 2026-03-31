@@ -6,10 +6,17 @@ interface Props {
 const { label } = Astro.props;
 ---
 
-<section aria-label={label} class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
-  <div class="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-[var(--token-space-3xl)]">
+<section
+  aria-label={label}
+  class="px-6 pb-[var(--token-space-section)] md:px-10 lg:px-16"
+>
+  <div
+    class="mx-auto grid max-w-[90rem] grid-cols-1 gap-[var(--token-space-3xl)] lg:grid-cols-[1fr_2fr]"
+  >
     <div>
-      <p class="font-mono text-[length:var(--token-text-sm)] text-text-muted uppercase tracking-[0.08em]">
+      <p
+        class="text-text-muted font-mono text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase"
+      >
         {label}
       </p>
     </div>

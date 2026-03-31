@@ -8,26 +8,36 @@ import JsonLd from "../components/JsonLd.astro";
   title=""
   description="Software engineer who builds real projects. Explore my work, background, and how to get in touch."
 >
-  <JsonLd schema={{
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Jack Cutrara",
-    "jobTitle": "Software Engineer",
-    "url": "https://jackcutrara.com",
-    "sameAs": [
-      "https://github.com/jackc625",
-      "https://linkedin.com/in/jackcutrara"
-    ]
-  }} />
+  <JsonLd
+    schema={{
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: "Jack Cutrara",
+      jobTitle: "Software Engineer",
+      url: "https://jackcutrara.com",
+      sameAs: [
+        "https://github.com/jackc625",
+        "https://linkedin.com/in/jackcutrara",
+      ],
+    }}
+  />
   <CanvasHero>
-    <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95]">
+    <h1
+      data-animate="split-text"
+      class="font-display text-[length:var(--token-text-display)] leading-[0.95] tracking-[-0.03em]"
+    >
       Jack Cutrara
     </h1>
-    <p class="font-body text-[length:var(--token-text-heading)] text-text-secondary uppercase tracking-[0.15em] mt-[var(--token-space-lg)]">
+    <p
+      class="font-body text-text-secondary mt-[var(--token-space-lg)] text-[length:var(--token-text-heading)] tracking-[0.15em] uppercase"
+    >
       Software Engineer
     </p>
-    <p class="font-body text-[length:var(--token-text-base)] text-text-muted mt-[var(--token-space-md)] max-w-xl leading-relaxed">
-      I build things that work. Full-stack developer with a bias for shipping real projects and learning by doing.
+    <p
+      class="font-body text-text-muted mt-[var(--token-space-md)] max-w-xl text-[length:var(--token-text-base)] leading-relaxed"
+    >
+      I build things that work. Full-stack developer with a bias for shipping
+      real projects and learning by doing.
     </p>
   </CanvasHero>
 </BaseLayout>

@@ -4,15 +4,23 @@
 // Canvas is decorative (aria-hidden), content overlays via <slot />
 ---
 
-<section class="relative w-full h-screen overflow-hidden" aria-label="Introduction">
-  <canvas id="hero-canvas" class="absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
-  <div class="relative z-10 flex flex-col justify-end h-full pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
+<section
+  class="relative h-screen w-full overflow-hidden"
+  aria-label="Introduction"
+>
+  <canvas
+    id="hero-canvas"
+    class="absolute inset-0 h-full w-full"
+    aria-hidden="true"></canvas>
+  <div
+    class="relative z-10 flex h-full flex-col justify-end px-6 pb-[var(--token-space-section)] md:px-10 lg:px-16"
+  >
     <slot />
   </div>
 </section>
 
 <script>
-  import { createNoise2D } from 'simplex-noise';
+  import { createNoise2D } from "simplex-noise";
 
   interface Particle {
     x: number;
@@ -25,11 +33,13 @@
   const depthValues = [0.5, 0.75, 1.0];
 
   function initCanvas(): (() => void) | undefined {
-    const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
+    const canvas = document.getElementById(
+      "hero-canvas",
+    ) as HTMLCanvasElement | null;
     if (!canvas) return undefined;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return undefined;
-    const section = canvas.closest('section');
+    const section = canvas.closest("section");
     if (!section) return undefined;
 
     const noise2D = createNoise2D();
@@ -60,25 +70,27 @@
     }
 
     // Only add mouse tracking on hover-capable devices
-    const hasHover = window.matchMedia('(hover: hover)').matches;
+    const hasHover = window.matchMedia("(hover: hover)").matches;
     if (hasHover) {
-      section.addEventListener('mousemove', onMouseMove);
+      section.addEventListener("mousemove", onMouseMove);
     }
 
     // Theme-aware trail color — adapts when theme switches (D-18)
     function getTrailColor(): string {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      return isLight ? 'rgba(246, 243, 235, 0.03)' : 'rgba(10, 10, 14, 0.03)';
+      const isLight =
+        document.documentElement.getAttribute("data-theme") === "light";
+      return isLight ? "rgba(246, 243, 235, 0.03)" : "rgba(10, 10, 14, 0.03)";
     }
 
     function getOpaqueTrailColor(): string {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      return isLight ? 'rgba(246, 243, 235, 1)' : 'rgba(10, 10, 14, 1)';
+      const isLight =
+        document.documentElement.getAttribute("data-theme") === "light";
+      return isLight ? "rgba(246, 243, 235, 1)" : "rgba(10, 10, 14, 1)";
     }
 
     // Extract accent color for stroke, or fallback
-    const accentEl = document.createElement('div');
-    accentEl.style.color = 'var(--token-accent)';
+    const accentEl = document.createElement("div");
+    accentEl.style.color = "var(--token-accent)";
     document.body.appendChild(accentEl);
     const computedAccent = getComputedStyle(accentEl).color;
     document.body.removeChild(accentEl);
@@ -87,7 +99,11 @@
     function parseColor(color: string): { r: number; g: number; b: number } {
       const match = color.match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
       if (match) {
-        return { r: parseInt(match[1]), g: parseInt(match[2]), b: parseInt(match[3]) };
+        return {
+          r: parseInt(match[1]),
+          g: parseInt(match[2]),
+          b: parseInt(match[3]),
+        };
       }
       // Fallback: muted blue matching accent token
       return { r: 130, g: 150, b: 220 };
@@ -101,8 +117,8 @@
       height = window.innerHeight;
       canvas!.width = width * dpr;
       canvas!.height = height * dpr;
-      canvas!.style.width = width + 'px';
-      canvas!.style.height = height + 'px';
+      canvas!.style.width = width + "px";
+      canvas!.style.height = height + "px";
       ctx!.scale(dpr, dpr);
       initParticles();
     }
@@ -112,7 +128,8 @@
       for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * width;
         const y = Math.random() * height;
-        const depth = depthValues[Math.floor(Math.random() * depthValues.length)];
+        const depth =
+          depthValues[Math.floor(Math.random() * depthValues.length)];
         particles.push({ x, y, prevX: x, prevY: y, depth });
       }
     }
@@ -127,7 +144,10 @@
         p.prevX = p.x;
         p.prevY = p.y;
 
-        let angle = noise2D(p.x * noiseScale, p.y * noiseScale + time * 0.0001) * Math.PI * 2;
+        let angle =
+          noise2D(p.x * noiseScale, p.y * noiseScale + time * 0.0001) *
+          Math.PI *
+          2;
 
         // Mouse influence (D-24): particles near cursor are repelled away
         const dx = mouseX - p.x;
@@ -180,7 +200,8 @@
       for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * width;
         const y = Math.random() * height;
-        const depth = depthValues[Math.floor(Math.random() * depthValues.length)];
+        const depth =
+          depthValues[Math.floor(Math.random() * depthValues.length)];
         const noiseVal = noise2D(x * noiseScale, y * noiseScale);
         const opacity = Math.abs(noiseVal) * 0.3 * depth;
 
@@ -194,7 +215,9 @@
     // Initialize
     resize();
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (prefersReducedMotion) {
       drawStaticFrame();
     } else {
@@ -208,14 +231,14 @@
         drawStaticFrame();
       }
     };
-    window.addEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
 
     // Return cleanup function for View Transitions
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener("resize", onResize);
       if (hasHover) {
-        section.removeEventListener('mousemove', onMouseMove);
+        section.removeEventListener("mousemove", onMouseMove);
       }
     };
   }
@@ -228,15 +251,15 @@
     cleanup = initCanvas() || undefined;
   }
 
-  document.addEventListener('astro:page-load', () => {
+  document.addEventListener("astro:page-load", () => {
     cleanup?.();
     cleanup = initCanvas() || undefined;
   });
 
-  document.addEventListener('astro:before-preparation', () => {
+  document.addEventListener("astro:before-preparation", () => {
     cleanup?.();
     cleanup = undefined;
   });
 
-  window.addEventListener('theme-changed', handleThemeChange);
+  window.addEventListener("theme-changed", handleThemeChange);
 </script>

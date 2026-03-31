@@ -22,108 +22,130 @@ const { project, nextProject } = Astro.props;
 const { Content } = await render(project);
 ---
 
-<BaseLayout
-  title={project.data.title}
-  description={project.data.description}
->
-  <JsonLd schema={{
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    "name": project.data.title,
-    "description": project.data.tagline,
-    "url": `https://jackcutrara.com/projects/${project.id}`,
-    "author": {
-      "@type": "Person",
-      "name": "Jack Cutrara"
-    },
-    "keywords": project.data.techStack.join(", "),
-    ...(project.data.githubUrl ? {
-      "codeRepository": project.data.githubUrl
-    } : {}),
-    ...(project.data.demoUrl ? {
-      "url": project.data.demoUrl
-    } : {})
-  }} />
+<BaseLayout title={project.data.title} description={project.data.description}>
+  <JsonLd
+    schema={{
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      name: project.data.title,
+      description: project.data.tagline,
+      url: `https://jackcutrara.com/projects/${project.id}`,
+      author: {
+        "@type": "Person",
+        name: "Jack Cutrara",
+      },
+      keywords: project.data.techStack.join(", "),
+      ...(project.data.githubUrl
+        ? {
+            codeRepository: project.data.githubUrl,
+          }
+        : {}),
+      ...(project.data.demoUrl
+        ? {
+            url: project.data.demoUrl,
+          }
+        : {}),
+    }}
+  />
   <!-- Hero Section -->
-  <section class="pt-[var(--token-space-section)] pb-[var(--token-space-2xl)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-[90rem] mx-auto">
+  <section
+    class="px-6 pt-[var(--token-space-section)] pb-[var(--token-space-2xl)] md:px-10 lg:px-16"
+  >
+    <div class="mx-auto max-w-[90rem]">
       <!-- Back link -->
       <a
         href="/projects"
-        class="group inline-flex items-center gap-[var(--token-space-sm)] font-mono text-[length:var(--token-text-sm)] text-text-muted hover:text-accent transition-colors duration-200 mb-[var(--token-space-2xl)]"
+        class="group text-text-muted hover:text-accent mb-[var(--token-space-2xl)] inline-flex items-center gap-[var(--token-space-sm)] font-mono text-[length:var(--token-text-sm)] transition-colors duration-200"
       >
         <svg
-          class="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-200"
+          class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
           stroke-width="1.5"
           aria-hidden="true"
         >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
         </svg>
         Back to Projects
       </a>
 
       <!-- Title -->
-      <h1 data-animate="split-text" class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em] leading-[0.95]">
+      <h1
+        data-animate="split-text"
+        class="font-display text-[length:var(--token-text-display)] leading-[0.95] tracking-[-0.03em]"
+      >
         {project.data.title}
       </h1>
 
       <!-- Tagline -->
-      <p class="font-body text-[length:var(--token-text-heading)] text-text-secondary mt-[var(--token-space-md)]">
+      <p
+        class="font-body text-text-secondary mt-[var(--token-space-md)] text-[length:var(--token-text-heading)]"
+      >
         {project.data.tagline}
       </p>
 
       <!-- Tech tags -->
-      <p class="font-mono text-[length:var(--token-text-sm)] text-text-muted mt-[var(--token-space-lg)]">
+      <p
+        class="text-text-muted mt-[var(--token-space-lg)] font-mono text-[length:var(--token-text-sm)]"
+      >
         {project.data.techStack.join(", ")}
       </p>
 
       <!-- Links row (conditional) -->
-      {(project.data.githubUrl || project.data.demoUrl) && (
-        <div class="flex items-center gap-[var(--token-space-xl)] mt-[var(--token-space-lg)]">
-          {project.data.githubUrl && (
-            <a
-              href={project.data.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-body text-[length:var(--token-text-sm)] text-accent hover:text-accent-hover uppercase tracking-[0.08em] border-b border-accent/30 hover:border-accent transition-colors duration-200"
-            >
-              View Source
-            </a>
-          )}
-          {project.data.demoUrl && (
-            <a
-              href={project.data.demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-body text-[length:var(--token-text-sm)] text-accent hover:text-accent-hover uppercase tracking-[0.08em] border-b border-accent/30 hover:border-accent transition-colors duration-200"
-            >
-              Live Demo
-            </a>
-          )}
-        </div>
-      )}
+      {
+        (project.data.githubUrl || project.data.demoUrl) && (
+          <div class="mt-[var(--token-space-lg)] flex items-center gap-[var(--token-space-xl)]">
+            {project.data.githubUrl && (
+              <a
+                href={project.data.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-body text-accent hover:text-accent-hover border-accent/30 hover:border-accent border-b text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase transition-colors duration-200"
+              >
+                View Source
+              </a>
+            )}
+            {project.data.demoUrl && (
+              <a
+                href={project.data.demoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-body text-accent hover:text-accent-hover border-accent/30 hover:border-accent border-b text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase transition-colors duration-200"
+              >
+                Live Demo
+              </a>
+            )}
+          </div>
+        )
+      }
     </div>
   </section>
 
   <!-- Hero image (conditional) -->
-  {project.data.thumbnail && (
-    <div class="px-6 md:px-10 lg:px-16 pb-[var(--token-space-2xl)]">
-      <div class="max-w-[90rem] mx-auto">
-        <Image
-          src={project.data.thumbnail}
-          alt={project.data.title}
-          class="w-full aspect-video object-cover rounded"
-        />
+  {
+    project.data.thumbnail && (
+      <div class="px-6 pb-[var(--token-space-2xl)] md:px-10 lg:px-16">
+        <div class="mx-auto max-w-[90rem]">
+          <Image
+            src={project.data.thumbnail}
+            alt={project.data.title}
+            class="aspect-video w-full rounded object-cover"
+          />
+        </div>
       </div>
-    </div>
-  )}
+    )
+  }
 
   <!-- MDX body content -->
-  <article data-animate="section" class="pb-[var(--token-space-section)] px-6 md:px-10 lg:px-16">
-    <div class="max-w-[90rem] mx-auto">
+  <article
+    data-animate="section"
+    class="px-6 pb-[var(--token-space-section)] md:px-10 lg:px-16"
+  >
+    <div class="mx-auto max-w-[90rem]">
       <div class="case-study-prose max-w-3xl">
         <Content components={{ img: ArticleImage }} />
       </div>

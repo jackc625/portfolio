@@ -62,11 +62,11 @@
   --token-text-secondary: oklch(0.38 0.015 270);
   --token-text-muted: oklch(0.47 0.01 270);
   --token-accent: oklch(0.48 0.18 250);
-  --token-accent-hover: oklch(0.40 0.20 250);
+  --token-accent-hover: oklch(0.4 0.2 250);
   --token-border: oklch(0.88 0.006 85);
   --token-border-hover: oklch(0.78 0.008 85);
   --token-destructive: oklch(0.55 0.22 25);
-  --token-success: oklch(0.50 0.15 155);
+  --token-success: oklch(0.5 0.15 155);
   --token-warning: oklch(0.55 0.15 85);
 }
 
@@ -77,8 +77,11 @@
 html.theme-transitioning *,
 html.theme-transitioning *::before,
 html.theme-transitioning *::after {
-  transition: background-color 300ms ease, color 300ms ease,
-              border-color 300ms ease, box-shadow 300ms ease !important;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease !important;
 }
 
 /* Disable theme transitions for reduced motion */
@@ -182,10 +185,14 @@ body {
   animation: vt-fade-in 200ms ease-out forwards;
 }
 @keyframes vt-fade-out {
-  to { opacity: 0; }
+  to {
+    opacity: 0;
+  }
 }
 @keyframes vt-fade-in {
-  from { opacity: 0; }
+  from {
+    opacity: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -203,7 +210,9 @@ body {
   background-size: 0% 1px;
   background-position: left bottom;
   background-repeat: no-repeat;
-  transition: background-size 300ms ease, color 200ms ease;
+  transition:
+    background-size 300ms ease,
+    color 200ms ease;
 }
 .nav-link-hover:hover {
   background-size: 100% 1px;
@@ -273,7 +282,8 @@ body {
   }
 
   /* Page break control */
-  h2, h3 {
+  h2,
+  h3 {
     break-after: avoid;
   }
   section {
