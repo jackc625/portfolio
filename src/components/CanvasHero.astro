@@ -29,6 +29,8 @@
     if (!canvas) return undefined;
     const ctx = canvas.getContext('2d');
     if (!ctx) return undefined;
+    const section = canvas.closest('section');
+    if (!section) return undefined;
 
     const noise2D = createNoise2D();
     let animationId: number;
@@ -59,7 +61,7 @@
     // Only add mouse tracking on hover-capable devices
     const hasHover = window.matchMedia('(hover: hover)').matches;
     if (hasHover) {
-      canvas.addEventListener('mousemove', onMouseMove);
+      section.addEventListener('mousemove', onMouseMove);
     }
 
     // Theme-aware trail color — adapts when theme switches (D-18)
@@ -204,7 +206,7 @@
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', onResize);
       if (hasHover) {
-        canvas.removeEventListener('mousemove', onMouseMove);
+        section.removeEventListener('mousemove', onMouseMove);
       }
     };
   }
