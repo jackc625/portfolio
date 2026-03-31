@@ -49,8 +49,8 @@
     // Mouse influence tracking (D-24)
     let mouseX = -1000;
     let mouseY = -1000;
-    const mouseRadius = 150;
-    const mouseInfluenceMax = 0.3;
+    const mouseRadius = 220;
+    const mouseInfluenceMax = 0.6;
 
     function onMouseMove(e: MouseEvent) {
       const rect = canvas!.getBoundingClientRect();
@@ -128,13 +128,18 @@
 
         let angle = noise2D(p.x * noiseScale, p.y * noiseScale + time * 0.0001) * Math.PI * 2;
 
-        // Mouse influence (D-24): particles near cursor are gently pushed
+        // Mouse influence (D-24): particles near cursor bend toward mouse direction
         const dx = mouseX - p.x;
         const dy = mouseY - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < mouseRadius) {
           const influence = (1 - dist / mouseRadius) * mouseInfluenceMax;
-          angle += Math.atan2(dy, dx) * influence;
+          const mouseAngle = Math.atan2(dy, dx);
+          let angleDiff = mouseAngle - angle;
+          // Normalize to [-PI, PI] for shortest-path rotation
+          while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+          while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+          angle += angleDiff * influence;
         }
 
         // Depth-scaled movement: deeper particles move slower
