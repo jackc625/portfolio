@@ -49,8 +49,8 @@
     // Mouse influence tracking (D-24)
     let mouseX = -1000;
     let mouseY = -1000;
-    const mouseRadius = 220;
-    const mouseInfluenceMax = 0.6;
+    const mouseRadius = 400;
+    const mouseInfluenceMax = 1.2;
 
     function onMouseMove(e: MouseEvent) {
       const rect = canvas!.getBoundingClientRect();
@@ -128,23 +128,26 @@
 
         let angle = noise2D(p.x * noiseScale, p.y * noiseScale + time * 0.0001) * Math.PI * 2;
 
-        // Mouse influence (D-24): particles near cursor bend toward mouse direction
+        // Mouse influence (D-24): particles near cursor are repelled away
         const dx = mouseX - p.x;
         const dy = mouseY - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
+        let speedMult = 1;
         if (dist < mouseRadius) {
           const influence = (1 - dist / mouseRadius) * mouseInfluenceMax;
-          const mouseAngle = Math.atan2(dy, dx);
-          let angleDiff = mouseAngle - angle;
-          // Normalize to [-PI, PI] for shortest-path rotation
+          // Steer angle AWAY from mouse (repulsion)
+          const awayAngle = Math.atan2(-dy, -dx);
+          let angleDiff = awayAngle - angle;
           while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
           while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
           angle += angleDiff * influence;
+          // Accelerate particles near cursor so the push is visible
+          speedMult = 1 + influence * 3;
         }
 
         // Depth-scaled movement: deeper particles move slower
-        p.x += Math.cos(angle) * speed * p.depth;
-        p.y += Math.sin(angle) * speed * p.depth;
+        p.x += Math.cos(angle) * speed * p.depth * speedMult;
+        p.y += Math.sin(angle) * speed * p.depth * speedMult;
 
         // Wrap around edges
         if (p.x < 0) p.x = width;
@@ -153,9 +156,9 @@
         if (p.y > height) p.y = 0;
 
         // Depth-varied stroke style and line width
-        const strokeOpacity = 0.18 * p.depth;
+        const strokeOpacity = 0.3 * p.depth;
         ctx!.strokeStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${strokeOpacity})`;
-        ctx!.lineWidth = p.depth === 0.5 ? 0.3 : p.depth === 0.75 ? 0.4 : 0.6;
+        ctx!.lineWidth = p.depth === 0.5 ? 0.5 : p.depth === 0.75 ? 0.8 : 1.2;
 
         ctx!.beginPath();
         ctx!.moveTo(p.prevX, p.prevY);
