@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-03-31T00:08:42.068Z"
+stopped_at: Completed 05-05-PLAN.md
+last_updated: "2026-03-31T02:53:44.381Z"
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 22
-  completed_plans: 21
+  total_plans: 23
+  completed_plans: 22
 ---
 
 # Project State
@@ -63,6 +63,7 @@ Plan: Not started
 | Phase 05 P01 | 9min | 2 tasks | 5 files |
 | Phase 05 P02 | 13min | 3 tasks | 14 files |
 | Phase 05 P03 | 7min | 2 tasks | 6 files |
+| Phase 05 P05 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,8 @@ Recent decisions affecting current work:
 - [Phase 05]: Canvas hero per-particle depth rendering (3-layer parallax) acceptable at 400-1000 particles
 - [Phase 05]: JSON-LD placed in body slot (valid per Google docs) rather than head for Astro slot simplicity
 - [Phase 05]: Print stylesheet uses .print-only-header class pattern with data-no-print attribute for hiding elements
+- [Phase 05]: Use astro:after-swap (not astro:page-load) to restore theme during View Transition swap, avoiding flash of wrong theme
+- [Phase 05]: Move mousemove listener to parent section element instead of canvas to bypass z-index overlay blocking
 
 ### Pending Todos
 
@@ -121,6 +124,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T23:55:11.956Z
-Stopped at: Completed 05-03-PLAN.md
+Last session: 2026-03-31T02:53:44.375Z
+Stopped at: Completed 05-05-PLAN.md
 Resume file: None
