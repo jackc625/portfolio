@@ -116,7 +116,7 @@ Plans:
 - [x] 05-03-PLAN.md -- Resume print stylesheet and JSON-LD structured data (Person + CreativeWork)
 - [x] 05-04-PLAN.md -- Human visual verification of complete Phase 5 implementation
 - [x] 05-05-PLAN.md -- UAT gap closure: theme persistence across navigation and canvas mouse influence fix
-- [ ] 05-06-PLAN.md -- UAT gap closure: fix mathematically broken canvas mouse influence formula
+- [x] 05-06-PLAN.md -- UAT gap closure: fix mathematically broken canvas mouse influence formula
 **UI hint**: yes
 
 ### Phase 6: Performance Audit & Deployment
