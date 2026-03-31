@@ -63,10 +63,10 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Responsive & Performance
 
 - [ ] **PERF-01**: Mobile-first responsive design tested across breakpoints (mobile, tablet, desktop)
-- [ ] **PERF-02**: Sub-2-second Largest Contentful Paint (LCP) on all pages
+- [x] **PERF-02**: Sub-2-second Largest Contentful Paint (LCP) on all pages
 - [ ] **PERF-03**: Lighthouse 90+ across Performance, Accessibility, Best Practices, SEO categories
 - [ ] **PERF-04**: Optimized images with lazy loading, responsive srcset, and modern formats (WebP/AVIF)
-- [ ] **PERF-05**: Zero layout shift (CLS < 0.1) during page load
+- [x] **PERF-05**: Zero layout shift (CLS < 0.1) during page load
 
 ### Animations
 
@@ -156,10 +156,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DSGN-03 | Phase 5 | Complete |
 | DSGN-04 | Phase 5 | Complete |
 | PERF-01 | Phase 6 | Pending |
-| PERF-02 | Phase 6 | Pending |
+| PERF-02 | Phase 6 | Complete |
 | PERF-03 | Phase 6 | Pending |
 | PERF-04 | Phase 6 | Pending |
-| PERF-05 | Phase 6 | Pending |
+| PERF-05 | Phase 6 | Complete |
 | ANIM-01 | Phase 5 | Complete |
 | ANIM-02 | Phase 5 | Complete |
 | ANIM-03 | Phase 5 | Complete |

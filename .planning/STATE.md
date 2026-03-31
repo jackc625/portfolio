@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 6 context gathered
-last_updated: "2026-03-31T13:15:16.100Z"
+status: Executing Phase 06
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-03-31T16:00:09Z"
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 24
-  completed_plans: 23
+  total_plans: 27
+  completed_plans: 24
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 
 ## Current Position
 
-Phase: 6
-Plan: Not started
+Phase: 06 (performance-audit-deployment) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Plan: Not started
 | Phase 05 P02 | 13min | 3 tasks | 14 files |
 | Phase 05 P03 | 7min | 2 tasks | 6 files |
 | Phase 05 P05 | 2min | 2 tasks | 2 files |
+| Phase 06 P01 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Print stylesheet uses .print-only-header class pattern with data-no-print attribute for hiding elements
 - [Phase 05]: Use astro:after-swap (not astro:page-load) to restore theme during View Transition swap, avoiding flash of wrong theme
 - [Phase 05]: Move mousemove listener to parent section element instead of canvas to bypass z-index overlay blocking
+- [Phase 06]: Dynamic import() for GSAP code-splitting -- Vite creates separate chunks automatically
+- [Phase 06]: CSS opacity:0 pre-animation state with 3s JS fallback for Safari import bug protection
+- [Phase 06]: Tiered canvas particles: 200 mobile, 600 tablet, 1000 desktop
 
 ### Pending Todos
 
@@ -124,6 +128,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T13:15:16.096Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-performance-audit-deployment/06-CONTEXT.md
+Last session: 2026-03-31T16:00:09Z
+Stopped at: Completed 06-01-PLAN.md
+Resume file: .planning/phases/06-performance-audit-deployment/06-01-SUMMARY.md
