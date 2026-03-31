@@ -38,9 +38,10 @@
     const noiseScale = 0.0025;
     const speed = 1.2;
 
-    // Determine particle count based on viewport
+    // Determine particle count based on viewport (D-03: tiered mobile/tablet/desktop)
     const isMobile = window.innerWidth < 768;
-    const particleCount = isMobile ? 400 : 1000;
+    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+    const particleCount = isMobile ? 200 : isTablet ? 600 : 1000;
 
     let width = window.innerWidth;
     let height = window.innerHeight;
