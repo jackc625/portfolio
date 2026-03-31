@@ -133,7 +133,7 @@ Plans:
 
 Plans:
 - [x] 06-01-PLAN.md -- GSAP lazy-loading via dynamic imports, mobile canvas particle reduction, CSS pre-animation states
-- [ ] 06-02-PLAN.md -- Lighthouse audit on all pages, build output inspection, image infrastructure verification, pending requirements close-out
+- [x] 06-02-PLAN.md -- Lighthouse audit on all pages, build output inspection, image infrastructure verification, pending requirements close-out
 - [ ] 06-03-PLAN.md -- Deploy to production, responsive breakpoint verification, human sign-off
 
 ## Progress
