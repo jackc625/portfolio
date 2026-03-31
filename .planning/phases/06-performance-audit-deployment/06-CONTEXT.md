@@ -47,6 +47,9 @@ Optimize the site for production-readiness: achieve Lighthouse 90+ across all ca
 ### Build Output Verification
 - **D-14:** **Inspect dist/ output** — run a production build, check total JS shipped, verify static pages have zero or minimal JS, confirm GSAP only loads where needed, check asset sizes.
 
+### Typography System (carried from Phase 1)
+- **D-15:** **Typography uses 3 weights (400 regular, 600 semibold, 700 bold)** — established in Phase 1 design system, locked for all phases. 400 for body/label text, 600 for section headings (h2, resume entries), 700 for display/hero text. All three weights are in active use in production CSS and Tailwind classes (`font-semibold`, `font-bold`).
+
 ### Claude's Discretion
 - Specific Lighthouse optimization techniques beyond what's decided above
 - Exact mobile particle count reduction (within "reduced" direction)

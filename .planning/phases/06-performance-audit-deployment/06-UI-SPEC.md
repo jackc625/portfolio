@@ -58,6 +58,8 @@ Exceptions: none. Phase 6 does not modify spacing.
 
 ## Typography
 
+> **Locked decision D-15:** Typography uses 3 weights (400 regular, 600 semibold, 700 bold) — established in Phase 1 design system, locked for all phases. All three weights are in active use in production CSS and Tailwind classes (`font-semibold` on section headings/resume entries, `font-bold` on display/hero text).
+
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body (base) | clamp(15px, 0.875rem + 0.3vw, 17px) | 400 (regular) | 1.6 |
