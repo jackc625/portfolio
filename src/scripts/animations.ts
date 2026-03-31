@@ -22,17 +22,18 @@ export async function initAnimations() {
     // 1. Section reveals (D-07, D-08)
     // Every section with data-animate="section" gets a fade-in + slide-up
     gsap.utils.toArray<HTMLElement>('[data-animate="section"]').forEach((el) => {
-      gsap.from(el, {
-        opacity: 0,
-        y: 24,
-        duration: 0.8,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: el,
-          start: 'top 85%',
-          once: true,
-        },
-      });
+      gsap.fromTo(el,
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1, y: 0, duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
     });
 
     // 2. Stagger items (D-09)
@@ -40,18 +41,19 @@ export async function initAnimations() {
     gsap.utils.toArray<HTMLElement>('[data-animate-container="stagger"]').forEach((container) => {
       const items = container.querySelectorAll('[data-animate="stagger-item"]');
       if (items.length === 0) return;
-      gsap.from(items, {
-        opacity: 0,
-        y: 24,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: container,
-          start: 'top 85%',
-          once: true,
-        },
-      });
+      gsap.fromTo(items,
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1, y: 0, duration: 0.6,
+          stagger: 0.1,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: container,
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
     });
 
     // 3. SplitText display headings (D-11)
@@ -62,13 +64,15 @@ export async function initAnimations() {
         mask: 'lines',
         autoSplit: true,
         onSplit(self: any) {
-          return gsap.from(self.lines, {
-            y: '100%',
-            opacity: 0,
-            duration: 0.7,
-            stagger: 0.12,
-            ease: 'power2.out',
-          });
+          return gsap.fromTo(self.lines,
+            { y: '100%', opacity: 0 },
+            {
+              y: '0%', opacity: 1,
+              duration: 0.7,
+              stagger: 0.12,
+              ease: 'power2.out',
+            }
+          );
         },
       });
     });
