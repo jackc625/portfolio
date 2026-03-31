@@ -25,6 +25,12 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - [x] Project detail/case study pages with technical depth — Validated in Phase 4: Structured MDX case studies with Problem/Solution/Challenges/Results sections
 - [x] Two reading modes: fast scan (recruiters) and deep review (engineers) — Validated in Phase 4: Card grid for scanning, case study pages for deep dives
 
+- [x] Dark/light theme system with persistent toggle — Validated in Phase 5: OKLCH tokens, no-flash detection, ThemeToggle component
+- [x] Scroll-triggered animations and page transitions — Validated in Phase 5: GSAP ScrollTrigger + SplitText + View Transitions crossfade
+- [x] Hover micro-interactions (card lift, nav underline, icon lift) — Validated in Phase 5: CSS + Tailwind hover states with reduced-motion respect
+- [x] Print-friendly resume output — Validated in Phase 5: @media print stylesheet with black-on-white, hidden chrome
+- [x] JSON-LD structured data for SEO — Validated in Phase 5: Person schema (home/about) + CreativeWork (case studies)
+
 ### Active
 - [ ] Professional, high-end visual design (all design decisions via frontend-design skill)
 - [ ] SEO/meta structure for discoverability
@@ -70,6 +76,8 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 | Hybrid project layout | Serve both fast-scan recruiters and deep-dive engineers | Featured card grid + editorial list (Phase 4) |
 | Optional thumbnail with solid-color fallback | Avoid fake images, keep builds fast | thumbnail: image().optional() in schema (Phase 4) |
 | 2 complete case studies for v1 | Demonstrate writing quality before production deploy | Portfolio Website + TaskFlow API fully written (Phase 4) |
+| GSAP for animations over CSS-only | ScrollTrigger + SplitText provide premium scroll-driven reveals that CSS alone cannot match | Centralized animations.ts with lifecycle cleanup (Phase 5) |
+| Theme-transitioning class approach | Avoids always-on transitions that cause layout thrash on load | .theme-transitioning added/removed on toggle click (Phase 5) |
 
 ## Evolution
 
@@ -89,4 +97,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-30 after Phase 4 completion*
+*Last updated: 2026-03-30 after Phase 5 completion*
