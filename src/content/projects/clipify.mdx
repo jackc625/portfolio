@@ -1,0 +1,54 @@
+---
+title: "Clipify"
+tagline: "AI video clipping from long-form content to social-ready clips"
+description: "An AI-powered SaaS that transforms YouTube videos, streams, and uploaded footage into captioned short-form clips using Whisper transcription, GPT-powered moment detection, and FFmpeg rendering."
+techStack:
+  [
+    "Next.js",
+    "TypeScript",
+    "OpenAI Whisper",
+    "GPT-4o",
+    "BullMQ",
+    "FFmpeg",
+    "AWS S3",
+    "Stripe",
+  ]
+featured: false
+status: "completed"
+category: "web-app"
+order: 5
+---
+
+## Problem
+
+Content creators with long-form videos — podcasts, streams, YouTube VODs — need short-form clips for TikTok, Shorts, and Reels. The manual process involves watching hours of footage, identifying compelling moments, cutting them, adding captions, and formatting for vertical video. Most creators either spend hours doing this or pay editors hundreds of dollars per video. I wanted to build an automated pipeline that could take any long-form video and produce download-ready clips with captions and hook titles, handling the entire workflow from ingestion through rendering.
+
+## Solution & Approach
+
+Clipify is a pnpm monorepo with two packages: a Next.js 15 web application and a Dockerized worker service. The pipeline has three decoupled stages — transcription, moment detection, and rendering — each running as independent BullMQ jobs on separate queues with independent concurrency tuning.
+
+Transcription uses OpenAI's Whisper API with word-level timestamp granularity. For videos over 45 minutes, the worker automatically splits audio into 10-minute chunks, processes each independently, adjusts timestamps to global offsets, and merges the results. This keeps memory bounded and avoids API timeouts regardless of input length — the system handles 8+ hour videos.
+
+Moment detection runs in multiple stages. Heuristic scoring scans the transcript for energy peaks, story arc markers, viral hook patterns, and speaker change dynamics. Then it generates variable-length candidates at multiple positions around detected moments with adaptive windows of 35-75 seconds. After deduplication, the top candidates go through GPT-4o-mini re-ranking with a structured scoring rubric: immediate engagement, emotional resonance, standalone value, and shareability. The system generates hook titles automatically.
+
+Each clip is rendered independently by FFmpeg: smart cropping for the target aspect ratio, H.264 High Profile at CRF 18, and ASS subtitle burning with smart line breaks at punctuation and natural pauses. Finished clips upload to S3 with tier-segmented paths enabling different lifecycle policies for free and paid users.
+
+## Tech Stack Detail
+
+The web application uses Next.js 15 with the App Router. Clerk handles authentication with middleware-level route protection. Prisma with Neon serverless PostgreSQL stores projects, transcripts, clips, and billing data. File uploads bypass the server entirely through S3 presigned URLs with five-minute expiry.
+
+BullMQ with Upstash Redis connects the web app to the worker. Each queue has tuned concurrency — transcription at 1x since it is API-bound, detection at 2x, and rendering at 0.5x since FFmpeg is CPU-intensive. Jobs get three retries with exponential backoff, and stalled job detection prevents zombie jobs from blocking the queues.
+
+Stripe powers a three-tier billing system: Free (60 minutes/month, watermarked), Pro ($29/month, 600 minutes), and Agency ($99/month, 2000 minutes). Minutes are deducted at transcription start, not completion, which prevents quota abuse from abandoned jobs. Premium features like aspect ratio selection, timeline editing, and bulk download are gated at the API layer, not just the UI.
+
+## Challenges & Lessons
+
+The hardest problem was moment detection accuracy. My first approach used only heuristic scoring and produced clips that started and ended at awkward points. Adding variable-length windowing — generating candidates at 30%, 50%, and 70% positions around each moment with adaptive durations — dramatically improved clip boundaries. The GPT re-ranking pass then selects the best candidates from this richer pool.
+
+Job recovery required careful design. Detection deletes existing clips before creating new ones to ensure idempotency. Rendering checks for double-render attempts. Queue jobs use deduplication IDs. This makes the entire pipeline safe to retry without producing duplicate clips or corrupted state.
+
+S3 lifecycle management was more complex than expected. Free-tier files expire after 90 days, paid-tier transitions to Glacier, and temporary processing files clean up after 7 days. Getting the rules right with tier-segmented paths and proper prefix matching took several iterations.
+
+## Results
+
+Clipify processes videos of any length through a fully automated pipeline, producing captioned clips ready for social platforms. The decoupled queue architecture means each stage can fail and retry independently. Real-time queue monitoring via SSE shows users their position and estimated wait time. The export system produces both JSON metadata and CMX3600 EDL format for editors who want to import clips into professional NLEs. The billing system handles the full subscription lifecycle with server-side quota enforcement.

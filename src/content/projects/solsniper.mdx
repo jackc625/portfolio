@@ -1,0 +1,45 @@
+---
+title: "SolSniper"
+tagline: "Real-time Solana token sniping with multi-tier safety analysis"
+description: "A high-speed Solana trading system with multi-source token detection, three-tier safety validation, six-step sell escalation, crash recovery, and a real-time Preact monitoring dashboard."
+techStack:
+  ["TypeScript", "Solana/web3.js", "Preact", "SQLite", "Fastify", "Jupiter API"]
+featured: true
+status: "completed"
+category: "other"
+order: 3
+---
+
+## Problem
+
+New tokens launch on Solana constantly. Most are scams, and the window to enter a legitimate launch is measured in seconds. Manual trading at this speed is not viable — by the time you evaluate a token's safety, check the liquidity, and submit a transaction, the opportunity is gone. I wanted to build a system that could detect new tokens in real time, evaluate them through multiple independent safety checks, execute purchases through the fastest available route, and manage positions with automated exit strategies. The core constraint was that every default had to be pessimistic: when in doubt, reject the token and protect capital.
+
+## Solution & Approach
+
+SolSniper runs as a single Node.js process with an embedded Fastify HTTP server and SQLite persistence. Token detection comes from three independent sources: a PumpPortal WebSocket listener for bonding curve launches, and on-chain log subscriptions for Raydium V4 and PumpSwap pool creation events. Each source is independently toggleable and feeds into a shared pre-filter that rejects impersonation tokens, spam keywords, and malformed metadata before any RPC calls are made.
+
+The safety pipeline runs three tiers of validation. Tier 1 checks are hard blocks — mint authority revoked, freeze authority revoked, and a Jupiter sell route exists. Any failure means immediate rejection. Tiers 2 and 3 run in parallel with a two-second timeout: RugCheck risk scoring, top-holder concentration analysis, and creator wallet history via the Helius API. A wallet with ten or more prior deployments is automatically blocklisted. Timeouts and errors default to a score of zero — pessimistic, not optimistic.
+
+Buy execution is source-aware. PumpPortal tokens route through the PumpPortal trade API for faster bonding curve execution. Raydium and PumpSwap tokens route through Jupiter. Every trade is written to SQLite before the transaction is broadcast, creating a write-ahead log so crash recovery can reconcile against on-chain state on restart.
+
+The sell side implements a six-step escalation ladder. When a position hits its exit trigger, the system starts with a standard Jupiter sell, then escalates through elevated priority fees, Jito MEV-protected bundles, chunked multi-tranche sells, PumpPortal bonding curve fallback, and an emergency sell with maximum slippage. Each step uses a fresh quote and fresh blockhash.
+
+## Tech Stack Detail
+
+TypeScript in strict mode runs the entire stack. SQLite via better-sqlite3 provides synchronous persistence with WAL mode for concurrent reads during writes. I chose SQLite over PostgreSQL because the bot is a single-process application — the simplicity of an embedded database with no network hop outweighs the features of a full RDBMS. All state transitions use optimistic locking to prevent race conditions.
+
+The frontend is a Preact SPA with Preact Signals for state management. SSE powers the real-time event feed showing every bot action with expandable detail cards. A cumulative P&L chart uses TradingView's lightweight-charts library. The settings view allows runtime configuration changes that take effect immediately without restarting the bot.
+
+Dual-RPC failover keeps the system online when an endpoint goes down. Three consecutive failures trigger automatic switchover to the backup, with recovery polling every ten seconds. Both connections are available simultaneously for parallel transaction broadcast, increasing landing probability.
+
+## Challenges & Lessons
+
+The hardest engineering problem was preventing double-sells. When a position hits a take-profit tier during a rapid price spike, the position manager might trigger a sell while a previous partial sell is still in flight. I solved this with an in-flight sell guard using SQLite's synchronous operations — because better-sqlite3 is not async, there is no gap between the state check and the state transition where a concurrent call could slip through.
+
+Crash recovery was more nuanced than I expected. A trade in BUYING state where tokens appear in the wallet means the buy succeeded — resume monitoring. But a trade in SELLING state where no tokens remain: did the sell succeed, or did the tokens go somewhere else? The recovery manager uses a conservative heuristic: mark it completed. This occasionally miscategorizes a failed sell, but the alternative — a phantom position stuck in monitoring — is worse.
+
+Rate limiting from Jupiter turned out to be the binding constraint on the entire system. The position manager dynamically adjusts its polling interval based on Jupiter's cooldown state, stretching the cadence during rate-limit windows rather than hammering the API and getting blocked entirely.
+
+## Results
+
+SolSniper operates autonomously once started, detecting tokens within milliseconds of launch, completing safety evaluation in under two seconds, and executing buys within the same candle. The crash recovery system correctly reconciles all in-flight trade states on restart. The real-time dashboard provides full operational visibility without requiring log access. Dry-run mode executes the entire pipeline without signing transactions, allowing strategy tuning without risking capital. The test suite covers all five safety checks, the sell ladder, state machine transitions, recovery logic, and RPC failover across 26 test files.

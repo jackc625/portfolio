@@ -1,0 +1,43 @@
+---
+title: "Optimize AI"
+tagline: "Full-stack fitness tracking with database-level data isolation"
+description: "A personal fitness platform for tracking workouts, nutrition, habits, and body composition built with Next.js 15 and Supabase, enforcing complete user data isolation through PostgreSQL Row-Level Security on every table."
+techStack:
+  ["Next.js", "React", "TypeScript", "Supabase", "PostgreSQL", "Tailwind CSS"]
+featured: false
+status: "completed"
+category: "web-app"
+order: 4
+---
+
+## Problem
+
+Most fitness apps treat data correctness as an afterthought. They store timestamps in UTC and break streak calculations across timezones. They enforce access control in the application layer and hope no one hits the API directly. I wanted to build a fitness tracker where data isolation was enforced at the database level, where every piece of data was validated at runtime before entering the application, and where the architecture could support new fitness modules without structural changes.
+
+## Solution & Approach
+
+Optimize AI is a Next.js 15 application with Supabase providing authentication, database, and real-time capabilities. The application covers five fitness domains: workout template management with set-level logging, a macro nutrition calculator using the Mifflin-St Jeor equation, daily habit tracking with automatic streak calculation, weight logging with goal visualization, and a body profile that feeds into all calculations.
+
+The defining architectural decision is that all nine PostgreSQL tables enforce Row-Level Security. Tables with a direct `user_id` column use `(SELECT auth.uid()) = user_id` policies. Child tables like `workout_exercises` and `workout_log_exercises` use `EXISTS` subqueries against their parent table's ownership. Even if the application layer has a bug, one user's data cannot leak to another.
+
+All data access flows through custom React hooks built on TanStack React Query v5. Each hook encapsulates its Supabase query, Zod validation, cache key, mutation logic, and toast feedback. The UI layer never touches Supabase directly. Every database response passes through Zod `safeParse` before entering the component tree — no unsafe type assertions anywhere in the codebase.
+
+## Tech Stack Detail
+
+Next.js 15 with the App Router handles routing and server component data loading. Supabase replaces the need for a custom backend — authentication, database access, and authorization all go through Supabase's client library with RLS policies handling what would otherwise be middleware authorization checks. The application has zero custom API routes. All data operations go directly from client-side hooks to Supabase's PostgREST API.
+
+The macro calculator pipeline is built from four pure functions: BMR calculation (Mifflin-St Jeor, sex-specific), TDEE derivation with activity multipliers, goal-based calorie adjustment, and macro gram splitting from goal-tuned ratios. Each function has full Vitest coverage. Users can override any computed value before saving, and a history of past calculations is persisted.
+
+Styling uses Tailwind CSS with a CSS variable-based design token system. Both light and dark themes inherit automatically through CSS variables, so new components get theming for free. Framer Motion handles page transitions and staggered card reveals, and a canvas confetti effect fires on habit completion.
+
+## Challenges & Lessons
+
+The subtlest bug was in streak calculation. My first implementation used UTC timestamps, which meant a user completing a habit at 11pm EST saw it recorded as the next day in UTC. Their streak appeared broken even though they completed the habit on time. The fix was storing all date-sensitive data as `YYYY-MM-DD` strings in the user's local timezone, with a dedicated `getLocalDate()` utility used consistently across habits, weight logs, and workout logs.
+
+Designing RLS policies for child tables taught me to think about authorization differently. The straightforward approach — adding `user_id` to every table — would denormalize ownership data. Instead, I used `EXISTS` subqueries that join child records to their parent and check the parent's `user_id`. This keeps the schema clean while still enforcing access control at every level.
+
+Session management required careful coordination between Supabase Auth and Next.js middleware. I implemented a cookie bridge pattern where the middleware checks the session cookie before allowing access to dashboard routes, and an `onAuthStateChange` listener detects mid-session token expiry, clears the cookie, notifies the user, and redirects to login.
+
+## Results
+
+The application serves five fitness domains from a clean, extensible architecture. Adding a new tracking module follows a repeatable pattern: define the Supabase table with RLS, create a Zod schema, write a React Query hook, and build the UI component. The RLS policies mean data isolation is guaranteed regardless of application-layer bugs. The test suite covers macro calculations, date utilities, Zod schema edge cases, and component rendering with Testing Library and MSW.

@@ -63,7 +63,7 @@ import JsonLd from "../components/JsonLd.astro";
         <p
           class="font-body text-text-primary mb-[var(--token-space-xl)] text-[length:var(--token-text-heading)] leading-[1.5]"
         >
-          I'm Jack Cutrara, a software engineer based in New York. I got into
+          I'm Jack Cutrara, a software engineer based in Virginia. I got into
           programming because I wanted to build things &mdash; not just read
           about them.
         </p>
@@ -123,37 +123,45 @@ import JsonLd from "../components/JsonLd.astro";
         <div data-animate="stagger-item">
           <SkillGroup
             title="Languages"
-            skills={[
-              "TypeScript",
-              "JavaScript",
-              "Python",
-              "SQL",
-              "HTML",
-              "CSS",
-            ]}
+            skills={["TypeScript", "Python", "Java", "JavaScript", "SQL"]}
           />
         </div>
         <div data-animate="stagger-item">
           <SkillGroup
             title="Frameworks"
-            skills={["React", "Next.js", "Astro", "Node.js", "Express"]}
+            skills={[
+              "React",
+              "Next.js",
+              "Express",
+              "FastAPI",
+              "Node.js",
+              "Spring Boot",
+            ]}
+          />
+        </div>
+        <div data-animate="stagger-item">
+          <SkillGroup
+            title="Databases & Infra"
+            skills={[
+              "PostgreSQL",
+              "Redis",
+              "SQLite",
+              "DuckDB",
+              "Prisma",
+              "Docker",
+            ]}
           />
         </div>
         <div data-animate="stagger-item">
           <SkillGroup
             title="Tools"
-            skills={["Git", "Docker", "PostgreSQL", "VS Code", "Linux"]}
-          />
-        </div>
-        <div data-animate="stagger-item">
-          <SkillGroup
-            title="Concepts"
             skills={[
-              "REST APIs",
-              "CI/CD",
-              "Testing",
-              "Responsive Design",
-              "Accessibility",
+              "Git",
+              "Stripe",
+              "Sentry",
+              "GitHub Actions",
+              "Railway",
+              "AWS S3",
             ]}
           />
         </div>

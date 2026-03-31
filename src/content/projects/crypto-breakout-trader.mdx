@@ -1,0 +1,44 @@
+---
+title: "Crypto Breakout Trader"
+tagline: "Momentum breakout bot with composable filters and risk controls"
+description: "An automated cryptocurrency day-trading system implementing momentum breakout detection on 5-minute candles with composable signal filters, risk-based position sizing, and atomic state persistence."
+techStack: ["Python", "CCXT", "pandas", "pandas-ta", "Pydantic"]
+featured: false
+status: "completed"
+category: "other"
+order: 6
+---
+
+## Problem
+
+I wanted to learn trading systems engineering — not just ML model training, but the full stack: market data ingestion, signal detection, risk management, position tracking, and state persistence that survives crashes. Most trading bot tutorials online produce something that works for a demo but would lose money in production because they skip the hard parts: position sizing, drawdown protection, and conservative assumptions about fill quality. I set out to build a system where every design decision prioritizes correctness and capital preservation over speed or complexity.
+
+## Solution & Approach
+
+The system runs as a single-process polling loop on 20-second intervals, monitoring a configurable universe of crypto/USD pairs on 5-minute candles via the CCXT library targeting Gemini's sandbox API. The strategy detects intraday momentum breakouts: when price closes above yesterday's high with a configurable buffer and simultaneous volume confirmation against a 20-candle rolling average.
+
+Signal filtering uses a composable `FilterChain` architecture. Three filters implement a `BaseFilter` abstract class: a TrendFilter that rejects counter-trend breakouts when EMA-50 is below EMA-200 with weak RSI, a ChopFilter that rejects signals in ranging markets when ADX is below threshold, and a LiquidityFilter that rejects signals when the bid-ask spread is too wide. All filters run on every signal with no short-circuit evaluation, so rejection reasons are fully logged for post-session analysis.
+
+Risk management is layered. Position sizing calculates quantity from `(equity * risk_per_trade) / stop_distance`, ensuring each trade risks exactly the configured percentage of capital. A daily kill switch monitors total equity including unrealized mark-to-market losses and blocks all new entries when drawdown exceeds the threshold. Per-symbol trade counters prevent overtrading, and a consecutive stop-out tracker blocks a coin after three consecutive losses. A volatility guard uses ATR to reduce position size in volatile conditions without blocking the signal entirely.
+
+State persistence uses atomic writes: positions, equity, and allocation state are serialized to a temp file under an exclusive `portalocker` lock, then atomically replaced via `os.replace()`. On restart, the full position state is restored from disk.
+
+## Tech Stack Detail
+
+Python with type hints throughout. CCXT provides a unified exchange API with automatic rate limiting and sandbox/live mode switching. pandas handles OHLCV data processing, and pandas-ta computes all technical indicators — EMA, RSI, ADX, ATR — once centrally, avoiding redundant recalculation across filters. Pydantic v2 BaseSettings validates all configuration from `.env` with type coercion and range checks.
+
+The architecture is interface-driven. All major components implement abstract base classes: `BaseStrategy`, `BaseBroker`, `BaseExchange`, `BaseFilter`. The `TradingBot` orchestrator depends on interfaces, not implementations. Swapping `PaperBroker` for a `LiveBroker` or adding a new strategy requires implementing the same ABC with no changes to the orchestrator.
+
+A historical data pipeline fetches paginated OHLCV data from Binance, storing it as Parquet with Snappy compression for backtesting. The pipeline supports incremental resume, detecting the last cached timestamp and fetching only new data.
+
+## Challenges & Lessons
+
+The most important design decision was making paper trading deliberately conservative. When both stop-loss and take-profit are touched within the same candle, the system assumes the stop-loss hit first. This consistently underestimates paper trading performance, which is what I want — false confidence before going live is more dangerous than underestimation.
+
+The daily kill switch needed to evaluate unrealized P&L, not just realized. My first version only checked closed-trade P&L, which meant the kill switch would not fire until losses were actually locked in. A $10K account with $200 realized profit but $500 unrealized losses should report $9,700 in equity. Adding mark-to-market evaluation caught this gap.
+
+Atomic state persistence seemed like over-engineering until I experienced a crash during a write. My first version wrote state directly to the file. After one crash corrupted the state and left phantom positions in the system, I implemented the temp-file-then-rename pattern with file locking. The extra complexity is justified by the guarantee that the state file is never partially written.
+
+## Results
+
+The bot operates autonomously in paper trading mode, monitoring multiple trading pairs with full signal filtering, risk management, and position tracking. The trade journal provides daily and per-symbol performance breakdowns with drawdown tracking and time-in-market analysis. The interface-driven architecture means transitioning to live trading requires implementing one class against the existing abstract base class — strategy, filters, risk management, and persistence remain unchanged. The test suite covers all components across 22 test files with full isolation.
