@@ -129,10 +129,12 @@ Plans:
   3. All images use optimized formats (WebP/AVIF), responsive srcset, lazy loading, and proper dimensions
   4. Site is live on Jack's custom domain over HTTPS with working CI/CD (git push triggers deploy)
   5. Mobile-first responsive design verified across mobile, tablet, and desktop breakpoints with no layout issues
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md -- GSAP lazy-loading via dynamic imports, mobile canvas particle reduction, CSS pre-animation states
+- [ ] 06-02-PLAN.md -- Lighthouse audit on all pages, build output inspection, image infrastructure verification, pending requirements close-out
+- [ ] 06-03-PLAN.md -- Deploy to production, responsive breakpoint verification, human sign-off
 
 ## Progress
 
@@ -146,4 +148,4 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 | 3. Core Pages | 2/6 | In Progress|  |
 | 4. Project System & Case Studies | 1/4 | In Progress|  |
 | 5. Dark Mode, Animations & Polish | 6/6 | Complete | 2026-03-31 |
-| 6. Performance Audit & Deployment | 0/? | Not started | - |
+| 6. Performance Audit & Deployment | 0/3 | Not started | - |
