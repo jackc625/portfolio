@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: Site Shell & Navigation** - Build layouts, navigation, mobile menu, footer, and SEO meta infrastructure that wraps every page
 - [ ] **Phase 3: Core Pages** - Full visual rebuild cloning shiyunlu.com's design language across all pages
 - [ ] **Phase 4: Project System & Case Studies** - Build project card grid, case study template, placeholder content, and at least 2 fully written case studies
-- [ ] **Phase 5: Dark Mode, Animations & Polish** - Add dark/light mode, scroll animations, page transitions, hover states, print styles, and structured data
+- [x] **Phase 5: Dark Mode, Animations & Polish** - Add dark/light mode, scroll animations, page transitions, hover states, print styles, and structured data
 - [ ] **Phase 6: Performance Audit & Deployment** - Optimize performance, audit accessibility, deploy to Cloudflare Pages with custom domain
 
 ## Phase Details
@@ -145,5 +145,5 @@ Phases execute in numeric order: 1 > 2 > 3 > 4 > 5 > 6
 | 2. Site Shell & Navigation | 3/3 | Complete | - |
 | 3. Core Pages | 2/6 | In Progress|  |
 | 4. Project System & Case Studies | 1/4 | In Progress|  |
-| 5. Dark Mode, Animations & Polish | 5/6 | In Progress|  |
+| 5. Dark Mode, Animations & Polish | 6/6 | Complete | 2026-03-31 |
 | 6. Performance Audit & Deployment | 0/? | Not started | - |

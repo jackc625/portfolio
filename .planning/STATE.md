@@ -7,9 +7,9 @@ stopped_at: Completed 05-05-PLAN.md
 last_updated: "2026-03-31T03:58:36.530Z"
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 24
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -19,7 +19,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 05 — dark-mode-animations-polish
+**Current focus:** Phase 06 — performance-audit-deployment
 
 ## Current Position
 
@@ -125,5 +125,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-31T02:53:44.375Z
-Stopped at: Completed 05-05-PLAN.md
+Stopped at: Phase 05 marked complete — all UAT passed, verification clean
 Resume file: None
