@@ -19,7 +19,7 @@
   /* Text Colors */
   --token-text-primary: oklch(0.95 0.005 270);
   --token-text-secondary: oklch(0.7 0.01 270);
-  --token-text-muted: oklch(0.5 0.01 270);
+  --token-text-muted: oklch(0.55 0.01 270);
 
   /* Border & Divider */
   --token-border: oklch(0.22 0.005 270);
@@ -60,7 +60,7 @@
   --token-bg-secondary: oklch(0.94 0.01 85);
   --token-text-primary: oklch(0.13 0.01 270);
   --token-text-secondary: oklch(0.38 0.015 270);
-  --token-text-muted: oklch(0.52 0.01 270);
+  --token-text-muted: oklch(0.47 0.01 270);
   --token-accent: oklch(0.48 0.18 250);
   --token-accent-hover: oklch(0.40 0.20 250);
   --token-border: oklch(0.88 0.006 85);
