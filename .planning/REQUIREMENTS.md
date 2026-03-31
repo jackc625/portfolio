@@ -51,7 +51,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Contact
 
 - [x] **CNTC-01**: Contact section with direct email, LinkedIn, and GitHub links
-- [ ] **CNTC-02**: Contact links accessible from every page (footer and/or dedicated page)
+- [x] **CNTC-02**: Contact links accessible from every page (footer and/or dedicated page)
 
 ### Design System
 
@@ -62,7 +62,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Responsive & Performance
 
-- [ ] **PERF-01**: Mobile-first responsive design tested across breakpoints (mobile, tablet, desktop)
+- [x] **PERF-01**: Mobile-first responsive design tested across breakpoints (mobile, tablet, desktop)
 - [x] **PERF-02**: Sub-2-second Largest Contentful Paint (LCP) on all pages
 - [x] **PERF-03**: Lighthouse 90+ across Performance, Accessibility, Best Practices, SEO categories
 - [x] **PERF-04**: Optimized images with lazy loading, responsive srcset, and modern formats (WebP/AVIF)
@@ -77,13 +77,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### SEO & Accessibility
 
-- [ ] **SEOA-01**: Unique title tag and meta description per page
-- [ ] **SEOA-02**: Open Graph tags for link previews on LinkedIn, Slack, and social platforms
+- [x] **SEOA-01**: Unique title tag and meta description per page
+- [x] **SEOA-02**: Open Graph tags for link previews on LinkedIn, Slack, and social platforms
 - [x] **SEOA-03**: JSON-LD structured data (Person schema on home/about, CreativeWork on project pages)
 - [x] **SEOA-04**: Semantic HTML throughout (proper heading hierarchy, landmarks, labels)
 - [x] **SEOA-05**: Full keyboard navigation with visible focus indicators
-- [ ] **SEOA-06**: Skip-to-content link for screen reader users
-- [ ] **SEOA-07**: Alt text on all images
+- [x] **SEOA-06**: Skip-to-content link for screen reader users
+- [x] **SEOA-07**: Alt text on all images
 
 ## v2 Requirements
 
@@ -150,12 +150,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | RESM-02 | Phase 3 | Complete |
 | RESM-03 | Phase 5 | Complete |
 | CNTC-01 | Phase 3 | Complete |
-| CNTC-02 | Phase 2 | Pending |
+| CNTC-02 | Phase 2 | Complete |
 | DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 5 | Complete |
 | DSGN-03 | Phase 5 | Complete |
 | DSGN-04 | Phase 5 | Complete |
-| PERF-01 | Phase 6 | Pending |
+| PERF-01 | Phase 6 | Complete |
 | PERF-02 | Phase 6 | Complete |
 | PERF-03 | Phase 6 | Complete |
 | PERF-04 | Phase 6 | Complete |
@@ -164,13 +164,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ANIM-02 | Phase 5 | Complete |
 | ANIM-03 | Phase 5 | Complete |
 | ANIM-04 | Phase 5 | Complete |
-| SEOA-01 | Phase 2 | Pending |
-| SEOA-02 | Phase 2 | Pending |
+| SEOA-01 | Phase 2 | Complete |
+| SEOA-02 | Phase 2 | Complete |
 | SEOA-03 | Phase 5 | Complete |
 | SEOA-04 | Phase 2 | Complete |
 | SEOA-05 | Phase 2 | Complete |
-| SEOA-06 | Phase 2 | Pending |
-| SEOA-07 | Phase 2 | Pending |
+| SEOA-06 | Phase 2 | Complete |
+| SEOA-07 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 45 total
@@ -179,4 +179,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-22*
-*Last updated: 2026-03-22 after roadmap creation*
+*Last updated: 2026-03-31 after Phase 6 completion*
