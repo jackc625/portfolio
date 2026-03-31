@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-dark-mode-animations-polish
 source: [05-VERIFICATION.md]
 started: 2026-03-31T03:00:00Z
@@ -70,7 +70,11 @@ blocked: 0
   reason: "User reported: No. Fail. It is not responsive to cursor at all"
   severity: major
   test: 8
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Mouse influence formula `angle += Math.atan2(dy, dx) * influence` is mathematically incorrect. atan2 returns direction to mouse, not a correction amount — produces zero effect when mouse is on particle's x-axis. Also mouseInfluenceMax (0.3) and mouseRadius (150) are too small for the ultra-faint particle rendering."
+  artifacts:
+    - path: "src/components/CanvasHero.astro"
+      issue: "Line 137: broken influence formula using raw atan2 instead of angular difference"
+  missing:
+    - "Replace with proper angular difference blending: compute shortest rotation from flow angle toward mouse angle, apply fraction proportional to influence"
+    - "Increase mouseInfluenceMax to 0.5-0.7 and mouseRadius to 200-250 for perceptible effect"
+  debug_session: ".planning/debug/canvas-mouse-influence-human-uat.md"
