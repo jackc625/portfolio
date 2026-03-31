@@ -98,7 +98,26 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
     </main>
     <Footer />
     <script>
-      import '../scripts/animations.ts';
+      document.addEventListener('astro:page-load', async () => {
+        const { initAnimations } = await import('../scripts/animations.ts');
+        await initAnimations();
+      });
+
+      document.addEventListener('astro:before-preparation', async () => {
+        const { cleanupAnimations } = await import('../scripts/animations.ts');
+        cleanupAnimations();
+      });
+
+      // Fallback: reveal content if GSAP fails to load after 3 seconds
+      setTimeout(() => {
+        document.querySelectorAll('[data-animate]').forEach(el => {
+          const computed = getComputedStyle(el);
+          if (computed.opacity === '0') {
+            (el as HTMLElement).style.opacity = '1';
+            (el as HTMLElement).style.transform = 'none';
+          }
+        });
+      }, 3000);
     </script>
   </body>
 </html>

@@ -1,18 +1,22 @@
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText } from 'gsap/SplitText';
+let ctx: any = null;
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
-
-let ctx: gsap.Context | null = null;
-
-function initAnimations() {
-  // Check reduced motion first (D-13, ANIM-04)
+export async function initAnimations() {
+  // D-05: completely disable animations on prefers-reduced-motion
+  // Check BEFORE importing GSAP — if reduced motion, GSAP never loads at all
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    // Show all content in final state, no animations
-    gsap.set('[data-animate]', { opacity: 1, y: 0 });
+    document.querySelectorAll('[data-animate]').forEach(el => {
+      (el as HTMLElement).style.opacity = '1';
+      (el as HTMLElement).style.transform = 'none';
+    });
     return;
   }
+
+  // Dynamic imports — Vite code-splits these into separate chunks
+  const { gsap } = await import('gsap');
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+  const { SplitText } = await import('gsap/SplitText');
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
 
   ctx = gsap.context(() => {
     // 1. Section reveals (D-07, D-08)
@@ -57,7 +61,7 @@ function initAnimations() {
         type: 'lines',
         mask: 'lines',
         autoSplit: true,
-        onSplit(self) {
+        onSplit(self: any) {
           return gsap.from(self.lines, {
             y: '100%',
             opacity: 0,
@@ -71,10 +75,7 @@ function initAnimations() {
   });
 }
 
-function cleanupAnimations() {
+export function cleanupAnimations() {
   ctx?.revert();
   ctx = null;
 }
-
-document.addEventListener('astro:page-load', initAnimations);
-document.addEventListener('astro:before-preparation', cleanupAnimations);
