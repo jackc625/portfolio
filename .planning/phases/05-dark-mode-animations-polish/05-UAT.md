@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-dark-mode-animations-polish
 source: [05-01-SUMMARY.md, 05-02-SUMMARY.md, 05-03-SUMMARY.md, 05-04-SUMMARY.md]
 started: 2026-03-30T23:55:00Z
@@ -96,12 +96,26 @@ blocked: 0
   reason: "User reported: navigating to a new page switches light/dark mode... the one you select doesn't persist across pages."
   severity: minor
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "Astro View Transitions replaces html element attributes during page swap, losing data-theme='light'. No astro:after-swap listener exists to restore theme. The is:inline head script only runs on initial parse, not during client-side navigation."
+  artifacts:
+    - path: "src/layouts/BaseLayout.astro"
+      issue: "Inline theme script (lines 39-46) has no astro:after-swap handler"
+    - path: "src/components/ThemeToggle.astro"
+      issue: "Listens to astro:page-load (too late, fires after paint)"
+  missing:
+    - "Add astro:after-swap listener in BaseLayout head inline script to restore data-theme from localStorage before page paint"
+  debug_session: ".planning/debug/theme-not-persisting-view-transitions.md"
 - truth: "Canvas hero particles flow/bend toward cursor on mouse move"
   status: failed
   reason: "User reported: canvas hero doesn't respond to cursor"
   severity: major
   test: 12
-  artifacts: []
-  missing: []
+  root_cause: "Content overlay div (z-10) completely covers the canvas and intercepts all pointer events. mousemove listener is on the canvas element which never receives events. mouseX/mouseY stay at initial -1000,-1000 values."
+  artifacts:
+    - path: "src/components/CanvasHero.astro"
+      issue: "Line 9: overlay div at z-10 blocks pointer events from reaching canvas"
+    - path: "src/components/CanvasHero.astro"
+      issue: "Line 62: mousemove listener on canvas (wrong target given z-index stacking)"
+  missing:
+    - "Move mousemove listener to parent section element instead of canvas, so it receives events regardless of z-index stacking"
+  debug_session: ".planning/debug/canvas-hero-mouse-influence.md"
