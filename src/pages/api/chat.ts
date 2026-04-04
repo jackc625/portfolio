@@ -14,14 +14,12 @@ import {
 
 export const POST: APIRoute = async ({ request }) => {
   // S9: CORS check — exact origin whitelist, NOT endsWith()
-  // Addresses review concern: all 3 reviewers flagged endsWith() as bypassable
   const origin = request.headers.get("Origin");
   if (!isAllowedOrigin(origin)) {
     return new Response("Forbidden", { status: 403 });
   }
 
   // Body size check — reject before parsing JSON to prevent memory abuse
-  // Addresses review concern: Claude flagged missing Content-Length check as MEDIUM
   const contentLength = request.headers.get("Content-Length");
   if (contentLength && parseInt(contentLength, 10) > MAX_BODY_SIZE) {
     return new Response(JSON.stringify({ error: "payload_too_large" }), {
@@ -30,16 +28,18 @@ export const POST: APIRoute = async ({ request }) => {
     });
   }
 
-  // S5/D-10/D-24: Rate limiting via Cloudflare binding
-  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  const { success: withinLimit } = await env.CHAT_RATE_LIMITER.limit({
-    key: ip,
-  });
-  if (!withinLimit) {
-    return new Response(JSON.stringify({ error: "rate_limited" }), {
-      status: 429,
-      headers: { "Content-Type": "application/json" },
-    });
+  // S5/D-10/D-24: Rate limiting via Cloudflare binding (skipped in local dev
+  // where the binding doesn't exist)
+  const rateLimiter = (env as any).CHAT_RATE_LIMITER;
+  if (rateLimiter) {
+    const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+    const { success: withinLimit } = await rateLimiter.limit({ key: ip });
+    if (!withinLimit) {
+      return new Response(JSON.stringify({ error: "rate_limited" }), {
+        status: 429,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   // Parse JSON body
@@ -66,7 +66,14 @@ export const POST: APIRoute = async ({ request }) => {
   const messages = sanitizeMessages(validation.data.messages);
 
   // D-08/D-11: Stream response from Claude Haiku
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+  const apiKey = env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: "server_error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  const client = new Anthropic({ apiKey });
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
