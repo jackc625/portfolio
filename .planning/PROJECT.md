@@ -12,8 +12,8 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 **Shipped:** v1.0 MVP (2026-03-31)
 **Live at:** jackcutrara.com (Cloudflare Pages)
-**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript + GSAP + MDX
-**Source LOC:** ~2,875 (Astro, TS, CSS, MDX)
+**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript + GSAP + MDX + Cloudflare Workers (SSR)
+**Source LOC:** ~2,875 (Astro, TS, CSS, MDX) + chatbot feature
 **Repo:** github.com/jackc625/portfolio (public)
 
 ## Requirements
@@ -49,6 +49,15 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 (None — next milestone will define new requirements via `/gsd:new-milestone`)
 
+### Validated in Phase 7
+
+- ✓ AI chatbot widget with streaming responses — Phase 7 (Claude Haiku via SSE)
+- ✓ Chat persistence across page navigation — Phase 7 (transition:persist)
+- ✓ Full keyboard accessibility and focus trapping — Phase 7
+- ✓ Defense-in-depth security (CORS whitelist, rate limiting, input validation, prompt injection resistance) — Phase 7
+- ✓ Mobile full-screen chat overlay — Phase 7
+- ✓ Markdown rendering with XSS sanitization — Phase 7 (marked + DOMPurify)
+
 ### Out of Scope
 
 - Blog / writing section — not needed unless Jack commits to regular writing
@@ -58,13 +67,15 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - 3D/Three.js hero — bloats bundle, kills mobile performance
 - Skills progress bars — meaningless self-assessment, looks amateurish
 - GitHub contribution graph — inconsistent graphs raise questions
-- Real-time chat — unnecessary complexity
+- Real-time chat — chatbot covers interactive Q&A; full real-time chat unnecessary
 - Background audio — universally disliked, accessibility violation
 - Custom loading screens — fast static site doesn't need them
 
 ## Context
 
 Shipped v1.0 MVP with 2,875 LOC across Astro, TypeScript, CSS, and MDX. 6 phases executed over 10 days (2026-03-22 to 2026-03-31), 195 commits, 27 plans. Design language cloned from shiyunlu.com with generative canvas hero, OKLCH color tokens, and Inter/IBM Plex Mono typography. All 45 requirements satisfied per milestone audit. 6 tech debt items remain (all non-critical).
+
+Phase 7 (2026-04-04): Added AI chatbot feature — Claude Haiku-powered chat widget with streaming SSE responses, markdown rendering, full accessibility, defense-in-depth security, and mobile support. Site now uses hybrid SSR via Cloudflare Workers adapter for the chat API endpoint.
 
 Known issues:
 - `CaseStudySection.astro` is dead code (safe to delete)
@@ -111,4 +122,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-31 after v1.0 milestone*
+*Last updated: 2026-04-04 after Phase 7 completion*
