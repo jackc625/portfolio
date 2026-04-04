@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  validateRequest,
   sanitizeMessages,
   isAllowedOrigin,
   type ValidatedMessage,
@@ -31,7 +32,6 @@ describe("Prompt Injection Defense (S1, D-22)", () => {
 
   it("validates message content type is string via schema", () => {
     // The Zod schema enforces string type - numbers should be rejected
-    const { validateRequest } = require("../../src/lib/validation");
     const result = validateRequest({
       messages: [{ role: "user", content: 12345 }],
     });
