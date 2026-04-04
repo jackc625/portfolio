@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-04-04T20:22:33.994Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-04-04T20:34:20.516Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
-  percent: 20
+  completed_plans: 2
+  percent: 40
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 07 (chatbot-feature) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 
 ## Performance Metrics
 
@@ -46,6 +46,7 @@ Plan: 2 of 5
 | Phase 05 | 6 | ~31min |
 | Phase 06 | 3 | ~19min |
 | Phase 07 P01 | 9min | 2 tasks | 12 files |
+| Phase 07 P02 | 8min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -56,6 +57,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 07]: Astro 6 removed output:hybrid -- use default static output with per-route SSR via prerender=false
 - [Phase 07]: Rate limit set to 5/60s (not 3/60s) for better UX per review feedback
 - [Phase 07]: Test stubs use it.todo() instead of expect(true).toBe(true) for honest pending status
+- [Phase 07]: Import zod directly (not astro/zod) for test compatibility in vitest
+- [Phase 07]: CORS uses exact origin whitelist with URL parsing, not endsWith() -- all reviewers flagged bypass risk
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None — milestone shipped.
 ## Session Continuity
 
 Last activity: 2026-04-04
-Last session: 2026-04-04T20:22:33.988Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-04-04T20:34:20.509Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
