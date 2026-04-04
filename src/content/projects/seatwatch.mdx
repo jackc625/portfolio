@@ -1,5 +1,5 @@
 ---
-title: "Seated"
+title: "SeatWatch"
 tagline: "Automated restaurant reservations with dual-strategy booking"
 description: "A multi-service SaaS platform that monitors restaurant availability and books reservations automatically, with a dual-strategy booking engine, distributed locking, and browser identity fingerprinting across a Turborepo monorepo."
 techStack:
@@ -17,6 +17,7 @@ featured: true
 status: "completed"
 category: "web-app"
 order: 1
+demoUrl: "https://seat.watch"
 ---
 
 ## Problem
@@ -25,7 +26,7 @@ High-demand restaurants release reservations at specific times, and the window t
 
 ## Solution & Approach
 
-I architected Seated as a Turborepo monorepo with three independently deployed services: a React SPA for the user dashboard, an Express REST API handling 40+ endpoints, and a BullMQ worker service processing five concurrent job queues. The separation means each service scales independently — the worker can be horizontally scaled without touching the API or frontend.
+I architected SeatWatch as a Turborepo monorepo with three independently deployed services: a React SPA for the user dashboard, an Express REST API handling 40+ endpoints, and a BullMQ worker service processing five concurrent job queues. The separation means each service scales independently — the worker can be horizontally scaled without touching the API or frontend.
 
 The core of the system is a dual-strategy booking engine. The primary path makes direct API calls to the restaurant platform, executing in under a second. When the API returns unexpected errors indicating compatibility issues, the system automatically falls back to a headless browser session using Patchright, a Playwright fork optimized for automation. The browser path is slower but resilient to API changes since it operates through the same interface a human would use.
 
@@ -51,4 +52,4 @@ I also learned that detection evasion is fundamentally about consistency, not ra
 
 ## Results
 
-Seated handles approximately fifty parallel user sessions across three deployed services on Railway. The monitoring system processes thousands of availability checks daily with jittered scheduling that keeps request patterns indistinguishable from organic traffic. The sniping mode lands first-poll attempts within milliseconds of reservation release times. The codebase spans 48,000 lines of TypeScript across 329 files with 90+ test files. The billing system has processed real transactions through all four plan tiers without a race condition or double-charge.
+SeatWatch handles approximately fifty parallel user sessions across three deployed services on Railway. The monitoring system processes thousands of availability checks daily with jittered scheduling that keeps request patterns indistinguishable from organic traffic. The sniping mode lands first-poll attempts within milliseconds of reservation release times. The codebase spans 48,000 lines of TypeScript across 329 files with 90+ test files. The billing system has processed real transactions through all four plan tiers without a race condition or double-charge.
