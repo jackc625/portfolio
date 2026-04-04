@@ -292,6 +292,27 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 // ============================================
+// Anonymous Analytics Event Dispatching (D-36)
+// ============================================
+
+// Fire-and-forget analytics via CustomEvent on document.
+// Framework-agnostic — can be consumed by any analytics provider later.
+// No conversation content is included in events (D-36).
+// Error tracking added per review feedback: Claude LOW — error frequency is
+// valuable operational data.
+
+function trackChatEvent(action: string, label?: string): void {
+  document.dispatchEvent(new CustomEvent("chat:analytics", {
+    detail: { action, label, timestamp: Date.now() },
+  }));
+
+  // Also log to console in development for debugging
+  if (import.meta.env.DEV) {
+    console.log(`[chat:analytics] ${action}`, label ?? "");
+  }
+}
+
+// ============================================
 // Focus Trap with Dynamic Re-querying (D-33)
 // ============================================
 
@@ -491,6 +512,7 @@ function initChat(): void {
   function openPanel(): void {
     panelOpen = true;
     stopPulse();
+    trackChatEvent("chat_open");
     bubble.setAttribute("aria-expanded", "true");
     bubble.setAttribute("aria-label", "Close chat");
     if (bubbleIcon) bubbleIcon.style.display = "none";
@@ -623,6 +645,7 @@ function initChat(): void {
     chip.addEventListener("click", () => {
       const text = chip.textContent?.trim();
       if (text) {
+        trackChatEvent("chip_click", text);
         sendMessage(text);
       }
     });
@@ -658,11 +681,15 @@ function initChat(): void {
 
     // Check offline (D-12)
     if (!navigator.onLine) {
+      trackChatEvent("chat_error", "offline");
       const errorEl = createErrorMessageEl(ERROR_MESSAGES.offline);
       messagesArea.insertBefore(errorEl, typingIndicator);
       scrollToBottom(messagesArea);
       return;
     }
+
+    // Track message sent (no content logged — D-36)
+    trackChatEvent("message_sent");
 
     // Add user message
     messages.push({ role: "user", content });
@@ -756,6 +783,7 @@ function initChat(): void {
         setInputDisabled(false);
         input.focus();
 
+        trackChatEvent("chat_error", type);
         const errorMessage = ERROR_MESSAGES[type] || ERROR_MESSAGES.api_error;
         const errorEl = createErrorMessageEl(errorMessage);
         messagesArea.insertBefore(errorEl, typingIndicator);
