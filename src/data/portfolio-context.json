@@ -1,0 +1,66 @@
+{
+  "personal": {
+    "name": "Jack Cutrara",
+    "title": "Software Engineer",
+    "location": "Virginia, USA",
+    "summary": "Software engineer who builds real systems, not tutorials. Every project in this portfolio exists because Jack saw a problem and decided to solve it. Passionate about clean architecture, strong fundamentals, and shipping code that works."
+  },
+  "education": {
+    "degree": "Bachelor of Science in Computer Science",
+    "school": "New Jersey Institute of Technology",
+    "graduation": "2024"
+  },
+  "skills": {
+    "languages": ["TypeScript", "Python", "Java", "JavaScript", "SQL"],
+    "frameworks": ["React", "Next.js", "Express", "FastAPI", "Node.js", "Spring Boot", "Astro", "Tailwind CSS"],
+    "databases": ["PostgreSQL", "Redis", "SQLite", "DuckDB"],
+    "tools": ["Git", "Docker", "Prisma", "Stripe", "Sentry", "GitHub Actions", "Railway", "AWS S3", "Cloudflare"]
+  },
+  "projects": [
+    {
+      "name": "SeatWatch",
+      "description": "A multi-service SaaS platform that monitors restaurant availability and books reservations automatically, with a dual-strategy booking engine, distributed locking, and browser identity fingerprinting across a Turborepo monorepo.",
+      "tech": ["TypeScript", "React", "Express", "BullMQ", "PostgreSQL", "Redis", "Prisma", "Stripe"],
+      "url": "https://seat.watch",
+      "page": "/projects/seatwatch"
+    },
+    {
+      "name": "NFL Prediction System",
+      "description": "A full-stack prediction engine generating win probability, spread, and over/under predictions with walk-forward temporal validation, market blending, and an interactive FastAPI dashboard.",
+      "tech": ["Python", "FastAPI", "XGBoost", "scikit-learn", "DuckDB", "HTMX", "Tailwind CSS"],
+      "page": "/projects/nfl-predict"
+    },
+    {
+      "name": "SolSniper",
+      "description": "A high-speed Solana trading system with multi-source token detection, three-tier safety validation, six-step sell escalation, crash recovery, and a real-time Preact monitoring dashboard.",
+      "tech": ["TypeScript", "Solana/web3.js", "Preact", "SQLite", "Fastify", "Jupiter API"],
+      "page": "/projects/solsniper"
+    },
+    {
+      "name": "Optimize AI",
+      "description": "A personal fitness platform for tracking workouts, nutrition, habits, and body composition built with Next.js 15 and Supabase, enforcing complete user data isolation through PostgreSQL Row-Level Security on every table.",
+      "tech": ["Next.js", "React", "TypeScript", "Supabase", "PostgreSQL", "Tailwind CSS"],
+      "page": "/projects/optimize-ai"
+    },
+    {
+      "name": "Clipify",
+      "description": "An AI-powered SaaS that transforms YouTube videos, streams, and uploaded footage into captioned short-form clips using Whisper transcription, GPT-powered moment detection, and FFmpeg rendering.",
+      "tech": ["Next.js", "TypeScript", "OpenAI Whisper", "GPT-4o", "BullMQ", "FFmpeg", "AWS S3", "Stripe"],
+      "page": "/projects/clipify"
+    },
+    {
+      "name": "Crypto Breakout Trader",
+      "description": "An automated cryptocurrency day-trading system implementing momentum breakout detection on 5-minute candles with composable signal filters, risk-based position sizing, and atomic state persistence.",
+      "tech": ["Python", "CCXT", "pandas", "pandas-ta", "Pydantic"],
+      "page": "/projects/crypto-breakout-trader"
+    }
+  ],
+  "experience": "Jack is a recent CS graduate actively seeking a software engineering role. He learns by building — every project in this portfolio was designed, architected, and coded by Jack to solve a real problem. His projects span full-stack web apps, trading systems, ML pipelines, and AI-powered SaaS products. He is currently looking for a software engineering role where he can contribute to a team building something that matters.",
+  "contact": {
+    "email": "jack@jackcutrara.com",
+    "github": "https://github.com/jackc625",
+    "linkedin": "https://linkedin.com/in/jackcutrara",
+    "website": "https://jackcutrara.com"
+  },
+  "siteStack": ["Astro 6", "Tailwind CSS v4", "TypeScript", "GSAP", "Cloudflare Workers", "MDX"]
+}
