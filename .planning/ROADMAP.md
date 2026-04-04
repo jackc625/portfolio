@@ -28,3 +28,17 @@
 | 4. Project System & Case Studies | v1.0 | 4/4 | Complete | 2026-03-27 |
 | 5. Dark Mode, Animations & Polish | v1.0 | 6/6 | Complete | 2026-03-31 |
 | 6. Performance Audit & Deployment | v1.0 | 3/3 | Complete | 2026-03-31 |
+
+### Phase 7: chatbot feature
+
+**Goal:** Add an AI-powered chatbot widget that answers questions about Jack's background, projects, and experience using Claude Haiku, with streaming responses, full accessibility, and defense-in-depth security.
+**Requirements**: D-01 through D-38 (from 07-CONTEXT.md)
+**Depends on:** Phase 6
+**Plans:** 5 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — Infrastructure: hybrid SSR, Cloudflare adapter, dependencies, test scaffold
+- [ ] 07-02-PLAN.md — Backend: streaming API endpoint, system prompt, portfolio context, validation
+- [ ] 07-03-PLAN.md — Frontend: chat widget markup, client-side controller, markdown rendering, animations
+- [ ] 07-04-PLAN.md — Integration: BaseLayout wiring, focus trap, keyboard accessibility, analytics
+- [ ] 07-05-PLAN.md — Checkpoint: human verification of complete chatbot feature
