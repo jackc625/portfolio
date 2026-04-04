@@ -37,7 +37,7 @@
 **Plans:** 5 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Infrastructure: hybrid SSR, Cloudflare adapter, dependencies, test scaffold
+- [x] 07-01-PLAN.md — Infrastructure: hybrid SSR, Cloudflare adapter, dependencies, test scaffold
 - [ ] 07-02-PLAN.md — Backend: streaming API endpoint, system prompt, portfolio context, validation
 - [ ] 07-03-PLAN.md — Frontend: chat widget markup, client-side controller, markdown rendering, animations
 - [ ] 07-04-PLAN.md — Integration: BaseLayout wiring, focus trap, keyboard accessibility, analytics
