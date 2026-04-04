@@ -1,6 +1,712 @@
 // Chat client-side controller — Phase 7
-// Full implementation in Task 2 of 07-03-PLAN
-// This placeholder ensures the build passes while ChatWidget.astro imports this module
+// Handles: bubble toggle, GSAP animations, starter chips, input handling,
+// SSE streaming with AbortController timeout, markdown rendering with
+// DOMPurify sanitization, copy-to-clipboard, typing indicator, error messages,
+// nudge system, auto-scroll, and reduced-motion support.
 
-// Placeholder: will be replaced with full implementation
-console.debug("[chat] module loaded — awaiting full implementation");
+import { marked } from "marked";
+import DOMPurify from "dompurify";
+
+// ============================================
+// Markdown Rendering Pipeline (D-21, D-25, D-38)
+// ============================================
+
+// Configure marked for limited subset
+// CRITICAL: Use { async: false } — marked v17 parse() returns Promise without it.
+// Addresses review concern: Claude flagged as HIGH — DOMPurify.sanitize(Promise)
+// returns empty string, silently breaking XSS protection while tests pass falsely.
+marked.use({ breaks: true, gfm: true, async: false });
+
+// Complete DOMPurify configuration — addresses review concern from all 3 reviewers:
+// Codex flagged as HIGH that allowlisting tags alone is insufficient.
+// Must specify allowed attributes, forbid style, enforce safe URL protocols.
+const PURIFY_CONFIG: DOMPurify.Config = {
+  ALLOWED_TAGS: ["b", "strong", "em", "i", "code", "a", "ul", "ol", "li", "p", "br"],
+  ALLOWED_ATTR: ["href", "target", "rel"],
+  FORBID_ATTR: ["style"],
+  ALLOW_DATA_ATTR: false,
+  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+};
+
+// DOMPurify hook: add target="_blank" and rel="noopener noreferrer" to all links
+DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+  if (node.tagName === "A") {
+    node.setAttribute("target", "_blank");
+    node.setAttribute("rel", "noopener noreferrer");
+  }
+});
+
+/**
+ * Render raw markdown text to sanitized HTML.
+ * Pipeline: raw -> marked.parse() -> DOMPurify.sanitize()
+ * Exported for testing.
+ */
+export function renderMarkdown(raw: string): string {
+  // marked.parse() with { async: false } configured above — returns string, not Promise
+  const html = marked.parse(raw) as string;
+  return DOMPurify.sanitize(html, PURIFY_CONFIG);
+}
+
+// ============================================
+// State Management (D-26)
+// ============================================
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+let messages: ChatMessage[] = [];
+let isStreaming = false;
+let messageCount = 0;
+let initialized = false;
+
+// ============================================
+// SSE Streaming with AbortController (D-11)
+// ============================================
+
+// Addresses review concern: all 3 reviewers flagged missing stream abort/error handling.
+// Client-side AbortController timeout prevents stuck "typing" state on connection drops.
+async function streamChat(
+  chatMessages: ChatMessage[],
+  onToken: (text: string) => void,
+  onDone: () => void,
+  onError: (type: string) => void
+): Promise<void> {
+  // AbortController with 30-second timeout to prevent stuck "typing" state
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: chatMessages }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (response.status === 429) {
+      onError("rate_limited");
+      return;
+    }
+    if (!response.ok) {
+      onError("api_error");
+      return;
+    }
+
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const data = line.slice(6).trim();
+        if (data === "[DONE]") {
+          onDone();
+          return;
+        }
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error) {
+            onError("api_error");
+            return;
+          }
+          onToken(parsed.text);
+        } catch {
+          /* skip malformed SSE line */
+        }
+      }
+    }
+    onDone();
+  } catch (err) {
+    clearTimeout(timeout);
+    if (err instanceof DOMException && err.name === "AbortError") {
+      onError("timeout");
+    } else {
+      onError("api_error");
+    }
+  }
+}
+
+// ============================================
+// DOM Helpers
+// ============================================
+
+function scrollToBottom(el: HTMLElement): void {
+  el.scrollTop = el.scrollHeight;
+}
+
+function autoGrowTextarea(textarea: HTMLTextAreaElement): void {
+  textarea.style.height = "auto";
+  textarea.style.height = Math.min(textarea.scrollHeight, 120) + "px";
+}
+
+// ============================================
+// Copy to Clipboard (D-30)
+// ============================================
+
+// MUST wrap in try/catch — navigator.clipboard.writeText() fails on non-HTTPS
+// Addresses review concern: Claude flagged clipboard API needing try/catch as MEDIUM
+async function copyToClipboard(text: string, button: HTMLElement): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text);
+    button.classList.add("copy-success");
+    setTimeout(() => button.classList.remove("copy-success"), 2000);
+  } catch {
+    // Silently fail — no user-visible error for copy failure on non-HTTPS
+  }
+}
+
+// ============================================
+// Message Rendering
+// ============================================
+
+function createUserMessageEl(content: string): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "chat-message-wrapper";
+  wrapper.style.cssText = "display: flex; justify-content: flex-end; margin-bottom: 8px;";
+
+  const bubble = document.createElement("div");
+  bubble.style.cssText = `
+    max-width: 85%;
+    background: var(--token-bg-secondary);
+    border-radius: 12px 12px 4px 12px;
+    padding: 8px 16px;
+    color: var(--token-text-primary);
+    font-size: var(--token-text-base);
+    word-break: break-word;
+  `;
+  bubble.textContent = content;
+
+  wrapper.appendChild(bubble);
+  return wrapper;
+}
+
+function createBotMessageEl(content: string): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "chat-message-wrapper";
+  wrapper.style.cssText = "display: flex; justify-content: flex-start; margin-bottom: 8px; position: relative;";
+
+  const bubble = document.createElement("div");
+  bubble.className = "chat-bot-message";
+  bubble.style.cssText = `
+    max-width: 90%;
+    border-left: 2px solid var(--token-border);
+    padding: 8px 0 8px 12px;
+    color: var(--token-text-secondary);
+    font-size: var(--token-text-base);
+    word-break: break-word;
+  `;
+  // Sanitized HTML — safe to use innerHTML after marked + DOMPurify pipeline
+  bubble.innerHTML = renderMarkdown(content);
+
+  // Copy button
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "chat-copy-btn";
+  copyBtn.setAttribute("aria-label", "Copy message");
+  copyBtn.style.cssText = `
+    position: absolute;
+    top: -4px;
+    right: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  `;
+  copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--token-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  copyBtn.addEventListener("click", () => {
+    copyToClipboard(content, copyBtn);
+  });
+
+  wrapper.appendChild(bubble);
+  wrapper.appendChild(copyBtn);
+  return wrapper;
+}
+
+function createErrorMessageEl(text: string): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = "display: flex; justify-content: flex-start; margin-bottom: 8px;";
+
+  const bubble = document.createElement("div");
+  bubble.style.cssText = `
+    max-width: 90%;
+    border-left: 2px solid var(--token-border);
+    padding: 8px 0 8px 12px;
+    color: var(--token-text-muted);
+    font-size: var(--token-text-base);
+    font-style: italic;
+  `;
+  bubble.textContent = text;
+
+  wrapper.appendChild(bubble);
+  return wrapper;
+}
+
+function createNudgeMessageEl(): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = "display: flex; justify-content: center; margin-bottom: 8px;";
+
+  const text = document.createElement("span");
+  text.style.cssText = `
+    font-size: var(--token-text-sm);
+    color: var(--token-text-muted);
+    font-style: italic;
+    padding: 8px 16px;
+  `;
+  text.textContent = "For more details, check out my projects page or reach out directly.";
+
+  wrapper.appendChild(text);
+  return wrapper;
+}
+
+// ============================================
+// Error Messages (D-12)
+// ============================================
+
+const ERROR_MESSAGES: Record<string, string> = {
+  api_error: "Sorry, I'm having trouble right now. Try again in a moment.",
+  rate_limited: "You've sent a lot of messages. Please wait a moment before trying again.",
+  offline: "It looks like you're offline. Check your connection and try again.",
+  timeout: "Sorry, I'm having trouble right now. Try again in a moment.",
+};
+
+// ============================================
+// GSAP Animation Helpers
+// ============================================
+
+const prefersReducedMotion = (): boolean =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let pulseAnimation: gsap.core.Tween | null = null;
+
+async function animatePanelOpen(panel: HTMLElement): Promise<void> {
+  if (prefersReducedMotion()) {
+    panel.style.display = "flex";
+    return;
+  }
+  panel.style.display = "flex";
+  try {
+    const { gsap } = await import("gsap");
+    gsap.fromTo(
+      panel,
+      { scale: 0.9, opacity: 0, transformOrigin: "bottom right" },
+      { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
+    );
+  } catch {
+    // GSAP load fail — panel is already visible via display:flex
+  }
+}
+
+async function animatePanelClose(panel: HTMLElement): Promise<void> {
+  if (prefersReducedMotion()) {
+    panel.style.display = "none";
+    return;
+  }
+  try {
+    const { gsap } = await import("gsap");
+    gsap.to(panel, {
+      scale: 0.9,
+      opacity: 0,
+      duration: 0.2,
+      ease: "power2.in",
+      onComplete: () => {
+        panel.style.display = "none";
+        gsap.set(panel, { clearProps: "scale,opacity" });
+      },
+    });
+  } catch {
+    panel.style.display = "none";
+  }
+}
+
+async function animateMessageAppear(el: HTMLElement): Promise<void> {
+  if (prefersReducedMotion()) return;
+  try {
+    const { gsap } = await import("gsap");
+    gsap.fromTo(
+      el,
+      { opacity: 0, y: 8 },
+      { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }
+    );
+  } catch {
+    // No animation fallback
+  }
+}
+
+async function startPulse(bubble: HTMLElement): Promise<void> {
+  if (prefersReducedMotion()) return;
+  try {
+    const { gsap } = await import("gsap");
+    pulseAnimation = gsap.to(bubble, {
+      boxShadow: "0 0 0 8px color-mix(in oklch, var(--token-accent) 40%, transparent)",
+      duration: 1,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+    });
+  } catch {
+    // No pulse fallback
+  }
+}
+
+function stopPulse(): void {
+  if (pulseAnimation) {
+    pulseAnimation.kill();
+    pulseAnimation = null;
+  }
+}
+
+async function startTypingDots(container: HTMLElement): Promise<void> {
+  const dots = container.querySelectorAll<HTMLElement>(".typing-dot");
+  if (prefersReducedMotion()) {
+    // Reduced motion: use opacity fade instead of bounce
+    dots.forEach((dot) => {
+      dot.style.animation = "none";
+      dot.style.opacity = "0.5";
+    });
+    return;
+  }
+  try {
+    const { gsap } = await import("gsap");
+    gsap.to(dots, {
+      y: -4,
+      duration: 0.3,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+      stagger: 0.15,
+    });
+  } catch {
+    // No animation fallback
+  }
+}
+
+// ============================================
+// Initialization (astro:page-load)
+// ============================================
+
+function initChat(): void {
+  // Idempotency guard — prevent re-initialization on navigation
+  if (initialized) return;
+
+  const bubble = document.getElementById("chat-bubble") as HTMLButtonElement | null;
+  const panel = document.getElementById("chat-panel") as HTMLElement | null;
+  const closeBtn = document.getElementById("chat-close") as HTMLButtonElement | null;
+  const input = document.getElementById("chat-input") as HTMLTextAreaElement | null;
+  const sendBtn = document.getElementById("chat-send") as HTMLButtonElement | null;
+  const messagesArea = document.getElementById("chat-messages") as HTMLElement | null;
+  const starters = document.getElementById("chat-starters") as HTMLElement | null;
+  const typingIndicator = document.getElementById("chat-typing") as HTMLElement | null;
+  const charCount = document.getElementById("chat-char-count") as HTMLElement | null;
+  const bubbleIcon = document.getElementById("chat-bubble-icon") as HTMLElement | null;
+  const bubbleCloseIcon = document.getElementById("chat-bubble-close-icon") as HTMLElement | null;
+
+  if (!bubble || !panel || !closeBtn || !input || !sendBtn || !messagesArea || !starters || !typingIndicator || !charCount) {
+    return; // Elements not yet in DOM
+  }
+
+  initialized = true;
+  let panelOpen = false;
+
+  // Start bubble pulse animation
+  startPulse(bubble);
+
+  // ---- Bubble Toggle (D-01, D-03, D-06) ----
+
+  function openPanel(): void {
+    panelOpen = true;
+    stopPulse();
+    bubble.setAttribute("aria-expanded", "true");
+    bubble.setAttribute("aria-label", "Close chat");
+    if (bubbleIcon) bubbleIcon.style.display = "none";
+    if (bubbleCloseIcon) bubbleCloseIcon.style.display = "block";
+
+    // Mobile: add full-screen class
+    if (window.innerWidth < 768) {
+      panel.classList.add("chat-panel-mobile");
+    }
+
+    animatePanelOpen(panel).then(() => {
+      input.focus();
+    });
+  }
+
+  function closePanel(): void {
+    panelOpen = false;
+    bubble.setAttribute("aria-expanded", "false");
+    bubble.setAttribute("aria-label", "Open chat");
+    if (bubbleIcon) bubbleIcon.style.display = "block";
+    if (bubbleCloseIcon) bubbleCloseIcon.style.display = "none";
+    panel.classList.remove("chat-panel-mobile");
+
+    animatePanelClose(panel).then(() => {
+      bubble.focus();
+      startPulse(bubble);
+    });
+  }
+
+  bubble.addEventListener("click", () => {
+    if (panelOpen) {
+      closePanel();
+    } else {
+      openPanel();
+    }
+  });
+
+  closeBtn.addEventListener("click", () => {
+    closePanel();
+  });
+
+  // Escape key closes panel (D-33)
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === "Escape" && panelOpen) {
+      closePanel();
+    }
+  });
+
+  // ---- Input Handling (D-34, D-35) ----
+
+  function updateCharCount(): void {
+    const len = input.value.length;
+    if (len === 0) {
+      charCount.style.display = "none";
+      return;
+    }
+    charCount.style.display = "block";
+    charCount.textContent = `${len}/500`;
+
+    if (len >= 500) {
+      charCount.style.color = "var(--token-destructive)";
+      charCount.style.fontWeight = "600";
+    } else if (len > 450) {
+      charCount.style.color = "var(--token-warning)";
+      charCount.style.fontWeight = "600";
+    } else {
+      charCount.style.color = "var(--token-text-muted)";
+      charCount.style.fontWeight = "400";
+    }
+  }
+
+  function updateSendButton(): void {
+    const hasContent = input.value.trim().length > 0;
+    if (hasContent && !isStreaming) {
+      sendBtn.disabled = false;
+      sendBtn.style.opacity = "1";
+      sendBtn.style.cursor = "pointer";
+    } else {
+      sendBtn.disabled = true;
+      sendBtn.style.opacity = "0.4";
+      sendBtn.style.cursor = "not-allowed";
+    }
+  }
+
+  function setInputDisabled(disabled: boolean): void {
+    if (disabled) {
+      input.style.opacity = "0.5";
+      input.style.pointerEvents = "none";
+      sendBtn.style.opacity = "0.5";
+      sendBtn.style.pointerEvents = "none";
+    } else {
+      input.style.opacity = "1";
+      input.style.pointerEvents = "auto";
+      updateSendButton();
+    }
+  }
+
+  input.addEventListener("input", () => {
+    // Prevent input beyond 500 characters
+    if (input.value.length > 500) {
+      input.value = input.value.slice(0, 500);
+    }
+    autoGrowTextarea(input);
+    updateCharCount();
+    updateSendButton();
+  });
+
+  // Enter sends, Shift+Enter adds newline (D-34)
+  input.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (input.value.trim() && !isStreaming) {
+        sendMessage(input.value.trim());
+      }
+    }
+  });
+
+  sendBtn.addEventListener("click", () => {
+    if (input.value.trim() && !isStreaming) {
+      sendMessage(input.value.trim());
+    }
+  });
+
+  // ---- Starter Chips (D-27) ----
+
+  const chipButtons = starters.querySelectorAll<HTMLButtonElement>(".chat-starter-chip");
+  chipButtons.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const text = chip.textContent?.trim();
+      if (text) {
+        sendMessage(text);
+      }
+    });
+    // Support Enter key on chips
+    chip.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        chip.click();
+      }
+    });
+  });
+
+  // ---- Send Message ----
+
+  function hideStarters(): void {
+    if (starters) {
+      starters.style.display = "none";
+    }
+  }
+
+  function showTyping(): void {
+    typingIndicator.style.display = "flex";
+    startTypingDots(typingIndicator);
+    scrollToBottom(messagesArea);
+  }
+
+  function hideTyping(): void {
+    typingIndicator.style.display = "none";
+  }
+
+  async function sendMessage(content: string): Promise<void> {
+    if (isStreaming) return;
+
+    // Check offline (D-12)
+    if (!navigator.onLine) {
+      const errorEl = createErrorMessageEl(ERROR_MESSAGES.offline);
+      messagesArea.insertBefore(errorEl, typingIndicator);
+      scrollToBottom(messagesArea);
+      return;
+    }
+
+    // Add user message
+    messages.push({ role: "user", content });
+    const userEl = createUserMessageEl(content);
+    messagesArea.insertBefore(userEl, typingIndicator);
+    animateMessageAppear(userEl);
+
+    // Clear input
+    input.value = "";
+    autoGrowTextarea(input);
+    updateCharCount();
+    updateSendButton();
+
+    // Hide starters
+    hideStarters();
+
+    // Show typing indicator
+    isStreaming = true;
+    setInputDisabled(true);
+    showTyping();
+
+    // Track message count for nudge (D-29)
+    messageCount++;
+
+    // Accumulate bot response
+    let botContent = "";
+    let botEl: HTMLElement | null = null;
+    let botBubble: HTMLElement | null = null;
+
+    await streamChat(
+      messages,
+      // onToken
+      (text: string) => {
+        // Hide typing on first token
+        if (!botEl) {
+          hideTyping();
+          botEl = createBotMessageEl("");
+          botBubble = botEl.querySelector(".chat-bot-message");
+          messagesArea.insertBefore(botEl, typingIndicator);
+          animateMessageAppear(botEl);
+        }
+        botContent += text;
+        if (botBubble) {
+          botBubble.innerHTML = renderMarkdown(botContent);
+        }
+        scrollToBottom(messagesArea);
+      },
+      // onDone
+      () => {
+        hideTyping();
+        isStreaming = false;
+        setInputDisabled(false);
+        input.focus();
+
+        // If no tokens received, create empty bot message
+        if (!botEl) {
+          botEl = createBotMessageEl(botContent || "...");
+          messagesArea.insertBefore(botEl, typingIndicator);
+        }
+
+        // Store final bot message
+        if (botContent) {
+          messages.push({ role: "assistant", content: botContent });
+        }
+
+        // Update copy button to use final content
+        const copyBtn = botEl?.querySelector(".chat-copy-btn");
+        if (copyBtn) {
+          copyBtn.replaceWith(copyBtn.cloneNode(true));
+          const newCopyBtn = botEl?.querySelector(".chat-copy-btn") as HTMLElement;
+          if (newCopyBtn) {
+            newCopyBtn.addEventListener("click", () => {
+              copyToClipboard(botContent, newCopyBtn);
+            });
+          }
+        }
+
+        // Nudge after ~15 messages (D-29)
+        if (messageCount === 15) {
+          const nudgeEl = createNudgeMessageEl();
+          messagesArea.insertBefore(nudgeEl, typingIndicator);
+          scrollToBottom(messagesArea);
+        }
+
+        scrollToBottom(messagesArea);
+      },
+      // onError
+      (type: string) => {
+        hideTyping();
+        isStreaming = false;
+        setInputDisabled(false);
+        input.focus();
+
+        const errorMessage = ERROR_MESSAGES[type] || ERROR_MESSAGES.api_error;
+        const errorEl = createErrorMessageEl(errorMessage);
+        messagesArea.insertBefore(errorEl, typingIndicator);
+        scrollToBottom(messagesArea);
+      }
+    );
+  }
+}
+
+// Listen to astro:page-load for (re)initialization
+document.addEventListener("astro:page-load", initChat);
+
+// Also initialize on DOMContentLoaded as fallback
+if (document.readyState !== "loading") {
+  initChat();
+} else {
+  document.addEventListener("DOMContentLoaded", initChat);
+}
