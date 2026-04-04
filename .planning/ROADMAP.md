@@ -41,4 +41,4 @@ Plans:
 - [x] 07-02-PLAN.md — Backend: streaming API endpoint, system prompt, portfolio context, validation
 - [x] 07-03-PLAN.md — Frontend: chat widget markup, client-side controller, markdown rendering, animations
 - [x] 07-04-PLAN.md — Integration: BaseLayout wiring, focus trap, keyboard accessibility, analytics
-- [ ] 07-05-PLAN.md — Checkpoint: human verification of complete chatbot feature
+- [x] 07-05-PLAN.md — Checkpoint: human verification of complete chatbot feature
