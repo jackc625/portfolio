@@ -59,9 +59,11 @@ Uses existing fluid type scale from `global.css`. All text in the chat widget us
 | Role | Token / Size | Weight | Line Height | Usage in Chat Widget |
 |------|-------------|--------|-------------|----------------------|
 | Body | `--token-text-base` (clamp 15px-17px) | 400 (regular) | 1.5 | Message text (user and bot), input field text |
-| Label | `--token-text-sm` (clamp 12px-14px) | 500 (medium) | 1.4 | Header label "Ask Jack's AI", privacy note, character count, timestamp, starter chip text |
+| Label | `--token-text-sm` (clamp 12px-14px) | 600 (semibold) | 1.4 | Header label "Ask Jack's AI", privacy note, character count, timestamp, starter chip text |
 | Heading | `--token-text-heading` (clamp 20px-32px) | 600 (semibold) | 1.2 | Not used in chat widget (no headings needed) |
 | Display | `--token-text-display` (clamp 40px-88px) | 700 (bold) | 1.1 | Not used in chat widget |
+
+**Active weights in chat widget: 2 (400 regular, 600 semibold)**
 
 Additional typography rules:
 - Bot markdown content: `font-body` at `--token-text-base`, weight 400, line-height 1.5
@@ -69,8 +71,8 @@ Additional typography rules:
 - Bot markdown code spans: `font-mono` (IBM Plex Mono) at `--token-text-sm`, weight 400
 - Bot markdown links: `color-accent`, underline on hover, weight 400
 - Bot markdown bullet lists: `--token-space-sm` left indent per level, `--token-space-xs` gap between items
-- Character count near limit (>450): weight 500, `color-warning`
-- Character count at limit (500): weight 500, `color-destructive`
+- Character count near limit (>450): weight 600, `color-warning`
+- Character count at limit (500): weight 600, `color-destructive`
 
 Source: global.css `:root` typography tokens, astro.config.mjs font configuration, 07-CONTEXT.md D-04/D-38
 
@@ -152,7 +154,7 @@ All components are `.astro` files for static markup or vanilla JS `<script>` tag
 - Border bottom: 1px solid `--token-border`
 - Padding: 0 16px (`--token-space-md`)
 - Layout: flex row, justify-between, align-center
-- Left: label "Ask Jack's AI" in `--token-text-sm` at weight 500, `--token-text-primary` color
+- Left: label "Ask Jack's AI" in `--token-text-sm` at weight 600, `--token-text-primary` color
 - Right: close button (X icon, 20px, `--token-text-muted`, hover `--token-text-primary`)
 - Close button: `aria-label="Close chat"`, Escape key also closes (D-33)
 
@@ -169,7 +171,7 @@ All components are `.astro` files for static markup or vanilla JS `<script>` tag
 - 3-4 clickable pill buttons (D-27)
 - Layout: flex wrap, gap 8px (`--token-space-sm`)
 - Each chip: `--token-bg-secondary` background, 1px solid `--token-border`, border-radius 9999px (full pill)
-- Padding: 6px 12px
+- Padding: 8px 12px
 - Text: `--token-text-sm`, weight 400, `--token-text-secondary`
 - Hover: border `--token-border-hover`, text `--token-accent`
 - `role="button"`, `tabindex="0"`
@@ -177,14 +179,14 @@ All components are `.astro` files for static markup or vanilla JS `<script>` tag
 ### MessageBubble (within MessageArea)
 - **User messages:** right-aligned, background `--token-bg-secondary`, border-radius 12px 12px 4px 12px, max-width 85%
 - **Bot messages:** left-aligned, background transparent, left border 2px solid `--token-border`, border-radius 0px, padding-left 12px, max-width 90%
-- Message padding: 10px 14px (user), 8px 0 8px 12px (bot -- left border provides visual boundary)
+- Message padding: 8px 16px (user), 8px 0 8px 12px (bot -- left border provides visual boundary)
 - Message gap: 8px (`--token-space-sm`) between consecutive same-sender messages, 16px (`--token-space-md`) between sender switches
 - Bot message text: `--token-text-secondary` (slightly muted to differentiate from user text)
 - User message text: `--token-text-primary`
 
 ### TypingIndicator (within MessageArea)
 - Shown after user sends message, before first streaming token (D-28)
-- Three dots, 6px circles, `--token-text-muted` color
+- Three dots, 8px circles, `--token-text-muted` color
 - Bounce animation: staggered 0.15s delay per dot, 0.6s infinite ease-in-out, translateY(-4px)
 - Appears in bot message position (left-aligned, with left border)
 
@@ -203,7 +205,7 @@ All components are `.astro` files for static markup or vanilla JS `<script>` tag
 - Padding: 12px 16px (`--token-space-md`)
 - Background: `--token-bg-primary`
 - Layout: flex row, gap 8px (`--token-space-sm`), align-end
-- **Text input:** `<textarea>` with auto-grow (1 row min, 4 rows max), background `--token-bg-secondary`, border 1px solid `--token-border`, border-radius 8px, padding 10px 12px, placeholder "Ask me anything...", `--token-text-muted` placeholder color
+- **Text input:** `<textarea>` with auto-grow (1 row min, 4 rows max), background `--token-bg-secondary`, border 1px solid `--token-border`, border-radius 8px, padding 8px 12px, placeholder "Ask me anything...", `--token-text-muted` placeholder color
 - Focus: border-color `--token-border-hover`, ring 2px `--token-accent` (consistent with codebase focus pattern)
 - **Send button:** 36px x 36px circle, background `--token-accent`, icon arrow-up SVG 18px white, disabled state opacity 0.4, `aria-label="Send message"`
 - **Character count:** below textarea, right-aligned, `--token-text-sm`, `--token-text-muted` by default
@@ -249,8 +251,8 @@ All components are `.astro` files for static markup or vanilla JS `<script>` tag
 | Empty | Placeholder visible, send button disabled (opacity 0.4) |
 | Typing | Placeholder hidden, send button enabled (full opacity), character count appears |
 | Characters 1-450 | Count in `--token-text-muted` |
-| Characters 451-499 | Count in `--token-warning`, weight 500 |
-| Characters 500 (limit) | Count in `--token-destructive`, weight 500, textarea prevents further input |
+| Characters 451-499 | Count in `--token-warning`, weight 600 |
+| Characters 500 (limit) | Count in `--token-destructive`, weight 600, textarea prevents further input |
 | Streaming (disabled) | textarea + send button opacity 0.5, pointer-events none |
 
 ### Messages
