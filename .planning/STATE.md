@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-04-04T20:34:20.516Z"
+stopped_at: Completed 07-03-PLAN.md
+last_updated: "2026-04-04T20:46:32.010Z"
 last_activity: 2026-04-04
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
-  percent: 40
+  completed_plans: 3
+  percent: 60
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 ## Current Position
 
 Phase: 07 (chatbot-feature) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: 3 of 5
 | Phase 06 | 3 | ~19min |
 | Phase 07 P01 | 9min | 2 tasks | 12 files |
 | Phase 07 P02 | 8min | 2 tasks | 9 files |
+| Phase 07 P03 | 8min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -59,6 +60,10 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 07]: Test stubs use it.todo() instead of expect(true).toBe(true) for honest pending status
 - [Phase 07]: Import zod directly (not astro/zod) for test compatibility in vitest
 - [Phase 07]: CORS uses exact origin whitelist with URL parsing, not endsWith() -- all reviewers flagged bypass risk
+- [Phase 07]: marked configured with async:false to prevent Promise-as-string bug in v17
+- [Phase 07]: DOMPurify strict config: ALLOWED_TAGS+ol, ALLOWED_ATTR whitelist, FORBID_ATTR:style, ALLOWED_URI_REGEXP
+- [Phase 07]: AbortController with 30s timeout for SSE streams to prevent stuck typing state
+- [Phase 07]: JS auto-grow textarea instead of field-sizing:content (no Firefox support)
 
 ### Pending Todos
 
@@ -81,6 +86,6 @@ None — milestone shipped.
 ## Session Continuity
 
 Last activity: 2026-04-04
-Last session: 2026-04-04T20:34:20.509Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-04-04T20:46:32.005Z
+Stopped at: Completed 07-03-PLAN.md
 Resume file: None
