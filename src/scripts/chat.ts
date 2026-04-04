@@ -59,7 +59,16 @@ interface ChatMessage {
 let messages: ChatMessage[] = [];
 let isStreaming = false;
 let messageCount = 0;
-let initialized = false;
+
+// Module-level initialization guard — prevents duplicate handlers
+// across view transition navigations where transition:persist preserves
+// the DOM but astro:page-load re-fires the script.
+// Addresses review concern: Claude MEDIUM, Codex MEDIUM — duplicate handler risk.
+let chatInitialized = false;
+
+// Focus trap cleanup reference — stored at module level so
+// astro:before-preparation can clean up even if panel scope is lost.
+let cleanupFocusTrap: (() => void) | null = null;
 
 // ============================================
 // SSE Streaming with AbortController (D-11)
@@ -283,6 +292,42 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 // ============================================
+// Focus Trap with Dynamic Re-querying (D-33)
+// ============================================
+
+// Addresses review concern: Claude MEDIUM — focus trap must re-query focusable
+// elements on EACH Tab keypress because bot messages dynamically add <a> links
+// and copy buttons. Static query at panel-open time would miss these elements.
+
+function setupFocusTrap(panel: HTMLElement, onEscape: () => void): () => void {
+  const handler = (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+      onEscape();
+      return;
+    }
+    if (e.key !== "Tab") return;
+
+    // Re-query focusable elements on EACH Tab keypress — bot messages
+    // dynamically add <a> links and copy buttons that must be included.
+    const focusable = panel.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  panel.addEventListener("keydown", handler);
+  return () => panel.removeEventListener("keydown", handler);
+}
+
+// ============================================
 // GSAP Animation Helpers
 // ============================================
 
@@ -399,11 +444,25 @@ async function startTypingDots(container: HTMLElement): Promise<void> {
 // ============================================
 
 function initChat(): void {
-  // Idempotency guard — prevent re-initialization on navigation
-  if (initialized) return;
+  const panel = document.getElementById("chat-panel") as HTMLElement | null;
+  if (!panel) return; // Widget not in DOM yet
+
+  // Idempotency: if already initialized AND the same DOM elements exist,
+  // skip re-initialization. The transition:persist keeps our state alive.
+  if (chatInitialized && panel.dataset.chatBound === "true") {
+    // Panel already initialized — but if panel is open after navigation,
+    // re-attach focus trap (it was cleaned up on astro:before-preparation)
+    if (panel.style.display !== "none") {
+      const closeFn = () => {
+        const bubble = document.getElementById("chat-bubble") as HTMLButtonElement | null;
+        if (bubble) bubble.click(); // Trigger close via existing handler
+      };
+      cleanupFocusTrap = setupFocusTrap(panel, closeFn);
+    }
+    return;
+  }
 
   const bubble = document.getElementById("chat-bubble") as HTMLButtonElement | null;
-  const panel = document.getElementById("chat-panel") as HTMLElement | null;
   const closeBtn = document.getElementById("chat-close") as HTMLButtonElement | null;
   const input = document.getElementById("chat-input") as HTMLTextAreaElement | null;
   const sendBtn = document.getElementById("chat-send") as HTMLButtonElement | null;
@@ -414,11 +473,14 @@ function initChat(): void {
   const bubbleIcon = document.getElementById("chat-bubble-icon") as HTMLElement | null;
   const bubbleCloseIcon = document.getElementById("chat-bubble-close-icon") as HTMLElement | null;
 
-  if (!bubble || !panel || !closeBtn || !input || !sendBtn || !messagesArea || !starters || !typingIndicator || !charCount) {
+  if (!bubble || !closeBtn || !input || !sendBtn || !messagesArea || !starters || !typingIndicator || !charCount) {
     return; // Elements not yet in DOM
   }
 
-  initialized = true;
+  // Mark as initialized
+  chatInitialized = true;
+  panel.dataset.chatBound = "true";
+
   let panelOpen = false;
 
   // Start bubble pulse animation
@@ -439,6 +501,9 @@ function initChat(): void {
       panel.classList.add("chat-panel-mobile");
     }
 
+    // Set up focus trap — Escape handled inside, Tab cycles with dynamic re-query
+    cleanupFocusTrap = setupFocusTrap(panel, closePanel);
+
     animatePanelOpen(panel).then(() => {
       input.focus();
     });
@@ -451,6 +516,12 @@ function initChat(): void {
     if (bubbleIcon) bubbleIcon.style.display = "block";
     if (bubbleCloseIcon) bubbleCloseIcon.style.display = "none";
     panel.classList.remove("chat-panel-mobile");
+
+    // Clean up focus trap
+    if (cleanupFocusTrap) {
+      cleanupFocusTrap();
+      cleanupFocusTrap = null;
+    }
 
     animatePanelClose(panel).then(() => {
       bubble.focus();
@@ -468,13 +539,6 @@ function initChat(): void {
 
   closeBtn.addEventListener("click", () => {
     closePanel();
-  });
-
-  // Escape key closes panel (D-33)
-  document.addEventListener("keydown", (e: KeyboardEvent) => {
-    if (e.key === "Escape" && panelOpen) {
-      closePanel();
-    }
   });
 
   // ---- Input Handling (D-34, D-35) ----
@@ -701,8 +765,28 @@ function initChat(): void {
   }
 }
 
+// ============================================
+// Lifecycle: Astro View Transitions (D-07)
+// ============================================
+
 // Listen to astro:page-load for (re)initialization
+// Idempotency guard in initChat() prevents duplicate handlers
+// when transition:persist preserves the DOM across navigations.
 document.addEventListener("astro:page-load", initChat);
+
+// Transition:persist state handling — on astro:before-preparation:
+// - The AbortController (from Plan 03) survives since it's in JS memory
+// - The streaming fetch is a Promise held in closure scope — it continues
+// - The typing indicator and message area are preserved DOM nodes
+// - Focus trap keydown listener MUST be cleaned up to prevent stale handlers
+// Addresses review concern: Codex HIGH — transition:persist re-initialization.
+document.addEventListener("astro:before-preparation", () => {
+  // Clean up focus trap listener (will be re-attached if panel still open)
+  if (cleanupFocusTrap) {
+    cleanupFocusTrap();
+    cleanupFocusTrap = null;
+  }
+});
 
 // Also initialize on DOMContentLoaded as fallback
 if (document.readyState !== "loading") {
