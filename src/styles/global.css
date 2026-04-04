@@ -350,3 +350,102 @@ body {
     border-bottom: 1px solid #ccc;
   }
 }
+
+/* ============================================
+ * Chat Widget Styles (Phase 7)
+ * ============================================ */
+
+/* Print: hide chat widget */
+@media print {
+  .chat-widget {
+    display: none !important;
+  }
+}
+
+/* Typing indicator dots */
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--token-text-muted);
+  display: inline-block;
+}
+
+/* Chat textarea — JS auto-grow, NOT field-sizing: content (no Firefox support) */
+.chat-textarea {
+  resize: none;
+  min-height: 36px;
+  max-height: 120px; /* ~4 rows */
+  overflow-y: auto;
+}
+
+/* Chat textarea focus state */
+.chat-textarea:focus {
+  border-color: var(--token-border-hover) !important;
+  box-shadow: 0 0 0 2px var(--token-accent);
+}
+
+/* Chat bot message markdown styles */
+.chat-bot-message p {
+  margin: 0 0 0.5em 0;
+}
+.chat-bot-message p:last-child {
+  margin-bottom: 0;
+}
+.chat-bot-message ul,
+.chat-bot-message ol {
+  margin: 0.25em 0;
+  padding-left: var(--token-space-md);
+}
+.chat-bot-message li {
+  margin-bottom: var(--token-space-xs);
+}
+.chat-bot-message code {
+  font-family: var(--font-code);
+  font-size: var(--token-text-sm);
+  background: var(--token-bg-secondary);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.chat-bot-message a {
+  color: var(--token-accent);
+  text-decoration: none;
+}
+.chat-bot-message a:hover {
+  text-decoration: underline;
+}
+
+/* Starter chip hover state */
+.chat-starter-chip:hover {
+  border-color: var(--token-border-hover) !important;
+  color: var(--token-accent) !important;
+}
+
+/* Close button hover state */
+.hover-text-primary:hover {
+  color: var(--token-text-primary) !important;
+}
+
+/* Copy button styles */
+.chat-copy-btn {
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.chat-message-wrapper:hover .chat-copy-btn {
+  opacity: 1;
+}
+.copy-success svg {
+  color: var(--token-success) !important;
+}
+
+/* Mobile full-screen chat */
+@media (max-width: 767px) {
+  .chat-panel-mobile {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
