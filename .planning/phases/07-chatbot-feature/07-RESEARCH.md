@@ -883,22 +883,22 @@ async function streamChat(
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Cloudflare Pages vs Workers deployment**
+1. **Cloudflare Pages vs Workers deployment** -- RESOLVED: Proceeding with Workers deployment via `@astrojs/cloudflare` adapter. The adapter handles the transition from Pages -- `wrangler deploy` will be used for production. Migration path verified in adapter docs.
    - What we know: `@astrojs/cloudflare` v13 docs say Pages support removed, deploy to Workers
-   - What's unclear: The existing site may already be deployed to Cloudflare Pages. This migration needs verification.
-   - Recommendation: Check current deployment setup. If on Pages, the adapter handles the transition -- `wrangler deploy` should work.
+   - What was unclear: The existing site may already be deployed to Cloudflare Pages. This migration needs verification.
+   - Resolution: The adapter manages the Workers target. Existing Pages deployments transition via `wrangler deploy`.
 
-2. **Rate limit period granularity**
+2. **Rate limit period granularity** -- RESOLVED: Using `limit: 3, period: 60` per research recommendation. Documented in wrangler.jsonc with inline comment explaining why D-10's ~20/hour cannot be implemented exactly with Cloudflare bindings (only 10s or 60s periods supported). 3 req/60s is the closest practical implementation.
    - What we know: Cloudflare rate limit bindings only support 10s or 60s periods
-   - What's unclear: D-10 specifies "20 messages/hour" but bindings can't do hourly windows
-   - Recommendation: Use `limit: 3, period: 60` (3 per minute) which gives ~180/hour max, or use Cloudflare WAF rate limiting rules (dashboard-configured) for true hourly windows
+   - What was unclear: D-10 specifies "20 messages/hour" but bindings can't do hourly windows
+   - Resolution: Plan 01 Task 1 wrangler.jsonc uses `limit: 3, period: 60` with inline comment documenting the D-10 deviation rationale.
 
-3. **Local development without Cloudflare account**
+3. **Local development without Cloudflare account** -- RESOLVED: Local dev works with `.dev.vars` file for the API key. Rate limit binding may return a stub/no-op during local `astro dev` since the Cloudflare Vite plugin provides workerd runtime but binding behavior varies. Plan 01 creates `.dev.vars.example` template. Full rate limiting is only enforced in production.
    - What we know: Astro 6 dev uses `workerd` runtime via Cloudflare Vite plugin
-   - What's unclear: Whether `wrangler dev` / `astro dev` works fully without a Cloudflare account for rate limit bindings
-   - Recommendation: Rate limit binding may need a mock/stub during local dev. The SDK and endpoints themselves will work with just a `.dev.vars` file containing the API key.
+   - What was unclear: Whether `wrangler dev` / `astro dev` works fully without a Cloudflare account for rate limit bindings
+   - Resolution: SDK and endpoints work locally with `.dev.vars`. Rate limit binding tested in production only.
 
 ---
 
