@@ -3,9 +3,13 @@ import { defineConfig, fontProviders } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
+import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
   site: "https://jackcutrara.com",
+  // Astro 6 removed output:"hybrid" — static is now the default with per-route SSR.
+  // Individual API routes opt into SSR via `export const prerender = false`.
+  adapter: cloudflare(),
   integrations: [mdx(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
