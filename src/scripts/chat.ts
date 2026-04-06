@@ -499,6 +499,18 @@ function initChat(): void {
     return; // Elements not yet in DOM
   }
 
+  // Re-bind for closure safety — TypeScript narrows these as non-null after the guard,
+  // and the new const bindings carry the narrowed type into nested closures.
+  const $panel = panel;
+  const $bubble = bubble;
+  const $closeBtn = closeBtn;
+  const $input = input;
+  const $sendBtn = sendBtn;
+  const $messagesArea = messagesArea;
+  const $starters = starters;
+  const $typingIndicator = typingIndicator;
+  const $charCount = charCount;
+
   // Mark as initialized
   chatInitialized = true;
   panel.dataset.chatBound = "true";
@@ -506,7 +518,7 @@ function initChat(): void {
   let panelOpen = false;
 
   // Start bubble pulse animation
-  startPulse(bubble);
+  startPulse($bubble);
 
   // ---- Bubble Toggle (D-01, D-03, D-06) ----
 
@@ -514,31 +526,31 @@ function initChat(): void {
     panelOpen = true;
     stopPulse();
     trackChatEvent("chat_open");
-    bubble.setAttribute("aria-expanded", "true");
-    bubble.setAttribute("aria-label", "Close chat");
+    $bubble.setAttribute("aria-expanded", "true");
+    $bubble.setAttribute("aria-label", "Close chat");
     if (bubbleIcon) bubbleIcon.style.display = "none";
     if (bubbleCloseIcon) bubbleCloseIcon.style.display = "block";
 
     // Mobile: add full-screen class
     if (window.innerWidth < 768) {
-      panel.classList.add("chat-panel-mobile");
+      $panel.classList.add("chat-panel-mobile");
     }
 
     // Set up focus trap — Escape handled inside, Tab cycles with dynamic re-query
-    cleanupFocusTrap = setupFocusTrap(panel, closePanel);
+    cleanupFocusTrap = setupFocusTrap($panel, closePanel);
 
-    animatePanelOpen(panel).then(() => {
-      input.focus();
+    animatePanelOpen($panel).then(() => {
+      $input.focus();
     });
   }
 
   function closePanel(): void {
     panelOpen = false;
-    bubble.setAttribute("aria-expanded", "false");
-    bubble.setAttribute("aria-label", "Open chat");
+    $bubble.setAttribute("aria-expanded", "false");
+    $bubble.setAttribute("aria-label", "Open chat");
     if (bubbleIcon) bubbleIcon.style.display = "block";
     if (bubbleCloseIcon) bubbleCloseIcon.style.display = "none";
-    panel.classList.remove("chat-panel-mobile");
+    $panel.classList.remove("chat-panel-mobile");
 
     // Clean up focus trap
     if (cleanupFocusTrap) {
@@ -546,13 +558,13 @@ function initChat(): void {
       cleanupFocusTrap = null;
     }
 
-    animatePanelClose(panel).then(() => {
-      bubble.focus();
-      startPulse(bubble);
+    animatePanelClose($panel).then(() => {
+      $bubble.focus();
+      startPulse($bubble);
     });
   }
 
-  bubble.addEventListener("click", () => {
+  $bubble.addEventListener("click", () => {
     if (panelOpen) {
       closePanel();
     } else {
@@ -560,88 +572,88 @@ function initChat(): void {
     }
   });
 
-  closeBtn.addEventListener("click", () => {
+  $closeBtn.addEventListener("click", () => {
     closePanel();
   });
 
   // ---- Input Handling (D-34, D-35) ----
 
   function updateCharCount(): void {
-    const len = input.value.length;
+    const len = $input.value.length;
     if (len === 0) {
-      charCount.style.display = "none";
+      $charCount.style.display = "none";
       return;
     }
-    charCount.style.display = "block";
-    charCount.textContent = `${len}/500`;
+    $charCount.style.display = "block";
+    $charCount.textContent = `${len}/500`;
 
     if (len >= 500) {
-      charCount.style.color = "var(--token-destructive)";
-      charCount.style.fontWeight = "600";
+      $charCount.style.color = "var(--token-destructive)";
+      $charCount.style.fontWeight = "600";
     } else if (len > 450) {
-      charCount.style.color = "var(--token-warning)";
-      charCount.style.fontWeight = "600";
+      $charCount.style.color = "var(--token-warning)";
+      $charCount.style.fontWeight = "600";
     } else {
-      charCount.style.color = "var(--token-text-muted)";
-      charCount.style.fontWeight = "400";
+      $charCount.style.color = "var(--token-text-muted)";
+      $charCount.style.fontWeight = "400";
     }
   }
 
   function updateSendButton(): void {
-    const hasContent = input.value.trim().length > 0;
+    const hasContent = $input.value.trim().length > 0;
     if (hasContent && !isStreaming) {
-      sendBtn.disabled = false;
-      sendBtn.style.opacity = "1";
-      sendBtn.style.cursor = "pointer";
+      $sendBtn.disabled = false;
+      $sendBtn.style.opacity = "1";
+      $sendBtn.style.cursor = "pointer";
     } else {
-      sendBtn.disabled = true;
-      sendBtn.style.opacity = "0.4";
-      sendBtn.style.cursor = "not-allowed";
+      $sendBtn.disabled = true;
+      $sendBtn.style.opacity = "0.4";
+      $sendBtn.style.cursor = "not-allowed";
     }
   }
 
   function setInputDisabled(disabled: boolean): void {
     if (disabled) {
-      input.style.opacity = "0.5";
-      input.style.pointerEvents = "none";
-      sendBtn.style.opacity = "0.5";
-      sendBtn.style.pointerEvents = "none";
+      $input.style.opacity = "0.5";
+      $input.style.pointerEvents = "none";
+      $sendBtn.style.opacity = "0.5";
+      $sendBtn.style.pointerEvents = "none";
     } else {
-      input.style.opacity = "1";
-      input.style.pointerEvents = "auto";
+      $input.style.opacity = "1";
+      $input.style.pointerEvents = "auto";
       updateSendButton();
     }
   }
 
-  input.addEventListener("input", () => {
+  $input.addEventListener("input", () => {
     // Prevent input beyond 500 characters
-    if (input.value.length > 500) {
-      input.value = input.value.slice(0, 500);
+    if ($input.value.length > 500) {
+      $input.value = $input.value.slice(0, 500);
     }
-    autoGrowTextarea(input);
+    autoGrowTextarea($input);
     updateCharCount();
     updateSendButton();
   });
 
   // Enter sends, Shift+Enter adds newline (D-34)
-  input.addEventListener("keydown", (e: KeyboardEvent) => {
+  $input.addEventListener("keydown", (e: KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (input.value.trim() && !isStreaming) {
-        sendMessage(input.value.trim());
+      if ($input.value.trim() && !isStreaming) {
+        sendMessage($input.value.trim());
       }
     }
   });
 
-  sendBtn.addEventListener("click", () => {
-    if (input.value.trim() && !isStreaming) {
-      sendMessage(input.value.trim());
+  $sendBtn.addEventListener("click", () => {
+    if ($input.value.trim() && !isStreaming) {
+      sendMessage($input.value.trim());
     }
   });
 
   // ---- Starter Chips (D-27) ----
 
-  const chipButtons = starters.querySelectorAll<HTMLButtonElement>(".chat-starter-chip");
+  const chipButtons = $starters.querySelectorAll<HTMLButtonElement>(".chat-starter-chip");
   chipButtons.forEach((chip) => {
     chip.addEventListener("click", () => {
       const text = chip.textContent?.trim();
@@ -662,19 +674,17 @@ function initChat(): void {
   // ---- Send Message ----
 
   function hideStarters(): void {
-    if (starters) {
-      starters.style.display = "none";
-    }
+    $starters.style.display = "none";
   }
 
   function showTyping(): void {
-    typingIndicator.style.display = "flex";
-    startTypingDots(typingIndicator);
-    scrollToBottom(messagesArea);
+    $typingIndicator.style.display = "flex";
+    startTypingDots($typingIndicator);
+    scrollToBottom($messagesArea);
   }
 
   function hideTyping(): void {
-    typingIndicator.style.display = "none";
+    $typingIndicator.style.display = "none";
   }
 
   async function sendMessage(content: string): Promise<void> {
@@ -684,8 +694,8 @@ function initChat(): void {
     if (!navigator.onLine) {
       trackChatEvent("chat_error", "offline");
       const errorEl = createErrorMessageEl(ERROR_MESSAGES.offline);
-      messagesArea.insertBefore(errorEl, typingIndicator);
-      scrollToBottom(messagesArea);
+      $messagesArea.insertBefore(errorEl, $typingIndicator);
+      scrollToBottom($messagesArea);
       return;
     }
 
@@ -695,12 +705,12 @@ function initChat(): void {
     // Add user message
     messages.push({ role: "user", content });
     const userEl = createUserMessageEl(content);
-    messagesArea.insertBefore(userEl, typingIndicator);
+    $messagesArea.insertBefore(userEl, $typingIndicator);
     animateMessageAppear(userEl);
 
     // Clear input
-    input.value = "";
-    autoGrowTextarea(input);
+    $input.value = "";
+    autoGrowTextarea($input);
     updateCharCount();
     updateSendButton();
 
@@ -729,26 +739,26 @@ function initChat(): void {
           hideTyping();
           botEl = createBotMessageEl("");
           botBubble = botEl.querySelector(".chat-bot-message");
-          messagesArea.insertBefore(botEl, typingIndicator);
+          $messagesArea.insertBefore(botEl, $typingIndicator);
           animateMessageAppear(botEl);
         }
         botContent += text;
         if (botBubble) {
           botBubble.innerHTML = renderMarkdown(botContent);
         }
-        scrollToBottom(messagesArea);
+        scrollToBottom($messagesArea);
       },
       // onDone
       () => {
         hideTyping();
         isStreaming = false;
         setInputDisabled(false);
-        input.focus();
+        $input.focus();
 
         // If no tokens received, create empty bot message
         if (!botEl) {
           botEl = createBotMessageEl(botContent || "...");
-          messagesArea.insertBefore(botEl, typingIndicator);
+          $messagesArea.insertBefore(botEl, $typingIndicator);
         }
 
         // Store final bot message
@@ -771,24 +781,24 @@ function initChat(): void {
         // Nudge after ~15 messages (D-29)
         if (messageCount === 15) {
           const nudgeEl = createNudgeMessageEl();
-          messagesArea.insertBefore(nudgeEl, typingIndicator);
-          scrollToBottom(messagesArea);
+          $messagesArea.insertBefore(nudgeEl, $typingIndicator);
+          scrollToBottom($messagesArea);
         }
 
-        scrollToBottom(messagesArea);
+        scrollToBottom($messagesArea);
       },
       // onError
       (type: string) => {
         hideTyping();
         isStreaming = false;
         setInputDisabled(false);
-        input.focus();
+        $input.focus();
 
         trackChatEvent("chat_error", type);
         const errorMessage = ERROR_MESSAGES[type] || ERROR_MESSAGES.api_error;
         const errorEl = createErrorMessageEl(errorMessage);
-        messagesArea.insertBefore(errorEl, typingIndicator);
-        scrollToBottom(messagesArea);
+        $messagesArea.insertBefore(errorEl, $typingIndicator);
+        scrollToBottom($messagesArea);
       }
     );
   }
