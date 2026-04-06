@@ -1,9 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "jack-cutrara-portfolio",
-  "pages_build_output_dir": "dist",
+  "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-04-04",
   "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist/client"
+  },
   // D-10 specifies ~20 messages/hour, but Cloudflare rate limit bindings
   // only support periods of 10 or 60 seconds — hourly windows are not available.
   // Using limit:5/period:60 (5 requests per 60 seconds) as a UX-friendly
