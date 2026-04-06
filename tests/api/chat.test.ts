@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   validateRequest,
   sanitizeMessages,
@@ -98,11 +98,11 @@ describe("Chat API Endpoint Contract (D-09)", () => {
             if (
               event.type === "content_block_delta" &&
               "delta" in event &&
-              event.delta.type === "text_delta"
+              event.delta?.type === "text_delta"
             ) {
               controller.enqueue(
                 encoder.encode(
-                  `data: ${JSON.stringify({ text: event.delta.text })}\n\n`
+                  `data: ${JSON.stringify({ text: event.delta?.text })}\n\n`
                 )
               );
             }

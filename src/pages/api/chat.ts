@@ -30,7 +30,9 @@ export const POST: APIRoute = async ({ request }) => {
 
   // S5/D-10/D-24: Rate limiting via Cloudflare binding (skipped in local dev
   // where the binding doesn't exist)
-  const rateLimiter = (env as any).CHAT_RATE_LIMITER;
+  const rateLimiter = (env as unknown as Record<string, unknown>).CHAT_RATE_LIMITER as
+    | { limit: (opts: { key: string }) => Promise<{ success: boolean }> }
+    | undefined;
   if (rateLimiter) {
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
     const { success: withinLimit } = await rateLimiter.limit({ key: ip });

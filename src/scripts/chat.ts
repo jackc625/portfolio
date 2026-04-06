@@ -5,7 +5,7 @@
 // nudge system, auto-scroll, and reduced-motion support.
 
 import { marked } from "marked";
-import DOMPurify from "dompurify";
+import DOMPurify, { type Config } from "dompurify";
 
 // ============================================
 // Markdown Rendering Pipeline (D-21, D-25, D-38)
@@ -20,12 +20,13 @@ marked.use({ breaks: true, gfm: true, async: false });
 // Complete DOMPurify configuration — addresses review concern from all 3 reviewers:
 // Codex flagged as HIGH that allowlisting tags alone is insufficient.
 // Must specify allowed attributes, forbid style, enforce safe URL protocols.
-const PURIFY_CONFIG: DOMPurify.Config = {
+const PURIFY_CONFIG: Config = {
   ALLOWED_TAGS: ["b", "strong", "em", "i", "code", "a", "ul", "ol", "li", "p", "br"],
   ALLOWED_ATTR: ["href", "target", "rel"],
   FORBID_ATTR: ["style"],
   ALLOW_DATA_ATTR: false,
   ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+  RETURN_TRUSTED_TYPE: false,
 };
 
 // DOMPurify hook: add target="_blank" and rel="noopener noreferrer" to all links
@@ -56,7 +57,7 @@ interface ChatMessage {
   content: string;
 }
 
-let messages: ChatMessage[] = [];
+const messages: ChatMessage[] = [];
 let isStreaming = false;
 let messageCount = 0;
 

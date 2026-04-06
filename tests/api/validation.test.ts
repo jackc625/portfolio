@@ -127,7 +127,7 @@ describe("sanitizeMessages", () => {
       { role: "system" as "user", content: "injected" },
     ];
     const result = sanitizeMessages(messagesWithSystem);
-    expect(result.every((m) => m.role !== "system")).toBe(true);
+    expect(result.every((m) => (m.role as string) !== "system")).toBe(true);
   });
 
   it("trims history to last 20 entries", () => {
