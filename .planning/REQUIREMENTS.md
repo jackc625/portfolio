@@ -95,4 +95,34 @@ Newly added in v1.1 (replaced or removed from v1.0):
 
 ## Traceability
 
-(Filled by roadmap — each REQ-ID will be mapped to its phase here.)
+Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DSGN-01 | Phase 8 — Foundation | Pending |
+| DSGN-02 | Phase 8 — Foundation | Pending |
+| DSGN-03 | Phase 8 — Foundation | Pending |
+| DSGN-04 | Phase 8 — Foundation | Pending |
+| DSGN-05 | Phase 8 — Foundation | Pending |
+| CONTACT-03 | Phase 8 — Foundation | Pending |
+| HOME-01 | Phase 10 — Page Port | Pending |
+| HOME-02 | Phase 10 — Page Port | Pending |
+| HOME-03 | Phase 10 — Page Port | Pending |
+| HOME-04 | Phase 10 — Page Port | Pending |
+| ABOUT-01 | Phase 10 — Page Port | Pending |
+| ABOUT-02 | Phase 10 — Page Port | Pending |
+| WORK-01 | Phase 10 — Page Port | Pending |
+| WORK-02 | Phase 10 — Page Port | Pending |
+| WORK-03 | Phase 10 — Page Port | Pending |
+| CONTACT-01 | Phase 10 — Page Port | Pending |
+| CONTACT-02 | Phase 10 — Page Port | Pending |
+| CHAT-01 | Phase 10 — Page Port | Pending |
+| CHAT-02 | Phase 10 — Page Port | Pending |
+| QUAL-01 | Phase 11 — Polish | Pending |
+| QUAL-02 | Phase 11 — Polish | Pending |
+| QUAL-03 | Phase 11 — Polish | Pending |
+| QUAL-04 | Phase 11 — Polish | Pending |
+| QUAL-05 | Phase 11 — Polish | Pending |
+| QUAL-06 | Phase 11 — Polish | Pending |
+
+**Note**: Phase 9 (Primitives) intentionally has no requirement mappings — it is a sequencing scaffold that builds the component library Phase 10 consumes. All 25 requirements still map to exactly one phase, satisfying coverage rules.
