@@ -11,8 +11,8 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 
 ### Design System (DSGN)
 
-- [ ] **DSGN-01**: Site uses Geist + Geist Mono typography across all pages, loaded via Astro 6 Fonts API (self-hosted, no external CDN)
-- [ ] **DSGN-02**: Site uses warm off-white `#FAFAF7` base + signal red `#E63946` accent palette as flat hex tokens (no oklch, no theme switching)
+- [x] **DSGN-01**: Site uses Geist + Geist Mono typography across all pages, loaded via Astro 6 Fonts API (self-hosted, no external CDN)
+- [x] **DSGN-02**: Site uses warm off-white `#FAFAF7` base + signal red `#E63946` accent palette as flat hex tokens (no oklch, no theme switching)
 - [ ] **DSGN-03**: Site uses single light theme — dark mode tokens, theme toggle, and theme transition logic removed entirely
 - [ ] **DSGN-04**: Site uses restrained motion only — canvas hero, GSAP scroll animations, reveal effects, and view transitions are removed; only functional hover/focus state transitions remain
 - [x] **DSGN-05**: Locked design rules captured in `design-system/MASTER.md` as the single source of truth for tokens, typography, layout, components, motion, accent usage, and anti-patterns
@@ -99,8 +99,8 @@ Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DSGN-01 | Phase 8 — Foundation | Pending |
-| DSGN-02 | Phase 8 — Foundation | Pending |
+| DSGN-01 | Phase 8 — Foundation | Complete |
+| DSGN-02 | Phase 8 — Foundation | Complete |
 | DSGN-03 | Phase 8 — Foundation | Pending |
 | DSGN-04 | Phase 8 — Foundation | Pending |
 | DSGN-05 | Phase 8 — Foundation | Complete |
