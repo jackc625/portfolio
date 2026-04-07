@@ -15,7 +15,7 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 - [ ] **DSGN-02**: Site uses warm off-white `#FAFAF7` base + signal red `#E63946` accent palette as flat hex tokens (no oklch, no theme switching)
 - [ ] **DSGN-03**: Site uses single light theme — dark mode tokens, theme toggle, and theme transition logic removed entirely
 - [ ] **DSGN-04**: Site uses restrained motion only — canvas hero, GSAP scroll animations, reveal effects, and view transitions are removed; only functional hover/focus state transitions remain
-- [ ] **DSGN-05**: Locked design rules captured in `design-system/MASTER.md` as the single source of truth for tokens, typography, layout, components, motion, accent usage, and anti-patterns
+- [x] **DSGN-05**: Locked design rules captured in `design-system/MASTER.md` as the single source of truth for tokens, typography, layout, components, motion, accent usage, and anti-patterns
 
 ### Homepage (HOME)
 
@@ -103,7 +103,7 @@ Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
 | DSGN-02 | Phase 8 — Foundation | Pending |
 | DSGN-03 | Phase 8 — Foundation | Pending |
 | DSGN-04 | Phase 8 — Foundation | Pending |
-| DSGN-05 | Phase 8 — Foundation | Pending |
+| DSGN-05 | Phase 8 — Foundation | Complete |
 | CONTACT-03 | Phase 8 — Foundation | Pending |
 | HOME-01 | Phase 10 — Page Port | Pending |
 | HOME-02 | Phase 10 — Page Port | Pending |
