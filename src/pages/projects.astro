@@ -1,88 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ProjectCard from "../components/ProjectCard.astro";
-import FeaturedProjectItem from "../components/FeaturedProjectItem.astro";
-import { getCollection } from "astro:content";
-
-const allProjects = await getCollection("projects");
-const sorted = allProjects.sort((a, b) => a.data.order - b.data.order);
-const featured = sorted.filter((p) => p.data.featured);
-const editorial = sorted.filter((p) => !p.data.featured);
 ---
-
 <BaseLayout
   title="Projects"
-  description="Explore software engineering projects by Jack Cutrara, from web applications to developer tools."
+  description="Jack Cutrara — projects. Site is being redesigned."
 >
-  <!-- Page Header -->
-  <section
-    class="px-6 pt-[var(--token-space-section)] pb-[var(--token-space-3xl)] md:px-10 lg:px-16"
-  >
-    <div class="mx-auto max-w-[90rem]">
-      <p
-        class="text-text-muted mb-[var(--token-space-lg)] font-mono text-[length:var(--token-text-sm)] tracking-[0.1em] uppercase"
-      >
-        Projects
-      </p>
-      <h1
-        data-animate="split-text"
-        class="font-display max-w-4xl text-[length:var(--token-text-display)] leading-[0.95] tracking-[-0.03em]"
-      >
-        Things I've built.
-      </h1>
-    </div>
+  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
+    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
+      Projects — redesigning
+    </h1>
+    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
+      This page is being redesigned. Check back soon.
+    </p>
   </section>
-
-  <!-- Featured Cards Grid -->
-  <section
-    aria-label="Featured projects"
-    data-animate="section"
-    class="px-6 pb-[var(--token-space-3xl)] md:px-10 lg:px-16"
-  >
-    <h2 class="sr-only">Featured projects</h2>
-    <div
-      data-animate-container="stagger"
-      class="mx-auto grid max-w-[90rem] grid-cols-1 gap-[var(--token-space-xl)] md:grid-cols-2 lg:grid-cols-3"
-    >
-      {
-        featured.map((project) => (
-          <div data-animate="stagger-item">
-            <ProjectCard project={project} />
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- Divider (only if editorial list exists) -->
-  {
-    editorial.length > 0 && (
-      <div class="px-6 md:px-10 lg:px-16">
-        <div class="border-border/40 mx-auto max-w-[90rem] border-t" />
-      </div>
-    )
-  }
-
-  <!-- Editorial List Section -->
-  {
-    editorial.length > 0 && (
-      <section
-        aria-label="More projects"
-        data-animate="section"
-        class="px-6 py-[var(--token-space-section)] md:px-10 lg:px-16"
-      >
-        <div class="mx-auto max-w-[90rem]">
-          <h2 class="sr-only">More projects</h2>
-          {editorial.map((project) => (
-            <FeaturedProjectItem
-              title={project.data.title}
-              tagline={project.data.tagline}
-              techStack={project.data.techStack}
-              slug={project.id}
-            />
-          ))}
-        </div>
-      </section>
-    )
-  }
 </BaseLayout>

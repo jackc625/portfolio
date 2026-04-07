@@ -1,110 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ContactChannel from "../components/ContactChannel.astro";
 ---
-
 <BaseLayout
   title="Contact"
-  description="Get in touch with Jack Cutrara via email, LinkedIn, or GitHub."
+  description="Jack Cutrara — contact. Site is being redesigned."
 >
-  <!-- Page Header -->
-  <section
-    class="px-6 py-[var(--token-space-section)] pb-[var(--token-space-2xl)] md:px-10 lg:px-16"
-  >
-    <div class="mx-auto max-w-[90rem]">
-      <h1
-        data-animate="split-text"
-        class="font-display text-[length:var(--token-text-display)] tracking-[-0.03em]"
-      >
-        Get in Touch
-      </h1>
-      <p
-        class="font-body text-text-secondary mt-[var(--token-space-md)] max-w-2xl text-[length:var(--token-text-base)] leading-[1.6]"
-      >
-        I'm always open to hearing about new opportunities, interesting
-        projects, or just connecting with other engineers.
-      </p>
-
-      <div
-        class="mt-[var(--token-space-lg)] flex items-center gap-[var(--token-space-sm)]"
-      >
-        <span class="availability-dot" aria-hidden="true"></span>
-        <span
-          class="text-text-muted font-mono text-[length:var(--token-text-sm)] tracking-[0.05em] uppercase"
-          >Currently open to opportunities</span
-        >
-      </div>
-    </div>
+  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
+    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
+      Contact — redesigning
+    </h1>
+    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
+      This page is being redesigned. Check back soon.
+    </p>
   </section>
-
-  <!-- Contact Channels -->
-  <section
-    aria-label="Contact information"
-    data-animate="section"
-    class="px-6 pb-[var(--token-space-section)] md:px-10 lg:px-16"
-  >
-    <div data-animate-container="stagger" class="mx-auto max-w-xl">
-      <div data-animate="stagger-item">
-        <ContactChannel
-          href="mailto:jackcutrara@gmail.com"
-          label="Email"
-          value="jackcutrara@gmail.com"
-          icon="email"
-        />
-      </div>
-      <div data-animate="stagger-item">
-        <ContactChannel
-          href="https://linkedin.com/in/jackcutrara"
-          label="LinkedIn"
-          value="linkedin.com/in/jackcutrara"
-          icon="linkedin"
-          external={true}
-        />
-      </div>
-      <div data-animate="stagger-item">
-        <ContactChannel
-          href="https://github.com/jackc625"
-          label="GitHub"
-          value="github.com/jackc625"
-          icon="github"
-          external={true}
-        />
-      </div>
-    </div>
-  </section>
-
-  <style is:global>
-    .availability-dot {
-      position: relative;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--token-success);
-      flex-shrink: 0;
-    }
-    .availability-dot::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background-color: var(--token-success);
-      animation: pulse-ring 2s ease-out infinite;
-    }
-    @keyframes pulse-ring {
-      0% {
-        transform: scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1.5);
-        opacity: 0;
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .availability-dot::before {
-        animation: none;
-        display: none;
-      }
-    }
-  </style>
 </BaseLayout>

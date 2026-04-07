@@ -1,43 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import CanvasHero from "../components/CanvasHero.astro";
-import JsonLd from "../components/JsonLd.astro";
 ---
-
 <BaseLayout
-  title=""
-  description="Software engineer who builds real projects. Explore my work, background, and how to get in touch."
+  title="Home"
+  description="Jack Cutrara — software engineer. Site is being redesigned."
 >
-  <JsonLd
-    schema={{
-      "@context": "https://schema.org",
-      "@type": "Person",
-      name: "Jack Cutrara",
-      jobTitle: "Software Engineer",
-      url: "https://jackcutrara.com",
-      sameAs: [
-        "https://github.com/jackc625",
-        "https://linkedin.com/in/jackcutrara",
-      ],
-    }}
-  />
-  <CanvasHero>
-    <h1
-      data-animate="split-text"
-      class="font-display text-[length:var(--token-text-display)] leading-[0.95] tracking-[-0.03em]"
-    >
-      Jack Cutrara
+  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
+    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
+      Home — redesigning
     </h1>
-    <p
-      class="font-body text-text-secondary mt-[var(--token-space-lg)] text-[length:var(--token-text-heading)] tracking-[0.15em] uppercase"
-    >
-      Software Engineer
+    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
+      This page is being redesigned. Check back soon.
     </p>
-    <p
-      class="font-body text-text-muted mt-[var(--token-space-md)] max-w-xl text-[length:var(--token-text-base)] leading-relaxed"
-    >
-      I build things that work. Full-stack developer with a bias for shipping
-      real projects and learning by doing.
-    </p>
-  </CanvasHero>
+  </section>
 </BaseLayout>
