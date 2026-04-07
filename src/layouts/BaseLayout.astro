@@ -37,28 +37,6 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <script is:inline>
-      (function () {
-        const stored = localStorage.getItem("theme");
-        if (
-          stored === "light" ||
-          (!stored &&
-            window.matchMedia("(prefers-color-scheme: light)").matches)
-        ) {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
-      })();
-      document.addEventListener("astro:after-swap", function () {
-        const stored = localStorage.getItem("theme");
-        if (
-          stored === "light" ||
-          (!stored &&
-            window.matchMedia("(prefers-color-scheme: light)").matches)
-        ) {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
-      });
-    </script>
     <SEO
       title={title}
       titleTemplate="%s | Jack Cutrara"
@@ -97,7 +75,7 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
     <ClientRouter />
   </head>
   <body
-    class="bg-bg-primary text-text-primary font-body flex min-h-screen flex-col antialiased"
+    class="bg-bg text-ink font-body flex min-h-screen flex-col antialiased"
   >
     <SkipToContent />
     <Header />

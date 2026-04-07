@@ -20,50 +20,6 @@
   --pad-mobile: 24px;
 }
 
-/* Phase 5: Light theme override (DSGN-02/DSGN-03)
- * Warm off-white / cream palette with deeper blue accent.
- * Typography and spacing tokens are theme-independent -- no overrides needed.
- * The @theme bridge (Layer 2) references var(--token-*), so Tailwind
- * utility classes automatically respect whichever theme is active.
- */
-[data-theme="light"] {
-  --token-bg-primary: oklch(0.975 0.008 85);
-  --token-bg-secondary: oklch(0.94 0.01 85);
-  --token-text-primary: oklch(0.13 0.01 270);
-  --token-text-secondary: oklch(0.38 0.015 270);
-  --token-text-muted: oklch(0.47 0.01 270);
-  --token-accent: oklch(0.48 0.18 250);
-  --token-accent-hover: oklch(0.4 0.2 250);
-  --token-border: oklch(0.88 0.006 85);
-  --token-border-hover: oklch(0.78 0.008 85);
-  --token-destructive: oklch(0.55 0.22 25);
-  --token-success: oklch(0.5 0.15 155);
-  --token-warning: oklch(0.55 0.15 85);
-}
-
-/* Theme transition: smooth color crossfade on toggle (D-04)
- * Only active during toggle via .theme-transitioning class to avoid
- * always-on transitions that cause layout thrash (RESEARCH Pitfall 4).
- */
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-  transition:
-    background-color 300ms ease,
-    color 300ms ease,
-    border-color 300ms ease,
-    box-shadow 300ms ease !important;
-}
-
-/* Disable theme transitions for reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  html.theme-transitioning *,
-  html.theme-transitioning *::before,
-  html.theme-transitioning *::after {
-    transition-duration: 0ms !important;
-  }
-}
-
 /* ============================================
  * LAYER 2: Tailwind @theme Bridge
  * Maps CSS custom properties to Tailwind utility classes.
@@ -214,20 +170,6 @@ body {
   .skip-to-content,
   [data-no-print] {
     display: none !important;
-  }
-
-  /* Force black on white — overrides both dark and light themes */
-  :root,
-  [data-theme="light"] {
-    --token-bg-primary: white;
-    --token-bg-secondary: #f5f5f5;
-    --token-text-primary: black;
-    --token-text-secondary: #333;
-    --token-text-muted: #666;
-    --token-accent: #0066cc;
-    --token-accent-hover: #0066cc;
-    --token-border: #ccc;
-    --token-border-hover: #999;
   }
 
   body {
