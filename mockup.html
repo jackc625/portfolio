@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jack Cutrara — Software Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+  <style>
+    /* ---------------------------------------------------------------
+       Design tokens
+    --------------------------------------------------------------- */
+    :root {
+      --bg: #FAFAF7;
+      --ink: #0A0A0A;
+      --ink-muted: #52525B;
+      --ink-faint: #A1A1AA;
+      --rule: #E4E4E7;
+      --accent: #E63946;
+      --container-max: 1200px;
+      --pad-desktop: 48px;
+      --pad-tablet: 32px;
+      --pad-mobile: 24px;
+    }
+
+    /* ---------------------------------------------------------------
+       Reset + base
+    --------------------------------------------------------------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Geist", system-ui, -apple-system, sans-serif;
+      font-feature-settings: "ss01", "cv11";
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3, p { margin: 0; }
+
+    .container {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding-left: var(--pad-desktop);
+      padding-right: var(--pad-desktop);
+    }
+
+    .tabular { font-variant-numeric: tabular-nums; }
+
+    /* ---------------------------------------------------------------
+       Typography
+    --------------------------------------------------------------- */
+    .display {
+      font-family: "Geist", system-ui, -apple-system, sans-serif;
+      font-weight: 700;
+      font-size: clamp(4rem, 9vw, 8rem);
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+      color: var(--ink);
+    }
+    .h1-section {
+      font-weight: 600;
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .h2-project {
+      font-weight: 500;
+      font-size: 1.75rem;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    .lead {
+      font-weight: 400;
+      font-size: clamp(1.25rem, 2vw, 1.625rem);
+      line-height: 1.4;
+    }
+    .body {
+      font-weight: 400;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      max-width: 68ch;
+    }
+    .label-mono {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+    .meta-mono {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-weight: 400;
+      font-size: 0.8125rem;
+      letter-spacing: 0.02em;
+    }
+
+    /* ---------------------------------------------------------------
+       Header (sticky)
+    --------------------------------------------------------------- */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 72px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--rule);
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+    .wordmark {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-weight: 500;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink);
+    }
+    .site-nav {
+      display: flex;
+      gap: 32px;
+    }
+    .nav-link {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-muted);
+    }
+    .nav-link.is-active {
+      color: var(--ink);
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 6px;
+    }
+
+    /* ---------------------------------------------------------------
+       Hero
+    --------------------------------------------------------------- */
+    .hero {
+      padding-top: 96px;
+      padding-bottom: 0;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .hero-content { grid-column: 1 / span 8; }
+    .hero-meta {
+      grid-column: 9 / span 4;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hero-lead {
+      margin-top: 32px;
+      max-width: 40ch;
+      color: var(--ink);
+    }
+    .accent-dot { color: var(--accent); }
+    .status-line {
+      display: inline-flex;
+      align-items: center;
+    }
+    .status-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-right: 8px;
+    }
+    .meta-location { color: var(--ink-muted); }
+
+    /* ---------------------------------------------------------------
+       Section base
+    --------------------------------------------------------------- */
+    .section { margin-top: 160px; }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .section-header .label-mono { color: var(--ink); }
+    .section-header .count { color: var(--ink-faint); }
+
+    .section-rule {
+      height: 1px;
+      background: var(--rule);
+      margin-top: 16px;
+      margin-bottom: 24px;
+    }
+
+    /* ---------------------------------------------------------------
+       § 01 — WORK
+    --------------------------------------------------------------- */
+    .work-row {
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--rule);
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      align-items: start;
+    }
+    .work-list .work-row:last-child { border-bottom: none; }
+    .work-num {
+      color: var(--ink-muted);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .work-title {
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .work-stack {
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-weight: 400;
+      font-size: 0.8125rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-faint);
+    }
+    .work-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      color: var(--ink-faint);
+    }
+    .work-arrow {
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 120ms ease;
+    }
+    .work-row:hover .work-title {
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 4px;
+    }
+    .work-row:hover .work-arrow { opacity: 1; }
+
+    /* ---------------------------------------------------------------
+       § 02 — ABOUT
+    --------------------------------------------------------------- */
+    .about-body {
+      max-width: 68ch;
+      margin-top: 24px;
+    }
+    .about-intro {
+      font-weight: 500;
+      font-size: 1.375rem;
+      line-height: 1.4;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+    .about-body p:not(.about-intro) {
+      font-weight: 400;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .about-body p:not(.about-intro):last-child { margin-bottom: 0; }
+
+    /* ---------------------------------------------------------------
+       § 03 — CONTACT
+    --------------------------------------------------------------- */
+    .contact-body { margin-top: 24px; }
+    .contact-label {
+      color: var(--ink-muted);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .contact-email {
+      font-weight: 500;
+      font-size: 1.75rem;
+      color: var(--ink);
+    }
+    .contact-email:hover {
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 4px;
+      color: var(--ink);
+    }
+    .contact-links {
+      margin-top: 24px;
+      font-family: "Geist Mono", ui-monospace, monospace;
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--ink-muted);
+    }
+    .contact-link:hover { color: var(--accent); }
+
+    /* ---------------------------------------------------------------
+       Footer
+    --------------------------------------------------------------- */
+    .site-footer {
+      margin-top: 96px;
+      border-top: 1px solid var(--rule);
+      height: 64px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+    .footer-copy, .footer-built { color: var(--ink-faint); }
+    .footer-built { text-transform: uppercase; }
+
+    /* ---------------------------------------------------------------
+       Responsive
+    --------------------------------------------------------------- */
+    @media (max-width: 1023px) {
+      .container { padding-left: 32px; padding-right: 32px; }
+      .hero { padding-top: 72px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-content, .hero-meta { grid-column: auto; }
+      .hero-meta { width: 100%; margin-top: 32px; }
+      .section { margin-top: 96px; }
+    }
+
+    @media (max-width: 767px) {
+      .container { padding-left: 24px; padding-right: 24px; }
+      .hero { padding-top: 48px; }
+      .section { margin-top: 72px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      /* No animations in this mockup — stub retained intentionally. */
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <span class="wordmark">JACK CUTRARA</span>
+      <nav class="site-nav">
+        <a href="#works" class="nav-link is-active">works</a>
+        <a href="#about" class="nav-link">about</a>
+        <a href="#contact" class="nav-link">contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero" class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <h1 class="display">
+            JACK<br>CUTRARA<span class="accent-dot">·</span>
+          </h1>
+          <p class="lead hero-lead">Software engineer building reliable, production-grade systems.</p>
+        </div>
+        <aside class="hero-meta">
+          <div class="status-line">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span class="label-mono">AVAILABLE FOR WORK</span>
+          </div>
+          <div class="meta-mono meta-location tabular">EST. 2024 · OAKLAND, CA</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="works" class="section works">
+      <div class="container">
+        <div class="section-header">
+          <span class="label-mono">§ 01 — WORK</span>
+          <span class="meta-mono count tabular">4 / 4</span>
+        </div>
+        <div class="section-rule"></div>
+        <div class="work-list">
+          <a class="work-row" href="#">
+            <span class="work-num meta-mono tabular">01</span>
+            <div class="work-body">
+              <h2 class="h2-project work-title">Portfolio System</h2>
+              <div class="work-stack">ASTRO · TAILWIND · GSAP</div>
+            </div>
+            <div class="work-meta">
+              <span class="meta-mono tabular work-year">2026</span>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+          <a class="work-row" href="#">
+            <span class="work-num meta-mono tabular">02</span>
+            <div class="work-body">
+              <h2 class="h2-project work-title">Distributed Cache</h2>
+              <div class="work-stack">RUST · TOKIO · REDIS</div>
+            </div>
+            <div class="work-meta">
+              <span class="meta-mono tabular work-year">2025</span>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+          <a class="work-row" href="#">
+            <span class="work-num meta-mono tabular">03</span>
+            <div class="work-body">
+              <h2 class="h2-project work-title">Compiler Toy</h2>
+              <div class="work-stack">OCAML · LLVM</div>
+            </div>
+            <div class="work-meta">
+              <span class="meta-mono tabular work-year">2025</span>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+          <a class="work-row" href="#">
+            <span class="work-num meta-mono tabular">04</span>
+            <div class="work-body">
+              <h2 class="h2-project work-title">Notes Sync Engine</h2>
+              <div class="work-stack">TYPESCRIPT · SQLITE · CRDT</div>
+            </div>
+            <div class="work-meta">
+              <span class="meta-mono tabular work-year">2024</span>
+              <span class="work-arrow" aria-hidden="true">→</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section about">
+      <div class="container">
+        <div class="section-header">
+          <span class="label-mono">§ 02 — ABOUT</span>
+        </div>
+        <div class="section-rule"></div>
+        <div class="about-body">
+          <p class="about-intro">I'm Jack — a junior software engineer who likes building systems that don't break at 3 a.m.</p>
+          <p>I build small, production-grade services and the plumbing around them: caches, compilers, sync engines, APIs. Most of my projects start as "I wonder how that actually works" and end as something I'd be comfortable handing off to a team.</p>
+          <p>I reach for the boring tool first. I read the spec before I read the blog post. I like tests that fail loudly and code review comments that start with "why." My favorite bug reports are the ones that come with a reproduction.</p>
+          <p>Right now I'm looking for a junior or entry-level role on a team that cares about correctness, reliability, and performance — ideally one that will push me to get better at the parts of the stack I haven't touched yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section contact">
+      <div class="container">
+        <div class="section-header">
+          <span class="label-mono">§ 03 — CONTACT</span>
+        </div>
+        <div class="section-rule"></div>
+        <div class="contact-body">
+          <div class="label-mono contact-label">GET IN TOUCH</div>
+          <a class="contact-email" href="mailto:jack@cutrara.dev">jack@cutrara.dev</a>
+          <div class="contact-links">
+            <a class="contact-link" href="#">GitHub</a> · <a class="contact-link" href="#">LinkedIn</a> · <a class="contact-link" href="#">X</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span class="meta-mono footer-copy tabular">© 2026 JACK CUTRARA</span>
+      <span class="meta-mono footer-built">BUILT WITH ASTRO · TAILWIND · GEIST</span>
+    </div>
+  </footer>
+</body>
+</html>
