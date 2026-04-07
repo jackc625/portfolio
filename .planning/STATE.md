@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 07-04-PLAN.md
-last_updated: "2026-04-04T22:01:20.462Z"
-last_activity: 2026-04-04
+milestone: v1.1
+milestone_name: Editorial Redesign
+status: Defining requirements
+stopped_at: Milestone v1.1 started
+last_updated: "2026-04-07T16:50:00.000Z"
+last_activity: 2026-04-07
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,12 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 07 — chatbot-feature
+**Current focus:** Milestone v1.1 — Editorial Redesign (defining requirements)
 
 ## Current Position
 
-Phase: 07
-Plan: Not started
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-04-07 — Milestone v1.1 (Editorial Redesign) started
 
 ## Performance Metrics
 
