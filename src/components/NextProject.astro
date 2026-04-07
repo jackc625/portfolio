@@ -8,25 +8,25 @@ interface Props {
 const { project } = Astro.props;
 ---
 
-<section data-animate="section" class="bg-bg-secondary">
+<section class="bg-rule">
   <a
     href={`/projects/${project.id}`}
-    class="group focus-visible:outline-accent block px-6 py-[var(--token-space-section)] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 md:px-10 lg:px-16"
+    class="group focus-visible:outline-accent block px-6 py-24 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 md:px-10 lg:px-16"
   >
     <div class="mx-auto max-w-[90rem]">
       <p
-        class="text-text-muted mb-[var(--token-space-lg)] font-mono text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase"
+        class="text-ink-faint mb-6 font-mono text-sm tracking-[0.08em] uppercase"
       >
         Next Project
       </p>
-      <div class="flex items-center gap-[var(--token-space-lg)]">
+      <div class="flex items-center gap-6">
         <span
-          class="font-display text-text-primary group-hover:text-accent text-[length:var(--token-text-heading)] transition-colors duration-200"
+          class="font-display text-ink group-hover:text-accent text-3xl transition-colors duration-200"
         >
           {project.data.title}
         </span>
         <svg
-          class="text-text-muted group-hover:text-accent h-6 w-6 transition-all duration-200 group-hover:translate-x-1"
+          class="text-ink-faint group-hover:text-accent h-6 w-6 transition-all duration-200 group-hover:translate-x-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
