@@ -1,52 +1,23 @@
 /* ============================================
- * LAYER 1: Design Tokens (dark-first, theme-switchable)
- * Architecture: RESEARCH.md Pattern 2
- *   - :root = dark theme (default, no attribute needed)
- *   - [data-theme="light"] = light overrides (Phase 5)
- *   - @theme bridge = Tailwind utilities auto-switch
+ * LAYER 1: Design Tokens (Phase 8 editorial rebrand)
+ * Source of truth: design-system/MASTER.md + mockup.html lines 14-25
+ * Six hex values — no oklch, no dark theme, no semantic tokens
  * ============================================ */
 
 :root {
-  /* === COLOR TOKENS (dark default) === */
-  /* Cloned from shiyunlu.com design language: near-black bg, muted accents */
+  /* === COLOR TOKENS === */
+  --bg: #FAFAF7;
+  --ink: #0A0A0A;
+  --ink-muted: #52525B;
+  --ink-faint: #A1A1AA;
+  --rule: #E4E4E7;
+  --accent: #E63946;
 
-  /* Core Palette (60-30-10 rule) */
-  --token-bg-primary: oklch(0.1 0.005 270);
-  --token-bg-secondary: oklch(0.15 0.005 270);
-  --token-accent: oklch(0.7 0.1 250);
-  --token-accent-hover: oklch(0.78 0.12 250);
-
-  /* Text Colors */
-  --token-text-primary: oklch(0.95 0.005 270);
-  --token-text-secondary: oklch(0.7 0.01 270);
-  --token-text-muted: oklch(0.55 0.01 270);
-
-  /* Border & Divider */
-  --token-border: oklch(0.22 0.005 270);
-  --token-border-hover: oklch(0.32 0.005 270);
-
-  /* Semantic Colors */
-  --token-destructive: oklch(0.63 0.2 25);
-  --token-success: oklch(0.72 0.15 155);
-  --token-warning: oklch(0.78 0.15 85);
-
-  /* === TYPOGRAPHY TOKENS === */
-  /* Fluid type scale — generous sizing matching shiyunlu.com's editorial scale */
-  --token-text-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --token-text-base: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
-  --token-text-heading: clamp(1.25rem, 1rem + 1.25vw, 2rem);
-  --token-text-display: clamp(2.5rem, 1.5rem + 4.5vw, 5.5rem);
-
-  /* === SPACING TOKENS === */
-  /* Generous whitespace matching shiyunlu.com's spatial rhythm */
-  --token-space-xs: 0.25rem;
-  --token-space-sm: 0.5rem;
-  --token-space-md: 1rem;
-  --token-space-lg: 1.5rem;
-  --token-space-xl: 2rem;
-  --token-space-2xl: 3rem;
-  --token-space-3xl: 4rem;
-  --token-space-section: clamp(5rem, 3.5rem + 6vw, 10rem);
+  /* === LAYOUT TOKENS === */
+  --container-max: 1200px;
+  --pad-desktop: 48px;
+  --pad-tablet: 32px;
+  --pad-mobile: 24px;
 }
 
 /* Phase 5: Light theme override (DSGN-02/DSGN-03)
@@ -106,31 +77,28 @@ html.theme-transitioning *::after {
   --color-*: initial;
   --font-*: initial;
 
-  /* Color tokens -> Tailwind utilities */
-  --color-bg-primary: var(--token-bg-primary);
-  --color-bg-secondary: var(--token-bg-secondary);
-  --color-text-primary: var(--token-text-primary);
-  --color-text-secondary: var(--token-text-secondary);
-  --color-text-muted: var(--token-text-muted);
-  --color-accent: var(--token-accent);
-  --color-accent-hover: var(--token-accent-hover);
-  --color-border: var(--token-border);
-  --color-border-hover: var(--token-border-hover);
-  --color-destructive: var(--token-destructive);
-  --color-success: var(--token-success);
-  --color-warning: var(--token-warning);
+  /* Color tokens -> Tailwind utilities (bg-bg, text-ink, etc.) */
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
 
-  /* Font family tokens -> Tailwind utilities */
-  /* Note: these reference the CSS vars set by Astro Fonts API <Font /> component */
-  --font-display: var(--font-heading), ui-sans-serif, sans-serif;
-  --font-body: var(--font-sans), ui-sans-serif, sans-serif;
-  --font-mono: var(--font-code), ui-monospace, monospace;
+  /* Font family tokens -> Tailwind utilities (font-display, font-body, font-mono)
+   * Two-layer naming: Astro Fonts API sets :root { --font-*-src: <font stack> };
+   * Tailwind @theme { --font-*: var(--font-*-src), fallback } consumes those values
+   * and emits the font-* utilities. Distinct names on each side prevent the
+   * self-reference bug (--font-display: var(--font-display) resolves to `initial`). */
+  --font-display: var(--font-display-src), system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-body-src), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono-src), ui-monospace, monospace;
 }
 
 @theme inline {
-  --font-display: var(--font-heading), ui-sans-serif, sans-serif;
-  --font-body: var(--font-sans), ui-sans-serif, sans-serif;
-  --font-mono: var(--font-code), ui-monospace, monospace;
+  --font-display: var(--font-display-src), system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-body-src), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono-src), ui-monospace, monospace;
 }
 
 /* ============================================
