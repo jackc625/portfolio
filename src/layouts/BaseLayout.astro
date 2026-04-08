@@ -1,7 +1,6 @@
 ---
 import { Font } from "astro:assets";
 import { SEO } from "astro-seo";
-import { ClientRouter } from "astro:transitions";
 import SkipToContent from "../components/SkipToContent.astro";
 import Header from "../components/Header.astro";
 import MobileMenu from "../components/MobileMenu.astro";
@@ -72,7 +71,6 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
     <Font cssVariable="--font-display-src" />
     <Font cssVariable="--font-body-src" />
     <Font cssVariable="--font-mono-src" />
-    <ClientRouter />
   </head>
   <body
     class="bg-bg text-ink font-body flex min-h-screen flex-col antialiased"
@@ -84,28 +82,6 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
       <slot />
     </main>
     <Footer />
-    <ChatWidget transition:persist />
-    <script>
-      document.addEventListener("astro:page-load", async () => {
-        const { initAnimations } = await import("../scripts/animations.ts");
-        await initAnimations();
-      });
-
-      document.addEventListener("astro:before-preparation", async () => {
-        const { cleanupAnimations } = await import("../scripts/animations.ts");
-        cleanupAnimations();
-      });
-
-      // Fallback: reveal content if GSAP fails to load after 3 seconds
-      setTimeout(() => {
-        document.querySelectorAll("[data-animate]").forEach((el) => {
-          const computed = getComputedStyle(el);
-          if (computed.opacity === "0") {
-            (el as HTMLElement).style.opacity = "1";
-            (el as HTMLElement).style.transform = "none";
-          }
-        });
-      }, 3000);
-    </script>
+    <ChatWidget />
   </body>
 </html>

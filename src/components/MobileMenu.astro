@@ -223,5 +223,12 @@ const navLinks = [
     document.body.style.overflow = "";
   }
 
+  // DOMContentLoaded fallback for when ClientRouter is removed (D-30)
+  if (document.readyState !== "loading") {
+    initMobileMenu();
+  } else {
+    document.addEventListener("DOMContentLoaded", initMobileMenu);
+  }
+  // Keep astro:page-load defensively — harmless without ClientRouter, allows Phase 10 to re-introduce view transitions without re-adding the init path
   document.addEventListener("astro:page-load", initMobileMenu);
 </script>

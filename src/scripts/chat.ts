@@ -186,11 +186,11 @@ function createUserMessageEl(content: string): HTMLElement {
   const bubble = document.createElement("div");
   bubble.style.cssText = `
     max-width: 85%;
-    background: var(--token-bg-secondary);
+    background: var(--rule);
     border-radius: 12px 12px 4px 12px;
     padding: 8px 16px;
-    color: var(--token-text-primary);
-    font-size: var(--token-text-base);
+    color: var(--ink);
+    font-size: 1rem;
     word-break: break-word;
   `;
   bubble.textContent = content;
@@ -208,10 +208,10 @@ function createBotMessageEl(content: string): HTMLElement {
   bubble.className = "chat-bot-message";
   bubble.style.cssText = `
     max-width: 90%;
-    border-left: 2px solid var(--token-border);
+    border-left: 2px solid var(--rule);
     padding: 8px 0 8px 12px;
-    color: var(--token-text-secondary);
-    font-size: var(--token-text-base);
+    color: var(--ink-muted);
+    font-size: 1rem;
     word-break: break-word;
   `;
   // Sanitized HTML — safe to use innerHTML after marked + DOMPurify pipeline
@@ -235,7 +235,7 @@ function createBotMessageEl(content: string): HTMLElement {
     cursor: pointer;
     border-radius: 4px;
   `;
-  copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--token-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
   copyBtn.addEventListener("click", () => {
     copyToClipboard(content, copyBtn);
   });
@@ -252,10 +252,10 @@ function createErrorMessageEl(text: string): HTMLElement {
   const bubble = document.createElement("div");
   bubble.style.cssText = `
     max-width: 90%;
-    border-left: 2px solid var(--token-border);
+    border-left: 2px solid var(--rule);
     padding: 8px 0 8px 12px;
-    color: var(--token-text-muted);
-    font-size: var(--token-text-base);
+    color: var(--ink-faint);
+    font-size: 1rem;
     font-style: italic;
   `;
   bubble.textContent = text;
@@ -270,8 +270,8 @@ function createNudgeMessageEl(): HTMLElement {
 
   const text = document.createElement("span");
   text.style.cssText = `
-    font-size: var(--token-text-sm);
-    color: var(--token-text-muted);
+    font-size: 0.875rem;
+    color: var(--ink-faint);
     font-style: italic;
     padding: 8px 16px;
   `;
@@ -350,115 +350,37 @@ function setupFocusTrap(panel: HTMLElement, onEscape: () => void): () => void {
 }
 
 // ============================================
-// GSAP Animation Helpers
+// Animation Helpers (Phase 8: GSAP removed — no-op stubs)
+// Chat motion restoration deferred to Phase 10 CHAT-02 per D-27.
 // ============================================
 
-const prefersReducedMotion = (): boolean =>
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-let pulseAnimation: gsap.core.Tween | null = null;
-
 async function animatePanelOpen(panel: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) {
-    panel.style.display = "flex";
-    return;
-  }
   panel.style.display = "flex";
-  try {
-    const { gsap } = await import("gsap");
-    gsap.fromTo(
-      panel,
-      { scale: 0.9, opacity: 0, transformOrigin: "bottom right" },
-      { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
-    );
-  } catch {
-    // GSAP load fail — panel is already visible via display:flex
-  }
 }
 
 async function animatePanelClose(panel: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) {
-    panel.style.display = "none";
-    return;
-  }
-  try {
-    const { gsap } = await import("gsap");
-    gsap.to(panel, {
-      scale: 0.9,
-      opacity: 0,
-      duration: 0.2,
-      ease: "power2.in",
-      onComplete: () => {
-        panel.style.display = "none";
-        gsap.set(panel, { clearProps: "scale,opacity" });
-      },
-    });
-  } catch {
-    panel.style.display = "none";
-  }
+  panel.style.display = "none";
 }
 
-async function animateMessageAppear(el: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) return;
-  try {
-    const { gsap } = await import("gsap");
-    gsap.fromTo(
-      el,
-      { opacity: 0, y: 8 },
-      { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }
-    );
-  } catch {
-    // No animation fallback
-  }
+async function animateMessageAppear(_el: HTMLElement): Promise<void> {
+  // No-op: no entrance animation (chat motion restoration deferred to Phase 10 CHAT-02 per D-27)
 }
 
-async function startPulse(bubble: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) return;
-  try {
-    const { gsap } = await import("gsap");
-    pulseAnimation = gsap.to(bubble, {
-      boxShadow: "0 0 0 8px color-mix(in oklch, var(--token-accent) 40%, transparent)",
-      duration: 1,
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-    });
-  } catch {
-    // No pulse fallback
-  }
+async function startPulse(_bubble: HTMLElement): Promise<void> {
+  // No-op: no pulse (chat motion restoration deferred to Phase 10 CHAT-02 per D-27)
 }
 
 function stopPulse(): void {
-  if (pulseAnimation) {
-    pulseAnimation.kill();
-    pulseAnimation = null;
-  }
+  // No-op: there is no pulse to stop
 }
 
 async function startTypingDots(container: HTMLElement): Promise<void> {
+  // Use CSS-based opacity fallback (no GSAP bounce — Phase 10 CHAT-02 may restore via @keyframes)
   const dots = container.querySelectorAll<HTMLElement>(".typing-dot");
-  if (prefersReducedMotion()) {
-    // Reduced motion: use opacity fade instead of bounce
-    dots.forEach((dot) => {
-      dot.style.animation = "none";
-      dot.style.opacity = "0.5";
-    });
-    return;
-  }
-  try {
-    const { gsap } = await import("gsap");
-    gsap.to(dots, {
-      y: -4,
-      duration: 0.3,
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-      stagger: 0.15,
-    });
-  } catch {
-    // No animation fallback
-  }
+  dots.forEach((dot) => {
+    dot.style.animation = "none";
+    dot.style.opacity = "0.5";
+  });
 }
 
 // ============================================
@@ -588,13 +510,13 @@ function initChat(): void {
     $charCount.textContent = `${len}/500`;
 
     if (len >= 500) {
-      $charCount.style.color = "var(--token-destructive)";
+      $charCount.style.color = "var(--accent)";
       $charCount.style.fontWeight = "600";
     } else if (len > 450) {
-      $charCount.style.color = "var(--token-warning)";
+      $charCount.style.color = "var(--accent)";
       $charCount.style.fontWeight = "600";
     } else {
-      $charCount.style.color = "var(--token-text-muted)";
+      $charCount.style.color = "var(--ink-faint)";
       $charCount.style.fontWeight = "400";
     }
   }
@@ -812,20 +734,6 @@ function initChat(): void {
 // Idempotency guard in initChat() prevents duplicate handlers
 // when transition:persist preserves the DOM across navigations.
 document.addEventListener("astro:page-load", initChat);
-
-// Transition:persist state handling — on astro:before-preparation:
-// - The AbortController (from Plan 03) survives since it's in JS memory
-// - The streaming fetch is a Promise held in closure scope — it continues
-// - The typing indicator and message area are preserved DOM nodes
-// - Focus trap keydown listener MUST be cleaned up to prevent stale handlers
-// Addresses review concern: Codex HIGH — transition:persist re-initialization.
-document.addEventListener("astro:before-preparation", () => {
-  // Clean up focus trap listener (will be re-attached if panel still open)
-  if (cleanupFocusTrap) {
-    cleanupFocusTrap();
-    cleanupFocusTrap = null;
-  }
-});
 
 // Also initialize on DOMContentLoaded as fallback
 if (document.readyState !== "loading") {

@@ -1,11 +1,11 @@
 ---
 // ChatWidget.astro — Floating chat bubble + expandable chat panel
 // Injected in BaseLayout.astro before </body>, after Footer
-// Uses transition:persist to survive page navigation (D-07)
+// Phase 8: transition:persist removed with ClientRouter (D-29) — cross-page chat persistence descoped to Phase 10 CHAT-01
 // All sub-components inline (single file per established pattern)
 ---
 
-<div class="chat-widget" data-no-print transition:persist>
+<div class="chat-widget" data-no-print>
   <!-- Floating Bubble (D-01, D-03) -->
   <button
     type="button"
