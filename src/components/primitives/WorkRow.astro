@@ -1,0 +1,99 @@
+---
+/**
+ * WorkRow — MASTER §5.5
+ *
+ * Single numbered row in the editorial work list. Three-column grid:
+ *   - 56px: number column (meta-mono, var(--ink-muted), 1rem/500)
+ *   - 1fr:  body column (title in .h2-project, stack in uppercase mono)
+ *   - auto: meta column (year + hover-reveal accent arrow)
+ *
+ * Hover: title gets accent underline, arrow transitions opacity 0 → 1 over 120ms.
+ * Arrow is opacity-only — NO translate-x (editorial grammar per §5.5).
+ *
+ * Per D-02: primitive lives in src/components/primitives/
+ * Per D-03: no Tailwind utilities inside primitive markup
+ * Per D-04: props stay as MASTER §5.5 specifies (number/title/stack/year/href)
+ * Per D-14: layout scoped here
+ */
+interface Props {
+  number: string;
+  title: string;
+  stack: string;
+  year: string;
+  href: string;
+}
+
+const { number, title, stack, year, href } = Astro.props;
+---
+
+<a class="work-row" href={href}>
+  <span class="work-num meta-mono tabular">{number}</span>
+  <div class="work-body">
+    <h2 class="h2-project work-title">{title}</h2>
+    <div class="work-stack">{stack}</div>
+  </div>
+  <div class="work-meta">
+    <span class="meta-mono tabular work-year">{year}</span>
+    <span class="work-arrow" aria-hidden="true">→</span>
+  </div>
+</a>
+
+<style>
+  .work-row {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 24px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    align-items: start;
+  }
+
+  .work-num {
+    color: var(--ink-muted);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .work-title {
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .work-stack {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+  }
+
+  .work-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--ink-faint);
+  }
+
+  .work-arrow {
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+
+  .work-row:hover .work-title,
+  .work-row:focus-visible .work-title {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+  }
+
+  .work-row:hover .work-arrow,
+  .work-row:focus-visible .work-arrow {
+    opacity: 1;
+  }
+</style>
