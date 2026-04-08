@@ -61,3 +61,32 @@ Per D-29 item 5 (chat smoke test) + D-30 (visual parity with mockup.html), the u
 User typed `approved` in response to the plan 09-08 task 2 checkpoint resume signal at 2026-04-08T20:54Z, confirming all checklist items passed without deviation. No follow-ups raised.
 
 ---
+
+## Success Criteria Evaluation
+
+Evaluation of the seven Phase 9 success criteria from `.planning/ROADMAP.md` against the observations recorded in the Automated Gate (Task 1) and Manual Gate (Task 2) sections above.
+
+| SC | Criterion (paraphrased) | Result | Evidence |
+|----|-------------------------|--------|----------|
+| SC#1 | Rebuilt `Header.astro` — sticky 72px + `JACK CUTRARA` mono wordmark + 3-link nav (works/about/contact) + accent-red active underline | **PASS** | Manual gate Part B desktop confirmed sticky 72px header with mono wordmark and inline 3-link nav at 1440px. Container-query hamburger swap at ≤380px verified at 375px (Part B mobile). Active-link state styled via `aria-current="page"` attribute selector — preview route doesn't trip any nav href, confirming the negative case. Header.astro created in plan 09-04 (commit landed on plan 09-05 via BaseLayout swap). |
+| SC#2 | Rebuilt `Footer.astro` — 64px copyright left + `BUILT WITH ASTRO · TAILWIND · GEIST` mono caption right | **PASS** | Manual gate Part B desktop confirmed sticky 64px footer at desktop with single-row layout: copyright left + BUILT WITH caption right, no social row (D-10). Mobile 3-row stack at 375px confirmed in Part B mobile. Footer.astro created in plan 09-04 with MASTER §5.2 mobile footer amendment from plan 09-01. |
+| SC#3 | New primitives render correctly in isolation: `Container`, `SectionHeader`, `WorkRow`, `MetaLabel`, `StatusDot` | **PASS** | Manual gate Part B desktop walked through all 5 stateless/composite primitives via /dev/primitives § 03 through § 07. Container exercised via `<Container as="main">` at the BaseLayout slot (preview page) — `{ as: Tag = 'div' }` dynamic-tag rename pattern verified live. SectionHeader rendered both with-count and without-count variants. WorkRow rendered 4 real projects from the content collection with hover-reveal accent arrow. MetaLabel rendered 3 ink/muted/faint variants with visibly distinct contrast. StatusDot rendered the 6px accent dot + AVAILABLE FOR WORK mono label, demonstrating the StatusDot-composes-MetaLabel pattern from plan 09-03. All 5 primitives created in plans 09-03 (stateless) and 09-04 (composite). |
+| SC#4 | MobileMenu question resolved — rebuilt as editorial primitive per D-05/D-06/D-07/D-08/D-09 + MASTER §5.8 amendment | **PASS** | MASTER §5.8 amendment landed in plan 09-01 (commit `3cabccc`) rewriting the deferred decision into a full Phase 9 rebuild contract. MobileMenu.astro created in plan 09-04 with focus-trap dialog matching `src/scripts/chat.ts:335` selector verbatim. Manual gate Part B mobile verified at 375px: hamburger swap, dialog open/close, 8-element focus trap (close + 3 nav + 4 social), Shift+Tab reverse cycle, Escape close + focus return to hamburger, backdrop click close, × button close, zero entrance animation (D-08). |
+| SC#5 | Primitives use only Phase 8 hex tokens + Geist/Geist Mono + mockup rule weights — no inline colors, no oklch, no GSAP | **PASS** | Plan 09-04 negative-grep regression suite confirmed zero inline hex, zero oklch references, zero GSAP imports, zero Tailwind utility classes in primitive markup. Manual gate Part B desktop confirmed all colors visually confined to the locked 6-token palette (#FAFAF7 / #0A0A0A / #52525B / #A1A1AA / #E4E4E7 / #E63946) and all text in Geist sans/Geist Mono — no other fonts visible. Automated gate `pnpm run build` (exit 0) validated all primitive type roles compile against the Phase 8 @theme bridge. |
+| SC#6 | Kept components audited and updated where applicable — `NextProject` restyled, `JsonLd`/`SkipToContent`/`ArticleImage` verify-only with stable APIs | **PASS** | Plan 09-06 restyled NextProject.astro from v1.0 bg-rule card-CTA panel to editorial row using `.section` rhythm + 48px scoped padding + `.h2-project` title + opacity-only accent arrow hover (120ms ease, WorkRow forward contract). Public API `{ project: CollectionEntry<'projects'> }` preserved verbatim. JsonLd.astro, SkipToContent.astro, ArticleImage.astro all passed verify-only audits with empty `git diff --stat` and zero negative-grep hits per D-23/D-24/D-25. |
+| SC#7 | `pnpm run build` succeeds and chat widget still functions | **PASS** | Automated gate Task 1: `pnpm run build` exit 0 (11 pages prerendered, sitemap excludes /dev/primitives), `pnpm run lint` exit 0, `pnpm run check` exit 0, `pnpm run test` exit 0 (52 tests passed). Manual gate Part A confirmed Phase 7 chat widget functions end-to-end on the live dev server: bubble open, SSE streaming, Geist Mono code rendering, focus trap, Escape/× close, no console errors. **D-26 regression gate held.** |
+
+**SC verdict: 7 / 7 PASS.** Phase 9 ships.
+
+---
+
+## Phase 9 Sign-Off
+
+- All 5 D-29 gate items pass: **yes** (4 automated commands exit 0 + 1 manual chat smoke test PASS)
+- D-30 /dev/primitives visual check at 1440px and 375px: **pass** (both viewports verified against mockup.html with zero deviations)
+- SC#1–SC#7 all PASS: **yes** (full table above)
+- Follow-ups for Phase 10: **None raised by this verification gate.** Phase 10 begins from a known-good primitive library + integrated BaseLayout. Pre-existing follow-ups already logged in `.planning/phases/09-primitives/deferred-items.md` (lightning-css `[var(--token-*)]` warnings) remain Phase 11 polish items.
+- Follow-ups for Phase 11: **None new.** Existing Phase 11 backlog (lightning-css warnings, JsonLd `is:inline` advisory hint, Container.astro `interface Props` declared-but-unused hint, BaseLayout slot-based noindex injection cleanup, mockup.html deletion) all carried forward unchanged.
+- **Phase 9 ready to ship: yes**
+
+Phase 9 (Primitives) is complete. The new editorial component library exists in `src/components/primitives/`, BaseLayout consumes the new shell (plan 09-05), `/dev/primitives` provides a private QA preview route excluded from sitemap and robots (plan 09-07), and every Phase 7 chat capability survives the swap. Ready to advance to Phase 10 (Page Port).
