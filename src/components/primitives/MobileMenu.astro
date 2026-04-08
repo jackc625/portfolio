@@ -261,6 +261,13 @@ function isActive(href: string): boolean {
       trigger!.setAttribute("aria-expanded", "true");
       trigger!.setAttribute("aria-label", "Close menu");
       document.body.style.overflow = "hidden";
+      // WR-01: Make the rest of the page inert while the dialog is open so
+      // header/main/footer elements are removed from the tab order and the
+      // a11y tree. `inert` has 95%+ browser support in 2026 and is the
+      // canonical modal-dialog pattern per ARIA authoring practices.
+      document.querySelector("header")?.setAttribute("inert", "");
+      document.querySelector("main")?.setAttribute("inert", "");
+      document.querySelector("footer")?.setAttribute("inert", "");
       // Focus the close button first so keyboard users land inside the dialog
       closeBtn!.focus();
       document.addEventListener("keydown", handleKeyDown);
@@ -272,6 +279,10 @@ function isActive(href: string): boolean {
       trigger!.setAttribute("aria-expanded", "false");
       trigger!.setAttribute("aria-label", "Open menu");
       document.body.style.overflow = "";
+      // WR-01: Restore the rest of the page to the tab order / a11y tree.
+      document.querySelector("header")?.removeAttribute("inert");
+      document.querySelector("main")?.removeAttribute("inert");
+      document.querySelector("footer")?.removeAttribute("inert");
       document.removeEventListener("keydown", handleKeyDown);
       if (returnFocus) trigger!.focus();
     }
