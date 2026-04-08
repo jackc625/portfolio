@@ -65,7 +65,15 @@
   5. Every primitive uses only the Phase 8 hex tokens, Geist/Geist Mono, and the rule weights from mockup.html — no inline colors, no leftover oklch references, no GSAP imports
   6. Kept components (`JsonLd.astro`, `SkipToContent.astro`, `ArticleImage.astro`, `NextProject.astro`) are audited and updated to use the new tokens where applicable, but their public APIs remain stable
   7. `npm run build` succeeds and the chat widget still functions
-**Plans**: TBD
+**Plans**: 8 plans
+- [ ] 09-01-master-amendment-PLAN.md — Amend MASTER.md §5.2 (mobile footer stack) and §5.8 (MobileMenu rebuild decision) as a docs-only commit
+- [ ] 09-02-global-css-foundations-PLAN.md — Land editorial typography role classes + .container/.section/.section-rule structural helpers in src/styles/global.css
+- [ ] 09-03-stateless-primitives-PLAN.md — Create Container, MetaLabel, StatusDot, SectionHeader primitives under src/components/primitives/
+- [ ] 09-04-composite-primitives-PLAN.md — Create Header (container-query hamburger), Footer (mobile 3-row stack), WorkRow, MobileMenu (focus-trap dialog) primitives
+- [ ] 09-05-baselayout-swap-PLAN.md — Swap BaseLayout.astro to import new primitives and delete old v1.0 Header/Footer/MobileMenu files
+- [ ] 09-06-kept-components-audit-PLAN.md — Restyle NextProject.astro to editorial row; verify-only audit of JsonLd, SkipToContent, ArticleImage
+- [ ] 09-07-dev-primitives-preview-PLAN.md — Create /dev/primitives preview route + sitemap/robots.txt exclusion for /dev/*
+- [ ] 09-08-verification-gate-PLAN.md — Run 5-point verification gate (build/lint/check/test + manual chat smoke + /dev/primitives visual check)
 **UI hint**: yes
 
 ### Phase 10: Page Port
@@ -112,6 +120,6 @@
 | 6. Performance Audit & Deployment | v1.0 | 3/3 | Complete | 2026-03-31 |
 | 7. Chatbot Feature | v1.0 | 5/5 | Complete | 2026-04-04 |
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
-| 9. Primitives | v1.1 | 0/? | Not started | — |
+| 9. Primitives | v1.1 | 0/8 | Planned     | — |
 | 10. Page Port | v1.1 | 0/? | Not started | — |
 | 11. Polish | v1.1 | 0/? | Not started | — |
