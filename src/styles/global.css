@@ -58,30 +58,6 @@
 }
 
 /* ============================================
- * Pre-Animation States (Phase 6 GSAP lazy-loading)
- * Elements with data-animate start hidden.
- * GSAP reveals them during animation.
- * Fallback: JS timeout reveals after 3s if GSAP fails.
- * ============================================ */
-[data-animate],
-[data-animate="section"],
-[data-animate="stagger-item"],
-[data-animate="split-text"] {
-  opacity: 0;
-}
-
-/* Ensure content visible for reduced-motion users (D-05) */
-@media (prefers-reduced-motion: reduce) {
-  [data-animate],
-  [data-animate="section"],
-  [data-animate="stagger-item"],
-  [data-animate="split-text"] {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
-
-/* ============================================
  * Base Element Styles
  * ============================================ */
 
@@ -91,39 +67,12 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-size: var(--token-text-base);
+  font-size: 1rem;
   line-height: 1.6;
-  color: var(--token-text-primary);
-  background-color: var(--token-bg-primary);
+  color: var(--ink);
+  background-color: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* ============================================
- * View Transitions (page-to-page crossfade)
- * ============================================ */
-::view-transition-old(root) {
-  animation: vt-fade-out 200ms ease-in forwards;
-}
-::view-transition-new(root) {
-  animation: vt-fade-in 200ms ease-out forwards;
-}
-@keyframes vt-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes vt-fade-in {
-  from {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
 }
 
 /* ============================================
