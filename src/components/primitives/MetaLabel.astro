@@ -1,0 +1,37 @@
+---
+/**
+ * MetaLabel — MASTER §5.6
+ *
+ * Small uppercase mono caption used for status labels, contact labels,
+ * hero metadata, section counts. Typography comes from the global
+ * .label-mono class (Geist Mono 500, 0.75rem, uppercase, 0.12em).
+ *
+ * Per D-02: primitive lives in src/components/primitives/
+ * Per D-03: no Tailwind utilities inside primitive markup
+ * Per D-04: props stay as MASTER §5.6 specifies (text + color? + class?)
+ * Per D-16: no new color tokens — only --ink, --ink-muted, --ink-faint
+ */
+interface Props {
+  text: string;
+  color?: "ink" | "ink-muted" | "ink-faint";
+  class?: string;
+}
+
+const { text, color = "ink", class: className } = Astro.props;
+---
+
+<span class:list={["label-mono", `meta-label--${color}`, className]}>
+  {text}
+</span>
+
+<style>
+  .meta-label--ink {
+    color: var(--ink);
+  }
+  .meta-label--ink-muted {
+    color: var(--ink-muted);
+  }
+  .meta-label--ink-faint {
+    color: var(--ink-faint);
+  }
+</style>
