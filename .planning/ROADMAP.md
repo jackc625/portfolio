@@ -70,7 +70,7 @@
 - [x] 09-02-global-css-foundations-PLAN.md — Land editorial typography role classes + .container/.section/.section-rule structural helpers in src/styles/global.css
 - [x] 09-03-stateless-primitives-PLAN.md — Create Container, MetaLabel, StatusDot, SectionHeader primitives under src/components/primitives/
 - [x] 09-04-composite-primitives-PLAN.md — Create Header (container-query hamburger), Footer (mobile 3-row stack), WorkRow, MobileMenu (focus-trap dialog) primitives
-- [ ] 09-05-baselayout-swap-PLAN.md — Swap BaseLayout.astro to import new primitives and delete old v1.0 Header/Footer/MobileMenu files
+- [x] 09-05-baselayout-swap-PLAN.md — Swap BaseLayout.astro to import new primitives and delete old v1.0 Header/Footer/MobileMenu files
 - [x] 09-06-kept-components-audit-PLAN.md — Restyle NextProject.astro to editorial row; verify-only audit of JsonLd, SkipToContent, ArticleImage
 - [ ] 09-07-dev-primitives-preview-PLAN.md — Create /dev/primitives preview route + sitemap/robots.txt exclusion for /dev/*
 - [ ] 09-08-verification-gate-PLAN.md — Run 5-point verification gate (build/lint/check/test + manual chat smoke + /dev/primitives visual check)

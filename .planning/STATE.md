@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
 status: executing
-stopped_at: Completed 09-04-composite-primitives-PLAN.md
-last_updated: "2026-04-08T20:00:13.536Z"
+stopped_at: Completed 09-05-baselayout-swap-PLAN.md
+last_updated: "2026-04-08T20:12:55.266Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 16
-  completed_plans: 13
-  percent: 81
+  completed_plans: 14
+  percent: 88
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 ## Current Position
 
 Phase: 09 (primitives) — EXECUTING
-Plan: 6 of 8
+Plan: 7 of 8
 Status: Ready to execute
 Last activity: 2026-04-08
 Branch: feat/ui-redesign
@@ -73,6 +73,7 @@ Branch: feat/ui-redesign
 | Phase 09-primitives P03 | 4min | 4 tasks | 4 files |
 | Phase 09-primitives P06 | 4min | 2 tasks | 1 files |
 | Phase 09-primitives P04 | 7min | 4 tasks | 4 files |
+| Phase 09-primitives P05 | 5min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,9 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 09-primitives]: [Phase 09-04]: MobileMenu BLOCKER 2 init lifecycle — resetMobileMenuState() runs unconditionally on every init/navigation BEFORE the menuInitialized double-bind guard; bindMobileMenuListeners() is separately-gated; both DOMContentLoaded and astro:page-load register initMobileMenu for Phase 10 ClientRouter forward-compat
 - [Phase 09-primitives]: [Phase 09-04]: MobileMenu focus-trap selector verbatim parity with src/scripts/chat.ts:335 — grep across src/ returns exactly 2 matching files (MobileMenu.astro + chat.ts), establishing cross-component focus-trap consistency
 - [Phase 09-primitives]: [Phase 09-04]: WorkRow honors NextProject forward contract from plan 09-06 — opacity-only accent arrow reveal (opacity 0→1, 120ms ease) on :hover AND :focus-visible, zero transform/translate. Cross-primitive hover grammar consistency paid down
+- [Phase 09-primitives]: [Phase 09-05]: BaseLayout <body> keeps pre-existing Tailwind utility classes (bg-bg text-ink font-body flex min-h-screen flex-col antialiased) untouched during primitive swap — D-03 'no Tailwind in primitives' applies to src/components/primitives/ markup, not to layout host elements; body is the flex-column container that main and footer rely on
+- [Phase 09-primitives]: [Phase 09-05]: pt-14 removed from <main> because primitives/Header is position:sticky height:72px (not v1.0 position:fixed height:56px); sticky siblings flow naturally below the header, so the 56px top-padding compensation hack is no longer needed. flex-1 kept on <main> because it participates in the body flex-column layout that pushes footer to bottom
+- [Phase 09-primitives]: [Phase 09-05]: Integration-point deviation restraint pattern established — when swapping a primitive library into a shared shell, do not also refactor the shell. Plan 09-05 touched exactly 4 lines of BaseLayout.astro (3 import paths + 1 main class) and nothing else; SEO wiring, Font bindings, html/body scaffolding, SkipToContent anchor, ChatWidget anchor all byte-identical. Minimum viable integration = minimum regression surface
 
 ### Pending Todos
 
@@ -151,6 +155,6 @@ None — roadmap is ready for `/gsd-plan-phase 8`.
 ## Session Continuity
 
 Last activity: 2026-04-07 - Created roadmap for v1.1 Editorial Redesign (4 phases, 25 requirements mapped)
-Last session: 2026-04-08T20:00:13.530Z
-Stopped at: Completed 09-04-composite-primitives-PLAN.md
+Last session: 2026-04-08T20:12:55.260Z
+Stopped at: Completed 09-05-baselayout-swap-PLAN.md
 Resume file: None
