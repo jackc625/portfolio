@@ -39,7 +39,7 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 
 - [ ] **CONTACT-01**: Contact section is minimal: `GET IN TOUCH` label + email + inline social links (`GITHUB · LINKEDIN · X · RÉSUMÉ`), no icons, no contact form, no CTA buttons
 - [ ] **CONTACT-02**: Résumé link uses `<a download>` and points to `/jack-cutrara-resume.pdf` (placeholder PDF shipped initially, real PDF replaces it later)
-- [ ] **CONTACT-03**: Standalone `/resume` page is removed entirely; the hosted PDF is the single source of truth for résumé content
+- [x] **CONTACT-03**: Standalone `/resume` page is removed entirely; the hosted PDF is the single source of truth for résumé content
 
 ### Chat Widget (CHAT)
 
@@ -104,7 +104,7 @@ Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
 | DSGN-03 | Phase 8 — Foundation | Complete |
 | DSGN-04 | Phase 8 — Foundation | Complete |
 | DSGN-05 | Phase 8 — Foundation | Complete |
-| CONTACT-03 | Phase 8 — Foundation | Pending |
+| CONTACT-03 | Phase 8 — Foundation | Complete |
 | HOME-01 | Phase 10 — Page Port | Pending |
 | HOME-02 | Phase 10 — Page Port | Pending |
 | HOME-03 | Phase 10 — Page Port | Pending |

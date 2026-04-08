@@ -49,7 +49,7 @@
 - [x] 08-04-PLAN.md — Delete 8 dead components; strip ThemeToggle + /resume from Header + MobileMenu nav (DSGN-04)
 - [x] 08-05-PLAN.md — Refactor chat widget to new tokens; audit portfolio-context.json for v1.0 design refs (DSGN-02, DSGN-04)
 - [x] 08-06-PLAN.md — Replace 5 pages with stubs; rename Tailwind tokens in 5 surviving components (DSGN-02)
-- [ ] 08-07-PLAN.md — Delete /resume route and rename public/resume.pdf → jack-cutrara-resume.pdf (CONTACT-03)
+- [x] 08-07-PLAN.md — Delete /resume route and rename public/resume.pdf → jack-cutrara-resume.pdf (CONTACT-03)
 - [ ] 08-08-PLAN.md — Run automated gate (build + lint + check + test) and manual chat smoke test (all REQs)
 **UI hint**: yes
 
