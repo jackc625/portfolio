@@ -2,9 +2,9 @@
 import { Font } from "astro:assets";
 import { SEO } from "astro-seo";
 import SkipToContent from "../components/SkipToContent.astro";
-import Header from "../components/Header.astro";
-import MobileMenu from "../components/MobileMenu.astro";
-import Footer from "../components/Footer.astro";
+import Header from "../components/primitives/Header.astro";
+import MobileMenu from "../components/primitives/MobileMenu.astro";
+import Footer from "../components/primitives/Footer.astro";
 import ChatWidget from "../components/chat/ChatWidget.astro";
 import "../styles/global.css";
 
@@ -78,7 +78,7 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
     <SkipToContent />
     <Header />
     <MobileMenu />
-    <main id="main-content" class="flex-1 pt-14">
+    <main id="main-content" class="flex-1">
       <slot />
     </main>
     <Footer />
