@@ -1,28 +1,25 @@
 ---
-import ThemeToggle from "./ThemeToggle.astro";
-
 const currentPath = Astro.url.pathname;
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
-  { href: "/resume", label: "Resume" },
   { href: "/contact", label: "Contact" },
 ];
 ---
 
 <header
   id="site-header"
-  class="border-border/40 fixed top-0 right-0 left-0 z-50 border-b"
+  class="border-rule/40 fixed top-0 right-0 left-0 z-50 border-b"
 >
-  <div class="bg-bg-primary/80 absolute inset-0 backdrop-blur-md"></div>
+  <div class="bg-bg/80 absolute inset-0 backdrop-blur-md"></div>
   <nav
     aria-label="Main navigation"
     class="relative mx-auto grid h-14 max-w-[90rem] grid-cols-[1fr_auto_auto] items-center gap-2 px-6 md:grid-cols-[auto_1fr_auto] md:gap-0 md:px-10 lg:px-16"
   >
     <a
       href="/"
-      class="font-display text-text-primary hover:text-accent focus-visible:ring-accent text-[length:var(--token-text-base)] tracking-tight transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
+      class="font-display text-ink hover:text-accent focus-visible:ring-accent text-base tracking-tight transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
     >
       Jack Cutrara
     </a>
@@ -41,10 +38,10 @@ const navLinks = [
               <a
                 href={link.href}
                 class:list={[
-                  "font-body focus-visible:ring-accent px-1 py-1 text-[length:var(--token-text-sm)] tracking-wide transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none",
+                  "font-body focus-visible:ring-accent px-1 py-1 text-sm tracking-wide transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none",
                   isActive
-                    ? "text-text-primary"
-                    : "text-text-muted hover:text-text-primary nav-link-hover",
+                    ? "text-ink"
+                    : "text-ink-muted hover:text-ink nav-link-hover",
                 ]}
                 aria-current={isActive ? "page" : undefined}
               >
@@ -54,14 +51,11 @@ const navLinks = [
           );
         })
       }
-      <li><ThemeToggle /></li>
     </ul>
-
-    <div class="md:hidden"><ThemeToggle /></div>
 
     <button
       id="menu-trigger"
-      class="text-text-primary focus-visible:ring-accent flex h-10 w-10 items-center justify-center focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none md:hidden"
+      class="text-ink focus-visible:ring-accent flex h-10 w-10 items-center justify-center focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none md:hidden"
       aria-label="Open menu"
       aria-expanded="false"
       aria-controls="mobile-menu"

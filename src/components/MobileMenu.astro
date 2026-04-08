@@ -4,14 +4,13 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
-  { href: "/resume", label: "Resume" },
   { href: "/contact", label: "Contact" },
 ];
 ---
 
 <div
   id="mobile-menu"
-  class="bg-bg-primary fixed inset-0 z-[60] hidden flex-col"
+  class="bg-bg fixed inset-0 z-[60] hidden flex-col"
   role="dialog"
   aria-label="Navigation menu"
   aria-modal="true"
@@ -19,7 +18,7 @@ const navLinks = [
   <div class="flex h-14 items-center justify-end px-6">
     <button
       id="menu-close"
-      class="text-text-primary focus-visible:ring-accent flex h-10 w-10 items-center justify-center focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
+      class="text-ink focus-visible:ring-accent flex h-10 w-10 items-center justify-center focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
       aria-label="Close menu"
     >
       <svg
@@ -51,10 +50,10 @@ const navLinks = [
           <a
             href={link.href}
             class:list={[
-              "font-display focus-visible:ring-accent mobile-menu-link text-[length:var(--token-text-heading)] tracking-tight transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none",
+              "font-display focus-visible:ring-accent mobile-menu-link text-3xl tracking-tight transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none",
               isActive
-                ? "text-text-primary"
-                : "text-text-muted hover:text-text-primary",
+                ? "text-ink"
+                : "text-ink-muted hover:text-ink",
             ]}
             aria-current={isActive ? "page" : undefined}
             style={`--link-index: ${index}`}
@@ -67,13 +66,13 @@ const navLinks = [
   </nav>
 
   <div class="px-10 pb-10">
-    <div class="text-text-muted flex items-center gap-6">
+    <div class="text-ink-faint flex items-center gap-6">
       <a
         href="https://github.com/jackc625"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="GitHub profile"
-        class="hover:text-text-primary focus-visible:ring-accent transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
+        class="hover:text-ink focus-visible:ring-accent transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
       >
         <svg
           width="18"
@@ -92,7 +91,7 @@ const navLinks = [
         target="_blank"
         rel="noopener noreferrer"
         aria-label="LinkedIn profile"
-        class="hover:text-text-primary focus-visible:ring-accent transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
+        class="hover:text-ink focus-visible:ring-accent transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
       >
         <svg
           width="18"
@@ -109,7 +108,7 @@ const navLinks = [
       <a
         href="mailto:jackcutrara@gmail.com"
         aria-label="Send email"
-        class="hover:text-text-primary focus-visible:ring-accent transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
+        class="hover:text-ink focus-visible:ring-accent transition-colors duration-200 focus-visible:rounded focus-visible:ring-2 focus-visible:outline-none"
       >
         <svg
           width="18"
