@@ -366,6 +366,18 @@ interface HeaderProps {
 </footer>
 ```
 
+**Mobile stack — Phase 9 D-10 amendment.** At <768px viewport the footer becomes a 3-row vertical stack instead of the single-row default. This extends the "single-row default, optional flex-column stack" latitude already granted in the Mobile behavior paragraph above with a concrete Phase 9 decision: the mobile footer inserts a mono social link row between the copyright and the "BUILT WITH" caption.
+
+Mobile stack (3 rows, centered horizontally, `gap: 12px` between rows, applied via a `@media (max-width: 767px)` rule inside `Footer.astro`'s scoped `<style>`):
+
+1. `© 2026 JACK CUTRARA` — `.meta-mono` + `.tabular`, color `var(--ink-faint)`
+2. `GITHUB · LINKEDIN · X · EMAIL` — `.label-mono` color `var(--ink-muted)`, each link hovers to `var(--accent)` (identical shape to the contact section's `.contact-links` and identical content to the MobileMenu overlay bottom row per §5.8)
+3. `BUILT WITH ASTRO · TAILWIND · GEIST` — `.meta-mono` uppercase, color `var(--ink-faint)`
+
+At ≥768px the default MASTER §5.2 single-row layout applies unchanged — the social row is hidden via `display: none` on desktop to avoid duplicating information that the Phase 10 contact section already presents.
+
+The social row uses pure mono text (no SVG icons) consistent with §8 anti-icon stance. Rationale: mobile users who skip the contact section still have social links within reach in the footer; users who never open `MobileMenu.astro` still see them without scrolling.
+
 ### 5.3 `Container.astro`
 
 **Purpose:** The single horizontal-padding wrapper used by every page region (header, main sections, footer). Applies `max-width: 1200px` and the responsive padding tier.
@@ -594,9 +606,32 @@ interface StatusDotProps {
 </div>
 ```
 
-### 5.8 Phase 9 mobile-nav decision (deferred)
+### 5.8 Mobile nav (Phase 9 rebuild decision)
 
-The `MobileMenu.astro` keep-or-delete decision is **Phase 9's call**, per ROADMAP Phase 9 success criterion #4. Phase 8 leaves the v1.0 `MobileMenu.astro` wired (with a `DOMContentLoaded` fallback per D-30) so mobile users have a working nav through the gap. Phase 9 either rebuilds it to match the editorial system or deletes it in favor of always-visible nav links — whichever it picks, the decision is recorded back into a future amendment of this section.
+Phase 9 **rebuilds** `MobileMenu.astro` as a full-screen overlay primitive rather than deleting it in favor of always-visible nav links. The rebuild lives at `src/components/primitives/MobileMenu.astro`. The v1.0 `src/components/MobileMenu.astro` (233 lines, hamburger + fullscreen overlay + focus trap + staggered link reveal + SVG social icons) is deleted in the same plan that wires BaseLayout to the new primitive. This takes the Phase 9 primitive library from 7 to 8 components.
+
+**Hamburger visibility — container query, not viewport media query.** `Header.astro` sets `container-type: inline-size` on its inner flex container and uses a `@container (max-width: 380px)` rule to hide the inline `.site-nav` links and reveal the hamburger trigger. Threshold 380px is chosen because at a 375px viewport minus the 2 × 24px mobile `.container` padding, the header-inner element measures ≈ 327px wide — below 380px — so standard phones (320–414px viewport) see the hamburger while tablets and desktops keep the inline nav. Container queries have ~95% browser support in 2026 and react to the header's actual rendered width, not the viewport. The rationale for 380px specifically is that the mono wordmark `JACK CUTRARA` (Geist Mono 500, 0.875rem, 0.12em letter-spacing) plus three uppercase mono nav links (`works·about·contact` ≈ 22 characters separated by two 32px gaps) cramps visibly at that width.
+
+**Overlay contents.** The rebuilt `MobileMenu.astro` renders:
+
+1. A close button pinned top-right of the overlay (matching the v1.0 × icon pattern — planner's choice between SVG or mono `×` character)
+2. Three mono nav links (`works`, `about`, `contact`) stacked vertically and centered, rendered at a prominent editorial size (planner selects between `.h2-project` 1.75rem and `.lead` clamp — whichever reads better). The active link receives the accent underline treatment from `.nav-link.is-active` defined inside `Header.astro` (text-decoration-color var(--accent), text-decoration-thickness 1.5px, text-underline-offset 6px).
+3. A small `GITHUB · LINKEDIN · X · EMAIL` mono link row at the bottom of the overlay, using the same shape as the contact section's `.contact-links` (Geist Mono 500, 0.75rem, uppercase, 0.12em letter-spacing, `var(--ink-muted)` default, `var(--accent)` on hover). This row intentionally duplicates the mobile footer social row so contact links are always one tap away while the menu is open.
+
+**A11y treatment.** Reuses the v1.0 shape plus the Phase 7 ChatWidget focus-trap pattern:
+
+- `role="dialog"`, `aria-modal="true"`, `aria-label="Navigation menu"`
+- Focus trap: Tab cycles within the overlay, Shift+Tab reverse-cycles, focus is **re-queried on every keypress** (matches Phase 7 `src/scripts/chat.ts` `setupFocusTrap` — see STATE.md "Focus trap re-queries focusable elements on every Tab keypress")
+- Escape closes the overlay
+- Click-outside on the backdrop closes the overlay
+- Close button (top-right ×) closes the overlay
+- `body { overflow: hidden }` while open
+- Focus returns to the hamburger trigger on close
+- Close on any nav-link click (so tapping a link dismisses the menu before the page navigates)
+
+**Motion stance — no entrance animation.** The v1.0 `@keyframes menuLinkIn` 60ms-stepped staggered link reveal does **not** survive into the new `MobileMenu.astro`. The overlay opens instantly via display toggle only. Per §6.1, orchestrated entrance animations are dead. The only transition allowed inside the overlay is functional hover/focus color change on the link rows and the social row (consistent with §6.2 Tailwind `transition-colors` allowance). No translation, no opacity fade-in, no stagger delay.
+
+**Props.** The new `MobileMenu.astro` takes no props; it reads `Astro.url.pathname` internally (matching Header per §5.1 / Phase 9 D-27) to compute the active link.
 
 ---
 
