@@ -67,7 +67,7 @@
   7. `npm run build` succeeds and the chat widget still functions
 **Plans**: 8 plans
 - [x] 09-01-master-amendment-PLAN.md — Amend MASTER.md §5.2 (mobile footer stack) and §5.8 (MobileMenu rebuild decision) as a docs-only commit
-- [ ] 09-02-global-css-foundations-PLAN.md — Land editorial typography role classes + .container/.section/.section-rule structural helpers in src/styles/global.css
+- [x] 09-02-global-css-foundations-PLAN.md — Land editorial typography role classes + .container/.section/.section-rule structural helpers in src/styles/global.css
 - [ ] 09-03-stateless-primitives-PLAN.md — Create Container, MetaLabel, StatusDot, SectionHeader primitives under src/components/primitives/
 - [ ] 09-04-composite-primitives-PLAN.md — Create Header (container-query hamburger), Footer (mobile 3-row stack), WorkRow, MobileMenu (focus-trap dialog) primitives
 - [ ] 09-05-baselayout-swap-PLAN.md — Swap BaseLayout.astro to import new primitives and delete old v1.0 Header/Footer/MobileMenu files

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
 status: executing
-stopped_at: Completed 09-01-master-amendment-PLAN.md
-last_updated: "2026-04-08T19:05:58.667Z"
+stopped_at: Completed 09-02-global-css-foundations-PLAN.md
+last_updated: "2026-04-08T19:15:43.698Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 16
-  completed_plans: 9
-  percent: 56
+  completed_plans: 10
+  percent: 63
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 ## Current Position
 
 Phase: 09 (primitives) — EXECUTING
-Plan: 2 of 8
+Plan: 3 of 8
 Status: Ready to execute
 Last activity: 2026-04-08
 Branch: feat/ui-redesign
@@ -69,6 +69,7 @@ Branch: feat/ui-redesign
 | Phase 08-foundation P07 | 1min | 1 tasks | 3 files |
 | Phase 08 P08 | 5min | 2 tasks | 1 files |
 | Phase 09-primitives P01 | 5min | 2 tasks | 1 files |
+| Phase 09-primitives P02 | 5min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,9 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 09-primitives]: [Phase 09-01]: MASTER.md §5.8 rewritten from 'deferred' to full Phase 9 MobileMenu rebuild decision — container query @container (max-width: 380px) on header-inner, rebuilt overlay at src/components/primitives/MobileMenu.astro (no entrance animation, Phase 7 focus-trap pattern reused, mono social row)
 - [Phase 09-primitives]: [Phase 09-01]: MASTER.md §5.2 extended with mobile 3-row footer stack (D-10) — copyright / GITHUB·LINKEDIN·X·EMAIL mono social row / BUILT WITH caption, gap 12px, @media (max-width: 767px), social row display:none at ≥768px
 - [Phase 09-primitives]: [Phase 09-01]: Single-commit deviation from per-task atomic commits — plan objective explicitly mandated 'One docs-only commit' so Task 1 and Task 2 landed in commit 3cabccc together
+- [Phase 09-primitives]: [Phase 09-02]: LAYER 3 appended at file tail of src/styles/global.css with seven type role classes + .tabular + .container/.section/.section-rule + responsive breakpoints — D-12/D-13 globals, D-14 primitives stay scoped, D-15 no @theme entries for type roles, D-16 no new color tokens, D-26 Phase 8 blocks byte-identical
+- [Phase 09-primitives]: [Phase 09-02]: Type role classes set font-family via var(--font-display)/var(--font-body)/var(--font-mono) — semantic role-driven names even though --font-display/--font-body both resolve to Geist through Phase 8 @theme bridge
+- [Phase 09-primitives]: [Phase 09-02]: Pre-existing lightning-css warnings (4x 'Unexpected token Delim(*)' from literal [var(--token-*)] strings in src/) logged to .planning/phases/09-primitives/deferred-items.md for Phase 11 polish — out of scope per GSD scope boundary rule, baseline verified via git stash
 
 ### Pending Todos
 
@@ -135,6 +139,6 @@ None — roadmap is ready for `/gsd-plan-phase 8`.
 ## Session Continuity
 
 Last activity: 2026-04-07 - Created roadmap for v1.1 Editorial Redesign (4 phases, 25 requirements mapped)
-Last session: 2026-04-08T19:05:58.662Z
-Stopped at: Completed 09-01-master-amendment-PLAN.md
+Last session: 2026-04-08T19:15:25.878Z
+Stopped at: Completed 09-02-global-css-foundations-PLAN.md
 Resume file: None
