@@ -23,7 +23,7 @@
 /* ============================================
  * LAYER 2: Tailwind @theme Bridge
  * Maps CSS custom properties to Tailwind utility classes.
- * All color values use var(--token-*) references so theme
+ * All color values reference the editorial :root tokens so palette
  * changes propagate automatically (RESEARCH.md Pitfall 4).
  * ============================================ */
 
@@ -226,7 +226,7 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--token-text-muted);
+  background-color: var(--ink-faint);
   display: inline-block;
 }
 
@@ -240,8 +240,8 @@ body {
 
 /* Chat textarea focus state */
 .chat-textarea:focus {
-  border-color: var(--token-border-hover) !important;
-  box-shadow: 0 0 0 2px var(--token-accent);
+  border-color: var(--ink-muted) !important;
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
 /* Chat bot message markdown styles */
@@ -254,20 +254,20 @@ body {
 .chat-bot-message ul,
 .chat-bot-message ol {
   margin: 0.25em 0;
-  padding-left: var(--token-space-md);
+  padding-left: 16px;
 }
 .chat-bot-message li {
-  margin-bottom: var(--token-space-xs);
+  margin-bottom: 4px;
 }
 .chat-bot-message code {
-  font-family: var(--font-code);
-  font-size: var(--token-text-sm);
-  background: var(--token-bg-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background: var(--rule);
   padding: 1px 4px;
   border-radius: 3px;
 }
 .chat-bot-message a {
-  color: var(--token-accent);
+  color: var(--accent);
   text-decoration: none;
 }
 .chat-bot-message a:hover {
@@ -276,13 +276,13 @@ body {
 
 /* Starter chip hover state */
 .chat-starter-chip:hover {
-  border-color: var(--token-border-hover) !important;
-  color: var(--token-accent) !important;
+  border-color: var(--ink-muted) !important;
+  color: var(--accent) !important;
 }
 
 /* Close button hover state */
 .hover-text-primary:hover {
-  color: var(--token-text-primary) !important;
+  color: var(--ink) !important;
 }
 
 /* Copy button styles */
@@ -294,7 +294,7 @@ body {
   opacity: 1;
 }
 .copy-success svg {
-  color: var(--token-success) !important;
+  color: var(--accent) !important;
 }
 
 /* Mobile full-screen chat */
