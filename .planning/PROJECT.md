@@ -140,4 +140,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-07 — Started milestone v1.1 (Editorial Redesign)*
+*Last updated: 2026-04-08 — Phase 9 (Primitives) complete. The editorial primitive library (Header, Footer, WorkRow, MobileMenu, Container, SectionHeader, MetaLabel, StatusDot) ships under `src/components/primitives/`. BaseLayout now imports the new chrome; old v1.0 Header/Footer/MobileMenu deleted. Chat widget regression gate held. Phase 10 (Page Port) unblocked.*
