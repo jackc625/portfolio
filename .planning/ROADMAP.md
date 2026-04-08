@@ -46,7 +46,7 @@
 - [x] 08-01-PLAN.md — Author design-system/MASTER.md as the locked design contract (DSGN-05)
 - [x] 08-02-PLAN.md — Swap foundation: hex tokens + Tailwind @theme bridge + Geist fonts (DSGN-01, DSGN-02)
 - [x] 08-03-PLAN.md — Demolish dark mode, GSAP, ClientRouter, motion machinery; add MobileMenu fallback (DSGN-03, DSGN-04)
-- [ ] 08-04-PLAN.md — Delete 8 dead components; strip ThemeToggle + /resume from Header + MobileMenu nav (DSGN-04)
+- [x] 08-04-PLAN.md — Delete 8 dead components; strip ThemeToggle + /resume from Header + MobileMenu nav (DSGN-04)
 - [ ] 08-05-PLAN.md — Refactor chat widget to new tokens; audit portfolio-context.json for v1.0 design refs (DSGN-02, DSGN-04)
 - [x] 08-06-PLAN.md — Replace 5 pages with stubs; rename Tailwind tokens in 5 surviving components (DSGN-02)
 - [ ] 08-07-PLAN.md — Delete /resume route and rename public/resume.pdf → jack-cutrara-resume.pdf (CONTACT-03)
