@@ -29,6 +29,13 @@
 
 @import "tailwindcss";
 
+/* Scope Tailwind class detection to source files only.
+ * Without this, Tailwind v4 auto-scans the entire repo (including .planning/
+ * markdown plans) and generates utility classes from literal example strings
+ * like `px-[var(--token-*)]`, producing broken CSS and lightning-css warnings.
+ * Restricting @source to src/ eliminates the warnings and shrinks the bundle. */
+@source "../**/*.{astro,html,js,jsx,ts,tsx,md,mdx}";
+
 @theme {
   --color-*: initial;
   --font-*: initial;
