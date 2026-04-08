@@ -150,6 +150,17 @@ function isActive(href: string): boolean {
     background: currentColor;
   }
 
+  /* WR-5: Keyboard focus affordance for the most-tabbed region on every page.
+   * Matches the 2px accent outline pattern already used by NextProject.astro
+   * and MobileMenu.astro so focus rings stay visually consistent site-wide. */
+  .wordmark:focus-visible,
+  .nav-link:focus-visible,
+  .menu-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
   /* D-06: container query swaps inline nav ↔ hamburger at 380px */
   @container (max-width: 380px) {
     .site-nav {
