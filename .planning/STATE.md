@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
 status: executing
-stopped_at: Completed 09-05-baselayout-swap-PLAN.md
-last_updated: "2026-04-08T20:12:55.266Z"
+stopped_at: Completed 09-07-dev-primitives-preview-PLAN.md
+last_updated: "2026-04-08T20:32:50.765Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 16
-  completed_plans: 14
-  percent: 88
+  completed_plans: 15
+  percent: 94
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 ## Current Position
 
 Phase: 09 (primitives) — EXECUTING
-Plan: 7 of 8
+Plan: 8 of 8
 Status: Ready to execute
 Last activity: 2026-04-08
 Branch: feat/ui-redesign
@@ -74,6 +74,7 @@ Branch: feat/ui-redesign
 | Phase 09-primitives P06 | 4min | 2 tasks | 1 files |
 | Phase 09-primitives P04 | 7min | 4 tasks | 4 files |
 | Phase 09-primitives P05 | 5min | 2 tasks | 4 files |
+| Phase 09-primitives P07 | 9min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -130,6 +131,10 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 09-primitives]: [Phase 09-05]: BaseLayout <body> keeps pre-existing Tailwind utility classes (bg-bg text-ink font-body flex min-h-screen flex-col antialiased) untouched during primitive swap — D-03 'no Tailwind in primitives' applies to src/components/primitives/ markup, not to layout host elements; body is the flex-column container that main and footer rely on
 - [Phase 09-primitives]: [Phase 09-05]: pt-14 removed from <main> because primitives/Header is position:sticky height:72px (not v1.0 position:fixed height:56px); sticky siblings flow naturally below the header, so the 56px top-padding compensation hack is no longer needed. flex-1 kept on <main> because it participates in the body flex-column layout that pushes footer to bottom
 - [Phase 09-primitives]: [Phase 09-05]: Integration-point deviation restraint pattern established — when swapping a primitive library into a shared shell, do not also refactor the shell. Plan 09-05 touched exactly 4 lines of BaseLayout.astro (3 import paths + 1 main class) and nothing else; SEO wiring, Font bindings, html/body scaffolding, SkipToContent anchor, ChatWidget anchor all byte-identical. Minimum viable integration = minimum regression surface
+- [Phase 09-07]: Slot-based noindex injection via BaseLayout's new <slot name="head" /> is the only sanctioned path per BLOCKER 1 — <Fragment slot="head"> in child pages pipes meta tags into the layout's <head>. Clean fix for duplicate robots meta (adding noindex prop to BaseLayout) is forbidden by plan; flagged for Phase 11 polish
+- [Phase 09-07]: MobileMenu preview via viewport shrink documentation callout (engage live D-06 container query) over a manual trigger button (which would bypass container query gating) or a 375px wrapper (which would hide the other 7 primitives)
+- [Phase 09-07]: Container as="main" on the preview page exercises the §5.3 dynamic-tag prop at render time against BaseLayout's main slot — live smoke test for the { as: Tag = 'div' } rename pattern
+- [Phase 09-07]: Belt-and-suspenders indexing defense: (1) @astrojs/sitemap filter !page.includes('/dev/') catches future /dev/* routes, (2) public/robots.txt Disallow: /dev/, (3) per-page noindex,nofollow meta via slot — triple defense required because astro-seo's default index,follow emission conflicts with the slot-injected noindex (Google uses more restrictive rule)
 
 ### Pending Todos
 
@@ -155,6 +160,6 @@ None — roadmap is ready for `/gsd-plan-phase 8`.
 ## Session Continuity
 
 Last activity: 2026-04-07 - Created roadmap for v1.1 Editorial Redesign (4 phases, 25 requirements mapped)
-Last session: 2026-04-08T20:12:55.260Z
-Stopped at: Completed 09-05-baselayout-swap-PLAN.md
+Last session: 2026-04-08T20:32:50.760Z
+Stopped at: Completed 09-07-dev-primitives-preview-PLAN.md
 Resume file: None
