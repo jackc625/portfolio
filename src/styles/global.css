@@ -68,8 +68,13 @@
  * Base Element Styles
  * ============================================ */
 
-html {
-  scroll-behavior: smooth;
+/* WR-02: Honor prefers-reduced-motion for programmatic smooth scrolls.
+ * Users with OS-level reduce-motion set (WCAG 2.3.3 / vestibular safety)
+ * should not get smooth scrolls on in-page anchor navigation. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
