@@ -28,6 +28,14 @@ const siteUrl =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://jackcutrara.com";
 const currentUrl = canonicalUrl ?? `${siteUrl}${Astro.url.pathname}`;
 const ogTitle = title || "Jack Cutrara | Software Engineer";
+
+// WR-03: Pass-through absolute URLs (e.g., CDN OG images) unchanged. Only
+// prepend siteUrl for root-relative paths like "/og-default.png". Without
+// this guard, `${siteUrl}${ogImage}` would corrupt absolute URLs into
+// `https://jackcutrara.comhttps://cdn.example.com/hero.png`.
+const resolveOg = (img: string) =>
+  /^https?:\/\//i.test(img) ? img : `${siteUrl}${img}`;
+const resolvedOgImage = resolveOg(ogImage);
 ---
 
 <html lang="en">
@@ -46,7 +54,7 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
         basic: {
           title: ogTitle,
           type: ogType,
-          image: `${siteUrl}${ogImage}`,
+          image: resolvedOgImage,
           url: currentUrl,
         },
         optional: {
@@ -64,7 +72,7 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
         card: "summary_large_image",
         title: ogTitle,
         description,
-        image: `${siteUrl}${ogImage}`,
+        image: resolvedOgImage,
         imageAlt: `${ogTitle} - Jack Cutrara Portfolio`,
       }}
     />
