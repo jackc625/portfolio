@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
 status: executing
-stopped_at: Completed 09-03-stateless-primitives-PLAN.md
-last_updated: "2026-04-08T19:30:44.662Z"
+stopped_at: Completed 09-06-kept-components-audit-PLAN.md
+last_updated: "2026-04-08T19:42:12.295Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 16
-  completed_plans: 11
-  percent: 69
+  completed_plans: 12
+  percent: 75
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 ## Current Position
 
 Phase: 09 (primitives) — EXECUTING
-Plan: 4 of 8
+Plan: 5 of 8
 Status: Ready to execute
 Last activity: 2026-04-08
 Branch: feat/ui-redesign
@@ -71,6 +71,7 @@ Branch: feat/ui-redesign
 | Phase 09-primitives P01 | 5min | 2 tasks | 1 files |
 | Phase 09-primitives P02 | 5min | 1 tasks | 1 files |
 | Phase 09-primitives P03 | 4min | 4 tasks | 4 files |
+| Phase 09-primitives P06 | 4min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -118,6 +119,9 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 09-primitives]: [Phase 09-03]: StatusDot composes MetaLabel — first primitive-in-primitive composition in the library, establishes the pattern composite primitives in plan 09-04 (Header/Footer/WorkRow/MobileMenu) will follow
 - [Phase 09-primitives]: [Phase 09-03]: Container uses { as: Tag = 'div' } rename pattern so dynamic JSX-style tag rendering works — Astro requires capital-letter identifiers for dynamic tag elements while MASTER §5.3 locks the prop name as lowercase 'as'
 - [Phase 09-primitives]: [Phase 09-03]: MetaLabel color variants live in scoped <style> as .meta-label--ink/--ink-muted/--ink-faint selectors (not inline style={}) — Astro auto-scopes the class names preventing collisions, keeps runtime zero-JS, and confines the color-switching surface to the locked six-token palette (D-16)
+- [Phase 09-primitives]: [Phase 09-06]: NextProject restyled from v1.0 bg-rule card-CTA panel to editorial row — global .section rhythm + scoped 48px padding + .container + .h2-project title + opacity-only accent arrow hover (120ms ease, matching WorkRow forward contract); public API { project: CollectionEntry<'projects'> } preserved verbatim
+- [Phase 09-primitives]: [Phase 09-06]: JsonLd.astro, SkipToContent.astro, ArticleImage.astro audited verify-only per D-23/D-24/D-25 — three kept components pass all negative regression greps (no oklch, no legacy text-text-* tokens, no bg-background/text-primary/ring-primary) with zero edits; git diff --stat empty for all three
+- [Phase 09-primitives]: [Phase 09-06]: WorkRow.astro does not yet exist (plan 09-04 creates it) — NextProject hover grammar sourced directly from plan action block + D-22 context as a forward contract plan 09-04 must honor when it writes .work-arrow
 
 ### Pending Todos
 
@@ -143,6 +147,6 @@ None — roadmap is ready for `/gsd-plan-phase 8`.
 ## Session Continuity
 
 Last activity: 2026-04-07 - Created roadmap for v1.1 Editorial Redesign (4 phases, 25 requirements mapped)
-Last session: 2026-04-08T19:30:44.657Z
-Stopped at: Completed 09-03-stateless-primitives-PLAN.md
+Last session: 2026-04-08T19:42:12.290Z
+Stopped at: Completed 09-06-kept-components-audit-PLAN.md
 Resume file: None
