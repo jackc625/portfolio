@@ -1,0 +1,116 @@
+---
+/**
+ * Footer — MASTER §5.2 (+ D-10 mobile 3-row stack amendment)
+ *
+ * Desktop (≥768px): single-row flex with copyright on the left and
+ * BUILT WITH ASTRO · TAILWIND · GEIST mono caption on the right.
+ *
+ * Mobile (<768px): 3-row vertical stack:
+ *   1. © {year} JACK CUTRARA
+ *   2. GITHUB · LINKEDIN · X · EMAIL mono link row
+ *   3. BUILT WITH ASTRO · TAILWIND · GEIST
+ *
+ * Per D-02: primitive lives in src/components/primitives/
+ * Per D-03: no Tailwind utilities inside primitive markup
+ * Per D-10: mobile footer inserts the social row between copyright and built
+ * Per D-14: layout scoped here
+ * Per D-16: only --ink-muted, --ink-faint, --rule, --accent color tokens used
+ */
+
+const year = new Date().getFullYear();
+
+const socialLinks = [
+  { href: "https://github.com/jackc625", label: "GITHUB" },
+  { href: "https://linkedin.com/in/jackcutrara", label: "LINKEDIN" },
+  { href: "https://x.com/jackcutrara", label: "X" },
+  { href: "mailto:jackcutrara@gmail.com", label: "EMAIL" },
+];
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="meta-mono footer-copy tabular">© {year} JACK CUTRARA</span>
+
+    <nav class="footer-social" aria-label="Social links">
+      {
+        socialLinks.map((link, i) => (
+          <>
+            {i > 0 && <span class="footer-social-sep" aria-hidden="true">·</span>}
+            <a
+              href={link.href}
+              class="label-mono footer-social-link"
+              target={link.href.startsWith("http") ? "_blank" : undefined}
+              rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+            >
+              {link.label}
+            </a>
+          </>
+        ))
+      }
+    </nav>
+
+    <span class="meta-mono footer-built">BUILT WITH ASTRO · TAILWIND · GEIST</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 96px;
+    border-top: 1px solid var(--rule);
+    height: 64px;
+  }
+
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+
+  .footer-copy,
+  .footer-built {
+    color: var(--ink-faint);
+  }
+
+  .footer-built {
+    text-transform: uppercase;
+  }
+
+  /* Desktop (≥768px): social row hidden — contact section presents them */
+  .footer-social {
+    display: none;
+  }
+
+  .footer-social-link {
+    color: var(--ink-muted);
+    transition: color 200ms ease;
+  }
+
+  .footer-social-link:hover {
+    color: var(--accent);
+  }
+
+  .footer-social-sep {
+    color: var(--ink-faint);
+    margin: 0 6px;
+  }
+
+  /* Mobile (<768px): 3-row vertical stack per D-10 + §5.2 amendment */
+  @media (max-width: 767px) {
+    .site-footer {
+      height: auto;
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+    .footer-inner {
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .footer-social {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-mono);
+    }
+  }
+</style>
