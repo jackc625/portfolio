@@ -1,0 +1,40 @@
+---
+/**
+ * StatusDot — MASTER §5.7
+ *
+ * 6px accent-red circle paired with an uppercase mono label.
+ * Used for "AVAILABLE FOR WORK" indicator on the homepage hero.
+ *
+ * Per D-02: primitive lives in src/components/primitives/
+ * Per D-03: no Tailwind utilities inside primitive markup
+ * Per D-04: props stay as MASTER §5.7 specifies (label only)
+ * Composes MetaLabel for the text portion.
+ */
+import MetaLabel from "./MetaLabel.astro";
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<span class="status-line">
+  <span class="status-dot" aria-hidden="true"></span>
+  <MetaLabel text={label} color="ink" />
+</span>
+
+<style>
+  .status-line {
+    display: inline-flex;
+    align-items: center;
+  }
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 8px;
+  }
+</style>
