@@ -24,12 +24,18 @@ import { getCollection } from "astro:content";
 
 // Pull 4 real projects from the content collection for WorkRow sample rows.
 // Sort by `order` ascending to get a deterministic preview.
+//
+// WR-4: Zip preview years directly into the projects derivation so every
+// derived entry is guaranteed to carry a `year: string`. If the content
+// collection has fewer than 4 projects (content drop / Phase 10 swap), the
+// shorter projects array is iterated and no `undefined` can leak into the
+// WorkRow `year` prop. The fallback "2024" keeps the type contract intact
+// even if `previewYears` is ever shortened below the projects length.
+const previewYears = ["2026", "2025", "2025", "2024"];
 const projects = (await getCollection("projects"))
   .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 4);
-
-// Projects schema has no year field — hardcode years for the preview only.
-const previewYears = ["2026", "2025", "2025", "2024"];
+  .slice(0, 4)
+  .map((project, i) => ({ project, year: previewYears[i] ?? "2024" }));
 ---
 
 <BaseLayout
@@ -113,13 +119,13 @@ const previewYears = ["2026", "2025", "2025", "2024"];
       <SectionHeader number="07" title="WORKROW" count={`${projects.length} / ${projects.length}`} />
       <div class="work-list">
         {
-          projects.map((p, i) => (
+          projects.map(({ project, year }, i) => (
             <WorkRow
               number={String(i + 1).padStart(2, "0")}
-              title={p.data.title}
-              stack={p.data.techStack.slice(0, 3).join(" · ").toUpperCase()}
-              year={previewYears[i]}
-              href={`/projects/${p.id}`}
+              title={project.data.title}
+              stack={project.data.techStack.slice(0, 3).join(" · ").toUpperCase()}
+              year={year}
+              href={`/projects/${project.id}`}
             />
           ))
         }
