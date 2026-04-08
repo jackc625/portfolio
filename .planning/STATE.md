@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
 status: executing
-stopped_at: Phase 9 context gathered
-last_updated: "2026-04-08T17:35:07.625Z"
-last_activity: 2026-04-08 -- Phase 9 planning complete
+stopped_at: Completed 09-01-master-amendment-PLAN.md
+last_updated: "2026-04-08T19:05:58.667Z"
+last_activity: 2026-04-08
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 16
-  completed_plans: 8
-  percent: 50
+  completed_plans: 9
+  percent: 56
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-07)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 08 — foundation
+**Current focus:** Phase 09 — primitives
 
 ## Current Position
 
-Phase: 08 (foundation) — EXECUTING
-Plan: 8 of 8
+Phase: 09 (primitives) — EXECUTING
+Plan: 2 of 8
 Status: Ready to execute
-Last activity: 2026-04-08 -- Phase 9 planning complete
+Last activity: 2026-04-08
 Branch: feat/ui-redesign
 
 ### Milestone v1.1 Phase Map
@@ -68,6 +68,7 @@ Branch: feat/ui-redesign
 | Phase 08-foundation P05 | 4 | 2 tasks | 3 files |
 | Phase 08-foundation P07 | 1min | 1 tasks | 3 files |
 | Phase 08 P08 | 5min | 2 tasks | 1 files |
+| Phase 09-primitives P01 | 5min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -106,6 +107,9 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 08-foundation]: Plan 08-07: Single-commit bundled /resume page deletion + git mv resume.pdf->jack-cutrara-resume.pdf; reconciliation flag raised for Phase 10 CONTACT-02 'placeholder PDF' wording in REQUIREMENTS.md
 - [Phase 08-foundation]: Plan 08-08: Tailwind v4 needs explicit @source scoping in src/styles/global.css to prevent .planning/ markdown from generating broken utility classes
 - [Phase 08-foundation]: Plan 08-08: ESLint no-unused-vars must use argsIgnorePattern ^_ to honor intentional no-op stub parameters left after GSAP removal
+- [Phase 09-primitives]: [Phase 09-01]: MASTER.md §5.8 rewritten from 'deferred' to full Phase 9 MobileMenu rebuild decision — container query @container (max-width: 380px) on header-inner, rebuilt overlay at src/components/primitives/MobileMenu.astro (no entrance animation, Phase 7 focus-trap pattern reused, mono social row)
+- [Phase 09-primitives]: [Phase 09-01]: MASTER.md §5.2 extended with mobile 3-row footer stack (D-10) — copyright / GITHUB·LINKEDIN·X·EMAIL mono social row / BUILT WITH caption, gap 12px, @media (max-width: 767px), social row display:none at ≥768px
+- [Phase 09-primitives]: [Phase 09-01]: Single-commit deviation from per-task atomic commits — plan objective explicitly mandated 'One docs-only commit' so Task 1 and Task 2 landed in commit 3cabccc together
 
 ### Pending Todos
 
@@ -131,6 +135,6 @@ None — roadmap is ready for `/gsd-plan-phase 8`.
 ## Session Continuity
 
 Last activity: 2026-04-07 - Created roadmap for v1.1 Editorial Redesign (4 phases, 25 requirements mapped)
-Last session: 2026-04-08T03:31:40.807Z
-Stopped at: Phase 9 context gathered
-Resume file: .planning/phases/09-primitives/09-CONTEXT.md
+Last session: 2026-04-08T19:05:58.662Z
+Stopped at: Completed 09-01-master-amendment-PLAN.md
+Resume file: None
