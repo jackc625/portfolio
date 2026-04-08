@@ -22,7 +22,7 @@
 
 ### v1.1 Editorial Redesign
 
-- [ ] **Phase 8: Foundation** — Write design-system/MASTER.md, replace tokens with hex palette, wire Geist fonts via Astro Fonts API, kill dark mode + theme toggle + GSAP/scroll animations, delete dead components and /resume page
+- [x] **Phase 8: Foundation** — Write design-system/MASTER.md, replace tokens with hex palette, wire Geist fonts via Astro Fonts API, kill dark mode + theme toggle + GSAP/scroll animations, delete dead components and /resume page (completed 2026-04-08)
 - [ ] **Phase 9: Primitives** — Build new component library (Header, Footer, Container, SectionHeader, WorkRow, MetaLabel, StatusDot) that the page port phase consumes
 - [ ] **Phase 10: Page Port** — Port all pages to the new editorial system in order: homepage, about, contact, projects index, project detail, then ChatWidget restyle
 - [ ] **Phase 11: Polish** — A11y/perf/responsive sweep, real content pass, validate Lighthouse 90+, delete mockup.html, sign-off
@@ -50,7 +50,7 @@
 - [x] 08-05-PLAN.md — Refactor chat widget to new tokens; audit portfolio-context.json for v1.0 design refs (DSGN-02, DSGN-04)
 - [x] 08-06-PLAN.md — Replace 5 pages with stubs; rename Tailwind tokens in 5 surviving components (DSGN-02)
 - [x] 08-07-PLAN.md — Delete /resume route and rename public/resume.pdf → jack-cutrara-resume.pdf (CONTACT-03)
-- [ ] 08-08-PLAN.md — Run automated gate (build + lint + check + test) and manual chat smoke test (all REQs)
+- [x] 08-08-PLAN.md — Run automated gate (build + lint + check + test) and manual chat smoke test (all REQs)
 **UI hint**: yes
 
 ### Phase 9: Primitives
@@ -111,7 +111,7 @@
 | 5. Dark Mode, Animations & Polish | v1.0 | 6/6 | Complete | 2026-03-31 |
 | 6. Performance Audit & Deployment | v1.0 | 3/3 | Complete | 2026-03-31 |
 | 7. Chatbot Feature | v1.0 | 5/5 | Complete | 2026-04-04 |
-| 8. Foundation | v1.1 | 0/? | Not started | — |
+| 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/? | Not started | — |
 | 10. Page Port | v1.1 | 0/? | Not started | — |
 | 11. Polish | v1.1 | 0/? | Not started | — |

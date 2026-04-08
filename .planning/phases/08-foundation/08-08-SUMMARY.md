@@ -34,8 +34,9 @@ decisions:
   - "Tailwind v4 auto-scan was generating broken utility classes from .planning/ markdown — fixed by scoping @source to src/"
   - "ESLint no-unused-vars upgraded with ^_ ignore pattern to support no-op stub functions"
 metrics:
-  duration: "~3min automated gates"
+  duration: "~3min automated gates + manual smoke test"
   completed: "2026-04-08"
+  manual_smoke: "PASS (18/18)"
 ---
 
 # Phase 8 Plan 08: Phase 8 Verification Gate Summary
@@ -104,11 +105,17 @@ metrics:
 
 **`dist/resume` directory:** OK — not built. The deletion in Plan 07 propagated correctly. `/resume` will return 404 in production.
 
-## Task 2 — Manual Chat Smoke Test (PENDING USER EXECUTION)
+## Task 2 — Manual Chat Smoke Test
 
-**Status:** AWAITING USER. Phase 8 is gate-blocked until the user runs the 18-item smoke test checklist on `npm run dev` and confirms each item.
+**Status:** PASS (18/18) — User confirmed all 18 checks passed on 2026-04-08.
 
-The full 18-item checklist is reproduced below for the user to execute. Claude cannot drive an interactive chat session against the live Anthropic SSE API in this environment.
+**User verdict:** "approved — all 18 checks passed"
+
+The chat widget regression gate is green. The new Phase 8 foundation renders correctly with the warm off-white background, near-black text, Geist + Geist Mono fonts loaded via Astro Fonts API, the floating accent-red chat bubble, motionless panel open, SSE streaming, focus trap, character counter, escape-to-close, and `/resume` returning 404. Phase 7 chat functionality survives the foundation rebuild.
+
+### Smoke test checklist (all 18 confirmed PASS by user)
+
+The full 18-item checklist is reproduced below for the historical record.
 
 ### Prerequisite
 
@@ -123,24 +130,24 @@ The full 18-item checklist is reproduced below for the user to execute. Claude c
 
 Visit `http://localhost:4321/` and verify each item in order:
 
-- [ ] **1.** Home stub renders — heading `"Home — redesigning"` + paragraph `"This page is being redesigned. Check back soon."`
-- [ ] **2.** Background = warm off-white `#FAFAF7`. Text = near-black `#0A0A0A`. (Inspect computed `background-color` of body.)
-- [ ] **3.** Header renders at top with `Jack Cutrara` wordmark and nav links Home / About / Projects / Contact (NO Resume).
-- [ ] **4.** Floating red chat bubble visible at bottom-right (48px square, background `#E63946`).
-- [ ] **5.** Click bubble → panel opens INSTANTLY (no scale-in animation — expected per D-27). Starter chips render in Geist body font.
-- [ ] **6.** Click a starter chip OR type `show me a TypeScript snippet` and press Enter.
-- [ ] **7.** Typing indicator appears (3 dots, static opacity fade — no GSAP bounce, expected per D-27).
-- [ ] **8.** SSE stream starts — bot message appends tokens incrementally in real-time.
-- [ ] **9.** When stream completes, bot message contains a `<code>...</code>` block rendered in **Geist Mono** (visually distinct from surrounding Geist body text). Inspect element to confirm `font-family` includes `"Geist Mono"`.
-- [ ] **10.** Hover bot message → copy button fades in (opacity transition — D-13 survivor). Click copy → message text in clipboard.
-- [ ] **11.** Press `Tab` in chat panel → focus cycles starter chips / input / send / close. Focus does NOT escape the panel (focus trap — Phase 7 carry-over).
-- [ ] **12.** Press `Shift+Tab` → focus cycles backwards through same elements.
-- [ ] **13.** Type a long message → character count appears below input. At 450+ chars, counter color changes to `#E63946`. At 500 chars, typing is prevented.
-- [ ] **14.** Press `Escape` → panel closes cleanly. Focus returns to chat bubble (not lost to `<body>`).
-- [ ] **15.** Reopen panel → previous messages from same session still visible (in-memory state on a single page).
-- [ ] **16.** **DO NOT navigate to another page.** Cross-page persistence is a known Phase 8 regression scoped to Phase 10 per D-29.
-- [ ] **17.** Visit `http://localhost:4321/resume` → 404 page (route does not exist).
-- [ ] **18.** Open devtools on `/`. `<h1>` computed `font-family` includes `"Geist"`. `<p>` computed `font-family` includes `"Geist"` (same family for display + body per D-11/D-12).
+- [x] **1.** Home stub renders — heading `"Home — redesigning"` + paragraph `"This page is being redesigned. Check back soon."`
+- [x] **2.** Background = warm off-white `#FAFAF7`. Text = near-black `#0A0A0A`.
+- [x] **3.** Header renders at top with `Jack Cutrara` wordmark and nav links Home / About / Projects / Contact (NO Resume).
+- [x] **4.** Floating red chat bubble visible at bottom-right (48px square, background `#E63946`).
+- [x] **5.** Click bubble → panel opens INSTANTLY (no scale-in animation — expected per D-27). Starter chips render in Geist body font.
+- [x] **6.** Click a starter chip OR type `show me a TypeScript snippet` and press Enter.
+- [x] **7.** Typing indicator appears (3 dots, static opacity fade — no GSAP bounce, expected per D-27).
+- [x] **8.** SSE stream starts — bot message appends tokens incrementally in real-time.
+- [x] **9.** When stream completes, bot message contains a `<code>...</code>` block rendered in **Geist Mono**.
+- [x] **10.** Hover bot message → copy button fades in. Click copy → message text in clipboard.
+- [x] **11.** Press `Tab` in chat panel → focus cycles starter chips / input / send / close. Focus does NOT escape the panel.
+- [x] **12.** Press `Shift+Tab` → focus cycles backwards through same elements.
+- [x] **13.** Long message → character count appears. At 450+ chars, counter color changes to `#E63946`. At 500 chars, typing is prevented.
+- [x] **14.** Press `Escape` → panel closes cleanly. Focus returns to chat bubble.
+- [x] **15.** Reopen panel → previous messages from same session still visible.
+- [x] **16.** No cross-page navigation attempted (per D-29 scope).
+- [x] **17.** `http://localhost:4321/resume` → 404 page (route does not exist).
+- [x] **18.** `<h1>` and `<p>` computed `font-family` includes `"Geist"` (same family for display + body per D-11/D-12).
 
 ### Common failure modes
 
@@ -155,9 +162,7 @@ Visit `http://localhost:4321/` and verify each item in order:
 
 ### Resume signal
 
-After running the dev server and completing all 18 items, reply with one of:
-- `approved` — all 18 checks passed
-- A list of failed check numbers + symptoms — Phase 8 is then blocked pending a planner revision pass
+User responded `approved` on 2026-04-08 — all 18 checks passed. Phase 8 is GO.
 
 ## Deviations from Plan
 
@@ -205,10 +210,12 @@ Per CONTEXT decisions D-24, D-27, D-29:
 
 ## Milestone Progress
 
-Phase 8 of 4 (v1.1 Editorial Redesign milestone) — automated gate complete, blocked on user-driven manual chat smoke test (Task 2 checkpoint).
+Phase 8 of 4 (v1.1 Editorial Redesign milestone) — **COMPLETE**. All 5 gate steps green (4 automated + 1 manual smoke test). Phase 9 (Primitives) is now unblocked.
 
-Once user approves Task 2, Phase 9 (Primitives) is unblocked.
+## Self-Check: PASSED
 
-## Self-Check: PENDING
-
-Will be appended after final commit + state updates.
+- FOUND: `.planning/phases/08-foundation/08-08-SUMMARY.md`
+- FOUND: `design-system/MASTER.md`
+- FOUND: `src/pages/resume.astro` deleted
+- All 4 automated gates verified PASS in Task 1 (build/lint/check/test)
+- Manual smoke test PASS recorded in Task 2 with user approval
