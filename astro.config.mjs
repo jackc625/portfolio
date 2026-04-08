@@ -10,7 +10,12 @@ export default defineConfig({
   // Astro 6 removed output:"hybrid" — static is now the default with per-route SSR.
   // Individual API routes opt into SSR via `export const prerender = false`.
   adapter: cloudflare(),
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => !page.includes("/dev/"),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
