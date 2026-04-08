@@ -1,0 +1,173 @@
+---
+/**
+ * /dev/primitives — Phase 9 isolation preview route (D-18…D-21)
+ *
+ * Living catalog rendering every Phase 9 primitive with sample data.
+ * Survives Phase 9 → 10 → 11, deleted in Phase 11 cleanup (D-20).
+ *
+ * Excluded from sitemap (astro.config.mjs filter), disallowed in
+ * public/robots.txt, noindex meta tag below. Not linked from any
+ * navigation — reachable only by typing the URL.
+ *
+ * Header, Footer, and MobileMenu are rendered globally by BaseLayout.astro
+ * already — they do NOT need to be imported + rendered again on this page.
+ * Instead, the "§ 01 — HEADER" and "§ 02 — FOOTER" sections contain
+ * documentation callouts pointing at the globally-rendered copies.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/primitives/Container.astro";
+import MetaLabel from "../../components/primitives/MetaLabel.astro";
+import StatusDot from "../../components/primitives/StatusDot.astro";
+import SectionHeader from "../../components/primitives/SectionHeader.astro";
+import WorkRow from "../../components/primitives/WorkRow.astro";
+import { getCollection } from "astro:content";
+
+// Pull 4 real projects from the content collection for WorkRow sample rows.
+// Sort by `order` ascending to get a deterministic preview.
+const projects = (await getCollection("projects"))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+// Projects schema has no year field — hardcode years for the preview only.
+const previewYears = ["2026", "2025", "2025", "2024"];
+---
+
+<BaseLayout
+  title="Primitives Preview (dev)"
+  description="Phase 9 primitive library — internal preview route, not indexed"
+>
+  <!-- noindex override — inherited BaseLayout SEO component generates the
+       canonical + OG + Twitter tags; we append noindex + nofollow here. -->
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+
+  <Container as="main" class="dev-primitives-main">
+    <h1 class="h1-section dev-primitives-h1">Primitives Preview</h1>
+    <p class="body">
+      Phase 9 isolation catalog. Not indexed. Deleted in Phase 11 cleanup.
+    </p>
+
+    <!-- § 01 — HEADER -->
+    <section class="section">
+      <SectionHeader number="01" title="HEADER" count="live above" />
+      <p class="body">
+        The sticky editorial header with JACK CUTRARA wordmark and 3-link mono
+        nav is rendered by BaseLayout above this content. Resize the window below
+        380px (header-inner container width) to see the hamburger trigger swap in.
+        Active link reflects this page's path (/dev/primitives) which does not
+        match any nav href, so all three links should render in the inactive
+        state.
+      </p>
+    </section>
+
+    <!-- § 02 — FOOTER -->
+    <section class="section">
+      <SectionHeader number="02" title="FOOTER" count="live below" />
+      <p class="body">
+        The 64px editorial footer with copyright + BUILT WITH caption is rendered
+        by BaseLayout below this content. Shrink to &lt;768px viewport to see
+        the 3-row vertical stack with the GITHUB · LINKEDIN · X · EMAIL mono
+        social row (D-10).
+      </p>
+    </section>
+
+    <!-- § 03 — CONTAINER -->
+    <section class="section">
+      <SectionHeader number="03" title="CONTAINER" />
+      <p class="body">
+        This very page is wrapped in a Container. Every section below sits inside
+        the 1200px max-width with 48px/32px/24px responsive padding.
+      </p>
+    </section>
+
+    <!-- § 04 — METALABEL -->
+    <section class="section">
+      <SectionHeader number="04" title="METALABEL" count="3 variants" />
+      <div class="dev-inline-stack">
+        <MetaLabel text="DEFAULT INK" color="ink" />
+        <MetaLabel text="INK MUTED" color="ink-muted" />
+        <MetaLabel text="INK FAINT" color="ink-faint" />
+      </div>
+    </section>
+
+    <!-- § 05 — STATUSDOT -->
+    <section class="section">
+      <SectionHeader number="05" title="STATUSDOT" />
+      <StatusDot label="AVAILABLE FOR WORK" />
+    </section>
+
+    <!-- § 06 — SECTIONHEADER -->
+    <section class="section">
+      <SectionHeader number="06" title="SECTIONHEADER" count="with / without count" />
+      <div class="dev-sectionheader-demo">
+        <SectionHeader number="EX" title="WITH COUNT" count="4 / 4" />
+      </div>
+      <div class="dev-sectionheader-demo">
+        <SectionHeader number="EX" title="WITHOUT COUNT" />
+      </div>
+    </section>
+
+    <!-- § 07 — WORKROW -->
+    <section class="section">
+      <SectionHeader number="07" title="WORKROW" count={`${projects.length} / ${projects.length}`} />
+      <div class="work-list">
+        {
+          projects.map((p, i) => (
+            <WorkRow
+              number={String(i + 1).padStart(2, "0")}
+              title={p.data.title}
+              stack={p.data.techStack.slice(0, 3).join(" · ").toUpperCase()}
+              year={previewYears[i]}
+              href={`/projects/${p.id}`}
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- § 08 — MOBILEMENU -->
+    <section class="section">
+      <SectionHeader number="08" title="MOBILEMENU" count="hamburger above" />
+      <p class="body">
+        MobileMenu.astro is rendered by BaseLayout as a hidden dialog. It is
+        triggered by the hamburger button in the Header, which is shown when the
+        header-inner container width is ≤380px (D-06 container query).
+      </p>
+      <p class="body">
+        To preview the overlay without resizing: shrink the browser window below
+        a viewport width where the header-inner measures ≤380px (typically ~427px
+        viewport at desktop-padding, ~380px at tablet-padding). Then click the
+        hamburger icon in the header. Verify: dialog opens, focus traps cycle
+        with Tab/Shift+Tab, Escape closes, clicking the backdrop closes, clicking
+        the × button closes, focus returns to the hamburger trigger on close.
+      </p>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+  .dev-primitives-main {
+    padding-top: 48px;
+    padding-bottom: 96px;
+  }
+
+  .dev-primitives-h1 {
+    margin-bottom: 16px;
+  }
+
+  .dev-inline-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .dev-sectionheader-demo {
+    margin-top: 24px;
+  }
+
+  .work-list .work-row:last-child {
+    border-bottom: none;
+  }
+</style>
