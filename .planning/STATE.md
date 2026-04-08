@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
 status: executing
-stopped_at: Completed 09-06-kept-components-audit-PLAN.md
-last_updated: "2026-04-08T19:42:12.295Z"
+stopped_at: Completed 09-04-composite-primitives-PLAN.md
+last_updated: "2026-04-08T20:00:13.536Z"
 last_activity: 2026-04-08
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 16
-  completed_plans: 12
-  percent: 75
+  completed_plans: 13
+  percent: 81
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 ## Current Position
 
 Phase: 09 (primitives) — EXECUTING
-Plan: 5 of 8
+Plan: 6 of 8
 Status: Ready to execute
 Last activity: 2026-04-08
 Branch: feat/ui-redesign
@@ -72,6 +72,7 @@ Branch: feat/ui-redesign
 | Phase 09-primitives P02 | 5min | 1 tasks | 1 files |
 | Phase 09-primitives P03 | 4min | 4 tasks | 4 files |
 | Phase 09-primitives P06 | 4min | 2 tasks | 1 files |
+| Phase 09-primitives P04 | 7min | 4 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -122,6 +123,9 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 09-primitives]: [Phase 09-06]: NextProject restyled from v1.0 bg-rule card-CTA panel to editorial row — global .section rhythm + scoped 48px padding + .container + .h2-project title + opacity-only accent arrow hover (120ms ease, matching WorkRow forward contract); public API { project: CollectionEntry<'projects'> } preserved verbatim
 - [Phase 09-primitives]: [Phase 09-06]: JsonLd.astro, SkipToContent.astro, ArticleImage.astro audited verify-only per D-23/D-24/D-25 — three kept components pass all negative regression greps (no oklch, no legacy text-text-* tokens, no bg-background/text-primary/ring-primary) with zero edits; git diff --stat empty for all three
 - [Phase 09-primitives]: [Phase 09-06]: WorkRow.astro does not yet exist (plan 09-04 creates it) — NextProject hover grammar sourced directly from plan action block + D-22 context as a forward contract plan 09-04 must honor when it writes .work-arrow
+- [Phase 09-primitives]: [Phase 09-04]: MobileMenu BLOCKER 2 init lifecycle — resetMobileMenuState() runs unconditionally on every init/navigation BEFORE the menuInitialized double-bind guard; bindMobileMenuListeners() is separately-gated; both DOMContentLoaded and astro:page-load register initMobileMenu for Phase 10 ClientRouter forward-compat
+- [Phase 09-primitives]: [Phase 09-04]: MobileMenu focus-trap selector verbatim parity with src/scripts/chat.ts:335 — grep across src/ returns exactly 2 matching files (MobileMenu.astro + chat.ts), establishing cross-component focus-trap consistency
+- [Phase 09-primitives]: [Phase 09-04]: WorkRow honors NextProject forward contract from plan 09-06 — opacity-only accent arrow reveal (opacity 0→1, 120ms ease) on :hover AND :focus-visible, zero transform/translate. Cross-primitive hover grammar consistency paid down
 
 ### Pending Todos
 
@@ -147,6 +151,6 @@ None — roadmap is ready for `/gsd-plan-phase 8`.
 ## Session Continuity
 
 Last activity: 2026-04-07 - Created roadmap for v1.1 Editorial Redesign (4 phases, 25 requirements mapped)
-Last session: 2026-04-08T19:42:12.290Z
-Stopped at: Completed 09-06-kept-components-audit-PLAN.md
+Last session: 2026-04-08T20:00:13.530Z
+Stopped at: Completed 09-04-composite-primitives-PLAN.md
 Resume file: None
