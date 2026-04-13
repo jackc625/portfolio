@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
 status: executing
-stopped_at: Completed 10-02-PLAN.md
-last_updated: "2026-04-13T02:47:10.003Z"
+stopped_at: Completed 10-03-PLAN.md
+last_updated: "2026-04-13T02:55:32.876Z"
 last_activity: 2026-04-13
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 23
-  completed_plans: 18
-  percent: 78
+  completed_plans: 19
+  percent: 83
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 ## Current Position
 
 Phase: 10 (page-port) — EXECUTING
-Plan: 3 of 7
+Plan: 4 of 7
 Status: Ready to execute
 Last activity: 2026-04-13
 Branch: feat/ui-redesign
@@ -78,6 +78,7 @@ Branch: feat/ui-redesign
 | Phase 09-primitives P08 | 22min | 3 tasks | 1 files |
 | Phase 10-page-port P01 | 4min | 2 tasks | 10 files |
 | Phase 10-page-port P02 | 6min | 3 tasks | 6 files |
+| Phase 10-page-port P03 | 4min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -145,6 +146,7 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 10-page-port]: Shiki theme set to github-light per D-13 to match warm off-white editorial design
 - [Phase 10-page-port]: contact.ts null-entry pattern for X — one-line edit activates all 4 consumer surfaces simultaneously
 - [Phase 10-page-port]: ContactSection renders no heading elements — heading hierarchy owned by consuming page
+- [Phase 10-page-port]: Homepage featured filter uses allProjects.filter(p => p.data.featured) per D-02, about preview shows ABOUT_INTRO + ABOUT_P1 per D-27, contact page omits showSectionHeader to avoid heading redundancy
 
 ### Pending Todos
 
@@ -170,6 +172,6 @@ None — roadmap is ready for `/gsd-plan-phase 8`.
 ## Session Continuity
 
 Last activity: 2026-04-07 - Created roadmap for v1.1 Editorial Redesign (4 phases, 25 requirements mapped)
-Last session: 2026-04-13T02:47:09.996Z
-Stopped at: Completed 10-02-PLAN.md
+Last session: 2026-04-13T02:55:32.869Z
+Stopped at: Completed 10-03-PLAN.md
 Resume file: None

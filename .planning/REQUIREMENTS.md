@@ -19,15 +19,15 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 
 ### Homepage (HOME)
 
-- [ ] **HOME-01**: Homepage shows display hero with `JACK CUTRARA` wordmark (with trailing accent-red `·`), mono metadata block (`AVAILABLE FOR WORK` status + `EST. 2024 · OAKLAND, CA`), and a lead role statement
-- [ ] **HOME-02**: Homepage shows a numbered work list (`§ 01 — WORK`) replacing the v1.0 project card grid — each row contains number, title, tech stack, year, and links to the case study
-- [ ] **HOME-03**: Homepage shows an editorial about preview section (`§ 02 — ABOUT`) with intro line and short body, linking to `/about`
-- [ ] **HOME-04**: Homepage shows a minimal contact section (`§ 03 — CONTACT`) with email, social links, and résumé PDF download
+- [x] **HOME-01**: Homepage shows display hero with `JACK CUTRARA` wordmark (with trailing accent-red `·`), mono metadata block (`AVAILABLE FOR WORK` status + `EST. 2024 · OAKLAND, CA`), and a lead role statement
+- [x] **HOME-02**: Homepage shows a numbered work list (`§ 01 — WORK`) replacing the v1.0 project card grid — each row contains number, title, tech stack, year, and links to the case study
+- [x] **HOME-03**: Homepage shows an editorial about preview section (`§ 02 — ABOUT`) with intro line and short body, linking to `/about`
+- [x] **HOME-04**: Homepage shows a minimal contact section (`§ 03 — CONTACT`) with email, social links, and résumé PDF download
 
 ### About (ABOUT)
 
-- [ ] **ABOUT-01**: About page uses editorial structure (intro line + 3 paragraphs covering "what I build / how I think / where I'm headed"), no skill icons, no progress bars, no narrative graphics
-- [ ] **ABOUT-02**: About page copy reads as a real engineer's voice — concise, specific, non-corporate, ≤80 words per paragraph
+- [x] **ABOUT-01**: About page uses editorial structure (intro line + 3 paragraphs covering "what I build / how I think / where I'm headed"), no skill icons, no progress bars, no narrative graphics
+- [x] **ABOUT-02**: About page copy reads as a real engineer's voice — concise, specific, non-corporate, ≤80 words per paragraph
 
 ### Works / Projects (WORK)
 
@@ -105,12 +105,12 @@ Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
 | DSGN-04 | Phase 8 — Foundation | Complete |
 | DSGN-05 | Phase 8 — Foundation | Complete |
 | CONTACT-03 | Phase 8 — Foundation | Complete |
-| HOME-01 | Phase 10 — Page Port | Pending |
-| HOME-02 | Phase 10 — Page Port | Pending |
-| HOME-03 | Phase 10 — Page Port | Pending |
-| HOME-04 | Phase 10 — Page Port | Pending |
-| ABOUT-01 | Phase 10 — Page Port | Pending |
-| ABOUT-02 | Phase 10 — Page Port | Pending |
+| HOME-01 | Phase 10 — Page Port | Complete |
+| HOME-02 | Phase 10 — Page Port | Complete |
+| HOME-03 | Phase 10 — Page Port | Complete |
+| HOME-04 | Phase 10 — Page Port | Complete |
+| ABOUT-01 | Phase 10 — Page Port | Complete |
+| ABOUT-02 | Phase 10 — Page Port | Complete |
 | WORK-01 | Phase 10 — Page Port | Pending |
 | WORK-02 | Phase 10 — Page Port | Pending |
 | WORK-03 | Phase 10 — Page Port | Complete |
