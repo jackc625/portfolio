@@ -251,7 +251,7 @@ function createUserMessageEl(content: string): HTMLElement {
   bubble.style.cssText = `
     max-width: 85%;
     background: var(--rule);
-    border-radius: 12px 12px 4px 12px;
+    border-radius: 0;
     padding: 8px 16px;
     color: var(--ink);
     font-size: 1rem;
@@ -438,13 +438,9 @@ function stopPulse(): void {
   // No-op: there is no pulse to stop
 }
 
-async function startTypingDots(container: HTMLElement): Promise<void> {
-  // Use CSS-based opacity fallback (no GSAP bounce — Phase 10 CHAT-02 may restore via @keyframes)
-  const dots = container.querySelectorAll<HTMLElement>(".typing-dot");
-  dots.forEach((dot) => {
-    dot.style.animation = "none";
-    dot.style.opacity = "0.5";
-  });
+async function startTypingDots(_container: HTMLElement): Promise<void> {
+  // CSS @keyframes typing-bounce in global.css handles animation automatically
+  // when #chat-typing display changes to flex via showTyping()
 }
 
 // ============================================
@@ -574,7 +570,7 @@ function initChat(): void {
           }
           fragment.appendChild(wrapper);
         }
-        $messagesArea.appendChild(fragment); // Single DOM operation
+        $messagesArea.insertBefore(fragment, $typingIndicator); // Insert before typing indicator so new messages appear after history
         // Hide starters since we have history
         $starters.style.display = "none";
         // Scroll to bottom
