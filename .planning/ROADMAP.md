@@ -24,7 +24,7 @@
 
 - [x] **Phase 8: Foundation** — Write design-system/MASTER.md, replace tokens with hex palette, wire Geist fonts via Astro Fonts API, kill dark mode + theme toggle + GSAP/scroll animations, delete dead components and /resume page (completed 2026-04-08)
 - [ ] **Phase 9: Primitives** — Build new component library (Header, Footer, Container, SectionHeader, WorkRow, MetaLabel, StatusDot) that the page port phase consumes
-- [ ] **Phase 10: Page Port** — Port all pages to the new editorial system in order: homepage, about, contact, projects index, project detail, then ChatWidget restyle
+- [x] **Phase 10: Page Port** — Port all pages to the new editorial system in order: homepage, about, contact, projects index, project detail, then ChatWidget restyle (completed 2026-04-13)
 - [ ] **Phase 11: Polish** — A11y/perf/responsive sweep, real content pass, validate Lighthouse 90+, delete mockup.html, sign-off
 
 ## Phase Details
@@ -96,7 +96,7 @@
 - [x] 10-04-PLAN.md — Rewrite projects index and project detail pages (WORK-01, WORK-02, WORK-03)
 - [x] 10-05-PLAN.md — Restyle chat widget visuals to editorial chrome (CHAT-02)
 - [x] 10-06-PLAN.md — Add localStorage chat persistence and update JsonLd (CHAT-01)
-- [ ] 10-07-PLAN.md — Verification gate: build/lint/check/test + manual chat + visual parity (all REQs)
+- [x] 10-07-PLAN.md — Verification gate: build/lint/check/test + manual chat + visual parity (all REQs)
 **UI hint**: yes
 
 ### Phase 11: Polish
@@ -128,5 +128,5 @@
 | 7. Chatbot Feature | v1.0 | 5/5 | Complete | 2026-04-04 |
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/8 | Planned     | — |
-| 10. Page Port | v1.1 | 6/7 | In Progress|  |
+| 10. Page Port | v1.1 | 7/7 | Complete   | 2026-04-13 |
 | 11. Polish | v1.1 | 0/? | Not started | — |
