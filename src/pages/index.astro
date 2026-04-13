@@ -1,16 +1,100 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/primitives/Container.astro";
+import SectionHeader from "../components/primitives/SectionHeader.astro";
+import WorkRow from "../components/primitives/WorkRow.astro";
+import StatusDot from "../components/primitives/StatusDot.astro";
+import MetaLabel from "../components/primitives/MetaLabel.astro";
+import ContactSection from "../components/ContactSection.astro";
+import { ABOUT_INTRO, ABOUT_P1 } from "../data/about";
+
+const allProjects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order
+);
+// D-02: Homepage shows exactly 3 featured:true projects (SeatWatch, NFL Prediction, SolSniper)
+const featured = allProjects.filter((p) => p.data.featured);
 ---
-<BaseLayout
-  title="Home"
-  description="Jack Cutrara — software engineer. Site is being redesigned."
->
-  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
-    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
-      Home — redesigning
-    </h1>
-    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
-      This page is being redesigned. Check back soon.
-    </p>
+
+<BaseLayout title="Jack Cutrara" description="Software engineer building reliable, production-grade systems.">
+  <section class="hero" aria-label="Introduction">
+    <Container>
+      <div class="hero-grid">
+        <div class="hero-content">
+          <h1 class="display">
+            JACK<br />CUTRARA<span class="accent-dot">.</span>
+          </h1>
+          <p class="lead hero-lead">
+            Software engineer building reliable, production-grade systems.
+          </p>
+        </div>
+        <aside class="hero-meta" aria-label="Status">
+          <StatusDot label="AVAILABLE FOR WORK" />
+          <MetaLabel text="EST. 2024 · OAKLAND, CA" color="ink-muted" />
+        </aside>
+      </div>
+    </Container>
+  </section>
+
+  <section class="section works" aria-labelledby="section-work">
+    <Container>
+      <SectionHeader number="01" title="WORK" count={`${featured.length} / ${allProjects.length}`} />
+      <div class="work-list">
+        {featured.map((p, i) => (
+          <WorkRow
+            number={String(i + 1).padStart(2, "0")}
+            title={p.data.title}
+            stack={p.data.techStack.join(" \u00B7 ").toUpperCase()}
+            year={p.data.year}
+            href={`/projects/${p.id}`}
+          />
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="section about" aria-labelledby="section-about">
+    <Container>
+      <SectionHeader number="02" title="ABOUT" />
+      <div class="about-body">
+        <p class="about-intro">{ABOUT_INTRO}</p>
+        <p class="body">{ABOUT_P1}</p>
+        <a class="label-mono read-more" href="/about">READ MORE &rarr;</a>
+      </div>
+    </Container>
+  </section>
+
+  <section class="section contact" aria-labelledby="section-contact">
+    <Container>
+      <ContactSection showSectionHeader={true} />
+    </Container>
   </section>
 </BaseLayout>
+
+<style>
+  /* Hero */
+  .hero { padding-top: 96px; padding-bottom: 0; }
+  .hero-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; align-items: start; }
+  .hero-content { grid-column: 1 / span 8; }
+  .hero-meta { grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 8px; }
+  .hero-lead { margin-top: 32px; max-width: 40ch; color: var(--ink); }
+  .accent-dot { color: var(--accent); }
+
+  /* About preview */
+  .about-body { max-width: 68ch; margin-top: 24px; }
+  .about-intro { font-weight: 500; font-size: 1.375rem; line-height: 1.4; color: var(--ink); margin-bottom: 24px; }
+  .about-body p:not(.about-intro) { font-weight: 400; font-size: 1.125rem; line-height: 1.6; color: var(--ink); margin-bottom: 16px; }
+  .read-more { display: inline-block; margin-top: 24px; color: var(--ink-muted); text-decoration: none; }
+  .read-more:hover { color: var(--accent); }
+
+  /* Responsive */
+  @media (max-width: 1023px) {
+    .hero { padding-top: 72px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-content, .hero-meta { grid-column: auto; }
+    .hero-meta { width: 100%; margin-top: 32px; }
+  }
+  @media (max-width: 767px) {
+    .hero { padding-top: 48px; }
+  }
+</style>
