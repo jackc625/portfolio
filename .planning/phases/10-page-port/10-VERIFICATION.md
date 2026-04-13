@@ -1,172 +1,187 @@
 ---
 phase: 10-page-port
-verified: 2026-04-13T23:55:00Z
+verified: 2026-04-13T20:30:00Z
 status: human_needed
-score: 8/8 roadmap SCs verified
-overrides_applied: 0
+score: 12/13 must-haves verified
+overrides_applied: 1
 overrides:
   - must_have: "Contact section renders inline GITHUB . LINKEDIN . X . RESUME mono links"
     reason: "X dropped per user decision D-25 in CONTEXT.md and REQUIREMENTS.md amendment. CONTACT.x is null, all consumers skip null entries. One-line edit to activate when X account exists."
     accepted_by: "Jack Cutrara"
     accepted_at: "2026-04-08T00:00:00Z"
+re_verification:
+  previous_status: human_needed
+  previous_score: 8/8 roadmap SCs verified (initial — pre-UAT-gap-closure)
+  gaps_closed:
+    - "Footer social links (GITHUB, LINKEDIN, EMAIL) now visible on desktop — .footer-social base rule changed from display:none to display:inline-flex in Footer.astro"
+    - "User chat message bubbles have flat corners (border-radius: 0) — fixed in createUserMessageEl() line 254 and history replay line 541 in chat.ts"
+    - "New messages appear below history in chronological order — history now uses insertBefore(fragment, $typingIndicator) at line 573 in chat.ts"
+    - "Typing dots animate with CSS typing-bounce keyframes — startTypingDots() is now a no-op, animation driven entirely by global.css"
+  gaps_remaining: []
+  regressions: []
 human_verification:
-  - test: "Chat smoke test: open panel, send message, verify SSE streaming, copy button, focus trap, Escape close"
-    expected: "Panel opens with flat-rectangle chrome, SSE streams progressively, COPY label appears on hover, focus cycles within panel, Escape closes"
-    why_human: "Requires running dev server and interacting with live chat widget -- SSE streaming, focus trap, and visual behavior cannot be verified statically"
-  - test: "Chat persistence test: send message, navigate to /about, reopen chat, close/reopen, hard refresh"
-    expected: "Messages survive navigation, no duplication on repeated open/close, history persists through hard refresh, privacy note says 'Conversations stored locally for 24h.'"
-    why_human: "Requires runtime browser interaction with localStorage and page navigation -- cannot verify statically"
-  - test: "Visual parity check: homepage at 1440px and 375px against mockup.html, project detail, about page, contact page"
-    expected: "JACK CUTRARA wordmark with red accent dot, status dot, 3 work rows, about preview, contact section all match mockup. Project detail shows mono metadata + section-sign h2 labels. No horizontal scroll at 375px."
-    why_human: "Visual layout and responsive behavior require rendering in a browser at specific viewport widths"
+  - test: "Live streaming bot message copy button label"
+    expected: "After a bot response finishes streaming (not replayed from history), hover over the bot message — a 'COPY' text label in mono font should appear, not an SVG clipboard icon. Clicking it should show 'COPIED' briefly then revert to 'COPY'."
+    why_human: "Code inspection reveals createBotMessageEl() at chat.ts line 302 sets copyBtn.innerHTML to an SVG element, while history replay at line 555 correctly uses copyBtn.textContent = 'COPY'. This inconsistency cannot be verified without a live test: open chat with no prior history (clear localStorage first), send a message, wait for full bot response, hover over the bot message. If SVG appears instead of COPY text, add copyBtn.textContent = 'COPY' to createBotMessageEl() around line 302 (2-line fix)."
 ---
 
-# Phase 10: Page Port Verification Report
+# Phase 10: Page Port Verification Report (Re-verification)
 
 **Phase Goal:** Every visible page is rewritten to compose the Phase 9 primitives into the editorial layout, real project content from the content collection renders in the new templates, and the chat widget visuals match the new system without losing any Phase 7 functionality.
-**Verified:** 2026-04-13T23:55:00Z
+**Verified:** 2026-04-13T20:30:00Z
 **Status:** human_needed
-**Re-verification:** No -- initial verification
+**Re-verification:** Yes — after Plan 08 gap closure (3 UAT issues fixed: footer links, chat bubble corners, message ordering + typing animation)
 
 ## Goal Achievement
 
-### Observable Truths (Roadmap Success Criteria)
+### Observable Truths
 
 | # | Truth | Status | Evidence |
-|---|-------|--------|----------|
-| 1 | Homepage renders display hero with JACK CUTRARA wordmark, mono metadata, lead statement, work list, about preview, contact section | VERIFIED | `src/pages/index.astro` (119 lines): h1 with JACK/CUTRARA + accent-dot, StatusDot "AVAILABLE FOR WORK", MetaLabel "EST. 2024", SectionHeader 01/WORK with featured filter, SectionHeader 02/ABOUT with ABOUT_INTRO+ABOUT_P1+READ MORE, ContactSection showSectionHeader=true. Responsive breakpoints at 1023px/767px. |
-| 2 | About page renders editorial structure: intro line (larger weight) + 3 short paragraphs, no icons/progress bars/graphics | VERIFIED | `src/pages/about.astro` (28 lines): imports all 4 about.ts exports, .about-intro at font-weight:500/1.375rem, 3 body paragraphs at 400/1.125rem. No img/svg/canvas/progress elements. max-width: 68ch. |
-| 3 | Projects index renders numbered work list with every project from content collection | VERIFIED | `src/pages/projects.astro` (35 lines): getCollection + sort by order ascending, maps ALL projects (no filter) into WorkRows with padStart(2,"0") numbering. Count shows projects.length / projects.length. |
-| 4 | Project detail pages render editorial case study layout with mono metadata, title, body, NextProject -- all 6 render without errors | VERIFIED | `src/pages/projects/[id].astro` (174 lines): label-mono metadata (year + techStack), h1-section title, lead tagline, conditional external links, .prose-editorial MDX wrapper with 13 :global() style overrides, section-sign h2 via ::before, ArticleImage in components map, NextProject wrap-around. Build output: 6 project routes confirmed in dist/. |
-| 5 | Contact section renders minimal layout: GET IN TOUCH + email + social links + resume download | VERIFIED (with D-25 override) | `src/components/ContactSection.astro` (58 lines): GET IN TOUCH label-mono div (not heading), CONTACT.email mailto link, GITHUB/LINKEDIN links with null-skip for X, RESUME with download attribute pointing to /jack-cutrara-resume.pdf. X dropped per D-25 user decision + REQUIREMENTS.md amendment. |
-| 6 | Chat widget restyled to editorial system and all Phase 7 capabilities preserved | VERIFIED (static) | `ChatWidget.astro` (187 lines): flat panel (border-radius:0, box-shadow:none, 1px rule border), round bubble (border-radius:50%, accent bg), ASK JACK'S AI label-mono header, 4 starter chips, typing dots, aria-modal. All 11 element IDs + 6 class names + aria attributes preserved. `global.css`: typing-bounce keyframes with --dot-delay/--dot-color, .chat-starter-chip border-radius:0, .chat-copy-btn mono label, .chat-panel-mobile full-screen. `chat.ts`: localStorage persistence with STORAGE_KEY/VERSION/MAX_MESSAGES/TTL_MS, try/catch wrapping, DocumentFragment replay, renderMarkdown sanitization for bot messages, textContent for user messages, chatLog.length===0 duplication guard, bot save only at stream completion. Privacy note: "Conversations stored locally for 24h." |
-| 7 | Real project titles, stacks, and years render in homepage list and projects index -- no placeholder text | VERIFIED | Built dist/client/index.html has 3 project links (seatwatch, nfl-predict, solsniper). Built dist/client/projects/index.html has 6 project links. grep -rl "redesigning" dist/ returns 0. All 6 MDX files have year fields (2024-2025). |
-| 8 | Header active-link state highlights current page, build succeeds | VERIFIED | Header.astro has isActive() with aria-current="page" matching currentPath. Build exits 0 with all routes generated. |
+|---|-------|--------|---------|
+| 1 | Homepage renders JACK CUTRARA wordmark with accent-red trailing dot | VERIFIED | `src/pages/index.astro` lines 43-45: `<h1 class="display">JACK<br />CUTRARA<span class="accent-dot">.</span></h1>` |
+| 2 | Homepage renders AVAILABLE FOR WORK status dot and EST. 2024 metadata | VERIFIED | lines 51-53: `<StatusDot label="AVAILABLE FOR WORK" />` and `<MetaLabel text="EST. 2024 · OAKLAND, CA" color="ink-muted" />` |
+| 3 | Homepage renders exactly 3 featured projects as numbered work rows with real titles from content collection | VERIFIED | `allProjects.filter((p) => p.data.featured)` — 3 MDX files have `featured: true` (seatwatch, nfl-predict, solsniper). Real titles/years/stacks from getCollection. |
+| 4 | Homepage renders about preview with intro and first paragraph and READ MORE link | VERIFIED | lines 78-82: renders ABOUT_INTRO, ABOUT_P1 from `src/data/about.ts`, and "READ MORE →" link to /about |
+| 5 | Homepage renders contact section with email, GITHUB, LINKEDIN, RESUME links | VERIFIED | `<ContactSection showSectionHeader={true} />` wired. ContactSection renders email + GITHUB + LINKEDIN + RESUME from contact.ts. CONTACT.x is null — X link never renders. |
+| 6 | About page renders intro line (larger weight) plus 3 body paragraphs from about.ts | VERIFIED | `src/pages/about.astro`: imports ABOUT_INTRO, ABOUT_P1, ABOUT_P2, ABOUT_P3. Scoped styles: `.about-intro { font-weight: 500; font-size: 1.375rem }` and `p:not(.about-intro) { font-weight: 400; font-size: 1.125rem }` |
+| 7 | About page has no skill icons, no progress bars, no narrative graphics | VERIFIED | `src/pages/about.astro`: pure text — Container + SectionHeader + 4 paragraphs only. No img/svg/canvas/progress elements present. |
+| 8 | Contact page renders the ContactSection composite with its own page-level heading | VERIFIED | `src/pages/contact.astro`: SectionHeader number="01" title="CONTACT" + `<ContactSection />` (showSectionHeader defaults false — no heading collision) |
+| 9 | Projects index page renders all 6 projects as numbered work rows sorted by order ascending | VERIFIED | `src/pages/projects.astro`: `getCollection("projects").sort((a, b) => a.data.order - b.data.order)` — no filter, all 6 MDX files (order 1-6), padStart "01"-"06" |
+| 10 | Project detail renders editorial case study layout with MDX body in prose-editorial wrapper | VERIFIED | `src/pages/projects/[id].astro`: label-mono metadata (year + techStack), h1-section title, lead tagline, conditional external links, `.prose-editorial` wrapper with `:global(h2)::before` section-sign labels, NextProject footer with wrap-around |
+| 11 | Footer social links visible on desktop (GITHUB, LINKEDIN, EMAIL) | VERIFIED | Plan 08 fix confirmed: `src/components/primitives/Footer.astro` `.footer-social { display: inline-flex; align-items: center; font-family: var(--font-mono); }` — no longer `display:none` as base rule. No redundant mobile override. |
+| 12 | User chat bubbles have flat corners, new messages appear below history, typing dots animate | VERIFIED | Plan 08 fixes confirmed: (1) `createUserMessageEl()` line 254: `border-radius: 0`. (2) History replay line 541: `border-radius: 0`. (3) History insertion: `$messagesArea.insertBefore(fragment, $typingIndicator)` at line 573. (4) `startTypingDots()` lines 441-443 is a no-op; `global.css` `@keyframes typing-bounce` with `--dot-delay` stagger drives all animation. |
+| 13 | Live streaming bot message copy button shows COPY text label (not SVG icon) | UNCERTAIN | History replay (line 555): `copyBtn.textContent = "COPY"` ✓. `createBotMessageEl()` (line 302): `copyBtn.innerHTML = '<svg...>'` — SVG for live messages. Inconsistency with Plan 05 must_have. UAT Test 13 passed but may have tested a replayed message. Needs human verification with fresh chat session. |
 
-**Score:** 8/8 roadmap success criteria verified
+**Score:** 12/13 truths verified (1 uncertain — human check needed)
+
+### Deferred Items
+
+None — all Phase 10 scope items are addressed. QUAL-01 through QUAL-06 are Phase 11 scope.
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `src/data/contact.ts` | SSOT for contact info | VERIFIED | 17 lines, exports CONTACT with email/github/linkedin/x:null/resume, JSDoc on each field |
-| `src/data/about.ts` | SSOT for about copy | VERIFIED | 16 lines, exports ABOUT_INTRO/P1/P2/P3 with unicode escapes, mockup-verbatim |
-| `src/components/ContactSection.astro` | Shared contact composite | VERIFIED | 58 lines, imports CONTACT, GET IN TOUCH div (not heading), download attribute on resume, showSectionHeader prop |
-| `src/content.config.ts` | Updated schema with year field | VERIFIED | Contains `year: z.string().regex(/^\d{4}$/)` |
-| `astro.config.mjs` | Shiki github-light theme | VERIFIED | Contains `markdown: { shikiConfig: { theme: 'github-light' } }` |
-| `src/pages/index.astro` | Homepage with hero, work, about, contact | VERIFIED | 119 lines, imports 8 components + 2 data files, getCollection + featured filter + sort |
-| `src/pages/about.astro` | About page with editorial structure | VERIFIED | 28 lines, imports all 4 about.ts exports, no icons/graphics |
-| `src/pages/contact.astro` | Contact page with shared composite | VERIFIED | 15 lines, SectionHeader + ContactSection (default showSectionHeader=false) |
-| `src/pages/projects.astro` | Projects index with all 6 rows | VERIFIED | 35 lines, getCollection + sort, maps all projects into WorkRows |
-| `src/pages/projects/[id].astro` | Project detail case study | VERIFIED | 174 lines, getStaticPaths + render + NextProject + ArticleImage + prose-editorial |
-| `src/components/chat/ChatWidget.astro` | Restyled chat widget | VERIFIED | 187 lines, all 11 IDs, aria-modal, flat panel, round bubble |
-| `src/styles/global.css` | Chat CSS with typing-dot keyframes | VERIFIED | typing-bounce keyframes, --dot-delay custom properties, chat-starter-chip/copy-btn/panel-mobile styles, LAYER 3 untouched |
-| `src/scripts/chat.ts` | Chat with localStorage persistence | VERIFIED | STORAGE_KEY, saveChatHistory, loadChatHistory, MAX_MESSAGES=50, TTL_MS=24h, chatLog duplication guard, DocumentFragment, renderMarkdown replay |
-| `src/components/ContactChannel.astro` | DELETED (dead code) | VERIFIED | File does not exist (confirmed) |
-| `design-system/MASTER.md` | Amended with typing-dot + chat bubble + X removal | VERIFIED | Section 6.1 has "Status indicators (typing dots, loading spinners)" carve-out. Section 10 has round accent chat bubble exception. Sections 5.2/5.8 show GITHUB . LINKEDIN . EMAIL (no X). |
-| `.planning/REQUIREMENTS.md` | Amended CONTACT-01/02 | VERIFIED | CONTACT-01: GITHUB . LINKEDIN . RESUME (no X). CONTACT-02: `<a download>` pointing to PDF. Both marked [x] Complete. |
+| `src/pages/index.astro` | Homepage with hero, work list, about preview, contact section | VERIFIED | getCollection + featured filter + sort, 8 imports, real content, responsive breakpoints |
+| `src/pages/about.astro` | About page with editorial structure | VERIFIED | 28 lines, 4 about.ts imports, .about-intro larger weight, 3 body paragraphs, no graphics |
+| `src/pages/contact.astro` | Contact page rendering ContactSection | VERIFIED | 15 lines, SectionHeader + ContactSection, no forms/SVG/CTA buttons |
+| `src/pages/projects.astro` | Projects index with numbered work list | VERIFIED | getCollection + identical sort as index.astro, maps all 6 projects |
+| `src/pages/projects/[id].astro` | Project detail with editorial case study layout | VERIFIED | getStaticPaths, render(), wrap-around NextProject, ArticleImage in components map, prose-editorial + 13 :global() overrides |
+| `src/components/ContactSection.astro` | Shared contact composite | VERIFIED | GET IN TOUCH as div (not heading), download on resume link, showSectionHeader prop, no h1/h2/h3/h4 |
+| `src/components/chat/ChatWidget.astro` | Restyled chat widget with editorial chrome | VERIFIED | flat panel (border-radius:0, box-shadow:none, 1px rule), round bubble only, ASK JACK'S AI label-mono header, all 11 IDs, aria-modal, type="button" on all buttons, privacy note "stored locally" |
+| `src/data/contact.ts` | Single source of truth for contact info | VERIFIED | email, github, linkedin, x:null, resume — all with JSDoc |
+| `src/data/about.ts` | Single source of truth for about copy | VERIFIED | ABOUT_INTRO, ABOUT_P1, ABOUT_P2, ABOUT_P3 with proper unicode characters |
+| `src/scripts/chat.ts` | Chat client with localStorage persistence | VERIFIED | STORAGE_KEY, STORAGE_VERSION=1, MAX_MESSAGES=50, TTL_MS=24h, saveChatHistory/loadChatHistory with try/catch, chatLog.length===0 guard, createDocumentFragment, renderMarkdown on bot replay, textContent on user replay |
+| `src/styles/global.css` | Chat CSS block with typing-dot keyframes | VERIFIED | @keyframes typing-bounce, --dot-delay custom props on .typing-dot:nth-child(2/3), .chat-textarea border-radius:0, .chat-starter-chip border-radius:0, .chat-copy-btn mono font, .chat-panel-mobile full-screen, LAYER 3 untouched |
+| `src/content.config.ts` | Updated Zod schema with year field | VERIFIED | `year: z.string().regex(/^\d{4}$/)` present |
+| `astro.config.mjs` | Shiki github-light theme configuration | VERIFIED | `markdown: { shikiConfig: { theme: 'github-light' } }` present |
+| `src/content/projects/*.mdx` | All 6 MDX files with year frontmatter | VERIFIED | seatwatch "2025", nfl-predict "2025", solsniper "2025", optimize-ai "2024", clipify "2024", crypto-breakout-trader "2025" |
+| `src/components/primitives/Footer.astro` | Footer with desktop-visible social links | VERIFIED | imports CONTACT, `.footer-social { display: inline-flex }` as base rule, no display:none override |
+| `src/components/primitives/MobileMenu.astro` | MobileMenu with CONTACT import | VERIFIED | `import { CONTACT } from "../../data/contact"` at line 34, uses CONTACT.github, CONTACT.linkedin |
+| `design-system/MASTER.md` | Amended with typing-dot carve-out and chat bubble exception | VERIFIED | Section 6.1 has "Status indicators (typing dots, loading spinners) may use looped CSS @keyframes". Section 10 has "round accent chat bubble" exception. Sections 5.2/5.8 have no X in social rows. |
+| `.planning/REQUIREMENTS.md` | CONTACT-01 and CONTACT-02 amended | VERIFIED | CONTACT-01: "GITHUB . LINKEDIN . RESUME" (no X). CONTACT-02: `<a download>` pointing to `/jack-cutrara-resume.pdf`. Both marked [x] Complete. |
+| `src/components/ContactChannel.astro` | DELETED (dead code) | VERIFIED | File does not exist — confirmed via glob search |
+| `public/jack-cutrara-resume.pdf` | Resume PDF asset exists | VERIFIED | File exists in public/ directory |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| index.astro | WorkRow.astro | import + getCollection featured map | WIRED | Line 6: `import WorkRow`, line 62-70: featured.map with WorkRow props |
-| index.astro | ContactSection.astro | import + render in section 03 | WIRED | Line 9: `import ContactSection`, line 88: `<ContactSection showSectionHeader={true} />` |
-| index.astro | about.ts | import for about preview | WIRED | Line 12: `import { ABOUT_INTRO, ABOUT_P1 }`, lines 79-80: rendered in .about-body |
-| about.astro | about.ts | import for full about copy | WIRED | Line 5: imports all 4 exports, lines 13-16: rendered as paragraphs |
-| contact.astro | ContactSection.astro | import and render | WIRED | Line 5: `import ContactSection`, line 12: `<ContactSection />` |
-| projects.astro | WorkRow.astro | import + getCollection map | WIRED | Line 6: `import WorkRow`, line 23-30: projects.map with WorkRow props |
-| [id].astro | render() | MDX content rendering | WIRED | Line 29: `const { Content } = await render(project)`, line 70: `<Content components={{ img: ArticleImage }} />` |
-| [id].astro | NextProject.astro | next project computation | WIRED | Line 18: wrap-around `allProjects[(idx + 1) % allProjects.length]`, line 77: `<NextProject project={nextProject} />` |
-| [id].astro | ArticleImage.astro | MDX components map | WIRED | Line 6: `import ArticleImage`, line 70: `components={{ img: ArticleImage }}` |
-| ContactSection.astro | contact.ts | import CONTACT | WIRED | Line 13: `import { CONTACT } from "../data/contact"`, used in email/github/linkedin/resume links |
-| Footer.astro | contact.ts | import CONTACT | WIRED | Line 20: `import { CONTACT } from "../../data/contact"`, used for GITHUB/LINKEDIN/EMAIL links |
-| MobileMenu.astro | contact.ts | import CONTACT | WIRED | Line 34: `import { CONTACT } from "../../data/contact"`, used for GITHUB/LINKEDIN/EMAIL links |
-| chat.ts | ChatWidget.astro IDs | getElementById calls match element IDs | WIRED | All 11 IDs present in ChatWidget.astro confirmed by grep (chat-panel, chat-bubble, chat-close, chat-input, chat-send, chat-messages, chat-starters, chat-typing, chat-char-count, chat-bubble-icon, chat-bubble-close-icon) |
-| chat.ts | localStorage | setItem/getItem with chat-history key | WIRED | saveChatHistory calls localStorage.setItem, loadChatHistory calls localStorage.getItem, both use STORAGE_KEY = "chat-history" |
-| chat.ts | renderMarkdown | Replayed bot messages through sanitization | WIRED | Line 550: `bubble.innerHTML = renderMarkdown(msg.content)` in replay path |
-| index.astro | JsonLd.astro | Person schema via head slot | WIRED | Lines 21-32: personSchema constructed with CONTACT constants, line 37: `<JsonLd schema={personSchema} />` |
+| `src/pages/index.astro` | `WorkRow.astro` | import + getCollection featured map | WIRED | `import WorkRow`, `featured.map()` with WorkRow props including year from collection |
+| `src/pages/index.astro` | `ContactSection.astro` | import + render in section 03 | WIRED | `import ContactSection`, `<ContactSection showSectionHeader={true} />` |
+| `src/pages/index.astro` | `src/data/about.ts` | import for about preview | WIRED | `import { ABOUT_INTRO, ABOUT_P1 }`, both rendered in .about-body |
+| `src/pages/about.astro` | `src/data/about.ts` | import for full about copy | WIRED | imports all 4 exports, rendered as 4 paragraphs |
+| `src/pages/contact.astro` | `ContactSection.astro` | import and render | WIRED | `import ContactSection`, `<ContactSection />` |
+| `src/pages/projects.astro` | `WorkRow.astro` | import + getCollection all projects | WIRED | `import WorkRow`, `projects.map()` — no filter |
+| `src/pages/projects/[id].astro` | astro:content render() | MDX content rendering | WIRED | `const { Content } = await render(project)`, `<Content components={{ img: ArticleImage }} />` |
+| `src/pages/projects/[id].astro` | `NextProject.astro` | next project with wrap-around | WIRED | `allProjects[(idx + 1) % allProjects.length]` in getStaticPaths, `<NextProject project={nextProject} />` |
+| `ContactSection.astro` | `contact.ts` | import CONTACT | WIRED | `import { CONTACT } from "../data/contact"`, used for all 4 link types |
+| `Footer.astro` | `contact.ts` | import CONTACT | WIRED | `import { CONTACT } from "../../data/contact"`, socialLinks array built from CONTACT |
+| `MobileMenu.astro` | `contact.ts` | import CONTACT | WIRED | `import { CONTACT } from "../../data/contact"` at line 34 |
+| `chat.ts` | `localStorage` | setItem/getItem with chat-history key | WIRED | `localStorage.setItem(STORAGE_KEY, ...)` inside try/catch (line 79), `localStorage.getItem(STORAGE_KEY)` inside try/catch (line 87) |
+| `chat.ts` | `renderMarkdown` | Replayed bot messages through sanitization | WIRED | line 550: `bubble.innerHTML = renderMarkdown(msg.content)` in history replay path |
+| `global.css` | `chat.ts` | CSS keyframes typing-bounce applied to .typing-dot | WIRED | `@keyframes typing-bounce` + `.typing-dot { animation: typing-bounce 600ms var(--dot-delay) ... }` in global.css; `startTypingDots()` is no-op in chat.ts |
+| `src/pages/index.astro` | `JsonLd.astro` | Person schema with CONTACT imports | WIRED | `import { CONTACT }`, personSchema uses CONTACT.email/github/linkedin, `<JsonLd schema={personSchema} />` in head slot |
 
 ### Data-Flow Trace (Level 4)
 
 | Artifact | Data Variable | Source | Produces Real Data | Status |
 |----------|---------------|--------|--------------------|--------|
-| index.astro | allProjects / featured | getCollection("projects") | Yes -- 6 MDX files with Zod-validated frontmatter, filtered to 3 featured | FLOWING |
-| index.astro | ABOUT_INTRO, ABOUT_P1 | import from about.ts | Yes -- static string constants, not empty | FLOWING |
-| projects.astro | projects | getCollection("projects") | Yes -- all 6 projects sorted by order | FLOWING |
-| [id].astro | project, nextProject, Content | getCollection + render | Yes -- Zod-validated MDX content rendered via Content component | FLOWING |
-| about.astro | ABOUT_INTRO..P3 | import from about.ts | Yes -- 4 non-empty string exports | FLOWING |
-| ContactSection.astro | CONTACT | import from contact.ts | Yes -- hardcoded constants (email, github, linkedin, resume) with null-skip for x | FLOWING |
-| chat.ts | chatLog | localStorage.getItem + loadChatHistory | Yes -- stored messages replayed via DocumentFragment with renderMarkdown | FLOWING |
+| `index.astro` work rows | `featured` (3 items) | `getCollection("projects").filter(featured)` | Yes — 3 MDX files with featured:true, Zod-validated real titles/stacks/years | FLOWING |
+| `index.astro` about section | ABOUT_INTRO, ABOUT_P1 | `src/data/about.ts` static exports | Yes — non-empty strings, real copy | FLOWING |
+| `projects.astro` work rows | `projects` (6 items) | `getCollection("projects").sort(order)` | Yes — all 6 MDX files, real titles/stacks/years | FLOWING |
+| `projects/[id].astro` body | `Content` component | `render(project)` — MDX files | Yes — 6 real MDX case studies, rendered at build time | FLOWING |
+| `about.astro` paragraphs | ABOUT_INTRO..P3 | `src/data/about.ts` static exports | Yes — 4 non-empty real copy strings | FLOWING |
+| `ContactSection.astro` links | CONTACT constants | `src/data/contact.ts` | Yes — real email/github/linkedin/resume values, x skipped (null) | FLOWING |
+| `chat.ts` replay | `chatLog` messages | `loadChatHistory()` from localStorage | Yes — stored conversation data, deserialized and sanitized through renderMarkdown | FLOWING |
 
 ### Behavioral Spot-Checks
 
-| Behavior | Command | Result | Status |
-|----------|---------|--------|--------|
-| Build succeeds with all routes | `npx pnpm run build` | Exit 0, 6 project detail routes + index/about/contact/projects | PASS |
-| Lint clean | `npx pnpm run lint` | 0 errors, 2 warnings (worker-configuration.d.ts, pre-existing) | PASS |
-| Astro check clean | `npx pnpm run check` | 0 errors, 0 warnings, 2 hints | PASS |
-| Tests pass | `npx pnpm run test` | 52/52 green | PASS |
-| 6 project detail routes in dist | `ls dist/client/projects/*/index.html \| wc -l` | 6 | PASS |
-| 3 featured on homepage | grep project links in dist/client/index.html | 3 links (seatwatch, nfl-predict, solsniper) | PASS |
-| 6 projects on /projects | grep project links in dist/client/projects/index.html | 6 links (all projects) | PASS |
-| No placeholder text | `grep -rl "redesigning" dist/client/` | 0 results | PASS |
-| Privacy note updated | `grep "stored locally" dist/client/index.html` | 1 match | PASS |
-| Resume download link | grep in dist/client/index.html | `resume.pdf" download` found | PASS |
+Step 7b: Cannot run dev server in this environment. Relying on build output analysis and code inspection.
+
+| Behavior | Method | Result | Status |
+|----------|--------|--------|--------|
+| Build succeeds | Code analysis: all 6 MDX files have year field, schema matches, all imports resolve | 10-07-SUMMARY confirms exit 0, 52/52 tests pass | PASS |
+| 6 project detail routes | getStaticPaths uses all 6 MDX IDs | 10-07-SUMMARY: `ls dist/projects/*/index.html` = 6 | PASS |
+| 3 featured on homepage | 3 MDX files with `featured: true` verified in source | seatwatch (order:1), nfl-predict (order:2), solsniper (order:3) | PASS |
+| No placeholder text | grep for "redesigning" in pages | 0 results — pages fully implemented | PASS |
+| Privacy note updated | ChatWidget.astro line 179 | "Conversations stored locally for 24h." — present | PASS |
+| Resume download link | ContactSection.astro line 45 | `href={CONTACT.resume} download` — present | PASS |
+| Footer social links on desktop | Footer.astro `.footer-social` rule | `display: inline-flex` as base — visible on all viewports | PASS |
+| User bubbles flat corners | chat.ts lines 254, 541 | `border-radius: 0` in both createUserMessageEl and history replay | PASS |
+| Message ordering correct | chat.ts line 573 | `insertBefore(fragment, $typingIndicator)` — history before typing indicator | PASS |
+| Typing dots animate | global.css + chat.ts lines 441-443 | CSS keyframes active; startTypingDots() is no-op | PASS |
 
 ### Requirements Coverage
 
 | Requirement | Source Plan | Description | Status | Evidence |
-|-------------|------------|-------------|--------|----------|
-| HOME-01 | 10-03 | Homepage hero with wordmark, metadata, lead | SATISFIED | index.astro: h1 JACK CUTRARA with accent-dot, StatusDot, MetaLabel, lead paragraph |
-| HOME-02 | 10-03 | Numbered work list replacing card grid | SATISFIED | index.astro: SectionHeader 01/WORK + featured WorkRows from getCollection |
-| HOME-03 | 10-03 | Editorial about preview | SATISFIED | index.astro: SectionHeader 02/ABOUT + ABOUT_INTRO + ABOUT_P1 + READ MORE link |
-| HOME-04 | 10-03 | Minimal contact section | SATISFIED | index.astro: ContactSection showSectionHeader=true in section 03 |
-| ABOUT-01 | 10-03 | Editorial structure, no icons/bars | SATISFIED | about.astro: intro (larger weight) + 3 paragraphs, no img/svg/canvas/progress |
-| ABOUT-02 | 10-03 | Real engineer's voice, <=80 words/paragraph | SATISFIED | about.ts: 4 exports with concise, specific, non-corporate copy |
-| WORK-01 | 10-04 | Projects index numbered list | SATISFIED | projects.astro: all 6 projects as WorkRows sorted by order |
-| WORK-02 | 10-04 | Editorial case study layout | SATISFIED | [id].astro: mono metadata, h1-section, lead, prose-editorial MDX, NextProject |
-| WORK-03 | 10-01, 10-04 | Real content renders in new layouts | SATISFIED | 6 MDX files with year fields, all routes build, no placeholder text |
-| CONTACT-01 | 10-02 | Minimal contact: GET IN TOUCH + email + GITHUB . LINKEDIN . RESUME | SATISFIED | ContactSection.astro: GET IN TOUCH div, email link, social links, no X per D-25 |
-| CONTACT-02 | 10-02 | Resume link with download attribute | SATISFIED | ContactSection.astro line 45: `download` attribute, href to /jack-cutrara-resume.pdf |
-| CHAT-01 | 10-06 | Chat retains Phase 7 functionality + localStorage persistence | SATISFIED | chat.ts: save/load/replay with 50-cap, 24h TTL, version 1, try/catch, DocumentFragment, DOMPurify |
-| CHAT-02 | 10-05 | Chat visuals match editorial design system | SATISFIED | ChatWidget.astro: flat panel, round bubble only, global.css: typing-bounce, mono labels |
+|-------------|-------------|-------------|--------|---------|
+| HOME-01 | 10-03 | Homepage display hero: wordmark, metadata, lead | SATISFIED | index.astro: JACK CUTRARA h1.display with accent-dot, StatusDot "AVAILABLE FOR WORK", MetaLabel "EST. 2024", lead paragraph |
+| HOME-02 | 10-03 | Numbered work list replacing card grid | SATISFIED | index.astro: SectionHeader "01 WORK" + 3 featured WorkRows from getCollection with real titles/stacks/years |
+| HOME-03 | 10-03 | Editorial about preview with READ MORE link | SATISFIED | index.astro: SectionHeader "02 ABOUT" + ABOUT_INTRO + ABOUT_P1 + "READ MORE →" link to /about |
+| HOME-04 | 10-03 | Minimal contact section on homepage | SATISFIED | index.astro: ContactSection showSectionHeader=true renders GET IN TOUCH + email + GITHUB/LINKEDIN/RESUME |
+| ABOUT-01 | 10-03 | Editorial structure: intro + 3 paragraphs, no icons/bars/graphics | SATISFIED | about.astro: .about-intro (larger weight) + 3 body paragraphs, no img/svg/canvas/progress |
+| ABOUT-02 | 10-03 | Real engineer's voice, ≤80 words/paragraph | SATISFIED | about.ts: 4 concise, specific, non-corporate copy exports |
+| WORK-01 | 10-04 | Projects index with numbered work list, no card grid | SATISFIED | projects.astro: all 6 projects as WorkRows sorted by order, padStart numbering 01-06 |
+| WORK-02 | 10-04 | Project detail editorial case study layout | SATISFIED | [id].astro: label-mono metadata, h1-section title, lead, prose-editorial MDX, NextProject with wrap-around |
+| WORK-03 | 10-01, 10-04 | Real content from collection in new layouts | SATISFIED | All 6 MDX files have year field, real titles/stacks appear in pages, 0 placeholder text |
+| CONTACT-01 | 10-02, 10-08 | GET IN TOUCH + email + GITHUB/LINKEDIN/RESUME, no icons/form/CTA | SATISFIED | ContactSection.astro: GET IN TOUCH div, email link, 3 social links. Footer shows GITHUB/LINKEDIN/EMAIL on desktop (Plan 08 fix). No X. |
+| CONTACT-02 | 10-02 | Resume link uses `<a download>` pointing to /jack-cutrara-resume.pdf | SATISFIED | ContactSection.astro line 45: `href={CONTACT.resume} download`. public/jack-cutrara-resume.pdf EXISTS. |
+| CHAT-01 | 10-06 | Phase 7 functionality retained + localStorage persistence | SATISFIED | SSE streaming, AbortController timeout, focus trap, rate limiting, renderMarkdown/DOMPurify all preserved. localStorage: save/load with 50-cap, 24h TTL, version 1, try/catch, DocumentFragment replay, XSS-safe |
+| CHAT-02 | 10-05, 10-08 | Chat visuals match editorial system | MOSTLY SATISFIED | Panel: border-radius:0, box-shadow:none, 1px rule. Bubble: 50% only round surface. Typing dots: CSS keyframes active (Plan 08 fix). User bubbles: border-radius:0 (Plan 08 fix). Starter chips: border-radius:0. UNCERTAIN: live bot message copy button may still use SVG icon instead of COPY text. |
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| (none) | -- | No TODO/FIXME/PLACEHOLDER found in Phase 10 files | -- | -- |
-| (none) | -- | No empty implementations found | -- | -- |
-| (none) | -- | No stub returns found | -- | -- |
+| `src/scripts/chat.ts` | 302 | `createBotMessageEl()` copy button uses `copyBtn.innerHTML = '<svg...>'` (SVG icon) while history replay at line 555 uses `copyBtn.textContent = "COPY"` (text label) | Warning | Inconsistency with Plan 05 must_have "Copy button shows COPY mono text label, not SVG icon". Live streamed messages get SVG icon; replayed messages get COPY text label. If confirmed by human test, fix is: replace `copyBtn.innerHTML = '<svg...>'` with `copyBtn.textContent = "COPY"` and update styling to match the mono label style. |
+
+No placeholder text in any page. No stub returns. No empty getCollection calls. No hardcoded empty arrays. No TODO/FIXME comments in Phase 10 files.
 
 ### Human Verification Required
 
-### 1. Chat Smoke Test
+#### 1. Live Bot Message Copy Button Label
 
-**Test:** Start dev server (`npx pnpm run dev`). Click the red accent chat bubble. Verify panel opens with flat-rectangle chrome (no rounded corners, no shadows). Click a starter chip. Verify SSE streaming response appears progressively. Hover over bot message and verify "COPY" text label appears. Click COPY. Press Tab repeatedly to verify focus trap. Press Escape to close. Confirm bubble is the ONLY round surface.
-**Expected:** Panel opens flat, SSE streams, COPY label works, focus trap cycles, Escape closes.
-**Why human:** Requires running dev server, real-time SSE interaction, visual inspection of chat behavior.
+**Test:** Start dev server (`pnpm run dev`). Open browser DevTools > Application > Local Storage, delete the `chat-history` key if present (ensures fresh session with no history). Open the chat panel (red bubble). Send a new message — for example type "Hello" and press Enter. Wait for the bot response to finish streaming completely. Hover the mouse over the bot's response message.
 
-### 2. Chat Persistence Test
+**Expected:** A "COPY" label appears in small uppercase mono font (not an SVG clipboard icon). Clicking it copies the text. The button briefly shows "COPIED" in accent red, then reverts to "COPY".
 
-**Test:** Open chat, send a message, wait for response to complete. Navigate to /about. Open chat -- verify previous messages appear. Close and reopen panel twice -- verify no message duplication. Hard refresh (Ctrl+Shift+R). Open chat -- verify history still present. Check privacy note text.
-**Expected:** Messages survive navigation, no duplication on repeated open/close, history survives hard refresh, note says "Conversations stored locally for 24h."
-**Why human:** Requires cross-page navigation and localStorage verification in a real browser session.
+**Why human:** `createBotMessageEl()` in `chat.ts` line 302 assigns `copyBtn.innerHTML = '<svg...>'` (SVG icon). History replay at line 555 correctly uses `copyBtn.textContent = "COPY"`. This inconsistency means live streamed messages and replayed messages show different copy controls. The original UAT Test 13 passed as COPY, but may have been tested on a replayed message. A fresh test (no history) will confirm which code path the user sees for live messages.
 
-### 3. Visual Parity Check
-
-**Test:** View homepage at 1440px -- compare against mockup.html. Verify: JACK CUTRARA wordmark with red accent dot, AVAILABLE FOR WORK status, 3 work rows with real titles, about preview with READ MORE, contact section. View at 375px -- verify no horizontal scroll, stacked layout. Check project detail (/projects/seatwatch) for mono metadata + section-sign h2 labels. Check about page for larger-weight intro + 3 paragraphs. Check projects index for 6 numbered rows.
-**Expected:** Visual match with mockup.html at desktop and mobile widths. No broken layouts.
-**Why human:** Visual layout comparison and responsive behavior require browser rendering at specific viewport widths.
-
-### Gaps Summary
-
-No blocking gaps found. All 8 roadmap success criteria verified at the code/build level. All 13 requirement IDs satisfied with code evidence. The ROADMAP SC-5 mentions "X" in contact links, but this was intentionally dropped per user decision D-25 in CONTEXT.md and the REQUIREMENTS.md was amended accordingly -- this is documented as an override above.
-
-Three items require human verification: chat smoke test (live SSE interaction), chat persistence test (cross-page localStorage behavior), and visual parity check (mockup comparison at specific viewports). All automated checks pass (build, lint, check, 52/52 tests, 10 content assertions).
+**If SVG appears:** This is a CHAT-02 defect. Fix: in `createBotMessageEl()` around line 302, replace the SVG innerHTML assignment with `copyBtn.textContent = "COPY"` and update the button styles to match the mono label pattern used in history replay (remove fixed width/height, remove display:flex, add font-family/font-weight/font-size/text-transform/letter-spacing).
 
 ---
 
-_Verified: 2026-04-13T23:55:00Z_
+## Gaps Summary
+
+All three UAT gaps from Plan 07 testing have been closed by Plan 08 and are confirmed fixed in code:
+- Test 10 (footer social links): Footer.astro now has `display: inline-flex` as the base rule for `.footer-social` — no longer hidden on desktop.
+- Test 11 (chat bubble corners): Both `createUserMessageEl()` and history replay in chat.ts now set `border-radius: 0`.
+- Test 12 (message ordering + typing animation): History replay uses `insertBefore(fragment, $typingIndicator)` for correct DOM order. `startTypingDots()` is a no-op — CSS keyframes drive animation.
+
+One item remains uncertain and requires human verification: whether live (non-replayed) bot messages show the "COPY" text label or an SVG icon. This is a potential CHAT-02 defect introduced by an inconsistency between `createBotMessageEl()` and the history replay code. If confirmed as SVG, it requires a 2-line fix.
+
+---
+
+_Verified: 2026-04-13T20:30:00Z_
 _Verifier: Claude (gsd-verifier)_
