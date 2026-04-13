@@ -371,7 +371,7 @@ interface HeaderProps {
 Mobile stack (3 rows, centered horizontally, `gap: 12px` between rows, applied via a `@media (max-width: 767px)` rule inside `Footer.astro`'s scoped `<style>`):
 
 1. `© 2026 JACK CUTRARA` — `.meta-mono` + `.tabular`, color `var(--ink-faint)`
-2. `GITHUB · LINKEDIN · X · EMAIL` — `.label-mono` color `var(--ink-muted)`, each link hovers to `var(--accent)` (identical shape to the contact section's `.contact-links` and identical content to the MobileMenu overlay bottom row per §5.8)
+2. `GITHUB · LINKEDIN · EMAIL` — `.label-mono` color `var(--ink-muted)`, each link hovers to `var(--accent)` (identical shape to the contact section's `.contact-links` and identical content to the MobileMenu overlay bottom row per §5.8)
 3. `BUILT WITH ASTRO · TAILWIND · GEIST` — `.meta-mono` uppercase, color `var(--ink-faint)`
 
 At ≥768px the default MASTER §5.2 single-row layout applies unchanged — the social row is hidden via `display: none` on desktop to avoid duplicating information that the Phase 10 contact section already presents.
@@ -616,7 +616,7 @@ Phase 9 **rebuilds** `MobileMenu.astro` as a full-screen overlay primitive rathe
 
 1. A close button pinned top-right of the overlay (matching the v1.0 × icon pattern — planner's choice between SVG or mono `×` character)
 2. Three mono nav links (`works`, `about`, `contact`) stacked vertically and centered, rendered at a prominent editorial size (planner selects between `.h2-project` 1.75rem and `.lead` clamp — whichever reads better). The active link receives the accent underline treatment from `.nav-link.is-active` defined inside `Header.astro` (text-decoration-color var(--accent), text-decoration-thickness 1.5px, text-underline-offset 6px).
-3. A small `GITHUB · LINKEDIN · X · EMAIL` mono link row at the bottom of the overlay, using the same shape as the contact section's `.contact-links` (Geist Mono 500, 0.75rem, uppercase, 0.12em letter-spacing, `var(--ink-muted)` default, `var(--accent)` on hover). This row intentionally duplicates the mobile footer social row so contact links are always one tap away while the menu is open.
+3. A small `GITHUB · LINKEDIN · EMAIL` mono link row at the bottom of the overlay, using the same shape as the contact section's `.contact-links` (Geist Mono 500, 0.75rem, uppercase, 0.12em letter-spacing, `var(--ink-muted)` default, `var(--accent)` on hover). This row intentionally duplicates the mobile footer social row so contact links are always one tap away while the menu is open.
 
 **A11y treatment.** Reuses the v1.0 shape plus the Phase 7 ChatWidget focus-trap pattern:
 
@@ -641,6 +641,7 @@ The editorial system is **mostly motionless**. The mockup is a deliberately quie
 
 ### 6.1 Dead — removed in Phase 8, never reintroduced
 
+- **Status indicators (typing dots, loading spinners) may use looped CSS @keyframes when actively signaling state — these are functional indicators, not entrance animations.**
 - **GSAP** — `gsap` is uninstalled from `package.json`. No `import gsap from "gsap"` anywhere. No GSAP plugins (ScrollTrigger, SplitText, etc.). The `npm uninstall gsap` step is permanent.
 - **Scroll-trigger animations** — every scroll-driven reveal, parallax effect, pin-to-viewport animation is gone. No `[data-animate]` opacity stub. No IntersectionObserver wiring for fade-in.
 - **Canvas hero** — `CanvasHero.astro` is deleted. No `<canvas>`, no simplex noise, no requestAnimationFrame loop, no WebGL.
@@ -779,6 +780,15 @@ The chat widget is **the** regression gate for every Phase 8 plan. Every plan th
 
 ---
 
-## 10. Changelog
+## 10. Chat Bubble Exception
 
+The round accent chat bubble (48x48px, background: var(--accent), border-radius: 50%) is the only round surface in the editorial system. This is a deliberate exception to the flat-rectangle grammar -- the bubble serves as the accent-red beacon signaling the chatbot exists.
+
+Every other surface in the system uses `border-radius: 0` (work rows, chat panel, chips, textarea, send button). The bubble's roundness is a functional signal — it communicates "this is a different kind of UI element" at a glance. Without it, the chat entry point would be indistinguishable from the editorial chrome.
+
+---
+
+## 11. Changelog
+
+- 2026-04-13 — Phase 10 head-of-phase amendment: §6.1 typing-dot carve-out, §5.2/§5.8 X drop from social rows, §10 chat bubble exception
 - 2026-04-07 — v1.1 initial lock (Phase 8)

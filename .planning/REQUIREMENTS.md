@@ -37,8 +37,8 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 
 ### Contact (CONTACT)
 
-- [ ] **CONTACT-01**: Contact section is minimal: `GET IN TOUCH` label + email + inline social links (`GITHUB · LINKEDIN · X · RÉSUMÉ`), no icons, no contact form, no CTA buttons
-- [ ] **CONTACT-02**: Résumé link uses `<a download>` and points to `/jack-cutrara-resume.pdf` (placeholder PDF shipped initially, real PDF replaces it later)
+- [ ] **CONTACT-01**: Contact section is minimal: `GET IN TOUCH` label + email + inline social links (`GITHUB . LINKEDIN . RESUME`), no icons, no contact form, no CTA buttons
+- [ ] **CONTACT-02**: Resume link uses `<a download>` and points to `/jack-cutrara-resume.pdf`
 - [x] **CONTACT-03**: Standalone `/resume` page is removed entirely; the hosted PDF is the single source of truth for résumé content
 
 ### Chat Widget (CHAT)
