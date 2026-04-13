@@ -89,7 +89,7 @@
   6. Chat widget (Phase 7) is visually restyled to the new system — no cards, no shadows, no gradients, monochrome surfaces with accent for active state and links only — and every Phase 7 capability still works: SSE streaming, focus trap, rate limiting, conversation persistence across page navigation, mobile full-screen overlay, markdown rendering with XSS sanitization
   7. Real project titles, stacks, and years from the existing content collection render in both the homepage list and the projects index — no placeholder titles like "Project One" appear in the shipped HTML
   8. Header active-link state correctly highlights the current page on every route, and `npm run build` succeeds
-**Plans**: 7 plans
+**Plans**: 8 plans
 - [x] 10-01-PLAN.md — Amend MASTER.md and REQUIREMENTS.md, add year field to content schema, configure Shiki theme (WORK-03)
 - [x] 10-02-PLAN.md — Create contact.ts and about.ts data files, ContactSection composite, refactor Footer/MobileMenu (CONTACT-01, CONTACT-02)
 - [x] 10-03-PLAN.md — Rewrite homepage, about page, and contact page (HOME-01..04, ABOUT-01..02)
@@ -97,6 +97,7 @@
 - [x] 10-05-PLAN.md — Restyle chat widget visuals to editorial chrome (CHAT-02)
 - [x] 10-06-PLAN.md — Add localStorage chat persistence and update JsonLd (CHAT-01)
 - [x] 10-07-PLAN.md — Verification gate: build/lint/check/test + manual chat + visual parity (all REQs)
+- [ ] 10-08-PLAN.md — UAT gap closure: footer social links, chat bubble style, message ordering, typing animation (CONTACT-01, CHAT-02)
 **UI hint**: yes
 
 ### Phase 11: Polish
@@ -128,5 +129,5 @@
 | 7. Chatbot Feature | v1.0 | 5/5 | Complete | 2026-04-04 |
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/8 | Planned     | — |
-| 10. Page Port | v1.1 | 7/7 | Complete    | 2026-04-13 |
+| 10. Page Port | v1.1 | 7/8 | In Progress | — |
 | 11. Polish | v1.1 | 0/? | Not started | — |
