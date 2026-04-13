@@ -116,7 +116,7 @@
 **Plans**: 3 plans
 Plans:
 - [x] 11-01-PLAN.md — Tech debt cleanup + focus-visible rings + accent contrast fix + artifact deletion (QUAL-03, QUAL-05)
-- [ ] 11-02-PLAN.md — Lighthouse audit + WCAG contrast inventory + manual QA checkpoint (QUAL-01..06)
+- [x] 11-02-PLAN.md — Lighthouse audit + WCAG contrast inventory + manual QA checkpoint (QUAL-01..06)
 - [ ] 11-03-PLAN.md — Merge to main + deploy to Cloudflare Pages + documentation closeout (QUAL-01..06)
 **UI hint**: yes
 
@@ -134,4 +134,4 @@ Plans:
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/8 | Planned     | — |
 | 10. Page Port | v1.1 | 8/8 | Complete    | 2026-04-13 |
-| 11. Polish | v1.1 | 1/3 | In Progress|  |
+| 11. Polish | v1.1 | 2/3 | In Progress|  |
