@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 10-page-port
 source: [10-01-SUMMARY.md, 10-02-SUMMARY.md, 10-03-SUMMARY.md, 10-04-SUMMARY.md, 10-05-SUMMARY.md, 10-06-SUMMARY.md, 10-07-SUMMARY.md]
 started: 2026-04-13T16:00:00Z
@@ -90,9 +90,12 @@ blocked: 0
   reason: "User reported: No social links in footer on desktop"
   severity: major
   test: 10
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: ".footer-social has unconditional display:none on desktop (Footer.astro lines 82-85). Only visible at max-width:767px. Comment says 'contact section presents them' but user expects them in footer too."
+  artifacts:
+    - path: "src/components/primitives/Footer.astro"
+      issue: ".footer-social display:none hides social links on desktop"
+  missing:
+    - "Remove or conditionalize the display:none rule so footer social links show on desktop"
   debug_session: ""
 
 - truth: "Chat panel uses flat-rectangle chrome — only the trigger bubble is round"
@@ -100,9 +103,12 @@ blocked: 0
   reason: "User reported: User's message bubble is rounded."
   severity: cosmetic
   test: 11
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "chat.ts line 254 and 545 apply inline border-radius: 12px 12px 4px 12px to user message bubbles, overriding the editorial flat-rectangle design."
+  artifacts:
+    - path: "src/scripts/chat.ts"
+      issue: "Inline border-radius on user message bubbles at lines 254 and 545"
+  missing:
+    - "Change border-radius to 0 in both createUserMessageEl() and history replay code"
   debug_session: ""
 
 - truth: "New messages appear at bottom of chat, typing dots animate with bounce effect"
@@ -110,7 +116,13 @@ blocked: 0
   reason: "User reported: Typing dots do not animate with a bounce effect. New sent message appears above historical past questions — have to scroll up to see it."
   severity: major
   test: 12
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "Two root causes: (1) sendMessage() uses insertBefore($typingIndicator) at lines 756/794 — when history is loaded, new messages go above history instead of below. (2) startTypingDots() at line 441-448 explicitly sets style.animation='none' on each dot, overriding the CSS typing-bounce keyframes."
+  artifacts:
+    - path: "src/scripts/chat.ts"
+      issue: "insertBefore($typingIndicator) places new messages above history"
+    - path: "src/scripts/chat.ts"
+      issue: "startTypingDots() disables animation with style.animation='none'"
+  missing:
+    - "Fix message insertion to append after history, not before typing indicator"
+    - "Remove style.animation='none' from startTypingDots() so CSS keyframes work"
   debug_session: ""
