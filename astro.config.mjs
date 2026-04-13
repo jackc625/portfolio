@@ -17,9 +17,7 @@ export default defineConfig({
   adapter: cloudflare(),
   integrations: [
     mdx(),
-    sitemap({
-      filter: (page) => !page.includes("/dev/"),
-    }),
+    sitemap(),
   ],
   vite: {
     plugins: [tailwindcss()],

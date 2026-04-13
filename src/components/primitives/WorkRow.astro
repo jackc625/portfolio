@@ -96,4 +96,9 @@ const { number, title, stack, year, href } = Astro.props;
   .work-row:focus-visible .work-arrow {
     opacity: 1;
   }
+
+  .work-row:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
 </style>
