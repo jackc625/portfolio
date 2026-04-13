@@ -97,7 +97,7 @@
 - [x] 10-05-PLAN.md — Restyle chat widget visuals to editorial chrome (CHAT-02)
 - [x] 10-06-PLAN.md — Add localStorage chat persistence and update JsonLd (CHAT-01)
 - [x] 10-07-PLAN.md — Verification gate: build/lint/check/test + manual chat + visual parity (all REQs)
-- [ ] 10-08-PLAN.md — UAT gap closure: footer social links, chat bubble style, message ordering, typing animation (CONTACT-01, CHAT-02)
+- [x] 10-08-PLAN.md — UAT gap closure: footer social links, chat bubble style, message ordering, typing animation (CONTACT-01, CHAT-02)
 **UI hint**: yes
 
 ### Phase 11: Polish
@@ -129,5 +129,5 @@
 | 7. Chatbot Feature | v1.0 | 5/5 | Complete | 2026-04-04 |
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/8 | Planned     | — |
-| 10. Page Port | v1.1 | 7/8 | In Progress | — |
+| 10. Page Port | v1.1 | 8/8 | Complete   | 2026-04-13 |
 | 11. Polish | v1.1 | 0/? | Not started | — |
