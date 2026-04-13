@@ -538,7 +538,7 @@ function initChat(): void {
           if (msg.role === "user") {
             wrapper.style.cssText = "display: flex; justify-content: flex-end; margin-bottom: 8px;";
             const el = document.createElement("div");
-            el.style.cssText = "max-width: 85%; background: var(--rule); border-radius: 12px 12px 4px 12px; padding: 8px 16px; color: var(--ink); font-size: 1rem; word-break: break-word;";
+            el.style.cssText = "max-width: 85%; background: var(--rule); border-radius: 0; padding: 8px 16px; color: var(--ink); font-size: 1rem; word-break: break-word;";
             el.textContent = msg.content; // textContent -- XSS safe
             wrapper.appendChild(el);
           } else {
