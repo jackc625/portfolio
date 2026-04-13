@@ -634,9 +634,11 @@ function initChat(): void {
     $charCount.textContent = `${len}/500`;
 
     if (len >= 500) {
+      // At max -- stronger visual signal
       $charCount.style.color = "var(--accent)";
-      $charCount.style.fontWeight = "600";
+      $charCount.style.fontWeight = "700";
     } else if (len > 450) {
+      // Approaching limit
       $charCount.style.color = "var(--accent)";
       $charCount.style.fontWeight = "600";
     } else {
