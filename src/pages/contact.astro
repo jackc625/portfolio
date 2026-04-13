@@ -1,16 +1,15 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/primitives/Container.astro";
+import SectionHeader from "../components/primitives/SectionHeader.astro";
+import ContactSection from "../components/ContactSection.astro";
 ---
-<BaseLayout
-  title="Contact"
-  description="Jack Cutrara — contact. Site is being redesigned."
->
-  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
-    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
-      Contact — redesigning
-    </h1>
-    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
-      This page is being redesigned. Check back soon.
-    </p>
+
+<BaseLayout title="Contact" description="Get in touch with Jack Cutrara.">
+  <section class="section" aria-label="Contact">
+    <Container>
+      <SectionHeader number="01" title="CONTACT" />
+      <ContactSection />
+    </Container>
   </section>
 </BaseLayout>
