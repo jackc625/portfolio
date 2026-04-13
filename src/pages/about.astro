@@ -1,16 +1,27 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/primitives/Container.astro";
+import SectionHeader from "../components/primitives/SectionHeader.astro";
+import { ABOUT_INTRO, ABOUT_P1, ABOUT_P2, ABOUT_P3 } from "../data/about";
 ---
-<BaseLayout
-  title="About"
-  description="Jack Cutrara — about. Site is being redesigned."
->
-  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
-    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
-      About — redesigning
-    </h1>
-    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
-      This page is being redesigned. Check back soon.
-    </p>
+
+<BaseLayout title="About" description="Jack Cutrara -- junior software engineer building production-grade systems.">
+  <section class="section about" aria-labelledby="section-about">
+    <Container>
+      <SectionHeader number="01" title="ABOUT" />
+      <div class="about-body">
+        <p class="about-intro">{ABOUT_INTRO}</p>
+        <p>{ABOUT_P1}</p>
+        <p>{ABOUT_P2}</p>
+        <p>{ABOUT_P3}</p>
+      </div>
+    </Container>
   </section>
 </BaseLayout>
+
+<style>
+  .about-body { max-width: 68ch; margin-top: 24px; }
+  .about-intro { font-weight: 500; font-size: 1.375rem; line-height: 1.4; color: var(--ink); margin-bottom: 24px; }
+  .about-body p:not(.about-intro) { font-weight: 400; font-size: 1.125rem; line-height: 1.6; color: var(--ink); margin-bottom: 16px; }
+  .about-body p:not(.about-intro):last-child { margin-bottom: 0; }
+</style>
