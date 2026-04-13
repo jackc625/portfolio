@@ -128,5 +128,5 @@
 | 7. Chatbot Feature | v1.0 | 5/5 | Complete | 2026-04-04 |
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/8 | Planned     | — |
-| 10. Page Port | v1.1 | 7/7 | Complete   | 2026-04-13 |
+| 10. Page Port | v1.1 | 7/7 | Complete    | 2026-04-13 |
 | 11. Polish | v1.1 | 0/? | Not started | — |
