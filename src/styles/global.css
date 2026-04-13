@@ -223,7 +223,8 @@ body {
 }
 
 /* ============================================
- * Chat Widget Styles (Phase 7)
+ * Chat Widget Styles (Phase 10 Editorial Restyle)
+ * Source: CONTEXT.md D-15 through D-21
  * ============================================ */
 
 /* Print: hide chat widget */
@@ -233,30 +234,55 @@ body {
   }
 }
 
-/* Typing indicator dots */
+/* D-17: Typing indicator dot bounce animation
+   Uses CSS custom properties for delay/color per review suggestion */
+@keyframes typing-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
 .typing-dot {
+  --dot-color: var(--ink-faint);
+  --dot-delay: 0ms;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--ink-faint);
+  background-color: var(--dot-color);
   display: inline-block;
+  animation: typing-bounce 600ms var(--dot-delay) ease-in-out infinite;
+}
+.typing-dot:nth-child(2) {
+  --dot-delay: 150ms;
+}
+.typing-dot:nth-child(3) {
+  --dot-delay: 300ms;
 }
 
 /* Chat textarea — JS auto-grow, NOT field-sizing: content (no Firefox support) */
 .chat-textarea {
   resize: none;
   min-height: 36px;
-  max-height: 120px; /* ~4 rows */
+  max-height: 120px;
   overflow-y: auto;
+  border-radius: 0;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--ink);
+  padding: 8px 12px;
 }
 
-/* Chat textarea focus state */
+/* Chat textarea focus state — D-16: accent focus ring */
 .chat-textarea:focus {
-  border-color: var(--ink-muted) !important;
-  box-shadow: 0 0 0 2px var(--accent);
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-color: var(--rule);
+  box-shadow: none;
 }
 
-/* Chat bot message markdown styles */
+/* D-21: Bot message markdown styles */
 .chat-bot-message p {
   margin: 0 0 0.5em 0;
 }
@@ -271,12 +297,20 @@ body {
 .chat-bot-message li {
   margin-bottom: 4px;
 }
+/* D-21: Inline code — font only, no background, no border-radius */
 .chat-bot-message code {
   font-family: var(--font-mono);
   font-size: 0.875rem;
-  background: var(--rule);
-  padding: 1px 4px;
-  border-radius: 3px;
+}
+/* D-21 + D-13: Fenced code blocks — minimal editorial box (same as project detail) */
+.chat-bot-message pre {
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  padding: 16px 20px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  margin: 0.5em 0;
 }
 .chat-bot-message a {
   color: var(--accent);
@@ -286,30 +320,50 @@ body {
   text-decoration: underline;
 }
 
-/* Starter chip hover state */
+/* D-16: Starter chip styles — flat editorial buttons with mono label */
+.chat-starter-chip {
+  border-radius: 0;
+  border: 1px solid var(--rule);
+  background: transparent;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color 200ms ease;
+}
 .chat-starter-chip:hover {
-  border-color: var(--ink-muted) !important;
-  color: var(--accent) !important;
+  color: var(--accent);
 }
 
-/* Close button hover state */
-.hover-text-primary:hover {
-  color: var(--ink) !important;
-}
-
-/* Copy button styles */
+/* D-18: Copy button — COPY mono label, opacity reveal on hover */
 .chat-copy-btn {
   opacity: 0;
   transition: opacity 200ms ease;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-faint);
+  position: absolute;
+  top: -4px;
+  right: 0;
+}
+.chat-message-wrapper {
+  position: relative;
 }
 .chat-message-wrapper:hover .chat-copy-btn {
   opacity: 1;
 }
-.copy-success svg {
-  color: var(--accent) !important;
-}
 
-/* Mobile full-screen chat */
+/* D-20: Mobile full-screen chat */
 @media (max-width: 767px) {
   .chat-panel-mobile {
     position: fixed !important;
