@@ -1,0 +1,42 @@
+---
+/**
+ * SectionHeader — MASTER §5.4
+ *
+ * The `§ NN — TITLE` mono label + optional count + 1px rule divider
+ * that opens every numbered section (§ 01 — WORK, § 02 — ABOUT, etc.).
+ *
+ * Per D-02: primitive lives in src/components/primitives/
+ * Per D-03: no Tailwind utilities inside primitive markup
+ * Per D-04: props stay as MASTER §5.4 specifies (number + title + count?)
+ * Per D-13: .section-rule is a global helper (landed in plan 09-02)
+ * Per D-14: .section-header flex row is component-local (scoped here)
+ */
+interface Props {
+  number: string;
+  title: string;
+  count?: string;
+  id?: string;
+}
+
+const { number, title, count, id } = Astro.props;
+---
+
+<div class="section-header">
+  <span id={id} class="label-mono section-label">§ {number} — {title}</span>
+  {count && <span class="meta-mono tabular section-count">{count}</span>}
+</div>
+<div class="section-rule"></div>
+
+<style>
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .section-label {
+    color: var(--ink);
+  }
+  .section-count {
+    color: var(--ink-faint);
+  }
+</style>

@@ -1,4 +1,23 @@
 ---
+/**
+ * NextProject — editorial next-project link row (D-22 Phase 9 restyle)
+ *
+ * Rendered at the foot of project detail pages. Editorial grammar:
+ *   - § NEXT — mono label (matching SectionHeader style)
+ *   - .h2-project title (Geist 500, 1.75rem) — sans-serif editorial
+ *   - accent arrow that hover-reveals via opacity 0 → 1 over 120ms
+ *     (matching WorkRow.astro .work-arrow pattern — NO translate)
+ *   - .section top margin for vertical rhythm (160/96/72px per breakpoint)
+ *   - 1px --rule bottom border to separate from the footer
+ *
+ * Public API unchanged per D-22: still accepts { project } — Phase 10
+ * consumers do not need to update call sites.
+ *
+ * Per D-22: no full-bleed bg panel, no oversized vertical padding, no translate on the arrow
+ * Per D-16: only --ink, --ink-faint, --rule, --accent tokens
+ * Per D-03: no Tailwind utility classes in the new markup (exception for
+ *           the focus ring outline which uses the token-driven var colors)
+ */
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
@@ -8,37 +27,69 @@ interface Props {
 const { project } = Astro.props;
 ---
 
-<section data-animate="section" class="bg-bg-secondary">
-  <a
-    href={`/projects/${project.id}`}
-    class="group focus-visible:outline-accent block px-6 py-[var(--token-space-section)] focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-4 md:px-10 lg:px-16"
-  >
-    <div class="mx-auto max-w-[90rem]">
-      <p
-        class="text-text-muted mb-[var(--token-space-lg)] font-mono text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase"
-      >
-        Next Project
-      </p>
-      <div class="flex items-center gap-[var(--token-space-lg)]">
-        <span
-          class="font-display text-text-primary group-hover:text-accent text-[length:var(--token-text-heading)] transition-colors duration-200"
-        >
-          {project.data.title}
-        </span>
-        <svg
-          class="text-text-muted group-hover:text-accent h-6 w-6 transition-all duration-200 group-hover:translate-x-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.5"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
-        </svg>
-      </div>
+<a class="next-project section" href={`/projects/${project.id}`}>
+  <div class="container next-project-inner">
+    <span class="label-mono next-project-label">§ NEXT —</span>
+    <div class="next-project-body">
+      <h2 class="h2-project next-project-title">{project.data.title}</h2>
+      <span class="next-project-arrow" aria-hidden="true">→</span>
     </div>
-  </a>
-</section>
+  </div>
+</a>
+
+<style>
+  .next-project {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    padding-top: 48px;
+    padding-bottom: 48px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .next-project-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .next-project-label {
+    color: var(--ink-faint);
+  }
+
+  .next-project-body {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .next-project-title {
+    color: var(--ink);
+  }
+
+  .next-project-arrow {
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 120ms ease;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .next-project:hover .next-project-title,
+  .next-project:focus-visible .next-project-title {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+  }
+
+  .next-project:hover .next-project-arrow,
+  .next-project:focus-visible .next-project-arrow {
+    opacity: 1;
+  }
+
+  .next-project:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+</style>

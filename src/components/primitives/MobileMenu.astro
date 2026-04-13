@@ -1,0 +1,371 @@
+---
+/**
+ * MobileMenu — MASTER §5.8 (amended in plan 09-01)
+ *
+ * Full-screen dialog overlay triggered by the #menu-trigger button inside
+ * Header.astro. Visibility is controlled by a container query on Header's
+ * .header-inner (container-type: inline-size, threshold 380px — D-06). The
+ * overlay itself is always in the DOM; hidden via display:none by default,
+ * toggled to display:flex when open.
+ *
+ * Contents:
+ *   1. Close button (top-right ×)
+ *   2. Three stacked mono nav links (works / about / contact) — active link
+ *      gets accent underline matching Header.astro .nav-link.is-active
+ *   3. GITHUB · LINKEDIN · EMAIL mono link row at the bottom (imports from contact.ts, null entries skipped)
+ *
+ * A11y: role="dialog" + aria-modal="true" + focus trap with per-Tab re-query
+ * (matches src/scripts/chat.ts setupFocusTrap), Escape closes, backdrop
+ * closes, body{overflow:hidden} while open, focus returns to #menu-trigger
+ * on close. Nav-link click also closes the menu before navigation.
+ *
+ * Motion: NO staggered entrance animation (D-09 kills @keyframes menuLinkIn).
+ * Display toggle only.
+ *
+ * Per D-02: primitive lives in src/components/primitives/
+ * Per D-03: no Tailwind utilities inside primitive markup
+ * Per D-08: focus trap re-queries focusable on every Tab keypress
+ * Per D-09: no orchestrated entrance animation
+ * Per D-14: layout scoped here
+ * Per D-16: only --bg, --ink, --ink-muted, --accent color tokens
+ * Per D-27: no props — reads Astro.url.pathname internally
+ */
+
+import { CONTACT } from "../../data/contact";
+
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: "/projects", label: "works" },
+  { href: "/about", label: "about" },
+  { href: "/contact", label: "contact" },
+];
+
+/** Build social links from CONTACT source of truth — null entries skipped silently. */
+const socialLinks = [
+  CONTACT.github ? { href: CONTACT.github, label: "GITHUB", external: true } : null,
+  CONTACT.linkedin ? { href: CONTACT.linkedin, label: "LINKEDIN", external: true } : null,
+  CONTACT.x ? { href: CONTACT.x, label: "X", external: true } : null,
+  { href: `mailto:${CONTACT.email}`, label: "EMAIL", external: false },
+].filter((link): link is NonNullable<typeof link> => link !== null);
+
+function isActive(href: string): boolean {
+  if (href === "/projects") return currentPath.startsWith("/projects");
+  if (href === "/about") return currentPath.startsWith("/about");
+  if (href === "/contact") return currentPath.startsWith("/contact");
+  return false;
+}
+---
+
+<div
+  id="mobile-menu"
+  class="mobile-menu"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Navigation menu"
+  aria-hidden="true"
+>
+  <div class="mobile-menu-backdrop" data-menu-close aria-hidden="true"></div>
+
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-top">
+      <button
+        id="menu-close"
+        type="button"
+        class="mobile-menu-close"
+        aria-label="Close menu"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <nav class="mobile-menu-nav" aria-label="Mobile navigation">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={["mobile-menu-link", { "is-active": isActive(link.href) }]}
+            aria-current={isActive(link.href) ? "page" : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="mobile-menu-social" aria-label="Social links">
+      {
+        socialLinks.map((link, i) => (
+          <>
+            {i > 0 && <span class="mobile-menu-social-sep" aria-hidden="true">·</span>}
+            <a
+              href={link.href}
+              class="label-mono mobile-menu-social-link"
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
+            >
+              {link.label}
+            </a>
+          </>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+  }
+
+  .mobile-menu.is-open {
+    display: flex;
+  }
+
+  .mobile-menu-backdrop {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+  }
+
+  .mobile-menu-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+  }
+
+  .mobile-menu-top {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 48px;
+  }
+
+  .mobile-menu-close {
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-size: 2rem;
+    line-height: 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .mobile-menu-close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .mobile-menu-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 32px;
+    padding-left: 16px;
+  }
+
+  .mobile-menu-link {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 1.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    transition: color 200ms ease;
+  }
+
+  .mobile-menu-link:hover,
+  .mobile-menu-link:focus-visible {
+    color: var(--ink);
+  }
+
+  .mobile-menu-link.is-active {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 6px;
+  }
+
+  .mobile-menu-social {
+    display: inline-flex;
+    align-items: center;
+    padding-bottom: 16px;
+    font-family: var(--font-mono);
+  }
+
+  .mobile-menu-social-link {
+    color: var(--ink-muted);
+    transition: color 200ms ease;
+  }
+
+  .mobile-menu-social-link:hover,
+  .mobile-menu-social-link:focus-visible {
+    color: var(--accent);
+  }
+
+  .mobile-menu-social-sep {
+    color: var(--ink-muted);
+    margin: 0 6px;
+  }
+</style>
+
+<script>
+  // MobileMenu wiring — D-08 focus trap parity with src/scripts/chat.ts setupFocusTrap.
+  // Re-queries focusable elements on EVERY Tab keypress so dynamically-added
+  // descendants are included. No stagger animation (D-09).
+  //
+  // BLOCKER 2 fix — Init lifecycle mirrors src/scripts/chat.ts lines 733–742:
+  //   1. State reset ALWAYS runs (must precede the double-bind guard so View
+  //      Transitions re-init correctly resets overlay state on navigation).
+  //   2. Listener binding is guarded separately — bind once per element.
+  //   3. Both `DOMContentLoaded` AND `astro:page-load` trigger init — forward
+  //      compat with Phase 10 if it reintroduces `<ClientRouter />`. Without
+  //      the `astro:page-load` listener, View Transitions re-evaluates the
+  //      script but the guarded binding block early-returns, leaving the new
+  //      page without listeners.
+
+  function resetMobileMenuState(menu: HTMLElement) {
+    // Unconditional reset — safe to call on every init/navigation. Does NOT
+    // touch event listeners (those are bound separately by
+    // bindMobileMenuListeners and guarded by the menuInitialized flag).
+    const trigger = document.getElementById("menu-trigger");
+    menu.classList.remove("is-open");
+    menu.setAttribute("aria-hidden", "true");
+    if (trigger) {
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.setAttribute("aria-label", "Open menu");
+    }
+    document.body.style.overflow = "";
+  }
+
+  function bindMobileMenuListeners(menu: HTMLElement) {
+    const trigger = document.getElementById("menu-trigger");
+    const closeBtn = document.getElementById("menu-close");
+    if (!trigger || !closeBtn) return;
+
+    const backdropEls = menu.querySelectorAll<HTMLElement>("[data-menu-close]");
+
+    function openMenu() {
+      menu.classList.add("is-open");
+      menu.setAttribute("aria-hidden", "false");
+      trigger!.setAttribute("aria-expanded", "true");
+      trigger!.setAttribute("aria-label", "Close menu");
+      document.body.style.overflow = "hidden";
+      // WR-01: Make the rest of the page inert while the dialog is open so
+      // header/main/footer elements are removed from the tab order and the
+      // a11y tree. `inert` has 95%+ browser support in 2026 and is the
+      // canonical modal-dialog pattern per ARIA authoring practices.
+      document.querySelector("header")?.setAttribute("inert", "");
+      document.querySelector("main")?.setAttribute("inert", "");
+      document.querySelector("footer")?.setAttribute("inert", "");
+      // Focus the close button first so keyboard users land inside the dialog
+      closeBtn!.focus();
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    function closeMenu(returnFocus = true) {
+      menu.classList.remove("is-open");
+      menu.setAttribute("aria-hidden", "true");
+      trigger!.setAttribute("aria-expanded", "false");
+      trigger!.setAttribute("aria-label", "Open menu");
+      document.body.style.overflow = "";
+      // WR-01: Restore the rest of the page to the tab order / a11y tree.
+      document.querySelector("header")?.removeAttribute("inert");
+      document.querySelector("main")?.removeAttribute("inert");
+      document.querySelector("footer")?.removeAttribute("inert");
+      document.removeEventListener("keydown", handleKeyDown);
+      if (returnFocus) trigger!.focus();
+    }
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        closeMenu();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      // D-08: re-query focusable elements on EVERY Tab keypress — matches
+      // src/scripts/chat.ts setupFocusTrap so dynamically-rendered descendants
+      // (if any are added in later phases) are always included.
+      const focusable = menu.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+
+    // Trigger open/close
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger!.getAttribute("aria-expanded") === "true";
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    // Close button
+    closeBtn.addEventListener("click", () => closeMenu());
+
+    // Backdrop click closes
+    backdropEls.forEach((el) => {
+      el.addEventListener("click", () => closeMenu());
+    });
+
+    // Close on nav-link click (before navigation)
+    menu.querySelectorAll<HTMLAnchorElement>(".mobile-menu-link").forEach((link) => {
+      link.addEventListener("click", () => closeMenu(false));
+    });
+  }
+
+  function initMobileMenu() {
+    const menu = document.querySelector<HTMLElement>(".mobile-menu");
+    if (!menu) return;
+
+    // Always reset state on init/navigation. This MUST run BEFORE the
+    // guarded event-listener binding so View Transitions re-init correctly
+    // clears overlay state on every page navigation.
+    resetMobileMenuState(menu);
+
+    // Event listener binding is guarded — only bind once per element. This
+    // guard sits AFTER the reset so the reset always runs, per BLOCKER 2.
+    if (menu.dataset.menuInitialized === "true") return;
+    menu.dataset.menuInitialized = "true";
+
+    bindMobileMenuListeners(menu);
+  }
+
+  // Initial load.
+  if (document.readyState !== "loading") {
+    initMobileMenu();
+  } else {
+    document.addEventListener("DOMContentLoaded", initMobileMenu);
+  }
+
+  // Forward-compat: re-init on Astro View Transitions navigation. Phase 10
+  // may reintroduce <ClientRouter />; the listener is a no-op until then.
+  // Mirrors src/scripts/chat.ts lines 733–742.
+  document.addEventListener("astro:page-load", initMobileMenu);
+</script>

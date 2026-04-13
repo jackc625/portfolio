@@ -1,11 +1,10 @@
 ---
 import { Font } from "astro:assets";
 import { SEO } from "astro-seo";
-import { ClientRouter } from "astro:transitions";
 import SkipToContent from "../components/SkipToContent.astro";
-import Header from "../components/Header.astro";
-import MobileMenu from "../components/MobileMenu.astro";
-import Footer from "../components/Footer.astro";
+import Header from "../components/primitives/Header.astro";
+import MobileMenu from "../components/primitives/MobileMenu.astro";
+import Footer from "../components/primitives/Footer.astro";
 import ChatWidget from "../components/chat/ChatWidget.astro";
 import "../styles/global.css";
 
@@ -15,6 +14,7 @@ interface Props {
   ogImage?: string;
   ogType?: string;
   canonicalUrl?: string;
+  noindex?: boolean;
 }
 
 const {
@@ -23,12 +23,21 @@ const {
   ogImage = "/og-default.png",
   ogType = "website",
   canonicalUrl,
+  noindex = false,
 } = Astro.props;
 
 const siteUrl =
   Astro.site?.toString().replace(/\/$/, "") ?? "https://jackcutrara.com";
 const currentUrl = canonicalUrl ?? `${siteUrl}${Astro.url.pathname}`;
 const ogTitle = title || "Jack Cutrara | Software Engineer";
+
+// WR-03: Pass-through absolute URLs (e.g., CDN OG images) unchanged. Only
+// prepend siteUrl for root-relative paths like "/og-default.png". Without
+// this guard, `${siteUrl}${ogImage}` would corrupt absolute URLs into
+// `https://jackcutrara.comhttps://cdn.example.com/hero.png`.
+const resolveOg = (img: string) =>
+  /^https?:\/\//i.test(img) ? img : `${siteUrl}${img}`;
+const resolvedOgImage = resolveOg(ogImage);
 ---
 
 <html lang="en">
@@ -37,28 +46,6 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
-    <script is:inline>
-      (function () {
-        const stored = localStorage.getItem("theme");
-        if (
-          stored === "light" ||
-          (!stored &&
-            window.matchMedia("(prefers-color-scheme: light)").matches)
-        ) {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
-      })();
-      document.addEventListener("astro:after-swap", function () {
-        const stored = localStorage.getItem("theme");
-        if (
-          stored === "light" ||
-          (!stored &&
-            window.matchMedia("(prefers-color-scheme: light)").matches)
-        ) {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
-      });
-    </script>
     <SEO
       title={title}
       titleTemplate="%s | Jack Cutrara"
@@ -69,7 +56,7 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
         basic: {
           title: ogTitle,
           type: ogType,
-          image: `${siteUrl}${ogImage}`,
+          image: resolvedOgImage,
           url: currentUrl,
         },
         optional: {
@@ -87,47 +74,26 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
         card: "summary_large_image",
         title: ogTitle,
         description,
-        image: `${siteUrl}${ogImage}`,
+        image: resolvedOgImage,
         imageAlt: `${ogTitle} - Jack Cutrara Portfolio`,
       }}
     />
-    <Font cssVariable="--font-heading" />
-    <Font cssVariable="--font-sans" />
-    <Font cssVariable="--font-code" />
-    <ClientRouter />
+    <Font cssVariable="--font-display-src" />
+    <Font cssVariable="--font-body-src" />
+    <Font cssVariable="--font-mono-src" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <slot name="head" />
   </head>
   <body
-    class="bg-bg-primary text-text-primary font-body flex min-h-screen flex-col antialiased"
+    class="bg-bg text-ink font-body flex min-h-screen flex-col antialiased"
   >
     <SkipToContent />
     <Header />
     <MobileMenu />
-    <main id="main-content" class="flex-1 pt-14">
+    <main id="main-content" class="flex-1">
       <slot />
     </main>
     <Footer />
-    <ChatWidget transition:persist />
-    <script>
-      document.addEventListener("astro:page-load", async () => {
-        const { initAnimations } = await import("../scripts/animations.ts");
-        await initAnimations();
-      });
-
-      document.addEventListener("astro:before-preparation", async () => {
-        const { cleanupAnimations } = await import("../scripts/animations.ts");
-        cleanupAnimations();
-      });
-
-      // Fallback: reveal content if GSAP fails to load after 3 seconds
-      setTimeout(() => {
-        document.querySelectorAll("[data-animate]").forEach((el) => {
-          const computed = getComputedStyle(el);
-          if (computed.opacity === "0") {
-            (el as HTMLElement).style.opacity = "1";
-            (el as HTMLElement).style.transform = "none";
-          }
-        });
-      }, 3000);
-    </script>
+    <ChatWidget />
   </body>
 </html>

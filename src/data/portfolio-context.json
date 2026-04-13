@@ -62,5 +62,5 @@
     "linkedin": "https://linkedin.com/in/jackcutrara",
     "website": "https://jackcutrara.com"
   },
-  "siteStack": ["Astro 6", "Tailwind CSS v4", "TypeScript", "GSAP", "Cloudflare Workers", "MDX"]
+  "siteStack": ["Astro 6", "Tailwind CSS v4", "TypeScript", "Cloudflare Workers", "MDX"]
 }

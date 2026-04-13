@@ -1,21 +1,28 @@
 ---
+import { getCollection, render, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import ArticleImage from "../../components/ArticleImage.astro";
+import Container from "../../components/primitives/Container.astro";
 import NextProject from "../../components/NextProject.astro";
-import JsonLd from "../../components/JsonLd.astro";
-import { getCollection, render } from "astro:content";
-import { Image } from "astro:assets";
+import ArticleImage from "../../components/ArticleImage.astro";
 
 export async function getStaticPaths() {
-  const projects = await getCollection("projects");
-  const sorted = projects.sort((a, b) => a.data.order - b.data.order);
-  return sorted.map((project, index) => {
-    const nextProject = sorted[(index + 1) % sorted.length];
-    return {
-      params: { id: project.id },
-      props: { project, nextProject },
-    };
-  });
+  // IDENTICAL sort as index.astro and projects.astro -- deterministic order
+  const allProjects = (await getCollection("projects")).sort(
+    (a, b) => a.data.order - b.data.order
+  );
+  return allProjects.map((project, idx) => ({
+    params: { id: project.id },
+    props: {
+      project,
+      // D-10: Next project by order ascending with wrap-around
+      nextProject: allProjects[(idx + 1) % allProjects.length],
+    },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<"projects">;
+  nextProject: CollectionEntry<"projects">;
 }
 
 const { project, nextProject } = Astro.props;
@@ -23,192 +30,145 @@ const { Content } = await render(project);
 ---
 
 <BaseLayout title={project.data.title} description={project.data.description}>
-  <JsonLd
-    schema={{
-      "@context": "https://schema.org",
-      "@type": "CreativeWork",
-      name: project.data.title,
-      description: project.data.tagline,
-      url: `https://jackcutrara.com/projects/${project.id}`,
-      author: {
-        "@type": "Person",
-        name: "Jack Cutrara",
-      },
-      keywords: project.data.techStack.join(", "),
-      ...(project.data.githubUrl
-        ? {
-            codeRepository: project.data.githubUrl,
-          }
-        : {}),
-      ...(project.data.demoUrl
-        ? {
-            url: project.data.demoUrl,
-          }
-        : {}),
-    }}
-  />
-  <!-- Hero Section -->
-  <section
-    class="px-6 pt-[var(--token-space-section)] pb-[var(--token-space-2xl)] md:px-10 lg:px-16"
-  >
-    <div class="mx-auto max-w-[90rem]">
-      <!-- Back link -->
-      <a
-        href="/projects"
-        class="group text-text-muted hover:text-accent mb-[var(--token-space-2xl)] inline-flex items-center gap-[var(--token-space-sm)] font-mono text-[length:var(--token-text-sm)] transition-colors duration-200"
-      >
-        <svg
-          class="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.5"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
-        </svg>
-        Back to Projects
-      </a>
-
-      <!-- Title -->
-      <h1
-        data-animate="split-text"
-        class="font-display text-[length:var(--token-text-display)] leading-[0.95] tracking-[-0.03em]"
-      >
-        {project.data.title}
-      </h1>
-
-      <!-- Tagline -->
-      <p
-        class="font-body text-text-secondary mt-[var(--token-space-md)] text-[length:var(--token-text-heading)]"
-      >
-        {project.data.tagline}
-      </p>
-
-      <!-- Tech tags -->
-      <p
-        class="text-text-muted mt-[var(--token-space-lg)] font-mono text-[length:var(--token-text-sm)]"
-      >
-        {project.data.techStack.join(", ")}
-      </p>
-
-      <!-- Links row (conditional) -->
-      {
-        (project.data.githubUrl || project.data.demoUrl) && (
-          <div class="mt-[var(--token-space-lg)] flex items-center gap-[var(--token-space-xl)]">
+  <article>
+    <section class="section project-header">
+      <Container>
+        <!-- D-05: Mono metadata header = YEAR . TECHSTACK -->
+        <div class="label-mono project-meta">
+          {project.data.year} &middot; {project.data.techStack.join(" \u00B7 ").toUpperCase()}
+        </div>
+        <!-- D-06: Title uses .h1-section -->
+        <h1 class="h1-section project-title">{project.data.title}</h1>
+        <!-- D-08: Tagline as .lead -->
+        <p class="lead project-tagline">{project.data.tagline}</p>
+        <!-- D-11: External links row (mono, missing entries skipped, NO empty wrapper) -->
+        {(project.data.githubUrl || project.data.demoUrl) && (
+          <div class="project-links">
             {project.data.githubUrl && (
-              <a
-                href={project.data.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="font-body text-accent hover:text-accent-hover border-accent/30 hover:border-accent border-b text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase transition-colors duration-200"
-              >
-                View Source
+              <a class="project-link label-mono" href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">
+                GITHUB &rarr;
               </a>
             )}
+            {project.data.githubUrl && project.data.demoUrl && (
+              <span class="project-link-sep" aria-hidden="true">&middot;</span>
+            )}
             {project.data.demoUrl && (
-              <a
-                href={project.data.demoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="font-body text-accent hover:text-accent-hover border-accent/30 hover:border-accent border-b text-[length:var(--token-text-sm)] tracking-[0.08em] uppercase transition-colors duration-200"
-              >
-                Live Demo
+              <a class="project-link label-mono" href={project.data.demoUrl} target="_blank" rel="noopener noreferrer">
+                LIVE DEMO &rarr;
               </a>
             )}
           </div>
-        )
-      }
-    </div>
-  </section>
+        )}
+      </Container>
+    </section>
 
-  <!-- Hero image (conditional) -->
-  {
-    project.data.thumbnail && (
-      <div class="px-6 pb-[var(--token-space-2xl)] md:px-10 lg:px-16">
-        <div class="mx-auto max-w-[90rem]">
-          <Image
-            src={project.data.thumbnail}
-            alt={project.data.title}
-            class="aspect-video w-full rounded object-cover"
-          />
+    <section class="section project-body-section">
+      <Container>
+        <!-- D-07: MDX body inside .prose-editorial wrapper with scoped overrides -->
+        <!-- Uses .prose-editorial instead of bare .body to prevent global style bleed -->
+        <div class="prose-editorial">
+          <Content components={{ img: ArticleImage }} />
         </div>
-      </div>
-    )
-  }
+      </Container>
+    </section>
 
-  <!-- MDX body content -->
-  <article
-    data-animate="section"
-    class="px-6 pb-[var(--token-space-section)] md:px-10 lg:px-16"
-  >
-    <div class="mx-auto max-w-[90rem]">
-      <div class="case-study-prose max-w-3xl">
-        <Content components={{ img: ArticleImage }} />
-      </div>
-    </div>
+    <section class="section">
+      <Container>
+        <NextProject project={nextProject} />
+      </Container>
+    </section>
   </article>
-
-  <!-- Next project navigation -->
-  <NextProject project={nextProject} />
 </BaseLayout>
 
 <style>
-  .case-study-prose :global(h2) {
-    font-family: var(--font-mono);
-    font-size: var(--token-text-sm);
-    color: var(--token-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-top: var(--token-space-section);
-    margin-bottom: var(--token-space-lg);
+  /* Project header */
+  .project-meta {
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+  }
+  .project-title {
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .project-tagline {
+    color: var(--ink);
+    max-width: 60ch;
+  }
+
+  /* D-11: External links row */
+  .project-links {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .project-link {
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+  .project-link:hover {
+    color: var(--accent);
+  }
+  .project-link-sep {
+    color: var(--ink-faint);
+  }
+
+  /* D-07 + D-09: MDX body overrides using .prose-editorial wrapper
+     CRITICAL: Use :global() for MDX-rendered elements that don't get Astro scope attributes.
+     The .prose-editorial wrapper IS scoped by Astro, so :global() only matches INSIDE it. */
+  .prose-editorial {
+    max-width: 68ch;
     font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--ink);
   }
-
-  .case-study-prose :global(h2:first-child) {
-    margin-top: 0;
+  .prose-editorial :global(h2) {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-top: 48px;
+    margin-bottom: 16px;
   }
-
-  .case-study-prose :global(p) {
-    font-family: var(--font-body);
-    font-size: var(--token-text-base);
-    color: var(--token-text-secondary);
-    line-height: 1.7;
-    margin-bottom: var(--token-space-lg);
+  .prose-editorial :global(h2)::before {
+    content: "\00A7\00A0";  /* section sign + nbsp */
   }
-
-  .case-study-prose :global(strong) {
-    color: var(--token-text-primary);
+  .prose-editorial :global(p) {
+    margin-bottom: 16px;
   }
-
-  .case-study-prose :global(a) {
-    color: var(--token-accent);
+  .prose-editorial :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .prose-editorial :global(ul),
+  .prose-editorial :global(ol) {
+    padding-left: 24px;
+    margin-bottom: 16px;
+  }
+  .prose-editorial :global(li) {
+    margin-bottom: 8px;
+  }
+  .prose-editorial :global(a) {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .prose-editorial :global(a:hover) {
     text-decoration: underline;
-    text-underline-offset: 2px;
   }
-
-  .case-study-prose :global(a:hover) {
-    color: var(--token-accent-hover);
+  .prose-editorial :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
   }
-
-  .case-study-prose :global(ul),
-  .case-study-prose :global(ol) {
-    color: var(--token-text-secondary);
-    margin-left: var(--token-space-lg);
-    margin-bottom: var(--token-space-lg);
-  }
-
-  .case-study-prose :global(li) {
-    margin-bottom: var(--token-space-sm);
-  }
-
-  .case-study-prose :global(blockquote) {
-    border-left: 2px solid oklch(0.7 0.1 250 / 0.3);
-    padding-left: var(--token-space-lg);
-    font-style: italic;
-    color: var(--token-text-muted);
+  /* D-13: Code blocks match editorial minimal box */
+  .prose-editorial :global(pre) {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    margin-bottom: 16px;
   }
 </style>

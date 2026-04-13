@@ -49,6 +49,66 @@ export function renderMarkdown(raw: string): string {
 }
 
 // ============================================
+// Chat Persistence (D-22)
+// ============================================
+
+interface StoredMessage {
+  role: "user" | "bot";
+  content: string;
+  timestamp: string;
+}
+
+interface ChatStorage {
+  version: 1;
+  messages: StoredMessage[];
+  lastActive: string; // ISO 8601
+}
+
+const STORAGE_KEY = "chat-history";
+const STORAGE_VERSION = 1;
+const MAX_MESSAGES = 50;
+const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function saveChatHistory(msgs: StoredMessage[]): void {
+  const data: ChatStorage = {
+    version: STORAGE_VERSION,
+    messages: msgs.slice(-MAX_MESSAGES),
+    lastActive: new Date().toISOString(),
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // Silently fail -- localStorage may be full, disabled, or in private browsing
+  }
+}
+
+function loadChatHistory(): StoredMessage[] | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw) as ChatStorage;
+    // Version check -- clear if schema has changed
+    if (!data.version || data.version !== STORAGE_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    // TTL check -- clear if older than 24 hours
+    const elapsed = Date.now() - new Date(data.lastActive).getTime();
+    if (elapsed > TTL_MS || isNaN(elapsed)) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return data.messages;
+  } catch {
+    // Corrupted JSON or other error -- clear and start fresh
+    try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+    return null;
+  }
+}
+
+let chatLog: StoredMessage[] = [];
+
+// ============================================
 // State Management (D-26)
 // ============================================
 
@@ -105,7 +165,11 @@ async function streamChat(
       return;
     }
 
-    const reader = response.body!.getReader();
+    if (!response.body) {
+      onError("api_error");
+      return;
+    }
+    const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
 
@@ -186,11 +250,11 @@ function createUserMessageEl(content: string): HTMLElement {
   const bubble = document.createElement("div");
   bubble.style.cssText = `
     max-width: 85%;
-    background: var(--token-bg-secondary);
-    border-radius: 12px 12px 4px 12px;
+    background: var(--rule);
+    border-radius: 0;
     padding: 8px 16px;
-    color: var(--token-text-primary);
-    font-size: var(--token-text-base);
+    color: var(--ink);
+    font-size: 1rem;
     word-break: break-word;
   `;
   bubble.textContent = content;
@@ -208,10 +272,10 @@ function createBotMessageEl(content: string): HTMLElement {
   bubble.className = "chat-bot-message";
   bubble.style.cssText = `
     max-width: 90%;
-    border-left: 2px solid var(--token-border);
+    border-left: 2px solid var(--rule);
     padding: 8px 0 8px 12px;
-    color: var(--token-text-secondary);
-    font-size: var(--token-text-base);
+    color: var(--ink-muted);
+    font-size: 1rem;
     word-break: break-word;
   `;
   // Sanitized HTML — safe to use innerHTML after marked + DOMPurify pipeline
@@ -235,7 +299,7 @@ function createBotMessageEl(content: string): HTMLElement {
     cursor: pointer;
     border-radius: 4px;
   `;
-  copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--token-text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
   copyBtn.addEventListener("click", () => {
     copyToClipboard(content, copyBtn);
   });
@@ -252,10 +316,10 @@ function createErrorMessageEl(text: string): HTMLElement {
   const bubble = document.createElement("div");
   bubble.style.cssText = `
     max-width: 90%;
-    border-left: 2px solid var(--token-border);
+    border-left: 2px solid var(--rule);
     padding: 8px 0 8px 12px;
-    color: var(--token-text-muted);
-    font-size: var(--token-text-base);
+    color: var(--ink-faint);
+    font-size: 1rem;
     font-style: italic;
   `;
   bubble.textContent = text;
@@ -270,8 +334,8 @@ function createNudgeMessageEl(): HTMLElement {
 
   const text = document.createElement("span");
   text.style.cssText = `
-    font-size: var(--token-text-sm);
-    color: var(--token-text-muted);
+    font-size: 0.875rem;
+    color: var(--ink-faint);
     font-style: italic;
     padding: 8px 16px;
   `;
@@ -350,115 +414,33 @@ function setupFocusTrap(panel: HTMLElement, onEscape: () => void): () => void {
 }
 
 // ============================================
-// GSAP Animation Helpers
+// Animation Helpers (Phase 8: GSAP removed — no-op stubs)
+// Chat motion restoration deferred to Phase 10 CHAT-02 per D-27.
 // ============================================
 
-const prefersReducedMotion = (): boolean =>
-  typeof window !== "undefined" &&
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-let pulseAnimation: gsap.core.Tween | null = null;
-
 async function animatePanelOpen(panel: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) {
-    panel.style.display = "flex";
-    return;
-  }
   panel.style.display = "flex";
-  try {
-    const { gsap } = await import("gsap");
-    gsap.fromTo(
-      panel,
-      { scale: 0.9, opacity: 0, transformOrigin: "bottom right" },
-      { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }
-    );
-  } catch {
-    // GSAP load fail — panel is already visible via display:flex
-  }
 }
 
 async function animatePanelClose(panel: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) {
-    panel.style.display = "none";
-    return;
-  }
-  try {
-    const { gsap } = await import("gsap");
-    gsap.to(panel, {
-      scale: 0.9,
-      opacity: 0,
-      duration: 0.2,
-      ease: "power2.in",
-      onComplete: () => {
-        panel.style.display = "none";
-        gsap.set(panel, { clearProps: "scale,opacity" });
-      },
-    });
-  } catch {
-    panel.style.display = "none";
-  }
+  panel.style.display = "none";
 }
 
-async function animateMessageAppear(el: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) return;
-  try {
-    const { gsap } = await import("gsap");
-    gsap.fromTo(
-      el,
-      { opacity: 0, y: 8 },
-      { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }
-    );
-  } catch {
-    // No animation fallback
-  }
+async function animateMessageAppear(_el: HTMLElement): Promise<void> {
+  // No-op: no entrance animation (chat motion restoration deferred to Phase 10 CHAT-02 per D-27)
 }
 
-async function startPulse(bubble: HTMLElement): Promise<void> {
-  if (prefersReducedMotion()) return;
-  try {
-    const { gsap } = await import("gsap");
-    pulseAnimation = gsap.to(bubble, {
-      boxShadow: "0 0 0 8px color-mix(in oklch, var(--token-accent) 40%, transparent)",
-      duration: 1,
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-    });
-  } catch {
-    // No pulse fallback
-  }
+async function startPulse(_bubble: HTMLElement): Promise<void> {
+  // No-op: no pulse (chat motion restoration deferred to Phase 10 CHAT-02 per D-27)
 }
 
 function stopPulse(): void {
-  if (pulseAnimation) {
-    pulseAnimation.kill();
-    pulseAnimation = null;
-  }
+  // No-op: there is no pulse to stop
 }
 
-async function startTypingDots(container: HTMLElement): Promise<void> {
-  const dots = container.querySelectorAll<HTMLElement>(".typing-dot");
-  if (prefersReducedMotion()) {
-    // Reduced motion: use opacity fade instead of bounce
-    dots.forEach((dot) => {
-      dot.style.animation = "none";
-      dot.style.opacity = "0.5";
-    });
-    return;
-  }
-  try {
-    const { gsap } = await import("gsap");
-    gsap.to(dots, {
-      y: -4,
-      duration: 0.3,
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-      stagger: 0.15,
-    });
-  } catch {
-    // No animation fallback
-  }
+async function startTypingDots(_container: HTMLElement): Promise<void> {
+  // CSS @keyframes typing-bounce in global.css handles animation automatically
+  // when #chat-typing display changes to flex via showTyping()
 }
 
 // ============================================
@@ -536,6 +518,66 @@ function initChat(): void {
       $panel.classList.add("chat-panel-mobile");
     }
 
+    // On first open, attempt to restore history (D-22)
+    // Duplication guard: chatLog.length === 0 ensures replay only happens once.
+    // If panel is opened, closed, and re-opened, chatLog is already populated
+    // from the first open, so replay is skipped.
+    if (chatLog.length === 0) {
+      const stored = loadChatHistory();
+      if (stored && stored.length > 0) {
+        chatLog = stored;
+        // Also populate the API messages array so continued conversation has context
+        for (const msg of stored) {
+          messages.push({ role: msg.role === "user" ? "user" : "assistant", content: msg.content });
+        }
+        // Batch DOM injection via DocumentFragment to avoid multiple repaints
+        const fragment = document.createDocumentFragment();
+        for (const msg of stored) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "chat-message-wrapper";
+          if (msg.role === "user") {
+            wrapper.style.cssText = "display: flex; justify-content: flex-end; margin-bottom: 8px;";
+            const el = document.createElement("div");
+            el.style.cssText = "max-width: 85%; background: var(--rule); border-radius: 0; padding: 8px 16px; color: var(--ink); font-size: 1rem; word-break: break-word;";
+            el.textContent = msg.content; // textContent -- XSS safe
+            wrapper.appendChild(el);
+          } else {
+            wrapper.style.cssText = "display: flex; justify-content: flex-start; margin-bottom: 8px; position: relative;";
+            // Bot messages MUST go through renderMarkdown -> DOMPurify
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bot-message";
+            bubble.style.cssText = "max-width: 90%; border-left: 2px solid var(--rule); padding: 8px 0 8px 12px; color: var(--ink-muted); font-size: 1rem; word-break: break-word;";
+            bubble.innerHTML = renderMarkdown(msg.content);
+            wrapper.appendChild(bubble);
+            // Add copy button (same pattern as live messages)
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "chat-copy-btn label-mono";
+            copyBtn.textContent = "COPY";
+            copyBtn.setAttribute("aria-label", "Copy message");
+            copyBtn.type = "button";
+            copyBtn.style.cssText = "position: absolute; top: -4px; right: 0; background: none; border: none; cursor: pointer;";
+            const capturedContent = msg.content;
+            copyBtn.addEventListener("click", () => {
+              copyToClipboard(capturedContent, copyBtn);
+              copyBtn.textContent = "COPIED";
+              copyBtn.style.color = "var(--accent)";
+              setTimeout(() => {
+                copyBtn.textContent = "COPY";
+                copyBtn.style.color = "var(--ink-faint)";
+              }, 1000);
+            });
+            wrapper.appendChild(copyBtn);
+          }
+          fragment.appendChild(wrapper);
+        }
+        $messagesArea.insertBefore(fragment, $typingIndicator); // Insert before typing indicator so new messages appear after history
+        // Hide starters since we have history
+        $starters.style.display = "none";
+        // Scroll to bottom
+        $messagesArea.scrollTop = $messagesArea.scrollHeight;
+      }
+    }
+
     // Set up focus trap — Escape handled inside, Tab cycles with dynamic re-query
     cleanupFocusTrap = setupFocusTrap($panel, closePanel);
 
@@ -588,13 +630,15 @@ function initChat(): void {
     $charCount.textContent = `${len}/500`;
 
     if (len >= 500) {
-      $charCount.style.color = "var(--token-destructive)";
-      $charCount.style.fontWeight = "600";
+      // At max -- stronger visual signal
+      $charCount.style.color = "var(--accent)";
+      $charCount.style.fontWeight = "700";
     } else if (len > 450) {
-      $charCount.style.color = "var(--token-warning)";
+      // Approaching limit
+      $charCount.style.color = "var(--accent)";
       $charCount.style.fontWeight = "600";
     } else {
-      $charCount.style.color = "var(--token-text-muted)";
+      $charCount.style.color = "var(--ink-faint)";
       $charCount.style.fontWeight = "400";
     }
   }
@@ -708,6 +752,10 @@ function initChat(): void {
     $messagesArea.insertBefore(userEl, $typingIndicator);
     animateMessageAppear(userEl);
 
+    // Persist user message (D-22)
+    chatLog.push({ role: "user", content, timestamp: new Date().toISOString() });
+    saveChatHistory(chatLog);
+
     // Clear input
     $input.value = "";
     autoGrowTextarea($input);
@@ -764,6 +812,11 @@ function initChat(): void {
         // Store final bot message
         if (botContent) {
           messages.push({ role: "assistant", content: botContent });
+
+          // Persist bot message ONLY at stream completion (D-22)
+          // Interrupted SSE streams (AbortController timeout, network error) do NOT reach here
+          chatLog.push({ role: "bot", content: botContent, timestamp: new Date().toISOString() });
+          saveChatHistory(chatLog);
         }
 
         // Update copy button to use final content
@@ -812,20 +865,6 @@ function initChat(): void {
 // Idempotency guard in initChat() prevents duplicate handlers
 // when transition:persist preserves the DOM across navigations.
 document.addEventListener("astro:page-load", initChat);
-
-// Transition:persist state handling — on astro:before-preparation:
-// - The AbortController (from Plan 03) survives since it's in JS memory
-// - The streaming fetch is a Promise held in closure scope — it continues
-// - The typing indicator and message area are preserved DOM nodes
-// - Focus trap keydown listener MUST be cleaned up to prevent stale handlers
-// Addresses review concern: Codex HIGH — transition:persist re-initialization.
-document.addEventListener("astro:before-preparation", () => {
-  // Clean up focus trap listener (will be re-attached if panel still open)
-  if (cleanupFocusTrap) {
-    cleanupFocusTrap();
-    cleanupFocusTrap = null;
-  }
-});
 
 // Also initialize on DOMContentLoaded as fallback
 if (document.readyState !== "loading") {

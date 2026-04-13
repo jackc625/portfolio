@@ -1,0 +1,173 @@
+---
+/**
+ * Header — MASTER §5.1 (+ D-06 container-query hamburger + D-27 internal pathname)
+ *
+ * Sticky 72px-tall editorial header: JACK CUTRARA mono wordmark on the left,
+ * 3-link mono nav (works/about/contact) on the right. Active link gets the
+ * accent-red underline from mockup.html §137–143.
+ *
+ * Below a 380px container width (not viewport width) the inline nav is hidden
+ * and a hamburger trigger is shown. This uses @container queries, not @media,
+ * so the behavior reacts to the header's actual rendered width.
+ *
+ * Per D-02: primitive lives in src/components/primitives/
+ * Per D-03: no Tailwind utilities inside primitive markup
+ * Per D-04 + D-27: no props — reads Astro.url.pathname internally
+ * Per D-06: container-query threshold is 380px on .header-inner
+ * Per D-14: layout classes scoped here
+ * Per D-16: only --bg, --ink, --ink-muted, --rule, --accent color tokens
+ */
+
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: "/projects", label: "works" },
+  { href: "/about", label: "about" },
+  { href: "/contact", label: "contact" },
+];
+
+function isActive(href: string): boolean {
+  // /projects covers the "works" nav label and any /projects/[id] sub-route
+  if (href === "/projects") return currentPath.startsWith("/projects");
+  if (href === "/about") return currentPath.startsWith("/about");
+  if (href === "/contact") return currentPath.startsWith("/contact");
+  return false;
+}
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="wordmark" aria-label="Jack Cutrara — Home">JACK CUTRARA</a>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={["nav-link", { "is-active": isActive(link.href) }]}
+            aria-current={isActive(link.href) ? "page" : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      id="menu-trigger"
+      type="button"
+      class="menu-trigger"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <span class="menu-trigger-bars" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: 72px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    /* D-06: container-query context for the hamburger trigger */
+    container-type: inline-size;
+  }
+
+  .wordmark {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink);
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 32px;
+  }
+
+  .nav-link {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    transition: color 200ms ease;
+  }
+
+  .nav-link:hover {
+    color: var(--ink);
+  }
+
+  .nav-link.is-active {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 6px;
+  }
+
+  /* D-06: hamburger trigger — hidden by default, shown at container width ≤380px */
+  .menu-trigger {
+    display: none;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--ink);
+  }
+
+  .menu-trigger-bars {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 20px;
+    height: 14px;
+  }
+
+  .menu-trigger-bars span {
+    display: block;
+    height: 1.5px;
+    width: 100%;
+    background: currentColor;
+  }
+
+  /* WR-5: Keyboard focus affordance for the most-tabbed region on every page.
+   * Matches the 2px accent outline pattern already used by NextProject.astro
+   * and MobileMenu.astro so focus rings stay visually consistent site-wide. */
+  .wordmark:focus-visible,
+  .nav-link:focus-visible,
+  .menu-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  /* D-06: container query swaps inline nav ↔ hamburger at 380px */
+  @container (max-width: 380px) {
+    .site-nav {
+      display: none;
+    }
+    .menu-trigger {
+      display: block;
+    }
+  }
+</style>

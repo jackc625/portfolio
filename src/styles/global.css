@@ -1,205 +1,110 @@
 /* ============================================
- * LAYER 1: Design Tokens (dark-first, theme-switchable)
- * Architecture: RESEARCH.md Pattern 2
- *   - :root = dark theme (default, no attribute needed)
- *   - [data-theme="light"] = light overrides (Phase 5)
- *   - @theme bridge = Tailwind utilities auto-switch
+ * LAYER 1: Design Tokens (Phase 8 editorial rebrand)
+ * Source of truth: design-system/MASTER.md + mockup.html lines 14-25
+ * Six hex values — no oklch, no dark theme, no semantic tokens
  * ============================================ */
 
 :root {
-  /* === COLOR TOKENS (dark default) === */
-  /* Cloned from shiyunlu.com design language: near-black bg, muted accents */
+  /* === COLOR TOKENS === */
+  --bg: #FAFAF7;
+  --ink: #0A0A0A;
+  --ink-muted: #52525B;
+  --ink-faint: #A1A1AA;
+  --rule: #E4E4E7;
+  --accent: #E63946;
 
-  /* Core Palette (60-30-10 rule) */
-  --token-bg-primary: oklch(0.1 0.005 270);
-  --token-bg-secondary: oklch(0.15 0.005 270);
-  --token-accent: oklch(0.7 0.1 250);
-  --token-accent-hover: oklch(0.78 0.12 250);
-
-  /* Text Colors */
-  --token-text-primary: oklch(0.95 0.005 270);
-  --token-text-secondary: oklch(0.7 0.01 270);
-  --token-text-muted: oklch(0.55 0.01 270);
-
-  /* Border & Divider */
-  --token-border: oklch(0.22 0.005 270);
-  --token-border-hover: oklch(0.32 0.005 270);
-
-  /* Semantic Colors */
-  --token-destructive: oklch(0.63 0.2 25);
-  --token-success: oklch(0.72 0.15 155);
-  --token-warning: oklch(0.78 0.15 85);
-
-  /* === TYPOGRAPHY TOKENS === */
-  /* Fluid type scale — generous sizing matching shiyunlu.com's editorial scale */
-  --token-text-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --token-text-base: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
-  --token-text-heading: clamp(1.25rem, 1rem + 1.25vw, 2rem);
-  --token-text-display: clamp(2.5rem, 1.5rem + 4.5vw, 5.5rem);
-
-  /* === SPACING TOKENS === */
-  /* Generous whitespace matching shiyunlu.com's spatial rhythm */
-  --token-space-xs: 0.25rem;
-  --token-space-sm: 0.5rem;
-  --token-space-md: 1rem;
-  --token-space-lg: 1.5rem;
-  --token-space-xl: 2rem;
-  --token-space-2xl: 3rem;
-  --token-space-3xl: 4rem;
-  --token-space-section: clamp(5rem, 3.5rem + 6vw, 10rem);
-}
-
-/* Phase 5: Light theme override (DSGN-02/DSGN-03)
- * Warm off-white / cream palette with deeper blue accent.
- * Typography and spacing tokens are theme-independent -- no overrides needed.
- * The @theme bridge (Layer 2) references var(--token-*), so Tailwind
- * utility classes automatically respect whichever theme is active.
- */
-[data-theme="light"] {
-  --token-bg-primary: oklch(0.975 0.008 85);
-  --token-bg-secondary: oklch(0.94 0.01 85);
-  --token-text-primary: oklch(0.13 0.01 270);
-  --token-text-secondary: oklch(0.38 0.015 270);
-  --token-text-muted: oklch(0.47 0.01 270);
-  --token-accent: oklch(0.48 0.18 250);
-  --token-accent-hover: oklch(0.4 0.2 250);
-  --token-border: oklch(0.88 0.006 85);
-  --token-border-hover: oklch(0.78 0.008 85);
-  --token-destructive: oklch(0.55 0.22 25);
-  --token-success: oklch(0.5 0.15 155);
-  --token-warning: oklch(0.55 0.15 85);
-}
-
-/* Theme transition: smooth color crossfade on toggle (D-04)
- * Only active during toggle via .theme-transitioning class to avoid
- * always-on transitions that cause layout thrash (RESEARCH Pitfall 4).
- */
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-  transition:
-    background-color 300ms ease,
-    color 300ms ease,
-    border-color 300ms ease,
-    box-shadow 300ms ease !important;
-}
-
-/* Disable theme transitions for reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  html.theme-transitioning *,
-  html.theme-transitioning *::before,
-  html.theme-transitioning *::after {
-    transition-duration: 0ms !important;
-  }
+  /* === LAYOUT TOKENS === */
+  --container-max: 1200px;
+  --pad-desktop: 48px;
+  --pad-tablet: 32px;
+  --pad-mobile: 24px;
 }
 
 /* ============================================
  * LAYER 2: Tailwind @theme Bridge
  * Maps CSS custom properties to Tailwind utility classes.
- * All color values use var(--token-*) references so theme
+ * All color values reference the editorial :root tokens so palette
  * changes propagate automatically (RESEARCH.md Pitfall 4).
  * ============================================ */
 
 @import "tailwindcss";
 
+/* Scope Tailwind class detection to source files only.
+ * Tailwind v4 auto-detects template files in the repo. The .planning/ directory
+ * contains v1.0 plan artifacts with literal class examples like px-[var(--token-*)]
+ * that generate lightning-css parse warnings. The @source not directives exclude
+ * .planning/ and design-system/ from Tailwind's detection surface. */
+@source "../**/*.{astro,html,js,jsx,ts,tsx,md,mdx}";
+@source not "../../.planning/**";
+@source not "../../design-system/**";
+
 @theme {
   --color-*: initial;
   --font-*: initial;
 
-  /* Color tokens -> Tailwind utilities */
-  --color-bg-primary: var(--token-bg-primary);
-  --color-bg-secondary: var(--token-bg-secondary);
-  --color-text-primary: var(--token-text-primary);
-  --color-text-secondary: var(--token-text-secondary);
-  --color-text-muted: var(--token-text-muted);
-  --color-accent: var(--token-accent);
-  --color-accent-hover: var(--token-accent-hover);
-  --color-border: var(--token-border);
-  --color-border-hover: var(--token-border-hover);
-  --color-destructive: var(--token-destructive);
-  --color-success: var(--token-success);
-  --color-warning: var(--token-warning);
+  /* Color tokens -> Tailwind utilities (bg-bg, text-ink, etc.) */
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
 
-  /* Font family tokens -> Tailwind utilities */
-  /* Note: these reference the CSS vars set by Astro Fonts API <Font /> component */
-  --font-display: var(--font-heading), ui-sans-serif, sans-serif;
-  --font-body: var(--font-sans), ui-sans-serif, sans-serif;
-  --font-mono: var(--font-code), ui-monospace, monospace;
+  /* Font family tokens -> Tailwind utilities (font-display, font-body, font-mono)
+   * Two-layer naming: Astro Fonts API sets :root { --font-*-src: <font stack> };
+   * Tailwind @theme { --font-*: var(--font-*-src), fallback } consumes those values
+   * and emits the font-* utilities. Distinct names on each side prevent the
+   * self-reference bug (--font-display: var(--font-display) resolves to `initial`). */
+  --font-display: var(--font-display-src), system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-body-src), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono-src), ui-monospace, monospace;
 }
 
 @theme inline {
-  --font-display: var(--font-heading), ui-sans-serif, sans-serif;
-  --font-body: var(--font-sans), ui-sans-serif, sans-serif;
-  --font-mono: var(--font-code), ui-monospace, monospace;
-}
-
-/* ============================================
- * Pre-Animation States (Phase 6 GSAP lazy-loading)
- * Elements with data-animate start hidden.
- * GSAP reveals them during animation.
- * Fallback: JS timeout reveals after 3s if GSAP fails.
- * ============================================ */
-[data-animate],
-[data-animate="section"],
-[data-animate="stagger-item"],
-[data-animate="split-text"] {
-  opacity: 0;
-}
-
-/* Ensure content visible for reduced-motion users (D-05) */
-@media (prefers-reduced-motion: reduce) {
-  [data-animate],
-  [data-animate="section"],
-  [data-animate="stagger-item"],
-  [data-animate="split-text"] {
-    opacity: 1 !important;
-    transform: none !important;
-  }
+  --font-display: var(--font-display-src), system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-body-src), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono-src), ui-monospace, monospace;
 }
 
 /* ============================================
  * Base Element Styles
  * ============================================ */
 
-html {
-  scroll-behavior: smooth;
+/* WR-02: Honor prefers-reduced-motion for programmatic smooth scrolls.
+ * Users with OS-level reduce-motion set (WCAG 2.3.3 / vestibular safety)
+ * should not get smooth scrolls on in-page anchor navigation. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
   font-family: var(--font-body);
-  font-size: var(--token-text-base);
+  font-size: 1rem;
   line-height: 1.6;
-  color: var(--token-text-primary);
-  background-color: var(--token-bg-primary);
+  color: var(--ink);
+  background-color: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============================================
- * View Transitions (page-to-page crossfade)
+ * Keyboard Focus Rings (QUAL-03)
+ * Global catch-all ensures every interactive element has a visible
+ * focus ring. Component-scoped :focus-visible rules in primitives
+ * override this via Astro's scoped style specificity.
+ * Pattern: 2px solid var(--accent), offset 2px (matches Header/NextProject).
  * ============================================ */
-::view-transition-old(root) {
-  animation: vt-fade-out 200ms ease-in forwards;
-}
-::view-transition-new(root) {
-  animation: vt-fade-in 200ms ease-out forwards;
-}
-@keyframes vt-fade-out {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes vt-fade-in {
-  from {
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
+a:focus-visible,
+button:focus-visible,
+textarea:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* ============================================
@@ -246,20 +151,6 @@ body {
   .skip-to-content,
   [data-no-print] {
     display: none !important;
-  }
-
-  /* Force black on white — overrides both dark and light themes */
-  :root,
-  [data-theme="light"] {
-    --token-bg-primary: white;
-    --token-bg-secondary: #f5f5f5;
-    --token-text-primary: black;
-    --token-text-secondary: #333;
-    --token-text-muted: #666;
-    --token-accent: #0066cc;
-    --token-accent-hover: #0066cc;
-    --token-border: #ccc;
-    --token-border-hover: #999;
   }
 
   body {
@@ -352,7 +243,8 @@ body {
 }
 
 /* ============================================
- * Chat Widget Styles (Phase 7)
+ * Chat Widget Styles (Phase 10 Editorial Restyle)
+ * Source: CONTEXT.md D-15 through D-21
  * ============================================ */
 
 /* Print: hide chat widget */
@@ -362,30 +254,55 @@ body {
   }
 }
 
-/* Typing indicator dots */
+/* D-17: Typing indicator dot bounce animation
+   Uses CSS custom properties for delay/color per review suggestion */
+@keyframes typing-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
 .typing-dot {
+  --dot-color: var(--ink-faint);
+  --dot-delay: 0ms;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--token-text-muted);
+  background-color: var(--dot-color);
   display: inline-block;
+  animation: typing-bounce 600ms var(--dot-delay) ease-in-out infinite;
+}
+.typing-dot:nth-child(2) {
+  --dot-delay: 150ms;
+}
+.typing-dot:nth-child(3) {
+  --dot-delay: 300ms;
 }
 
 /* Chat textarea — JS auto-grow, NOT field-sizing: content (no Firefox support) */
 .chat-textarea {
   resize: none;
   min-height: 36px;
-  max-height: 120px; /* ~4 rows */
+  max-height: 120px;
   overflow-y: auto;
+  border-radius: 0;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--ink);
+  padding: 8px 12px;
 }
 
-/* Chat textarea focus state */
-.chat-textarea:focus {
-  border-color: var(--token-border-hover) !important;
-  box-shadow: 0 0 0 2px var(--token-accent);
+/* Chat textarea focus state — D-16: accent focus ring */
+.chat-textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+  border-color: var(--rule);
+  box-shadow: none;
 }
 
-/* Chat bot message markdown styles */
+/* D-21: Bot message markdown styles */
 .chat-bot-message p {
   margin: 0 0 0.5em 0;
 }
@@ -395,50 +312,91 @@ body {
 .chat-bot-message ul,
 .chat-bot-message ol {
   margin: 0.25em 0;
-  padding-left: var(--token-space-md);
+  padding-left: 16px;
 }
 .chat-bot-message li {
-  margin-bottom: var(--token-space-xs);
+  margin-bottom: 4px;
 }
+/* D-21: Inline code — font only, no background, no border-radius */
 .chat-bot-message code {
-  font-family: var(--font-code);
-  font-size: var(--token-text-sm);
-  background: var(--token-bg-secondary);
-  padding: 1px 4px;
-  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+/* D-21 + D-13: Fenced code blocks — minimal editorial box (same as project detail) */
+.chat-bot-message pre {
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  padding: 16px 20px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  margin: 0.5em 0;
 }
 .chat-bot-message a {
-  color: var(--token-accent);
-  text-decoration: none;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1.5px;
 }
 .chat-bot-message a:hover {
+  color: var(--accent);
   text-decoration: underline;
 }
 
-/* Starter chip hover state */
+/* D-16: Starter chip styles — flat editorial buttons with mono label */
+.chat-starter-chip {
+  border-radius: 0;
+  border: 1px solid var(--rule);
+  background: transparent;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color 200ms ease;
+}
 .chat-starter-chip:hover {
-  border-color: var(--token-border-hover) !important;
-  color: var(--token-accent) !important;
+  color: var(--accent);
+}
+.chat-starter-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-/* Close button hover state */
-.hover-text-primary:hover {
-  color: var(--token-text-primary) !important;
-}
-
-/* Copy button styles */
+/* D-18: Copy button — COPY mono label, opacity reveal on hover */
 .chat-copy-btn {
   opacity: 0;
   transition: opacity 200ms ease;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-faint);
+  position: absolute;
+  top: -4px;
+  right: 0;
+}
+.chat-message-wrapper {
+  position: relative;
 }
 .chat-message-wrapper:hover .chat-copy-btn {
   opacity: 1;
 }
-.copy-success svg {
-  color: var(--token-success) !important;
+.chat-copy-btn:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-/* Mobile full-screen chat */
+/* D-20: Mobile full-screen chat */
 @media (max-width: 767px) {
   .chat-panel-mobile {
     position: fixed !important;
@@ -447,5 +405,119 @@ body {
     height: 100% !important;
     border-radius: 0 !important;
     padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+
+/* ============================================
+ * LAYER 3: Editorial Typography & Structural Helpers (Phase 9)
+ * Source of truth: design-system/MASTER.md §3.1 + §4
+ *                   mockup.html lines 43–99 and 188–203 and 329–344
+ * Per D-12 and D-13: type role classes and shared structurals live here as
+ * global helpers. Per D-14: component-local layout stays inside each
+ * primitive's scoped <style> block, not here.
+ * Per D-16: no new color tokens, no semantic aliases, no shade variants.
+ * ============================================ */
+
+/* -- Typography role classes (MASTER §3.1 / mockup.html §55–99) -- */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(4rem, 9vw, 8rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+
+.h1-section {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.h2-project {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.lead {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  line-height: 1.4;
+}
+
+.body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.meta-mono {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* -- Structural helpers (MASTER §4 / mockup.html §43–48, §188, §198–203) -- */
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--pad-desktop);
+  padding-right: var(--pad-desktop);
+}
+
+.section {
+  margin-top: 160px;
+}
+
+.section-rule {
+  height: 1px;
+  background: var(--rule);
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+
+/* -- Responsive breakpoints for .container + .section (mockup.html §329–344) -- */
+
+@media (max-width: 1023px) {
+  .container {
+    padding-left: var(--pad-tablet);
+    padding-right: var(--pad-tablet);
+  }
+  .section {
+    margin-top: 96px;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding-left: var(--pad-mobile);
+    padding-right: var(--pad-mobile);
+  }
+  .section {
+    margin-top: 72px;
   }
 }

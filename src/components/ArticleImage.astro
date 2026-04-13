@@ -10,7 +10,7 @@ interface Props {
 const { src, alt } = Astro.props;
 ---
 
-<figure class="my-[var(--token-space-xl)]">
+<figure class="my-8">
   {
     typeof src === "string" ? (
       <img
@@ -29,7 +29,7 @@ const { src, alt } = Astro.props;
   }
   {
     alt && (
-      <figcaption class="text-text-muted mt-[var(--token-space-sm)] font-mono text-[length:var(--token-text-sm)]">
+      <figcaption class="text-ink-faint mt-2 font-mono text-sm">
         {alt}
       </figcaption>
     )

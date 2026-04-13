@@ -1,17 +1,17 @@
 ---
 // ChatWidget.astro — Floating chat bubble + expandable chat panel
 // Injected in BaseLayout.astro before </body>, after Footer
-// Uses transition:persist to survive page navigation (D-07)
+// Phase 10: Restyled to editorial flat-rectangle chrome (D-15 through D-20)
+// Phase 8: transition:persist removed with ClientRouter (D-29) — cross-page chat persistence descoped to Phase 10 CHAT-01
 // All sub-components inline (single file per established pattern)
 ---
 
-<div class="chat-widget" data-no-print transition:persist>
-  <!-- Floating Bubble (D-01, D-03) -->
+<div class="chat-widget" data-no-print>
+  <!-- Floating Bubble (D-15: only round surface in editorial system) -->
   <button
     type="button"
     id="chat-bubble"
-    class="fixed z-50 flex items-center justify-center rounded-full"
-    style="bottom: 24px; right: 24px; width: 48px; height: 48px; background: var(--token-accent);"
+    style="position: fixed; z-index: 50; bottom: 24px; right: 24px; width: 48px; height: 48px; background: var(--accent); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;"
     aria-label="Open chat"
     aria-expanded="false"
   >
@@ -49,70 +49,46 @@
     </svg>
   </button>
 
-  <!-- Chat Panel (D-02, D-05, D-06) -->
+  <!-- Chat Panel (D-15: flat rectangle, no shadow, 1px rule border) -->
   <div
     id="chat-panel"
-    class="fixed z-49 flex flex-col overflow-hidden"
-    style="display: none; bottom: 80px; right: 24px; width: 400px; height: 500px; background: var(--token-bg-primary); border: 1px solid var(--token-border); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.25);"
+    style="display: none; position: fixed; bottom: 84px; right: 24px; z-index: 50; width: 400px; height: 500px; background: var(--bg); border: 1px solid var(--rule); border-radius: 0; box-shadow: none; flex-direction: column; overflow: hidden;"
     role="dialog"
+    aria-modal="true"
     aria-label="Chat with Jack's AI"
   >
-    <!-- Chat Header -->
+    <!-- Chat Header (D-15: label-mono text + 1px rule bottom) -->
     <div
-      class="flex items-center justify-between shrink-0"
-      style="height: 48px; background: var(--token-bg-secondary); border-bottom: 1px solid var(--token-border); padding: 0 var(--token-space-md);"
+      style="height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid var(--rule); flex-shrink: 0;"
     >
-      <span
-        style="font-size: var(--token-text-sm); font-weight: 600; color: var(--token-text-primary);"
-      >
-        Ask Jack's AI
+      <span class="label-mono" style="color: var(--ink);">
+        ASK JACK'S AI
       </span>
       <button
         type="button"
         id="chat-close"
-        class="flex items-center justify-center"
-        style="min-width: 44px; min-height: 44px;"
+        style="min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--ink-faint);"
         aria-label="Close chat"
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          style="color: var(--token-text-muted);"
-          class="hover-text-primary"
-        >
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
+      >&times;</button>
     </div>
 
-    <!-- Message Area (D-32) -->
+    <!-- Message Area -->
     <div
       id="chat-messages"
-      class="flex-1 overflow-y-auto"
-      style="padding: var(--token-space-md);"
+      style="flex: 1; overflow-y: auto; padding: 16px;"
       aria-live="polite"
       role="log"
     >
-      <!-- Starter Chips (D-27) -->
+      <!-- Starter Chips (D-16: flat editorial buttons) -->
       <div
         id="chat-starters"
-        class="flex flex-wrap"
-        style="gap: var(--token-space-sm);"
+        style="display: flex; flex-wrap: wrap; gap: 8px;"
       >
         <button
           type="button"
           class="chat-starter-chip"
           role="button"
           tabindex="0"
-          style="background: var(--token-bg-secondary); border: 1px solid var(--token-border); border-radius: 9999px; padding: 8px 12px; font-size: var(--token-text-sm); font-weight: 400; color: var(--token-text-secondary); cursor: pointer;"
         >
           What projects have you built?
         </button>
@@ -121,7 +97,6 @@
           class="chat-starter-chip"
           role="button"
           tabindex="0"
-          style="background: var(--token-bg-secondary); border: 1px solid var(--token-border); border-radius: 9999px; padding: 8px 12px; font-size: var(--token-text-sm); font-weight: 400; color: var(--token-text-secondary); cursor: pointer;"
         >
           What's your tech stack?
         </button>
@@ -130,7 +105,6 @@
           class="chat-starter-chip"
           role="button"
           tabindex="0"
-          style="background: var(--token-bg-secondary); border: 1px solid var(--token-border); border-radius: 9999px; padding: 8px 12px; font-size: var(--token-text-sm); font-weight: 400; color: var(--token-text-secondary); cursor: pointer;"
         >
           Tell me about your experience
         </button>
@@ -139,49 +113,44 @@
           class="chat-starter-chip"
           role="button"
           tabindex="0"
-          style="background: var(--token-bg-secondary); border: 1px solid var(--token-border); border-radius: 9999px; padding: 8px 12px; font-size: var(--token-text-sm); font-weight: 400; color: var(--token-text-secondary); cursor: pointer;"
         >
           What makes you stand out?
         </button>
       </div>
 
-      <!-- Typing Indicator (D-28) — hidden by default -->
+      <!-- Typing Indicator (D-17) — hidden by default, CSS keyframes in global.css -->
       <div
         id="chat-typing"
-        class="flex items-center"
-        style="display: none; padding: 8px 0 8px 12px; border-left: 2px solid var(--token-border); gap: 4px;"
+        style="display: none; padding: 8px 0 8px 12px; border-left: 2px solid var(--rule); gap: 4px; align-items: center;"
       >
-        <span class="typing-dot" style="animation-delay: 0ms;"></span>
-        <span class="typing-dot" style="animation-delay: 150ms;"></span>
-        <span class="typing-dot" style="animation-delay: 300ms;"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
       </div>
     </div>
 
-    <!-- Input Area (D-34, D-35) -->
+    <!-- Input Area (D-16: flat rule borders, accent focus ring) -->
     <div
-      class="shrink-0"
-      style="border-top: 1px solid var(--token-border); padding: 12px var(--token-space-md); background: var(--token-bg-primary);"
+      style="flex-shrink: 0; border-top: 1px solid var(--rule); padding: 12px 16px; background: var(--bg);"
     >
-      <div class="flex items-end" style="gap: var(--token-space-sm);">
-        <div class="flex-1 flex flex-col">
+      <div style="display: flex; align-items: flex-end; gap: 8px;">
+        <div style="flex: 1; display: flex; flex-direction: column;">
           <textarea
             id="chat-input"
-            class="chat-textarea w-full"
+            class="chat-textarea"
             placeholder="Ask me anything..."
             rows="1"
             maxlength="500"
-            style="background: var(--token-bg-secondary); border: 1px solid var(--token-border); border-radius: 8px; padding: 8px 12px; font-family: var(--font-body); font-size: var(--token-text-base); color: var(--token-text-primary); outline: none;"
           ></textarea>
           <div
             id="chat-char-count"
-            style="display: none; text-align: right; font-size: var(--token-text-sm); color: var(--token-text-muted); margin-top: 2px;"
+            style="display: none; text-align: right; font-size: 0.875rem; color: var(--ink-faint); margin-top: 2px;"
           ></div>
         </div>
         <button
           type="button"
           id="chat-send"
-          class="flex items-center justify-center shrink-0 rounded-full"
-          style="width: 36px; height: 36px; background: var(--token-accent); opacity: 0.4; cursor: not-allowed;"
+          style="width: 36px; height: 36px; border-radius: 0; background: transparent; border: none; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink-faint); opacity: 0.4; cursor: not-allowed;"
           aria-label="Send message"
           disabled
         >
@@ -190,7 +159,7 @@
             height="18"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="white"
+            stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -203,11 +172,11 @@
       </div>
     </div>
 
-    <!-- Privacy Note (D-37) -->
+    <!-- Privacy Note (D-22) — Updated in Plan 06 after localStorage persistence implemented -->
     <div
-      style="font-size: var(--token-text-sm); color: var(--token-text-muted); text-align: center; padding: 4px 0 8px 0;"
+      style="font-size: 0.875rem; color: var(--ink-faint); text-align: center; padding: 4px 0 8px 0;"
     >
-      Conversations are not stored.
+      Conversations stored locally for 24h.
     </div>
   </div>
 </div>
