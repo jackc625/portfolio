@@ -1,16 +1,35 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/primitives/Container.astro";
+import SectionHeader from "../components/primitives/SectionHeader.astro";
+import WorkRow from "../components/primitives/WorkRow.astro";
+
+// IDENTICAL sort as index.astro -- deterministic order across pages
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order
+);
 ---
-<BaseLayout
-  title="Projects"
-  description="Jack Cutrara — projects. Site is being redesigned."
->
-  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
-    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
-      Projects — redesigning
-    </h1>
-    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
-      This page is being redesigned. Check back soon.
-    </p>
+
+<BaseLayout title="Projects" description="Engineering projects by Jack Cutrara.">
+  <section class="section works" aria-labelledby="section-work">
+    <Container>
+      <SectionHeader
+        number="01"
+        title="WORK"
+        count={`${projects.length} / ${projects.length}`}
+      />
+      <div class="work-list">
+        {projects.map((p, i) => (
+          <WorkRow
+            number={String(i + 1).padStart(2, "0")}
+            title={p.data.title}
+            stack={p.data.techStack.join(" \u00B7 ").toUpperCase()}
+            year={p.data.year}
+            href={`/projects/${p.id}`}
+          />
+        ))}
+      </div>
+    </Container>
   </section>
 </BaseLayout>
