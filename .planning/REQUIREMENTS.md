@@ -33,7 +33,7 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 
 - [ ] **WORK-01**: Projects index page (`/projects`) uses the same numbered work list pattern as the homepage section, with no card grid
 - [ ] **WORK-02**: Project detail pages (`/projects/[id]`) use an editorial case study layout (mono metadata header, big sans title, long-form column body, optional inline images, "next project" link)
-- [ ] **WORK-03**: Real project content from the existing content collection (Zod + MDX) appears in the new layouts — no placeholder titles or stacks shipped
+- [x] **WORK-03**: Real project content from the existing content collection (Zod + MDX) appears in the new layouts — no placeholder titles or stacks shipped
 
 ### Contact (CONTACT)
 
@@ -113,7 +113,7 @@ Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
 | ABOUT-02 | Phase 10 — Page Port | Pending |
 | WORK-01 | Phase 10 — Page Port | Pending |
 | WORK-02 | Phase 10 — Page Port | Pending |
-| WORK-03 | Phase 10 — Page Port | Pending |
+| WORK-03 | Phase 10 — Page Port | Complete |
 | CONTACT-01 | Phase 10 — Page Port | Pending |
 | CONTACT-02 | Phase 10 — Page Port | Pending |
 | CHAT-01 | Phase 10 — Page Port | Pending |
