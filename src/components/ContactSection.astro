@@ -1,0 +1,58 @@
+---
+/**
+ * ContactSection — shared contact composite for homepage (§ 03) and /contact page.
+ *
+ * NOT inside primitives/ — this is a composite that composes data from contact.ts.
+ * Renders NO heading elements (no h1/h2/h3/h4). Heading hierarchy is always
+ * controlled by the consuming page.
+ *
+ * Per D-24: showSectionHeader controls the § 03 — CONTACT label (homepage uses true,
+ *           /contact page uses false since it owns its own page-level heading).
+ * Per D-28: Replaces the dead ContactChannel.astro (v1.0 SVG-icon component).
+ */
+import { CONTACT } from "../data/contact";
+
+interface Props {
+  /**
+   * When true, renders the section-sign header (used on homepage as section 03).
+   * When false (default), omits it (used on /contact which has its own page-level heading).
+   */
+  showSectionHeader?: boolean;
+}
+
+const { showSectionHeader = false } = Astro.props;
+---
+
+{showSectionHeader && (
+  <div class="section-header"><span class="label-mono">&sect; 03 &mdash; CONTACT</span></div>
+  <div class="section-rule"></div>
+)}
+
+<div class="contact-body">
+  <div class="label-mono contact-label">GET IN TOUCH</div>
+  <a class="contact-email" href={`mailto:${CONTACT.email}`}>
+    {CONTACT.email}
+  </a>
+  <div class="contact-links">
+    {CONTACT.github && (
+      <a class="contact-link" href={CONTACT.github} target="_blank" rel="noopener noreferrer">GITHUB</a>
+    )}
+    {CONTACT.github && CONTACT.linkedin && <span class="contact-sep" aria-hidden="true"> &middot; </span>}
+    {CONTACT.linkedin && (
+      <a class="contact-link" href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer">LINKEDIN</a>
+    )}
+    {(CONTACT.github || CONTACT.linkedin) && <span class="contact-sep" aria-hidden="true"> &middot; </span>}
+    <a class="contact-link" href={CONTACT.resume} download>RESUME</a>
+  </div>
+</div>
+
+<style>
+  .contact-body { margin-top: 24px; }
+  .contact-label { color: var(--ink-muted); margin-bottom: 16px; display: block; }
+  .contact-email { font-weight: 500; font-size: 1.75rem; color: var(--ink); text-decoration: none; display: block; }
+  .contact-email:hover { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 4px; color: var(--ink); }
+  .contact-links { margin-top: 24px; font-family: var(--font-mono); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-muted); }
+  .contact-link { color: var(--ink-muted); text-decoration: none; }
+  .contact-link:hover { color: var(--accent); }
+  .contact-sep { color: var(--ink-faint); }
+</style>
