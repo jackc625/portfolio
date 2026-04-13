@@ -7,6 +7,8 @@ import WorkRow from "../components/primitives/WorkRow.astro";
 import StatusDot from "../components/primitives/StatusDot.astro";
 import MetaLabel from "../components/primitives/MetaLabel.astro";
 import ContactSection from "../components/ContactSection.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { CONTACT } from "../data/contact";
 import { ABOUT_INTRO, ABOUT_P1 } from "../data/about";
 
 const allProjects = (await getCollection("projects")).sort(
@@ -14,9 +16,26 @@ const allProjects = (await getCollection("projects")).sort(
 );
 // D-02: Homepage shows exactly 3 featured:true projects (SeatWatch, NFL Prediction, SolSniper)
 const featured = allProjects.filter((p) => p.data.featured);
+
+// Person schema using CONTACT constants (D-23)
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Jack Cutrara",
+  url: "https://jackcutrara.com",
+  email: CONTACT.email,
+  sameAs: [
+    CONTACT.github,
+    CONTACT.linkedin,
+    CONTACT.x,
+  ].filter(Boolean),
+};
 ---
 
 <BaseLayout title="Jack Cutrara" description="Software engineer building reliable, production-grade systems.">
+  <Fragment slot="head">
+    <JsonLd schema={personSchema} />
+  </Fragment>
   <section class="hero" aria-label="Introduction">
     <Container>
       <div class="hero-grid">
