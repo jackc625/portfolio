@@ -1,28 +1,174 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
+import { getCollection, render, type CollectionEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/primitives/Container.astro";
+import NextProject from "../../components/NextProject.astro";
+import ArticleImage from "../../components/ArticleImage.astro";
 
 export async function getStaticPaths() {
-  const projects = await getCollection("projects");
-  return projects.map((project: CollectionEntry<"projects">) => ({
+  // IDENTICAL sort as index.astro and projects.astro -- deterministic order
+  const allProjects = (await getCollection("projects")).sort(
+    (a, b) => a.data.order - b.data.order
+  );
+  return allProjects.map((project, idx) => ({
     params: { id: project.id },
-    props: { project },
+    props: {
+      project,
+      // D-10: Next project by order ascending with wrap-around
+      nextProject: allProjects[(idx + 1) % allProjects.length],
+    },
   }));
 }
 
-const { project } = Astro.props;
+interface Props {
+  project: CollectionEntry<"projects">;
+  nextProject: CollectionEntry<"projects">;
+}
+
+const { project, nextProject } = Astro.props;
+const { Content } = await render(project);
 ---
 
-<BaseLayout
-  title={`${project.data.title} — Jack Cutrara`}
-  description="Jack Cutrara — project case study. Site is being redesigned."
->
-  <section style="padding: 96px 48px; max-width: 1200px; margin: 0 auto;">
-    <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em;">
-      {project.data.title} — redesigning
-    </h1>
-    <p style="font-family: var(--font-body); font-size: 1.125rem; line-height: 1.6; color: var(--ink-muted); margin-top: 16px; max-width: 68ch;">
-      This case study will return when the editorial redesign ships. Check back soon.
-    </p>
-  </section>
+<BaseLayout title={`${project.data.title} - Jack Cutrara`} description={project.data.description}>
+  <article>
+    <section class="section project-header">
+      <Container>
+        <!-- D-05: Mono metadata header = YEAR . TECHSTACK -->
+        <div class="label-mono project-meta">
+          {project.data.year} &middot; {project.data.techStack.join(" \u00B7 ").toUpperCase()}
+        </div>
+        <!-- D-06: Title uses .h1-section -->
+        <h1 class="h1-section project-title">{project.data.title}</h1>
+        <!-- D-08: Tagline as .lead -->
+        <p class="lead project-tagline">{project.data.tagline}</p>
+        <!-- D-11: External links row (mono, missing entries skipped, NO empty wrapper) -->
+        {(project.data.githubUrl || project.data.demoUrl) && (
+          <div class="project-links">
+            {project.data.githubUrl && (
+              <a class="project-link label-mono" href={project.data.githubUrl} target="_blank" rel="noopener noreferrer">
+                GITHUB &rarr;
+              </a>
+            )}
+            {project.data.githubUrl && project.data.demoUrl && (
+              <span class="project-link-sep" aria-hidden="true">&middot;</span>
+            )}
+            {project.data.demoUrl && (
+              <a class="project-link label-mono" href={project.data.demoUrl} target="_blank" rel="noopener noreferrer">
+                LIVE DEMO &rarr;
+              </a>
+            )}
+          </div>
+        )}
+      </Container>
+    </section>
+
+    <section class="section project-body-section">
+      <Container>
+        <!-- D-07: MDX body inside .prose-editorial wrapper with scoped overrides -->
+        <!-- Uses .prose-editorial instead of bare .body to prevent global style bleed -->
+        <div class="prose-editorial">
+          <Content components={{ img: ArticleImage }} />
+        </div>
+      </Container>
+    </section>
+
+    <section class="section">
+      <Container>
+        <NextProject project={nextProject} />
+      </Container>
+    </section>
+  </article>
 </BaseLayout>
+
+<style>
+  /* Project header */
+  .project-meta {
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+  }
+  .project-title {
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .project-tagline {
+    color: var(--ink);
+    max-width: 60ch;
+  }
+
+  /* D-11: External links row */
+  .project-links {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .project-link {
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+  .project-link:hover {
+    color: var(--accent);
+  }
+  .project-link-sep {
+    color: var(--ink-faint);
+  }
+
+  /* D-07 + D-09: MDX body overrides using .prose-editorial wrapper
+     CRITICAL: Use :global() for MDX-rendered elements that don't get Astro scope attributes.
+     The .prose-editorial wrapper IS scoped by Astro, so :global() only matches INSIDE it. */
+  .prose-editorial {
+    max-width: 68ch;
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .prose-editorial :global(h2) {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+  .prose-editorial :global(h2)::before {
+    content: "\00A7\00A0";  /* section sign + nbsp */
+  }
+  .prose-editorial :global(p) {
+    margin-bottom: 16px;
+  }
+  .prose-editorial :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .prose-editorial :global(ul),
+  .prose-editorial :global(ol) {
+    padding-left: 24px;
+    margin-bottom: 16px;
+  }
+  .prose-editorial :global(li) {
+    margin-bottom: 8px;
+  }
+  .prose-editorial :global(a) {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .prose-editorial :global(a:hover) {
+    text-decoration: underline;
+  }
+  .prose-editorial :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+  /* D-13: Code blocks match editorial minimal box */
+  .prose-editorial :global(pre) {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+  }
+</style>
