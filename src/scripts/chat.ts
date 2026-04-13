@@ -165,7 +165,11 @@ async function streamChat(
       return;
     }
 
-    const reader = response.body!.getReader();
+    if (!response.body) {
+      onError("api_error");
+      return;
+    }
+    const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
 
