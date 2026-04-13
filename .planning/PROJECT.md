@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A polished multi-page personal portfolio website for Jack Cutrara built with Astro 6, Tailwind CSS v4, and GSAP. The site showcases projects, technical ability, and professional polish — functioning as a living complement to his resume that positions him as a serious, capable junior software engineer worth interviewing. Live at jackcutrara.com.
+A polished multi-page personal portfolio website for Jack Cutrara built with Astro 6, Tailwind CSS v4, and Geist typography. The site showcases projects, technical ability, and professional polish — functioning as a living complement to his resume that positions him as a serious, capable junior software engineer worth interviewing. Live at jackcutrara.com.
 
 ## Core Value
 
@@ -10,9 +10,9 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ## Current State
 
-**Shipped:** v1.0 MVP (2026-03-31)
+**Shipped:** v1.1 Editorial Redesign (2026-04-13)
 **Live at:** jackcutrara.com (Cloudflare Pages)
-**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript + GSAP + MDX + Cloudflare Workers (SSR)
+**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript + MDX + Cloudflare Workers (SSR) + Geist/Geist Mono typography
 **Source LOC:** ~2,875 (Astro, TS, CSS, MDX) + chatbot feature
 **Repo:** github.com/jackc625/portfolio (public)
 
@@ -24,16 +24,16 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - ✓ Custom domain with HTTPS — v1.0 (jackcutrara.com on Cloudflare Pages)
 - ✓ Content collection system for projects — v1.0 (Zod schema + MDX)
 - ✓ Multi-page site (Home, About, Projects, Resume, Contact) — v1.0
-- ✓ Home page with generative canvas hero — v1.0
+- ✓ Home page with generative canvas hero — v1.0 (replaced in v1.1 by editorial display hero)
 - ✓ About page with narrative and skills — v1.0
-- ✓ Resume page with PDF download — v1.0
+- ✓ Resume page with PDF download — v1.0 (replaced in v1.1 by inline download link)
 - ✓ Contact page with email/LinkedIn/GitHub — v1.0
 - ✓ Responsive design across breakpoints — v1.0
-- ✓ Project card grid with 6 projects — v1.0
+- ✓ Project card grid with 6 projects — v1.0 (replaced in v1.1 by numbered work list)
 - ✓ Structured case study pages — v1.0 (2 fully written)
 - ✓ Dual reading modes (recruiter scan + engineer deep dive) — v1.0
-- ✓ Dark/light theme with persistent toggle — v1.0
-- ✓ GSAP scroll animations and page transitions — v1.0
+- ✓ Dark/light theme with persistent toggle — v1.0 (removed in v1.1)
+- ✓ GSAP scroll animations and page transitions — v1.0 (removed in v1.1)
 - ✓ Hover micro-interactions — v1.0
 - ✓ Print-friendly resume — v1.0
 - ✓ JSON-LD structured data — v1.0
@@ -44,6 +44,17 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - ✓ Sub-2s LCP, CLS < 0.1 — v1.0
 - ✓ Optimized images with lazy loading — v1.0
 - ✓ prefers-reduced-motion respect — v1.0
+
+- ✓ Editorial design system with locked MASTER.md contract -- v1.1
+- ✓ Geist + Geist Mono typography via Astro 6 Fonts API -- v1.1
+- ✓ Warm off-white #FAFAF7 + signal red #E63946 hex palette -- v1.1
+- ✓ Single light theme (dark mode removed) -- v1.1
+- ✓ Numbered editorial work list replacing card grid -- v1.1
+- ✓ Restrained motion (GSAP/scroll animations removed) -- v1.1
+- ✓ Chat widget restyled to editorial chrome -- v1.1
+- ✓ Lighthouse 90+ maintained after redesign -- v1.1
+- ✓ WCAG AA contrast verified -- v1.1
+- ✓ Full keyboard accessibility with visible focus rings -- v1.1
 
 ### Active
 

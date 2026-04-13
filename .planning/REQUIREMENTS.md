@@ -48,12 +48,12 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 
 ### Quality (QUAL)
 
-- [ ] **QUAL-01**: Lighthouse scores remain ≥90 on Performance, Accessibility, Best Practices, and SEO across all pages
-- [ ] **QUAL-02**: LCP < 2s, CLS < 0.1 maintained on the homepage and project detail pages
+- [x] **QUAL-01**: Lighthouse scores remain >=90 on Performance, Accessibility, Best Practices, and SEO across all pages
+- [x] **QUAL-02**: LCP < 2s, CLS < 0.1 maintained on the homepage and project detail pages
 - [x] **QUAL-03**: Full keyboard accessibility with visible focus rings on all interactive elements
-- [ ] **QUAL-04**: `prefers-reduced-motion` respected (trivially satisfied — there is effectively no motion to reduce)
+- [x] **QUAL-04**: `prefers-reduced-motion` respected (trivially satisfied — there is effectively no motion to reduce)
 - [x] **QUAL-05**: WCAG AA color contrast (4.5:1 normal text, 3:1 large text) verified on all text/background combinations
-- [ ] **QUAL-06**: Responsive across breakpoints (375, 768, 1024, 1440) with no horizontal scroll and readable type at every width
+- [x] **QUAL-06**: Responsive across breakpoints (375, 768, 1024, 1440) with no horizontal scroll and readable type at every width
 
 ---
 
@@ -95,7 +95,7 @@ Newly added in v1.1 (replaced or removed from v1.0):
 
 ## Traceability
 
-Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
+Coverage: 25 / 25 requirements -- all complete ✓
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
@@ -118,11 +118,11 @@ Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
 | CONTACT-02 | Phase 10 — Page Port | Complete |
 | CHAT-01 | Phase 10 — Page Port | Complete |
 | CHAT-02 | Phase 10 — Page Port | Complete |
-| QUAL-01 | Phase 11 — Polish | Pending |
-| QUAL-02 | Phase 11 — Polish | Pending |
+| QUAL-01 | Phase 11 — Polish | Complete |
+| QUAL-02 | Phase 11 — Polish | Complete |
 | QUAL-03 | Phase 11 — Polish | Complete |
-| QUAL-04 | Phase 11 — Polish | Pending |
+| QUAL-04 | Phase 11 — Polish | Complete |
 | QUAL-05 | Phase 11 — Polish | Complete |
-| QUAL-06 | Phase 11 — Polish | Pending |
+| QUAL-06 | Phase 11 — Polish | Complete |
 
 **Note**: Phase 9 (Primitives) intentionally has no requirement mappings — it is a sequencing scaffold that builds the component library Phase 10 consumes. All 25 requirements still map to exactly one phase, satisfying coverage rules.
