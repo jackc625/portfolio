@@ -1,48 +1,49 @@
 ---
 phase: 10-page-port
-fixed_at: 2026-04-13T12:00:00Z
+fixed_at: 2026-04-13T17:30:00Z
 review_path: .planning/phases/10-page-port/10-REVIEW.md
 iteration: 1
 findings_in_scope: 3
-fixed: 3
-skipped: 0
-status: all_fixed
+fixed: 2
+skipped: 1
+status: partial
 ---
 
 # Phase 10: Code Review Fix Report
 
-**Fixed at:** 2026-04-13T12:00:00Z
+**Fixed at:** 2026-04-13T17:30:00Z
 **Source review:** .planning/phases/10-page-port/10-REVIEW.md
 **Iteration:** 1
 
 **Summary:**
 - Findings in scope: 3
-- Fixed: 3
-- Skipped: 0
+- Fixed: 2
+- Skipped: 1
 
 ## Fixed Issues
 
-### WR-01: Broken aria-labelledby references on multiple pages
+### WR-01: Homepage title double-brands as "Jack Cutrara | Jack Cutrara"
 
-**Files modified:** `src/components/primitives/SectionHeader.astro`, `src/pages/index.astro`, `src/pages/about.astro`, `src/pages/projects.astro`, `src/components/ContactSection.astro`
-**Commit:** 1a46159
-**Applied fix:** Added optional `id` prop to `SectionHeader.astro` Props interface and rendered it on the `<span>` label element. Passed matching `id` values (`section-work`, `section-about`) to all `SectionHeader` usages on index.astro, about.astro, and projects.astro. Also added `id="section-contact"` to the inline section header span in `ContactSection.astro` (which renders its own header markup rather than using `SectionHeader.astro`). All `aria-labelledby` references now resolve to real DOM IDs.
+**Files modified:** `src/pages/index.astro`
+**Commit:** ffb9523
+**Applied fix:** Changed `title="Jack Cutrara"` to `title=""` on line 35 so that `titleDefault="Jack Cutrara | Software Engineer"` is used instead of `titleTemplate` producing the double-branded "Jack Cutrara | Jack Cutrara".
 
-### WR-02: Non-null assertion on response.body in chat streaming
+### WR-02: Project detail page title double-brands as "{Title} - Jack Cutrara | Jack Cutrara"
 
-**Files modified:** `src/scripts/chat.ts`
-**Commit:** a7f1192
-**Applied fix:** Replaced `response.body!.getReader()` non-null assertion with an explicit null guard that calls `onError("api_error")` and returns early if `response.body` is null. The reader assignment now uses `response.body.getReader()` without the `!` operator, since TypeScript narrows the type after the guard.
+**Files modified:** `src/pages/projects/[id].astro`
+**Commit:** 7fda3e1
+**Applied fix:** Changed `title={`${project.data.title} - Jack Cutrara`}` to `title={project.data.title}` on line 32 so that `titleTemplate="%s | Jack Cutrara"` handles the branding suffix without duplication.
 
-### WR-03: Duplicate conditional branches in updateCharCount
+## Skipped Issues
 
-**Files modified:** `src/scripts/chat.ts`
-**Commit:** 1836ebe
-**Status:** fixed: requires human verification
-**Applied fix:** Differentiated the two previously-identical branches in `updateCharCount`: the `len >= 500` (at max) branch now uses `fontWeight: "700"` while the `len > 450` (approaching limit) branch retains `fontWeight: "600"`. This provides a visible distinction between the two states. Marked for human verification since this is a UX/logic decision -- the developer may prefer a different color or visual indicator for the at-max state.
+### WR-03: Restored chat user messages use old rounded bubble style, live messages use editorial flat style
+
+**File:** `src/scripts/chat.ts:541`
+**Reason:** Already fixed in prior commit 561516a ("fix(10): fix restored chat message bubble corners (WR-03)"). Line 541 already reads `border-radius: 0` matching the live message style. No action needed.
+**Original issue:** The localStorage restoration path hardcoded `border-radius: 12px 12px 4px 12px` while live messages used `border-radius: 0`, creating a visible style mismatch.
 
 ---
 
-_Fixed: 2026-04-13T12:00:00Z_
+_Fixed: 2026-04-13T17:30:00Z_
 _Fixer: Claude (gsd-code-fixer)_
 _Iteration: 1_
