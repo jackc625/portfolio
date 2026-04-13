@@ -148,13 +148,29 @@ A polished multi-page personal portfolio website for Jack Cutrara that helps him
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
+- Editorial design system contract at `design-system/MASTER.md` -- all visual decisions reference this spec
+- Six hex color tokens only: --bg (#FAFAF7), --ink (#0A0A0A), --ink-muted (#52525B), --ink-faint (#A1A1AA), --rule (#E4E4E7), --accent (#E63946)
+- Geist + Geist Mono via Astro 6 Fonts API (self-hosted, no external CDN)
+- Primitives in `src/components/primitives/` use scoped `<style>`, not Tailwind utilities
+- Single light theme -- no dark mode, no theme switching
+- Restrained motion -- only functional hover/focus transitions, no scroll animations
+- Focus rings: `outline: 2px solid var(--accent); outline-offset: 2px` on all interactive elements
+- Chat widget: Phase 7 architecture preserved (SSE streaming, focus trap, XSS sanitization, rate limiting)
+- Content collections: Zod schemas + MDX in `src/content/projects/`
+- Type role classes in global.css: `.display`, `.h1-section`, `.h2-project`, `.lead`, `.body`, `.label-mono`, `.meta-mono`
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->
 ## Architecture
 
-Architecture not yet mapped. Follow existing patterns found in the codebase.
+- **Framework:** Astro 6 (static site + per-route SSR for chat API endpoint)
+- **Styling:** Tailwind CSS v4 (Oxide engine) via `@tailwindcss/vite` + CSS custom properties for design tokens in `src/styles/global.css`
+- **Layout:** `BaseLayout.astro` wraps all pages; primitives in `src/components/primitives/` compose into page templates
+- **Content:** Astro Content Collections with Zod schemas + MDX for project case studies in `src/content/projects/`
+- **Chat:** Client-side widget (`src/scripts/chat.ts`) + Cloudflare Workers SSR API (`src/pages/api/chat.ts`) + Anthropic Claude Haiku
+- **Deployment:** Cloudflare Pages (static pages) + Cloudflare Workers (SSR API route) at jackcutrara.com
+- **Fonts:** Astro 6 Fonts API -> self-hosted Geist/Geist Mono with `--font-display-src`/`--font-body-src`/`--font-mono-src` CSS variable bridge
+- **Design system:** `design-system/MASTER.md` is the locked visual contract; tokens/typography/layout/components/motion/accent rules
 <!-- GSD:architecture-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->

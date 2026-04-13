@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Editorial Redesign
-status: executing
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-04-13T20:40:58.866Z"
-last_activity: 2026-04-13
+status: complete
+stopped_at: Milestone v1.1 complete
+last_updated: "2026-04-13T21:10:00.000Z"
+last_activity: 2026-04-13 -- Milestone v1.1 complete
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 27
-  completed_plans: 25
-  percent: 93
+  completed_plans: 27
+  percent: 100
 ---
 
 # Project State
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-07)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 11 — polish
+**Current focus:** Milestone v1.1 complete
 
 ## Current Position
 
-Phase: 11 (polish) — EXECUTING
-Plan: 2 of 3
-Status: Ready to execute
-Last activity: 2026-04-13
-Branch: feat/ui-redesign
+Phase: 11
+Plan: Complete
+Status: Milestone v1.1 complete
+Last activity: 2026-04-13 -- All QUAL requirements verified, merged to main, deployed
+Branch: main
 
 ### Milestone v1.1 Phase Map
 
@@ -38,7 +38,7 @@ Branch: feat/ui-redesign
 | 8 | Foundation | DSGN-01..05, CONTACT-03 | Not started |
 | 9 | Primitives | (sequencing — enables Phase 10) | Not started |
 | 10 | Page Port | HOME-01..04, ABOUT-01..02, WORK-01..03, CONTACT-01..02, CHAT-01..02 | Not started |
-| 11 | Polish | QUAL-01..06 | Not started |
+| 11 | Polish | QUAL-01..06 | Complete |
 
 ## Performance Metrics
 
@@ -166,6 +166,16 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 11-polish]: Used @source not directives to exclude .planning/ and design-system/ from Tailwind detection surface, fixing 4x lightning-css warnings
 - [Phase 11-polish]: Chat bot message links changed from accent text (4.0:1) to ink text with accent underline for WCAG AA normal-text compliance (18.5:1)
 - [Phase 11-polish]: Container Props ts(6196) fixed via explicit type annotation on intermediate variable -- type alias and @ts-ignore insufficient for astro check
+- [Phase 11]: Lighthouse CLI JSON reports captured for homepage + /projects/seatwatch per D-01/D-02 (representative sampling documented)
+- [Phase 11]: WCAG AA contrast verified with full inventory table -- --ink-faint (2.5:1) documented as tertiary text, --accent restricted to hover/UI per D-04
+- [Phase 11]: Focus-visible rings added globally (a, button, textarea, input, select, [role=button], summary) + component-scoped rules per D-12
+- [Phase 11]: BaseLayout noindex prop added as clean replacement for slot-based injection per D-06
+- [Phase 11]: JsonLd is:inline + Container type Props fixes per D-07
+- [Phase 11]: mockup.html deleted after Phase 10 parity sign-off per D-15
+- [Phase 11]: /dev/primitives page deleted, sitemap filter cleaned per D-16
+- [Phase 11]: feat/ui-redesign merged to main with pre-merge safety checks, deployed to Cloudflare Pages per D-17/D-18
+- [Phase 11]: OG/social meta tags verified in production (Gemini review suggestion)
+- [Phase 11]: Lighthouse scores: Performance 100, Accessibility 95, Best Practices 100, SEO 100
 
 ### Pending Todos
 
