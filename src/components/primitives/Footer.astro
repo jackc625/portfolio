@@ -79,9 +79,10 @@ const socialLinks = [
     text-transform: uppercase;
   }
 
-  /* Desktop (≥768px): social row hidden — contact section presents them */
   .footer-social {
-    display: none;
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
   }
 
   .footer-social-link {
@@ -109,11 +110,6 @@ const socialLinks = [
       flex-direction: column;
       align-items: center;
       gap: 12px;
-    }
-    .footer-social {
-      display: inline-flex;
-      align-items: center;
-      font-family: var(--font-mono);
     }
   }
 </style>
