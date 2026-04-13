@@ -7,6 +7,11 @@ import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
   site: "https://jackcutrara.com",
+  markdown: {
+    shikiConfig: {
+      theme: 'github-light',
+    },
+  },
   // Astro 6 removed output:"hybrid" — static is now the default with per-route SSR.
   // Individual API routes opt into SSR via `export const prerender = false`.
   adapter: cloudflare(),

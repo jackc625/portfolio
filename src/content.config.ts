@@ -17,6 +17,7 @@ const projects = defineCollection({
       thumbnail: image().optional(),
       category: z.enum(["web-app", "cli-tool", "library", "api", "other"]),
       order: z.number().int().min(1),
+      year: z.string().regex(/^\d{4}$/),
     }),
 });
 
