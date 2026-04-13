@@ -43,7 +43,7 @@ This milestone replaces the v1.0 visual system (shiyunlu.com clone with canvas h
 
 ### Chat Widget (CHAT)
 
-- [ ] **CHAT-01**: Chat widget retains all v1.0 (Phase 7) functionality: SSE streaming responses, focus trap, rate limiting, conversation persistence across page navigation, defense-in-depth security, mobile full-screen overlay, markdown rendering with XSS sanitization
+- [x] **CHAT-01**: Chat widget retains all v1.0 (Phase 7) functionality: SSE streaming responses, focus trap, rate limiting, conversation persistence across page navigation, defense-in-depth security, mobile full-screen overlay, markdown rendering with XSS sanitization
 - [x] **CHAT-02**: Chat widget visuals match the new design system — no cards, no shadows, no gradients; monochrome surfaces with accent for active state and links only
 
 ### Quality (QUAL)
@@ -116,7 +116,7 @@ Coverage: 25 / 25 requirements mapped to Phases 8-11 ✓
 | WORK-03 | Phase 10 — Page Port | Complete |
 | CONTACT-01 | Phase 10 — Page Port | Complete |
 | CONTACT-02 | Phase 10 — Page Port | Complete |
-| CHAT-01 | Phase 10 — Page Port | Pending |
+| CHAT-01 | Phase 10 — Page Port | Complete |
 | CHAT-02 | Phase 10 — Page Port | Complete |
 | QUAL-01 | Phase 11 — Polish | Pending |
 | QUAL-02 | Phase 11 — Polish | Pending |

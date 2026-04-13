@@ -95,7 +95,7 @@
 - [x] 10-03-PLAN.md — Rewrite homepage, about page, and contact page (HOME-01..04, ABOUT-01..02)
 - [x] 10-04-PLAN.md — Rewrite projects index and project detail pages (WORK-01, WORK-02, WORK-03)
 - [x] 10-05-PLAN.md — Restyle chat widget visuals to editorial chrome (CHAT-02)
-- [ ] 10-06-PLAN.md — Add localStorage chat persistence and update JsonLd (CHAT-01)
+- [x] 10-06-PLAN.md — Add localStorage chat persistence and update JsonLd (CHAT-01)
 - [ ] 10-07-PLAN.md — Verification gate: build/lint/check/test + manual chat + visual parity (all REQs)
 **UI hint**: yes
 
@@ -128,5 +128,5 @@
 | 7. Chatbot Feature | v1.0 | 5/5 | Complete | 2026-04-04 |
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/8 | Planned     | — |
-| 10. Page Port | v1.1 | 5/7 | In Progress|  |
+| 10. Page Port | v1.1 | 6/7 | In Progress|  |
 | 11. Polish | v1.1 | 0/? | Not started | — |
