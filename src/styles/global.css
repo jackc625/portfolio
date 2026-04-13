@@ -30,11 +30,13 @@
 @import "tailwindcss";
 
 /* Scope Tailwind class detection to source files only.
- * Without this, Tailwind v4 auto-scans the entire repo (including .planning/
- * markdown plans) and generates utility classes from literal example strings
- * like `px-[var(--token-*)]`, producing broken CSS and lightning-css warnings.
- * Restricting @source to src/ eliminates the warnings and shrinks the bundle. */
+ * Tailwind v4 auto-detects template files in the repo. The .planning/ directory
+ * contains v1.0 plan artifacts with literal class examples like px-[var(--token-*)]
+ * that generate lightning-css parse warnings. The @source not directives exclude
+ * .planning/ and design-system/ from Tailwind's detection surface. */
 @source "../**/*.{astro,html,js,jsx,ts,tsx,md,mdx}";
+@source not "../../.planning/**";
+@source not "../../design-system/**";
 
 @theme {
   --color-*: initial;

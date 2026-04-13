@@ -15,8 +15,9 @@ interface Props {
   as?: keyof HTMLElementTagNameMap;
   class?: string;
 }
-
-const { as: Tag = "div", class: className } = Astro.props;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- consumed by Astro's type system
+const _props: Props = Astro.props;
+const { as: Tag = "div", class: className } = _props;
 ---
 
 <Tag class:list={["container", className]}>
