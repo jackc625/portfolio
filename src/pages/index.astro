@@ -57,7 +57,7 @@ const personSchema = {
 
   <section class="section works" aria-labelledby="section-work">
     <Container>
-      <SectionHeader number="01" title="WORK" count={`${featured.length} / ${allProjects.length}`} />
+      <SectionHeader number="01" title="WORK" id="section-work" count={`${featured.length} / ${allProjects.length}`} />
       <div class="work-list">
         {featured.map((p, i) => (
           <WorkRow
@@ -74,7 +74,7 @@ const personSchema = {
 
   <section class="section about" aria-labelledby="section-about">
     <Container>
-      <SectionHeader number="02" title="ABOUT" />
+      <SectionHeader number="02" title="ABOUT" id="section-about" />
       <div class="about-body">
         <p class="about-intro">{ABOUT_INTRO}</p>
         <p class="body">{ABOUT_P1}</p>

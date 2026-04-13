@@ -15,13 +15,14 @@ interface Props {
   number: string;
   title: string;
   count?: string;
+  id?: string;
 }
 
-const { number, title, count } = Astro.props;
+const { number, title, count, id } = Astro.props;
 ---
 
 <div class="section-header">
-  <span class="label-mono section-label">§ {number} — {title}</span>
+  <span id={id} class="label-mono section-label">§ {number} — {title}</span>
   {count && <span class="meta-mono tabular section-count">{count}</span>}
 </div>
 <div class="section-rule"></div>
