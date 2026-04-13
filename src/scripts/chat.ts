@@ -49,6 +49,66 @@ export function renderMarkdown(raw: string): string {
 }
 
 // ============================================
+// Chat Persistence (D-22)
+// ============================================
+
+interface StoredMessage {
+  role: "user" | "bot";
+  content: string;
+  timestamp: string;
+}
+
+interface ChatStorage {
+  version: 1;
+  messages: StoredMessage[];
+  lastActive: string; // ISO 8601
+}
+
+const STORAGE_KEY = "chat-history";
+const STORAGE_VERSION = 1;
+const MAX_MESSAGES = 50;
+const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function saveChatHistory(msgs: StoredMessage[]): void {
+  const data: ChatStorage = {
+    version: STORAGE_VERSION,
+    messages: msgs.slice(-MAX_MESSAGES),
+    lastActive: new Date().toISOString(),
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // Silently fail -- localStorage may be full, disabled, or in private browsing
+  }
+}
+
+function loadChatHistory(): StoredMessage[] | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw) as ChatStorage;
+    // Version check -- clear if schema has changed
+    if (!data.version || data.version !== STORAGE_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    // TTL check -- clear if older than 24 hours
+    const elapsed = Date.now() - new Date(data.lastActive).getTime();
+    if (elapsed > TTL_MS || isNaN(elapsed)) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return data.messages;
+  } catch {
+    // Corrupted JSON or other error -- clear and start fresh
+    try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+    return null;
+  }
+}
+
+let chatLog: StoredMessage[] = [];
+
+// ============================================
 // State Management (D-26)
 // ============================================
 
@@ -458,6 +518,66 @@ function initChat(): void {
       $panel.classList.add("chat-panel-mobile");
     }
 
+    // On first open, attempt to restore history (D-22)
+    // Duplication guard: chatLog.length === 0 ensures replay only happens once.
+    // If panel is opened, closed, and re-opened, chatLog is already populated
+    // from the first open, so replay is skipped.
+    if (chatLog.length === 0) {
+      const stored = loadChatHistory();
+      if (stored && stored.length > 0) {
+        chatLog = stored;
+        // Also populate the API messages array so continued conversation has context
+        for (const msg of stored) {
+          messages.push({ role: msg.role === "user" ? "user" : "assistant", content: msg.content });
+        }
+        // Batch DOM injection via DocumentFragment to avoid multiple repaints
+        const fragment = document.createDocumentFragment();
+        for (const msg of stored) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "chat-message-wrapper";
+          if (msg.role === "user") {
+            wrapper.style.cssText = "display: flex; justify-content: flex-end; margin-bottom: 8px;";
+            const el = document.createElement("div");
+            el.style.cssText = "max-width: 85%; background: var(--rule); border-radius: 12px 12px 4px 12px; padding: 8px 16px; color: var(--ink); font-size: 1rem; word-break: break-word;";
+            el.textContent = msg.content; // textContent -- XSS safe
+            wrapper.appendChild(el);
+          } else {
+            wrapper.style.cssText = "display: flex; justify-content: flex-start; margin-bottom: 8px; position: relative;";
+            // Bot messages MUST go through renderMarkdown -> DOMPurify
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bot-message";
+            bubble.style.cssText = "max-width: 90%; border-left: 2px solid var(--rule); padding: 8px 0 8px 12px; color: var(--ink-muted); font-size: 1rem; word-break: break-word;";
+            bubble.innerHTML = renderMarkdown(msg.content);
+            wrapper.appendChild(bubble);
+            // Add copy button (same pattern as live messages)
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "chat-copy-btn label-mono";
+            copyBtn.textContent = "COPY";
+            copyBtn.setAttribute("aria-label", "Copy message");
+            copyBtn.type = "button";
+            copyBtn.style.cssText = "position: absolute; top: -4px; right: 0; background: none; border: none; cursor: pointer;";
+            const capturedContent = msg.content;
+            copyBtn.addEventListener("click", () => {
+              copyToClipboard(capturedContent, copyBtn);
+              copyBtn.textContent = "COPIED";
+              copyBtn.style.color = "var(--accent)";
+              setTimeout(() => {
+                copyBtn.textContent = "COPY";
+                copyBtn.style.color = "var(--ink-faint)";
+              }, 1000);
+            });
+            wrapper.appendChild(copyBtn);
+          }
+          fragment.appendChild(wrapper);
+        }
+        $messagesArea.appendChild(fragment); // Single DOM operation
+        // Hide starters since we have history
+        $starters.style.display = "none";
+        // Scroll to bottom
+        $messagesArea.scrollTop = $messagesArea.scrollHeight;
+      }
+    }
+
     // Set up focus trap — Escape handled inside, Tab cycles with dynamic re-query
     cleanupFocusTrap = setupFocusTrap($panel, closePanel);
 
@@ -630,6 +750,10 @@ function initChat(): void {
     $messagesArea.insertBefore(userEl, $typingIndicator);
     animateMessageAppear(userEl);
 
+    // Persist user message (D-22)
+    chatLog.push({ role: "user", content, timestamp: new Date().toISOString() });
+    saveChatHistory(chatLog);
+
     // Clear input
     $input.value = "";
     autoGrowTextarea($input);
@@ -686,6 +810,11 @@ function initChat(): void {
         // Store final bot message
         if (botContent) {
           messages.push({ role: "assistant", content: botContent });
+
+          // Persist bot message ONLY at stream completion (D-22)
+          // Interrupted SSE streams (AbortController timeout, network error) do NOT reach here
+          chatLog.push({ role: "bot", content: botContent, timestamp: new Date().toISOString() });
+          saveChatHistory(chatLog);
         }
 
         // Update copy button to use final content
