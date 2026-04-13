@@ -4,8 +4,8 @@
  * Null entries are skipped silently by every consumer.
  */
 export const CONTACT = {
-  /** Display: "jack@jackcutrara.com", rendered as mailto: link */
-  email: "jack@jackcutrara.com",
+  /** Display: "jackcutrara@gmail.com", rendered as mailto: link */
+  email: "jackcutrara@gmail.com",
   /** Label: "GITHUB", opens in new tab with rel="noopener noreferrer" */
   github: "https://github.com/jackc625",
   /** Label: "LINKEDIN", opens in new tab with rel="noopener noreferrer" */

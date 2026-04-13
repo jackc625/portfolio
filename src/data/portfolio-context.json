@@ -7,8 +7,8 @@
   },
   "education": {
     "degree": "Bachelor of Science in Computer Science",
-    "school": "New Jersey Institute of Technology",
-    "graduation": "2024"
+    "school": "Western Governors University",
+    "graduation": "2026"
   },
   "skills": {
     "languages": ["TypeScript", "Python", "Java", "JavaScript", "SQL"],
@@ -57,7 +57,7 @@
   ],
   "experience": "Jack is a recent CS graduate actively seeking a software engineering role. He learns by building — every project in this portfolio was designed, architected, and coded by Jack to solve a real problem. His projects span full-stack web apps, trading systems, ML pipelines, and AI-powered SaaS products. He is currently looking for a software engineering role where he can contribute to a team building something that matters.",
   "contact": {
-    "email": "jack@jackcutrara.com",
+    "email": "jackcutrara@gmail.com",
     "github": "https://github.com/jackc625",
     "linkedin": "https://linkedin.com/in/jackcutrara",
     "website": "https://jackcutrara.com"
