@@ -29,7 +29,7 @@ const { project, nextProject } = Astro.props;
 const { Content } = await render(project);
 ---
 
-<BaseLayout title={`${project.data.title} - Jack Cutrara`} description={project.data.description}>
+<BaseLayout title={project.data.title} description={project.data.description}>
   <article>
     <section class="section project-header">
       <Container>
