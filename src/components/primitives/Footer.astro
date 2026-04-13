@@ -7,7 +7,7 @@
  *
  * Mobile (<768px): 3-row vertical stack:
  *   1. © {year} JACK CUTRARA
- *   2. GITHUB · LINKEDIN · X · EMAIL mono link row
+ *   2. GITHUB · LINKEDIN · EMAIL mono link row (imports from contact.ts, null entries skipped)
  *   3. BUILT WITH ASTRO · TAILWIND · GEIST
  *
  * Per D-02: primitive lives in src/components/primitives/
@@ -17,14 +17,17 @@
  * Per D-16: only --ink-muted, --ink-faint, --rule, --accent color tokens used
  */
 
+import { CONTACT } from "../../data/contact";
+
 const year = new Date().getFullYear();
 
+/** Build social links from CONTACT source of truth — null entries skipped silently. */
 const socialLinks = [
-  { href: "https://github.com/jackc625", label: "GITHUB" },
-  { href: "https://linkedin.com/in/jackcutrara", label: "LINKEDIN" },
-  { href: "https://x.com/jackcutrara", label: "X" },
-  { href: "mailto:jackcutrara@gmail.com", label: "EMAIL" },
-];
+  CONTACT.github ? { href: CONTACT.github, label: "GITHUB", external: true } : null,
+  CONTACT.linkedin ? { href: CONTACT.linkedin, label: "LINKEDIN", external: true } : null,
+  CONTACT.x ? { href: CONTACT.x, label: "X", external: true } : null,
+  { href: `mailto:${CONTACT.email}`, label: "EMAIL", external: false },
+].filter((link): link is NonNullable<typeof link> => link !== null);
 ---
 
 <footer class="site-footer">
@@ -39,8 +42,8 @@ const socialLinks = [
             <a
               href={link.href}
               class="label-mono footer-social-link"
-              target={link.href.startsWith("http") ? "_blank" : undefined}
-              rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
             >
               {link.label}
             </a>
