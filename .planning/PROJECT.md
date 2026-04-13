@@ -67,10 +67,19 @@ See REQUIREMENTS.md for milestone v1.1 requirements (Editorial Redesign).
 - Phase numbering continues: v1.1 starts at Phase 8 (v1.0 ended at Phase 7 — chatbot)
 - Many v1.0 design requirements will be invalidated by this milestone (canvas hero, dark/light theme, GSAP scroll animations, project card grid, resume page) and moved to Out of Scope with reason "replaced by editorial redesign v1.1"
 
+### Validated in Phase 10
+
+- ✓ Editorial homepage with display hero, numbered work list, about preview, contact section — Phase 10 (HOME-01..04)
+- ✓ Editorial about page (intro + 3 paragraphs, no icons) — Phase 10 (ABOUT-01..02)
+- ✓ Projects index with numbered work list + editorial case study detail pages — Phase 10 (WORK-01..03)
+- ✓ Minimal contact section with résumé PDF download, X dropped (no account exists) — Phase 10 (CONTACT-01..02)
+- ✓ Chat widget restyled to editorial system (flat-rectangle chrome, mono labels) — Phase 10 (CHAT-02)
+- ✓ Chat persistence restored via localStorage (50-msg cap, 24h TTL) — Phase 10 (CHAT-01)
+
 ### Validated in Phase 7
 
 - ✓ AI chatbot widget with streaming responses — Phase 7 (Claude Haiku via SSE)
-- ✓ Chat persistence across page navigation — Phase 7 (transition:persist)
+- ✓ Chat persistence across page navigation — Phase 7 (transition:persist → Phase 10 localStorage)
 - ✓ Full keyboard accessibility and focus trapping — Phase 7
 - ✓ Defense-in-depth security (CORS whitelist, rate limiting, input validation, prompt injection resistance) — Phase 7
 - ✓ Mobile full-screen chat overlay — Phase 7
@@ -140,4 +149,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-08 — Phase 9 (Primitives) complete. The editorial primitive library (Header, Footer, WorkRow, MobileMenu, Container, SectionHeader, MetaLabel, StatusDot) ships under `src/components/primitives/`. BaseLayout now imports the new chrome; old v1.0 Header/Footer/MobileMenu deleted. Chat widget regression gate held. Phase 10 (Page Port) unblocked.*
+*Last updated: 2026-04-13 — Phase 10 (Page Port) complete. All 5 pages rewritten to editorial compositions over Phase 9 primitives. Chat widget restyled to flat-rectangle chrome with localStorage persistence restored. 13/13 requirements delivered (HOME-01..04, ABOUT-01..02, WORK-01..03, CONTACT-01..02, CHAT-01..02). Phase 11 (Polish) unblocked.*
