@@ -49,9 +49,14 @@ skipped: 0
 ## Gaps
 
 - truth: "Deleted/unknown paths (/dev/primitives, /mockup.html) should return a 404 page, not render or redirect to the homepage."
-  status: failed
+  status: fixed
   reason: "User reported: No, they just redirect to homescreen. Not sure if that's a pass or fail"
   severity: minor
   test: 3
-  artifacts: []
+  root_cause: "No src/pages/404.astro existed; @astrojs/cloudflare adapter fell back to serving root index.html for unknown routes."
+  fix: "Added src/pages/404.astro using BaseLayout + Container + SectionHeader with noindex. Prerenders to /404.html at build. Cloudflare Pages will serve this for unknown paths."
+  fix_commit: "(see src/pages/404.astro commit on main)"
+  verification: "npx astro check: 0/0/0; build prerenders /404.html; production verification pending next deploy."
+  artifacts:
+    - "src/pages/404.astro"
   missing: []
