@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/primitives/Container.astro";
+import SectionHeader from "../components/primitives/SectionHeader.astro";
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The page you are looking for does not exist."
+  noindex={true}
+>
+  <section class="section notfound" aria-labelledby="section-notfound">
+    <Container>
+      <SectionHeader number="404" title="NOT FOUND" id="section-notfound" />
+      <div class="notfound-body">
+        <p class="notfound-lead">
+          This page doesn't exist -- or it was retired during the v1.1 redesign.
+        </p>
+        <p class="notfound-meta">
+          Try the <a class="notfound-link" href="/">homepage</a>,
+          browse the <a class="notfound-link" href="/projects">projects index</a>,
+          or reach out via <a class="notfound-link" href="/contact">contact</a>.
+        </p>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound-body { max-width: 68ch; margin-top: 24px; }
+  .notfound-lead { font-weight: 500; font-size: 1.375rem; line-height: 1.4; color: var(--ink); margin-bottom: 24px; }
+  .notfound-meta { font-weight: 400; font-size: 1.125rem; line-height: 1.6; color: var(--ink); margin-bottom: 0; }
+  .notfound-link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+  .notfound-link:hover { color: var(--ink-muted); }
+  .notfound-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+</style>
