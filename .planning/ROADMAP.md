@@ -25,7 +25,7 @@
 - [x] **Phase 8: Foundation** — Write design-system/MASTER.md, replace tokens with hex palette, wire Geist fonts via Astro Fonts API, kill dark mode + theme toggle + GSAP/scroll animations, delete dead components and /resume page (completed 2026-04-08)
 - [ ] **Phase 9: Primitives** — Build new component library (Header, Footer, Container, SectionHeader, WorkRow, MetaLabel, StatusDot) that the page port phase consumes
 - [x] **Phase 10: Page Port** — Port all pages to the new editorial system in order: homepage, about, contact, projects index, project detail, then ChatWidget restyle (completed 2026-04-13)
-- [ ] **Phase 11: Polish** — A11y/perf/responsive sweep, real content pass, validate Lighthouse 90+, delete mockup.html, sign-off
+- [x] **Phase 11: Polish** — A11y/perf/responsive sweep, real content pass, validate Lighthouse 90+, delete mockup.html, sign-off (completed 2026-04-13)
 
 ## Phase Details
 
@@ -117,7 +117,7 @@
 Plans:
 - [x] 11-01-PLAN.md — Tech debt cleanup + focus-visible rings + accent contrast fix + artifact deletion (QUAL-03, QUAL-05)
 - [x] 11-02-PLAN.md — Lighthouse audit + WCAG contrast inventory + manual QA checkpoint (QUAL-01..06)
-- [ ] 11-03-PLAN.md — Merge to main + deploy to Cloudflare Pages + documentation closeout (QUAL-01..06)
+- [x] 11-03-PLAN.md — Merge to main + deploy to Cloudflare Pages + documentation closeout (QUAL-01..06)
 **UI hint**: yes
 
 ## Progress
@@ -134,4 +134,4 @@ Plans:
 | 8. Foundation | v1.1 | 8/8 | Complete   | 2026-04-08 |
 | 9. Primitives | v1.1 | 0/8 | Planned     | — |
 | 10. Page Port | v1.1 | 8/8 | Complete    | 2026-04-13 |
-| 11. Polish | v1.1 | 2/3 | In Progress|  |
+| 11. Polish | v1.1 | 3/3 | Complete   | 2026-04-13 |
