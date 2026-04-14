@@ -3,6 +3,15 @@ interface Props {
   schema: Record<string, unknown>;
 }
 const { schema } = Astro.props;
+// Escape </ and <! sequences that would terminate a <script> block or
+// start an HTML comment. Also escape line/paragraph separators that
+// break JavaScript string literals in older parsers.
+const serialized = JSON.stringify(schema)
+  .replace(/</g, "\\u003c")
+  .replace(/>/g, "\\u003e")
+  .replace(/&/g, "\\u0026")
+  .replace(/\u2028/g, "\\u2028")
+  .replace(/\u2029/g, "\\u2029");
 ---
 
-<script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+<script is:inline type="application/ld+json" set:html={serialized} />
