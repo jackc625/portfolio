@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 12 context gathered
-last_updated: "2026-04-15T18:41:33.944Z"
-last_activity: 2026-04-15 -- Phase 12 execution started
+stopped_at: Completed 12-01-build-warnings-sweep-PLAN.md — zero-warning gate held
+last_updated: "2026-04-15T19:05:28.791Z"
+last_activity: 2026-04-15
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 6
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 17
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 12 (tech-debt-sweep) — EXECUTING
-Plan: 1 of 6
-Status: Executing Phase 12
-Last activity: 2026-04-15 -- Phase 12 execution started
+Plan: 2 of 6
+Status: Ready to execute
+Last activity: 2026-04-15
 Branch: main
 
 Progress: [░░░░░░░░░░] 0% (0 / TBD plans)
@@ -69,6 +69,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 11]: Lighthouse Performance 100 / A11y 95 / BP 100 / SEO 100 is the v1.2 starting baseline — every phase ends with a re-run
 - [Phase 07]: 15+ load-bearing invariants on chat.ts + api/chat.ts (async:false marked, exact-origin CORS, DOMPurify strict, 30s AbortController, 5/60s rate limit, focus-trap re-query, dual idempotency) — Phase 7 regression battery gates any phase that touches those files
 - [Phase 10]: localStorage chat persistence (50-msg cap, 24h TTL) replaced `transition:persist` — reintroducing `<ClientRouter />` would break it
+- [Phase 12-tech-debt-sweep]: 12-01: Chose DELETE path for wrangler.jsonc rate_limits block (D-05 default) — activating a new Cloudflare rate-limiter binding would double-count against app-layer limiter without explicit authorization
+- [Phase 12-tech-debt-sweep]: 12-01: Container.astro refactor used PATTERNS.md Option B (typed destructure) over Option A (inline cast)
 
 ### Pending Todos
 
@@ -97,9 +99,10 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 | Chat | Keyword routing | Deferred (only if $/mo > $5) | v1.2 planning |
 | Motion | Signature hero moment | User-excluded for v1.2 | v1.2 planning |
 | Motion | Project → project view-transition-name morph | Deferred to v1.3+ | v1.2 planning |
+| Phase 12-tech-debt-sweep P01-build-warnings-sweep | 8min | 6 tasks | 6 files |
 
 ## Session Continuity
 
-Last session: 2026-04-15T15:56:28.712Z
-Stopped at: Phase 12 context gathered
-Resume file: .planning/phases/12-tech-debt-sweep/12-CONTEXT.md
+Last session: 2026-04-15T19:05:28.785Z
+Stopped at: Completed 12-01-build-warnings-sweep-PLAN.md — zero-warning gate held
+Resume file: None
