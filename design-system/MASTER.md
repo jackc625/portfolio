@@ -83,6 +83,30 @@ The **entire** color palette is six hex values. The **entire** layout token set 
 
 Components consume either raw `var(--ink)` or Tailwind utilities like `text-ink-muted` and `bg-bg`. Both are equivalent. There is no third option.
 
+### 2.4 Accepted token exceptions
+
+These are the only documented exceptions to the six-hex palette. Each entry is a deliberate, permanently-accepted trade-off — re-evaluation is deferred to any future milestone that revisits the editorial color system (§2.1). No inline CSS comments duplicate this documentation; MASTER.md is the single source of truth.
+
+#### `--ink-faint` contrast exception
+
+| Property  | Value                                                                                                                                                                                                  |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Token     | `--ink-faint` (`#A1A1AA`) on `--bg` (`#FAFAF7`)                                                                                                                                                        |
+| Contrast  | 2.5:1 — below WCAG AA 4.5:1 for normal text; passes AA 3:1 for non-text UI and Large Text                                                                                                              |
+| Scope     | Tertiary / decorative metadata only — `SectionHeader` section counts, `WorkRow` stack labels and year labels, footer copy, next-project label, contact separator, chat character count                 |
+| Rationale | Editorial hierarchy requires a visually-quieter tertiary text tone than 4.5:1 permits. Primary body text uses `--ink` (18.9:1) and secondary text uses `--ink-muted` (7.4:1); both pass AA comfortably. |
+| Impact    | Lighthouse Accessibility lands at 95/100 (not 100). QUAL-01 threshold (≥90) is still met.                                                                                                              |
+| Status    | Permanent-accepted — will not be addressed in v1.x                                                                                                                                                     |
+
+#### Print stylesheet `#666`
+
+| Property  | Value                                                                                                                                                                                                |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Token     | `#666` literal at `src/styles/global.css:199` inside `a[href^="http"]::after` URL annotations                                                                                                        |
+| Scope     | Print media query only (`@media print { ... }`) — never reaches the screen                                                                                                                           |
+| Rationale | The editorial color system applies to the screen cascade. Print stylesheets annotate external links with their URLs for readability on paper; the specific grey chosen here is outside palette scope. |
+| Status    | Permanent-accepted — will not be addressed in v1.x                                                                                                                                                   |
+
 ---
 
 ## 3. Typography
@@ -790,5 +814,6 @@ Every other surface in the system uses `border-radius: 0` (work rows, chat panel
 
 ## 11. Changelog
 
+- 2026-04-15 — Phase 12 amendment: §2.4 Accepted token exceptions added (`--ink-faint` contrast + print `#666`)
 - 2026-04-13 — Phase 10 head-of-phase amendment: §6.1 typing-dot carve-out, §5.2/§5.8 X drop from social rows, §10 chat bubble exception
 - 2026-04-07 — v1.1 initial lock (Phase 8)
