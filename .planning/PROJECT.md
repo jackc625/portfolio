@@ -10,11 +10,13 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ## Current State
 
-**Shipped:** v1.1 Editorial Redesign (2026-04-13)
+**Shipped:** v1.1 Editorial Redesign (2026-04-15)
 **Live at:** jackcutrara.com (Cloudflare Pages)
 **Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript + MDX + Cloudflare Workers (SSR) + Geist/Geist Mono typography
-**Source LOC:** ~2,875 (Astro, TS, CSS, MDX) + chatbot feature
+**Source LOC:** ~3,859 (src/ — astro, ts, css, mdx)
 **Repo:** github.com/jackc625/portfolio (public)
+**Lighthouse:** Performance 100 / Accessibility 95 / Best Practices 100 / SEO 100
+**Design contract:** `design-system/MASTER.md` — locked editorial system, 6-hex palette, Geist/Geist Mono, restrained motion
 
 ## Requirements
 
@@ -58,43 +60,16 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ### Active
 
-See REQUIREMENTS.md for milestone v1.1 requirements (Editorial Redesign).
+(None — v1.1 complete. Requirements for the next milestone will be defined via `/gsd-new-milestone`.)
 
-## Current Milestone: v1.1 Editorial Redesign
+## Next Milestone Goals
 
-**Goal:** Replace the v1.0 shiyunlu-clone visual system with a locked editorial design system (Geist + Geist Mono, warm off-white + signal red, restrained motion) across every page, while preserving all functional capabilities (chat widget, content collections, deployment, performance, a11y).
+v1.1 shipped the locked editorial design system and all page/component rewrites. Potential directions for v1.2+ (to be scoped during `/gsd-new-milestone`):
 
-**Target features:**
-- New design system: Geist + Geist Mono typography, warm off-white #FAFAF7 base + signal red #E63946 accent, single light theme (dark mode killed)
-- Editorial homepage with display hero, mono metadata block, "available for work" status, numbered work list
-- Editorial about page (intro line + 3 paragraphs, no skill icons)
-- Editorial projects index and case study layout using real project content
-- Minimal contact section with résumé PDF download (resume page removed — PDF is single source of truth)
-- Chat widget restyle (all functionality preserved, visuals integrated)
-- Polish sweep: a11y, Lighthouse 90+ retained, responsive QA
-
-**Key context:**
-- Visual direction is locked via mockup.html (repo root) and design-system/MASTER.md (to be written as first artifact)
-- Phase numbering continues: v1.1 starts at Phase 8 (v1.0 ended at Phase 7 — chatbot)
-- Many v1.0 design requirements will be invalidated by this milestone (canvas hero, dark/light theme, GSAP scroll animations, project card grid, resume page) and moved to Out of Scope with reason "replaced by editorial redesign v1.1"
-
-### Validated in Phase 10
-
-- ✓ Editorial homepage with display hero, numbered work list, about preview, contact section — Phase 10 (HOME-01..04)
-- ✓ Editorial about page (intro + 3 paragraphs, no icons) — Phase 10 (ABOUT-01..02)
-- ✓ Projects index with numbered work list + editorial case study detail pages — Phase 10 (WORK-01..03)
-- ✓ Minimal contact section with résumé PDF download, X dropped (no account exists) — Phase 10 (CONTACT-01..02)
-- ✓ Chat widget restyled to editorial system (flat-rectangle chrome, mono labels) — Phase 10 (CHAT-02)
-- ✓ Chat persistence restored via localStorage (50-msg cap, 24h TTL) — Phase 10 (CHAT-01)
-
-### Validated in Phase 7
-
-- ✓ AI chatbot widget with streaming responses — Phase 7 (Claude Haiku via SSE)
-- ✓ Chat persistence across page navigation — Phase 7 (transition:persist → Phase 10 localStorage)
-- ✓ Full keyboard accessibility and focus trapping — Phase 7
-- ✓ Defense-in-depth security (CORS whitelist, rate limiting, input validation, prompt injection resistance) — Phase 7
-- ✓ Mobile full-screen chat overlay — Phase 7
-- ✓ Markdown rendering with XSS sanitization — Phase 7 (marked + DOMPurify)
+- **Real content pass** — replace placeholder content in the 4 remaining project MDX files with real case studies (highest-leverage work for job applications)
+- **Blog / writing section** — only if Jack commits to regular writing cadence
+- **Analytics & instrumentation** — Plausible/Umami to measure recruiter engagement on the live site
+- **Chat widget enhancements** — fine-tune portfolio-context.json with real project specifics once content pass completes
 
 ### Out of Scope
 
@@ -111,14 +86,13 @@ See REQUIREMENTS.md for milestone v1.1 requirements (Editorial Redesign).
 
 ## Context
 
-Shipped v1.0 MVP with 2,875 LOC across Astro, TypeScript, CSS, and MDX. 6 phases executed over 10 days (2026-03-22 to 2026-03-31), 195 commits, 27 plans. Design language cloned from shiyunlu.com with generative canvas hero, OKLCH color tokens, and Inter/IBM Plex Mono typography. All 45 requirements satisfied per milestone audit. 6 tech debt items remain (all non-critical).
+v1.1 Editorial Redesign shipped 2026-04-15. 4 phases (8-11), 27 plans, 63 tasks, ~150 commits over 9 days (2026-04-07 → 2026-04-15). Source LOC climbed from ~2,875 to ~3,859 across src/ after primitive library build-out. All 25 v1.1 requirements satisfied per milestone audit. Design contract locked at `design-system/MASTER.md`.
 
-Phase 7 (2026-04-04): Added AI chatbot feature — Claude Haiku-powered chat widget with streaming SSE responses, markdown rendering, full accessibility, defense-in-depth security, and mobile support. Site now uses hybrid SSR via Cloudflare Workers adapter for the chat API endpoint.
+v1.0 MVP shipped 2026-03-31 with 6 phases, 27 plans, 43 tasks. Added Phase 7 (chatbot) 2026-04-04.
 
-Known issues:
-- `CaseStudySection.astro` is dead code (safe to delete)
-- 4 of 6 project MDX files have placeholder content
-- `ArticleImage.astro` wiring is dormant (no MDX uses embedded images yet)
+Known issues carried into v1.2:
+- 4 of 6 project MDX files still have placeholder content — highest-priority content work
+- 7 non-blocking tech debt items documented in `milestones/v1.1-MILESTONE-AUDIT.md` (lightning-css warnings, MobileMenu focus-trap middle-element edge case, OG URL builder latent bug, `--ink-faint` 2.5:1 contrast on decorative metadata, live vs replayed chat copy button inconsistency)
 
 ## Key Decisions
 
@@ -134,11 +108,16 @@ Known issues:
 | Hybrid project layout | Featured cards + editorial list serves both audiences | ✓ Good — scan-friendly and deep-dive ready |
 | Theme transitions via .theme-transitioning class | Prevents layout thrash on initial load | ✓ Good — no flash of wrong theme |
 | Dynamic import() for GSAP | Code-splitting without manual chunk config | ✓ Good — Lighthouse 90+ Performance |
+| Locked editorial design system (v1.1) | Restraint over motion — MASTER.md as single source of truth | ✓ Good — Lighthouse 100/95/100/100, distinctive visual identity |
+| Flat hex tokens replacing OKLCH (v1.1) | Simpler mental model, single light theme eliminates theme machinery | ✓ Good — dead theme code removed, smaller surface area |
+| localStorage chat persistence replacing transition:persist (v1.1) | ClientRouter removed with view transitions; localStorage survives the navigation model | ✓ Good — 50-msg cap + 24h TTL preserves UX without DOM persistence |
+| MobileMenu container query (v1.1) | `@container (max-width: 380px)` on header-inner is the true signal, not viewport width | ✓ Good — hamburger appears when nav actually wraps, not at arbitrary breakpoint |
 
 ## Constraints
 
 - **Design process**: All visual/UI/UX decisions routed through frontend-design skill — no ad-hoc design choices
-- **Tech stack**: Astro 6 + Tailwind CSS v4 + GSAP (locked for v1)
+- **Tech stack**: Astro 6 + Tailwind CSS v4 (GSAP removed in v1.1 — restrained motion)
+- **Design system**: `design-system/MASTER.md` is the locked contract for v1.1+ — all visual work references it; six-hex palette; Geist + Geist Mono only
 - **Content**: 4 of 6 project MDX files still have placeholder content — fill before active job applications
 - **Audience**: Must serve both 30-second recruiter scans and 10-minute engineer deep dives
 
@@ -160,4 +139,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-13 — Phase 10 (Page Port) complete. All 5 pages rewritten to editorial compositions over Phase 9 primitives. Chat widget restyled to flat-rectangle chrome with localStorage persistence restored. 13/13 requirements delivered (HOME-01..04, ABOUT-01..02, WORK-01..03, CONTACT-01..02, CHAT-01..02). Phase 11 (Polish) unblocked.*
+*Last updated: 2026-04-15 after v1.1 Editorial Redesign milestone. Phases 8-11 complete, 25/25 requirements satisfied, Lighthouse 100/95/100/100 verified, deployed to jackcutrara.com. Next: `/gsd-new-milestone` to define v1.2 scope.*

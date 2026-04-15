@@ -51,6 +51,55 @@
 
 ---
 
+## Milestone: v1.1 — Editorial Redesign
+
+**Shipped:** 2026-04-15
+**Phases:** 4 | **Plans:** 27 | **Tasks:** 63
+
+### What Was Built
+- `design-system/MASTER.md` — locked editorial contract (tokens, typography, layout, motion, accent rules, anti-patterns) written before any code changes
+- Flat 6-hex palette replacing OKLCH tokens; Geist + Geist Mono self-hosted via Astro 6 Fonts API; GSAP/dark mode/canvas hero/view transitions fully removed
+- New primitive library in `src/components/primitives/` — Container, SectionHeader, WorkRow, MetaLabel, StatusDot, Header, Footer, MobileMenu (container-query hamburger, focus-trap dialog)
+- Full page port: homepage (display hero + numbered work list + about preview + contact), about (3 paragraphs), projects index, project detail (editorial case study), contact (minimal)
+- Chat widget restyle (flat-rectangle chrome, mono labels) with localStorage persistence restored (50-msg cap, 24h TTL)
+- Lighthouse 100/95/100/100, WCAG AA verified, deployed to Cloudflare Pages
+
+### What Worked
+- **MASTER.md as task 1 of Phase 8**: Writing the design contract before any code changes eliminated drift — every subsequent phase consumed it as the rules artifact
+- **Foundation → Primitives → Page Port → Polish phase shape**: Building the component library before rewriting pages prevented the page-by-page churn that would happen from porting and designing simultaneously
+- **mockup.html as visual reference through Phases 8-10**: Preserving the static HTML reference gave Claude a target to match instead of re-designing blind (v1.0 lesson applied correctly)
+- **Integration-point deviation restraint**: Plan 09-05 swapped the primitive library into BaseLayout.astro by touching exactly 4 lines — minimum viable integration = minimum regression surface
+- **Phase 7 chat as universal regression gate**: Every phase touching BaseLayout or shared CSS had to smoke-test the chat widget before shipping — caught issues before they compounded
+- **Cross-AI review before executing Phase 11**: Gemini + Codex review surfaced contrast-truth and merge-safety concerns that tightened the plans
+
+### What Was Inefficient
+- **Phase 9 retroactive VALIDATION.md reconstruction (State B)**: 22 validation gaps were reclassified manual-only after the fact — sign that Nyquist classification wasn't happening during plan authoring
+- **Lightning-css warnings from Tailwind v4 Oxide template detection**: 4 `Unexpected token Delim('*')` warnings from literal `var(--token-*)` example strings in `.planning/` surfaced in Phase 9 and weren't closed until Phase 11 via `@source not` directive — deferred-items discipline slipped one phase
+- **Live vs replayed chat copy button code drift**: `chat.ts:302` uses SVG icon, `chat.ts:555` uses `COPY` text for the same UI — a 2-line fix that accumulated because live and replay paths diverged across plans 10-05 and 10-06
+- **STATE.md field drift**: `gsd-tools milestone complete` warned that the `Last Activity Description` field was missing — STATE.md's shape has drifted from what the tool expects
+
+### Patterns Established
+- **Primitive-in-primitive composition**: `StatusDot` composes `MetaLabel` — pattern adopted by composite primitives (Header/Footer/WorkRow)
+- **Dynamic tag prop `{ as: Tag = 'div' }` rename**: Astro requires capital-letter identifier for dynamic tag rendering while MASTER.md locks lowercase `as` prop name
+- **Scoped CSS variant classes** (e.g., `.meta-label--ink-muted`): Astro auto-scopes class names, keeps runtime zero-JS, confines color-switching to the six-token palette
+- **Container query hamburger**: `@container (max-width: 380px)` on `header-inner` is the true signal — mobile nav appears when nav would actually wrap, not at arbitrary viewport breakpoint
+- **Belt-and-suspenders dev route indexing defense**: sitemap filter + robots.txt Disallow + per-page noindex meta — triple defense required because astro-seo's default index,follow conflicts with slot-injected noindex
+- **Opacity-only hover transitions**: WorkRow + NextProject use `opacity 0→1, 120ms ease` with zero transform — restraint primitive for the "no motion" design system
+
+### Key Lessons
+1. **Write the design contract as task 1, not as an afterthought** — MASTER.md before any code changes eliminated the per-phase design drift that plagued v1.0
+2. **Phase the rebuild as foundation → primitives → pages → polish** — trying to redesign and port pages simultaneously is a recipe for rework; build the component library first even though it looks like a phase without user-facing output
+3. **Minimum viable integration = minimum regression surface** — when swapping a primitive library into a shared shell, touch only the import paths; don't also refactor the shell
+4. **Classify Nyquist manual-only at plan-authoring time, not retroactively** — State B reconstruction for 22 gaps across Phases 9-10 is a tell that the decision belongs upstream in the plan
+5. **Defer lightning-css / build warnings the same phase they appear** — deferring across phases lets them compound; `deferred-items.md` worked as a ledger but the fix should have landed in Phase 9, not Phase 11
+
+### Cost Observations
+- Model mix: Primarily opus for execution + plan authoring, sonnet for research and verification agents
+- Sessions: ~15 across 9 days (2026-04-07 → 2026-04-15)
+- Notable: Phase 11 was the most expensive phase (cross-AI review + Lighthouse audit + WCAG inventory + merge + deploy + closeout all in 3 plans)
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -58,9 +107,12 @@
 | Milestone | Sessions | Phases | Plans | Key Change |
 |-----------|----------|--------|-------|------------|
 | v1.0 | ~10 | 6 | 27 | Established GSD workflow, design reference pattern |
+| v1.1 | ~15 | 4 | 27 | Added phased rebuild shape (Foundation→Primitives→Pages→Polish) and design-contract-first discipline |
 
 ### Top Lessons (Verified Across Milestones)
 
-1. Always provide a visual design reference — blind AI design iterations waste time
-2. Dynamic imports solve GSAP bundle size without manual chunk config
-3. Milestone-level audit catches cross-phase gaps that per-phase verification misses
+1. Always provide a visual design reference — blind AI design iterations waste time (v1.0 + v1.1)
+2. Dynamic imports solve GSAP bundle size without manual chunk config (v1.0) — moot after v1.1 removed GSAP entirely
+3. Milestone-level audit catches cross-phase gaps that per-phase verification misses (v1.0 + v1.1)
+4. Write the design contract before writing code — MASTER.md-as-task-1 eliminates per-phase drift (v1.1, new)
+5. Phase rebuilds as foundation → primitives → pages → polish — don't design and port simultaneously (v1.1, new)
