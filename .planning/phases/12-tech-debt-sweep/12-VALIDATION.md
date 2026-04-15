@@ -251,3 +251,31 @@ Per-plan manual D-26 verification was collapsed into a single phase-end gate on 
 - [ ] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
+
+---
+
+## DEBT-03 OG URL Production Verification
+
+**Run date:** 2026-04-15
+**Commit SHA at time of run:** `aead835`
+**User-Agent:** `facebookexternalhit/1.1`
+**Command:** `curl -sL -A "facebookexternalhit/1.1" "<URL>" | grep -oE '<meta property="og:(url|image)" content="[^"]*"'` — raw output at `/tmp/12-04-og-sweep.log`
+**Chosen project slug:** `seatwatch`
+
+| URL | og:url captured | og:image captured | Verdict |
+|-----|-----------------|-------------------|---------|
+| `https://jackcutrara.com/` | `https://jackcutrara.com/` | `https://jackcutrara.com/og-default.png` | PASS |
+| `https://jackcutrara.com/about` | `https://jackcutrara.com/about/` | `https://jackcutrara.com/og-default.png` | PASS |
+| `https://jackcutrara.com/projects` | `https://jackcutrara.com/projects/` | `https://jackcutrara.com/og-default.png` | PASS |
+| `https://jackcutrara.com/projects/seatwatch` | `https://jackcutrara.com/projects/seatwatch/` | `https://jackcutrara.com/og-default.png` | PASS |
+| `https://jackcutrara.com/contact` | `https://jackcutrara.com/contact/` | `https://jackcutrara.com/og-default.png` | PASS |
+
+**Per-URL observations:**
+
+- All 5 `og:url` values are absolute with correct `https://jackcutrara.com` origin.
+- All 5 `og:image` values are absolute, correctly resolved via the `resolveOg` guard at `src/layouts/BaseLayout.astro:38-39` (root-relative `/og-default.png` → `https://jackcutrara.com/og-default.png` with no double-prefix corruption).
+- Non-homepage `og:url` values carry a trailing slash (Astro/Cloudflare Pages canonical form) — no double-slash, no `localhost`, no preview-deploy hostname, no `https://jackcutrara.comhttps://...` corruption. Matches the site's canonical URL shape.
+- No query strings, fragments, or stale hostnames leaked in any of the 5 responses.
+
+**All-pass verdict:** DEBT-03 closed — `resolveOg` guard at `src/layouts/BaseLayout.astro:38-39` verified shipping correct absolute URLs across all 5 page types on production. No code change required.
+
