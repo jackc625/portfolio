@@ -53,7 +53,13 @@
   3. Production Open Graph / social previews resolve the correct absolute URL on every page (homepage, about, projects index, project detail, contact)
   4. Chat copy-to-clipboard button markup and behavior are identical between live-streamed bot messages and messages rehydrated from localStorage after page reload
   5. `milestones/v1.1-MILESTONE-AUDIT.md` shows all 7 carried items as closed or annotated as accepted trade-offs with rationale referenced in MASTER.md
-**Plans**: TBD
+**Plans**: 6 plans
+- [ ] 12-01-build-warnings-sweep-PLAN.md — Wrangler upgrade + rate_limits schema fix + ESLint/CSS clean-up (DEBT-01)
+- [ ] 12-02-mobilemenu-chatwidget-inert-PLAN.md — Extend inert to .chat-widget in MobileMenu openMenu/closeMenu (DEBT-02)
+- [ ] 12-03-chat-copy-button-parity-PLAN.md — createCopyButton helper + vitest parity test + D-26 gate (DEBT-04)
+- [ ] 12-04-og-url-production-verify-PLAN.md — 5-URL curl sweep against prod, record in 12-VALIDATION.md (DEBT-03)
+- [ ] 12-05-master-token-exceptions-PLAN.md — MASTER.md §2.4 Accepted token exceptions + §11 changelog (DEBT-05)
+- [ ] 12-06-audit-closeout-PLAN.md — Annotate all 7 carried items in v1.1-MILESTONE-AUDIT.md (DEBT-06)
 
 ### Phase 13: Content Pass + Projects/ Sync
 **Goal**: Every page a recruiter or engineer reads reflects Jack's real work — six real case studies, an accurate About narrative, verified homepage and resume copy, and a diff-reviewable sync pipeline that keeps `Projects/` as the single source of truth.
@@ -144,7 +150,7 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 9. Primitives | v1.1 | 8/8 | Complete | 2026-04-11 |
 | 10. Page Port | v1.1 | 8/8 | Complete | 2026-04-13 |
 | 11. Polish | v1.1 | 3/3 | Complete | 2026-04-13 |
-| 12. Tech Debt Sweep | v1.2 | 0/TBD | Not started | - |
+| 12. Tech Debt Sweep | v1.2 | 0/6 | Not started | - |
 | 13. Content Pass + Projects/ Sync | v1.2 | 0/TBD | Not started | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 0/TBD | Not started | - |
 | 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |
