@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Editorial Redesign
-status: completed
-stopped_at: Completed 11-01-PLAN.md
-last_updated: "2026-04-15T13:28:14.542Z"
+milestone: v1.2
+milestone_name: Polish
+status: defining_requirements
+stopped_at: Milestone v1.2 started — defining requirements
+last_updated: "2026-04-15T14:00:00.000Z"
 last_activity: 2026-04-15
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 27
-  completed_plans: 27
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,20 +25,11 @@ See: .planning/PROJECT.md (updated 2026-04-07)
 
 ## Current Position
 
-Phase: 11
-Plan: Complete
-Status: Milestone v1.1 complete
-Last activity: 2026-04-15
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-04-15 — Milestone v1.2 Polish started
 Branch: main
-
-### Milestone v1.1 Phase Map
-
-| Phase | Name | Requirements | Status |
-|-------|------|--------------|--------|
-| 8 | Foundation | DSGN-01..05, CONTACT-03 | Not started |
-| 9 | Primitives | (sequencing — enables Phase 10) | Not started |
-| 10 | Page Port | HOME-01..04, ABOUT-01..02, WORK-01..03, CONTACT-01..02, CHAT-01..02 | Not started |
-| 11 | Polish | QUAL-01..06 | Complete |
 
 ## Performance Metrics
 

@@ -60,16 +60,21 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ### Active
 
-(None — v1.1 complete. Requirements for the next milestone will be defined via `/gsd-new-milestone`.)
+(Requirements for v1.2 will be defined in REQUIREMENTS.md once roadmap is built.)
 
-## Next Milestone Goals
+## Current Milestone: v1.2 Polish
 
-v1.1 shipped the locked editorial design system and all page/component rewrites. Potential directions for v1.2+ (to be scoped during `/gsd-new-milestone`):
+**Goal:** Raise the bar on what already shipped — tasteful motion, real content everywhere, smarter chat, zero tech debt, measurable recruiter engagement.
 
-- **Real content pass** — replace placeholder content in the 4 remaining project MDX files with real case studies (highest-leverage work for job applications)
-- **Blog / writing section** — only if Jack commits to regular writing cadence
-- **Analytics & instrumentation** — Plausible/Umami to measure recruiter engagement on the live site
-- **Chat widget enhancements** — fine-tune portfolio-context.json with real project specifics once content pass completes
+**Target features:**
+
+- Tasteful motion layer — page enter/transitions, scroll-reveal on sections, primitive microinteractions (WorkRow, chat bubble, MobileMenu, StatusDot). No signature hero moment; homepage hero stays as-is.
+- Full content pass — replace 4 placeholder project MDX files with real case studies, audit About page narrative, verify homepage/resume copy is current, update `Projects/` folder docs as source-of-truth for project MDX.
+- Chat widget upgrade — fine-tune `portfolio-context.json`, tune system prompt / persona / response quality, research stronger knowledge approaches (RAG, embeddings DB, feeding project MDX directly) before choosing an implementation.
+- Resolve all 7 non-blocking tech debt items from the v1.1 audit.
+- Analytics instrumentation — Plausible or Umami to measure recruiter engagement on live site.
+
+**Key context:** MASTER.md is no longer a word-for-word contract in v1.2 — the design is locked, so motion layers on top intentionally without changing the editorial system. Content pass and chat knowledge work are coupled (chat gets better once real project content exists).
 
 ### Out of Scope
 
@@ -139,4 +144,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-15 after v1.1 Editorial Redesign milestone. Phases 8-11 complete, 25/25 requirements satisfied, Lighthouse 100/95/100/100 verified, deployed to jackcutrara.com. Next: `/gsd-new-milestone` to define v1.2 scope.*
+*Last updated: 2026-04-15 — milestone v1.2 Polish initialized. Next: define REQUIREMENTS.md and ROADMAP.md.*
