@@ -214,7 +214,30 @@ The following items require a human with a running `pnpm preview` (or staging de
 - [ ] Same for a replayed copy button (post-reload)
 - [ ] Diff confirms byte-equal markup except for post-click transient state
 
-**D-26 Gate Verdict for Plan 12-03:** AUTOMATED ALL GREEN (9/9). MANUAL smoke + Lighthouse pending human verification. Update this section with timestamps + verdicts after human confirms on preview deploy.
+**D-26 Gate Verdict for Plan 12-03:** AUTOMATED ALL GREEN (9/9). MANUAL smoke + Lighthouse **deferred to consolidated phase-end D-26 gate** (covers 12-02 + 12-03 chat-adjacent changes together — see `## D-26 Phase-End Consolidated Gate` below).
+
+---
+
+## D-26 Phase-End Consolidated Gate
+
+Per-plan manual D-26 verification was collapsed into a single phase-end gate on 2026-04-15 to avoid redundant browser smoke per plan. This gate covers both chat-adjacent plans (12-02 inert extension + 12-03 copy-button dedup) in one pass.
+
+**Run after:** all 6 plans complete (12-06 commits).
+
+**Coverage (union of 12-02 Part A/B/C/D + 12-03 Part A/C/D):**
+
+- [ ] Keyboard-cycle test (mobile menu open → Tab/Shift+Tab 30× on `/projects`; focus never escapes menu; inert on header/main/footer/.chat-widget confirmed in DevTools)
+- [ ] Mobile menu × chat interaction matrix (menu open with chat closed; menu open with chat open; inert restoration on menu close)
+- [ ] Chat panel functional smoke (open, Tab cycle, send, SSE stream renders tokens, typing indicator)
+- [ ] COPY button live-stream: text flip COPY→COPIED, color flip faint→accent, 1s revert, clipboard contents correct
+- [ ] COPY button replay (after reload): byte-identical markup to live-stream, same behavior, idempotent on double-click
+- [ ] 30s AbortController timeout recovery
+- [ ] Rate limit 5/60s — 6th message rejected with user-facing error
+- [ ] localStorage 50-msg cap + 24h TTL
+- [ ] Markdown rendering via DOMPurify strict whitelist
+- [ ] Focus trap re-query never escapes chat panel
+- [ ] DevTools `outerHTML` diff: live-stream vs replay copy buttons byte-equal (except post-click transient)
+- [ ] Lighthouse CI on `/` + one project detail: Performance ≥99 / Accessibility ≥95 / Best Practices 100 / SEO 100
 
 ---
 
