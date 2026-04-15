@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Completed 12-02-mobilemenu-chatwidget-inert-PLAN.md — DEBT-02 closed, D-26 gate all-green
-last_updated: "2026-04-15T20:05:28.694Z"
+stopped_at: Completed 12-03-chat-copy-button-parity-PLAN.md automated portions (Tasks 1+2); Task 3 D-26 manual smoke + Lighthouse awaiting human verification on pnpm preview
+last_updated: "2026-04-15T20:24:18.096Z"
 last_activity: 2026-04-15
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 6
-  completed_plans: 2
-  percent: 33
+  completed_plans: 3
+  percent: 50
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 12 (tech-debt-sweep) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 Status: Ready to execute
 Last activity: 2026-04-15
 Branch: main
@@ -72,6 +72,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 12-tech-debt-sweep]: 12-01: Chose DELETE path for wrangler.jsonc rate_limits block (D-05 default) — activating a new Cloudflare rate-limiter binding would double-count against app-layer limiter without explicit authorization
 - [Phase 12-tech-debt-sweep]: 12-01: Container.astro refactor used PATTERNS.md Option B (typed destructure) over Option A (inline cast)
 - [Phase 12-tech-debt-sweep]: 12-02: Single .chat-widget selector covers both bubble-only and panel-open states for inert (Claude's-discretion resolution per CONTEXT.md D-12); handleKeyDown preserved byte-for-byte per D-10 belt-and-suspenders for Safari <15.5 / Firefox <112
+- [Phase 12-tech-debt-sweep]: 12-03: createCopyButton(getContent: () => string) — closure over callback (not captured string) so live-stream can read final botContent at click-time; keeps chat.ts:817-827 cloneNode idempotency guard byte-identical and additive.
+- [Phase 12-tech-debt-sweep]: 12-03: jsdom in vitest env does not round-trip style.cssText via setter — canonical-markup test uses toBeInstanceOf + outerHTML parity instead; real-browser inline style verified in D-26 manual smoke.
 
 ### Pending Todos
 
@@ -102,9 +104,10 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 | Motion | Project → project view-transition-name morph | Deferred to v1.3+ | v1.2 planning |
 | Phase 12-tech-debt-sweep P01-build-warnings-sweep | 8min | 6 tasks | 6 files |
 | Phase 12-tech-debt-sweep P02-mobilemenu-chatwidget-inert | 6min | 2 tasks | 2 files |
+| Phase 12-tech-debt-sweep P03-chat-copy-button-parity | 8min | 3 tasks | 4 files |
 
 ## Session Continuity
 
-Last session: 2026-04-15T20:05:17.135Z
-Stopped at: Completed 12-02-mobilemenu-chatwidget-inert-PLAN.md — DEBT-02 closed, D-26 gate all-green
+Last session: 2026-04-15T20:24:18.085Z
+Stopped at: Completed 12-03-chat-copy-button-parity-PLAN.md automated portions (Tasks 1+2); Task 3 D-26 manual smoke + Lighthouse awaiting human verification on pnpm preview
 Resume file: None
