@@ -1,215 +1,398 @@
-# Feature Research
+# Feature Research — v1.2 Polish Milestone
 
-**Domain:** Personal portfolio website for junior SWE candidate
-**Researched:** 2026-03-22
-**Confidence:** HIGH
+**Domain:** Personal portfolio site — polish pass on shipped Astro 6 editorial build
+**Researched:** 2026-04-15
+**Confidence:** HIGH (motion + case study structure + analytics); MEDIUM (chat knowledge approaches — implementation-dependent); HIGH (anti-features — MASTER.md already forbids most of them)
 
-## Feature Landscape
+---
 
-### Table Stakes (Visitors Expect These)
+## Scope Reminder
 
-Missing any of these means the site feels broken, amateur, or incomplete. Recruiters leave in under 10 seconds.
+v1.2 is a *polish* milestone on top of a locked editorial design system. The six-hex palette, Geist typography, seven primitive library, restrained-motion stance, and Phase 7 chat architecture are **already shipped**. This research covers only the five new capability areas being layered on top:
 
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| **Clear hero/identity section** | Recruiters must know who Jack is and what he does within 3-5 seconds of landing. Name, role, one-liner value prop. | LOW | Above the fold. No ambiguity. "Jack Cutrara -- Software Engineer" not clever taglines. |
-| **Responsive design (mobile-first)** | 60%+ of portfolio views happen on mobile (2025 data). Recruiters review on phones between meetings. | MEDIUM | Must be mobile-first, not desktop-adapted. Test on real devices. |
-| **Professional navigation** | Users expect to find Home, About, Projects, Resume, Contact without hunting. Broken navigation = instant bounce. | LOW | Sticky/fixed nav. Clear labels. No hamburger menu on desktop. |
-| **Projects page with scan-friendly cards** | This is the core product. Recruiters scan 3-5 projects in under 60 seconds. Each card needs: title, one-line description, tech stack tags, thumbnail/screenshot. | MEDIUM | Cards, not lists. Visual hierarchy matters. Link to detail pages. |
-| **Project detail/case study pages** | Engineers doing deep review need: problem statement, approach, architecture decisions, tech stack, challenges, outcomes, links to code/live demo. | HIGH | Structure: Problem > Solution > Tech > Challenges > Results > Links. 800-1500 words with visuals. |
-| **About page** | Without context on who Jack is, the portfolio feels cold and disconnected. Background, education, path into engineering, interests. | LOW | Keep professional but human. Show personality without being cute. |
-| **Resume page with PDF download** | Recruiters need to save/forward your resume to hiring managers. PDF format preserves layout across systems. | LOW | Viewable on-page AND downloadable PDF. Put download button above the fold. |
-| **Contact information** | The entire point is to get contacted. Email, LinkedIn, GitHub -- visible and accessible. | LOW | Direct links, not a contact form (per PROJECT.md). Footer presence on every page plus dedicated section. |
-| **Fast page load (<2 seconds)** | 38% bounce rate at 3 seconds. 90% increase in bounce probability from 1 to 5 seconds. Recruiters won't wait. | MEDIUM | Target <1.5s LCP. Optimize images, minimize JS, use SSG/SSR. This is non-negotiable for a performance-focused site. |
-| **Working links (zero 404s)** | Broken links are the #1 immediate rejection signal. Hiring managers equate broken links with careless engineering. | LOW | Test all links. No "coming soon" placeholders. If a project isn't ready, don't list it. |
-| **GitHub profile links** | Engineers will check your code. Make it easy. Link from every project to its repo. | LOW | Per-project repo links on detail pages. Global GitHub link in nav/footer. |
-| **Basic SEO/meta tags** | When someone Googles "Jack Cutrara", this site should rank. Title tags, meta descriptions, Open Graph tags. | LOW | Unique title/description per page. OG tags for link previews when shared on LinkedIn/Slack. |
-| **HTTPS and custom domain** | yourname.com signals professionalism. HTTP signals amateur hour. | LOW | Jack has a custom domain available. HTTPS is free via any modern host. |
+1. Tasteful motion layer (page enter/transition, scroll-reveal, primitive microinteractions — **no hero signature moment**)
+2. Content pass (4 placeholder MDX files → real case studies, About audit, copy audit, `Projects/` docs)
+3. Chat widget knowledge upgrade
+4. 7 v1.1 tech debt items (enumerated in `v1.1-MILESTONE-AUDIT.md` — not researched here)
+5. Analytics instrumentation for recruiter engagement
 
-### Differentiators (Competitive Advantage)
+Features the site already has (home, about, projects index, case studies, contact, chat widget, JSON-LD, sitemap, OG, Lighthouse 100/95/100/100) are **not re-researched**.
 
-These separate a forgettable portfolio from one that gets bookmarked and shared. They signal "this person is a step above."
+---
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| **Dual reading modes (scan vs deep)** | Directly serves both audiences: recruiter 30-second scan AND engineer 10-minute deep review. Most portfolios optimize for one, not both. | MEDIUM | Project cards for scan mode. Case study pages for deep mode. Progressive disclosure -- summary first, detail on demand. This is the core differentiator per PROJECT.md. |
-| **Project screenshots/visuals/demos** | 84% of employers want to see working applications, not just code. Screenshots make projects real at a glance. Hiring managers won't clone and run your repo. | MEDIUM | Real screenshots, not mockups. GIFs or short video clips for interactive features. Lazy-loaded for performance. |
-| **Structured case studies with outcomes** | Transforms "I built a thing" into "I identified a problem, made technical decisions, and delivered results." Shows engineering thinking, not just coding ability. | HIGH | Follow: Context > Problem > Approach > Architecture > Challenges > Results > Learnings. Include specific metrics where possible ("reduced load time by 40%"). |
-| **Live demo links for projects** | Lets reviewers experience the work without setup friction. Dramatically increases engagement time and memorability. | LOW (if projects are already deployed) | Not all projects need live demos. Prioritize 2-3 that demo well. Ensure demos are stable and fast. |
-| **Dark/light mode toggle** | Shows attention to UX detail and user preference respect. Expected in 2025 dev portfolios. Respecting OS preference via `prefers-color-scheme` is table stakes for a "modern tech stack" claim. | MEDIUM | Default to OS preference. Persist user choice in localStorage. Smooth transition, no flash of wrong theme. |
-| **Subtle, purposeful animations** | Polished entrance animations and micro-interactions signal design sensibility. The portfolio IS a demo of frontend skill. | MEDIUM | Page transitions, scroll-triggered reveals, hover states. Keep tasteful -- no parallax overload. Performance budget: animations must not cause jank or increase LCP. |
-| **Accessible design (WCAG 2.2 AA)** | Demonstrates professional standards. Most junior portfolios ignore accessibility entirely. Standing out here is easy and impactful. | MEDIUM | Semantic HTML, keyboard navigation, focus indicators, color contrast (4.5:1+), alt text, skip links. ARIA where needed. This is also good SEO. |
-| **Print-friendly resume** | Recruiters print resumes. A `@media print` stylesheet that produces clean output from the resume page is a subtle power move. | LOW | CSS print styles. Hide nav, footer, interactive elements. Clean typography. This costs almost nothing to implement. |
-| **Structured data / JSON-LD** | Rich search results when someone Googles Jack's name. Person schema, project schema. Shows technical depth. | LOW | Person schema on home/about. CreativeWork schema on project pages. Low effort, high signal. |
-| **Performance scores as a feature** | If the site scores 95+ on Lighthouse across all categories, that IS a portfolio piece. It demonstrates real engineering skill. | MEDIUM | Lighthouse 95+ in Performance, Accessibility, Best Practices, SEO. Display this as a badge or mention it. The site proves the claim. |
+## 1. Motion Layer — Feature Landscape
 
-### Anti-Features (Deliberately NOT Building)
+### 1.1 Table Stakes (a polished 2026 portfolio is expected to have these)
 
-Features that seem appealing but actively hurt the portfolio's effectiveness.
+Missing any of these and the site feels static/unfinished to a design-literate recruiter. All of these are compatible with MASTER.md §6's "pragmatic motion line" and do not require amending the design system.
 
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|-----------------|-------------|
-| **Blog / writing section** | "Shows thought leadership" | No content source for v1. Empty blogs signal abandonment. Half-written posts are worse than no posts. Maintaining a blog is an ongoing commitment that distracts from the portfolio's core mission: getting interviews. | Defer to v2 after site proves its value. If Jack starts writing, add it then. |
-| **Contact form** | "Looks professional" | Forms create backend complexity (spam filtering, email delivery, CAPTCHA). Direct email/LinkedIn links are actually more professional for this audience -- recruiters already have email workflows. Forms often go unchecked. | Direct mailto: link, LinkedIn button, GitHub link. PROJECT.md already specifies this. |
-| **Flashy 3D / Three.js hero** | "Looks impressive, shows skill" | Bloats bundle size. Kills mobile performance. Increases LCP. Alienates non-technical recruiters. Unless applying for creative/3D roles, it signals "I prioritize showing off over usability." | Subtle CSS animations, clean typography, and fast load times impress more people who actually hire engineers. |
-| **Skills progress bars / percentage ratings** | "Quantifies my abilities" | "85% Python" is meaningless and invites skepticism. No hiring manager takes self-reported skill percentages seriously. They look amateurish. | List technologies cleanly with context (e.g., grouped by proficiency or project). Let the project case studies demonstrate depth. |
-| **Testimonials section** | "Social proof" | No content source for v1 (per PROJECT.md). Fake or forced testimonials destroy credibility. Empty testimonial sections look worse than none. | Defer entirely. If Jack gets strong recommendations later, add them. LinkedIn endorsements serve this purpose already. |
-| **CMS / admin panel** | "Easy content updates" | Massive overengineering for a static portfolio with 5-6 projects. Adds deployment complexity, potential security surface, and maintenance burden. Content changes happen monthly at most. | Static site with content in code/markdown. Edit, commit, deploy. This IS the appropriate workflow for a developer's portfolio. |
-| **Analytics dashboard** | "Track visitor behavior" | Building a custom dashboard is wasted effort. Adds JS weight. Privacy concerns. | Add a lightweight analytics script post-launch (Plausible, Umami, or simple Vercel Analytics). Not part of v1 build. |
-| **Real-time chat widget** | "Instant communication" | Unnecessary complexity. Nobody expects to chat with a portfolio owner in real-time. Looks spammy. Kills the professional tone. | Email and LinkedIn are sufficient. Response time expectations are different for job seekers vs. businesses. |
-| **Excessive page transitions / loading screens** | "Feels like an app" | Custom loading screens on a static site scream "I'm hiding slow performance." Forced wait states frustrate recruiters. Every second counts. | Instant navigation. If the site is fast (and it should be), there's nothing to mask. |
-| **GitHub contribution graph embed** | "Shows I code every day" | Inconsistent graphs raise questions. Green squares don't prove skill. Adds visual noise. Can backfire if there are gaps. | Link to GitHub profile. Let curious engineers visit on their own. Focus the portfolio on curated project work, not activity metrics. |
-| **Music player / background audio** | "Personal touch" | Universally disliked. Auto-playing audio is an accessibility violation and an instant close-tab trigger. | Don't. |
+| Feature | Why Expected | Complexity | Duration / Easing | Reduced-Motion Behavior |
+|---------|--------------|------------|-------------------|-------------------------|
+| **Page enter fade** | Hard DOM swap on every navigation feels jarring. Astro 6 View Transitions give near-free polish via the browser's native API. | LOW — two directives (`transition:animate="fade"` on `<main>`, opt-in `<ClientRouter />`). Must reconcile with MASTER §6.1 "no ClientRouter" — amendment required or use CSS-only crossfade. | 200–300ms, `ease-out` | Native API auto-disables under `prefers-reduced-motion: reduce` — instant swap |
+| **Scroll-reveal (fade + 8–16px translateY)** | Sections feel inert without progressive reveal. Used across Linear, Vercel, Brian Lovin, Rauno Freiberg. | LOW — IntersectionObserver + `[data-reveal]` CSS class, ~30 lines vanilla TS. No library. | **250–350ms**, `cubic-bezier(0.22, 1, 0.36, 1)` ("ease-out-quint"). Translate amount **12px max**. | `@media (prefers-reduced-motion: reduce)` → elements start at final state (opacity 1, no translate). `once: true` so re-entry doesn't re-trigger. |
+| **Hover/focus state transitions** (already on site) | Link color, underline, arrow reveal — instant swap feels broken per MASTER §6.4. | LOW — already spec'd in MASTER §6.2. | **120ms**, `ease` (matches existing WorkRow arrow) | Unaffected — sub-200ms color/opacity is safe per MASTER §6.3. |
+| **Focus-visible ring animation** | Accessibility affordance; instant outline snap is fine but a 100ms outline-offset grow is more refined. | LOW — CSS `:focus-visible` + `transition: outline-offset 100ms ease`. | 100ms, `ease` | No change needed — motion is functional state signal. |
+| **Copy-to-clipboard confirmation** | Chat code-block copy button already exists — the "copied!" state swap should fade, not flicker. | LOW — CSS opacity transition, 150ms. | 150ms, `ease` | Already a state transition; compliant. |
 
-## Feature Dependencies
+### 1.2 Differentiators (tasteful primitive microinteractions that set this site apart)
+
+These are small, compound effects that a 2026 recruiter would notice but can't name. Restrained, editorial, compatible with the six-hex palette. Each one is a **feature unit**; the roadmap can ship them independently.
+
+| Feature | Value Proposition | Complexity | Duration / Easing | Notes |
+|---------|-------------------|------------|-------------------|-------|
+| **WorkRow hover — arrow slide-in** | Existing spec is opacity 0→1 over 120ms. Adding a **4px `translateX(-4px)` → `translateX(0)`** on the arrow turns a fade into directional motion at zero cost. | LOW — modify WorkRow.astro scoped style. | 180ms, `cubic-bezier(0.22, 1, 0.36, 1)` | MASTER §5.5 spec amendment — additive, not conflicting. |
+| **WorkRow hover — title letter-spacing tighten** | Title goes from `-0.01em` to `-0.015em` on row hover. Invisible at a glance, feels tactile. Rauno Freiberg-style "invisible detail." | LOW — scoped style, `transition: letter-spacing 200ms ease`. | 200ms, `ease` | Risk: subpixel shifts may cause janky reflow on some browsers. Test in Safari. |
+| **Section enter — word/line stagger on headings** | `.h1-section` titles split to spans, each staggered 40ms. Feels editorial. Used by Vercel, Linear. | MEDIUM — split on space in template (not runtime JS), IntersectionObserver triggers CSS `@keyframes` with `animation-delay`. Avoid SplitText library. | 400ms per word, 40ms stagger, `cubic-bezier(0.22, 1, 0.36, 1)` | Apply ONLY to `.h1-section` — never `.display` (MASTER §3.1 locks the hero wordmark to a single static glyph). |
+| **Scroll-reveal stagger for work list** | Work rows reveal in sequence (50–80ms stagger between rows) when WORK section enters viewport. | LOW — IntersectionObserver on `.work-list`, toggle parent class, use CSS `nth-child` animation-delay. | 300ms per row, 60ms stagger, `ease-out-quint` | One-shot per scroll-session. |
+| **Chat bubble idle pulse (restored)** | MASTER §6.1 killed the GSAP pulse but explicitly left the door open ("restoration via CSS `@keyframes` if desired"). A 2.5s breathing pulse tells users chat is available without a label. | LOW — CSS `@keyframes` on `.chat-bubble`, 2.5s `ease-in-out` infinite, 1.0 → 1.04 scale. | 2500ms loop, `ease-in-out` | Pause on `prefers-reduced-motion` (media query wrapper). Pause on hover/focus (to avoid competing with functional state). |
+| **Chat typing-dot bounce (restored)** | Already explicitly carved out in MASTER §6.1 ("looped CSS @keyframes when actively signaling state"). | LOW — CSS `@keyframes`, three dots with `animation-delay: 0s, 0.15s, 0.3s`. | 900ms loop, `ease-in-out` | Active only while `data-streaming` attr present on chat container. |
+| **Chat panel open scale-in** | Panel currently appears instantly per MASTER §6.1 D-27 no-op. A 180ms scale-from-96%-and-fade-in feels app-native. | LOW — CSS transition on `.chat-panel[data-open]`. | 180ms, `cubic-bezier(0.22, 1, 0.36, 1)` | Paired with 120ms fade-out on close. |
+| **Chat message stream "settle" fade** | Each streamed message fades in on append (very short, 120ms). Differentiates SSE streaming from raw DOM insert. | LOW — CSS `@keyframes` applied to `.chat-message` as it mounts. | 120ms, `ease-out` | Do not delay/stagger — messages arrive one at a time already. |
+| **MobileMenu overlay fade-in** | MASTER §5.8 explicitly kills the entrance animation. Reconsider: a **200ms backdrop opacity fade** (no link stagger, no translation) is restrained enough to respect §5.8's intent while not feeling like a broken display-toggle. | LOW — CSS transition on overlay backdrop only. Links still instant. | 200ms, `ease` on backdrop only | **Requires MASTER §5.8 amendment.** Proposal to add: "backdrop opacity transition allowed; link reveal remains instant." |
+| **View transitions between project case studies** | When navigating project → project, the `h2-project` title could morph via `view-transition-name`. Feels premium. | MEDIUM — requires `<ClientRouter />` re-enablement AND `view-transition-name: project-{slug}` on both the WorkRow title and the case study heading. | Browser-native, ~400ms default | **Conflicts with MASTER §6.1 "no ClientRouter"** and §8 "no `::view-transition-*` keyframes." Requires explicit amendment. Consider deferring past v1.2 unless roadmap accepts the revision. |
+
+### 1.3 Anti-Features (explicitly NOT building — many already forbidden by MASTER.md)
+
+Every entry below is either already banned by MASTER.md (cited) or a 2026 portfolio cliché that would contradict the editorial brief.
+
+| Anti-Feature | Why Requested | Why Problematic | MASTER.md Status |
+|--------------|---------------|-----------------|------------------|
+| **Custom animated cursor / cursor trails** | Looks "designer-y" on agency sites. | Breaks accessibility (hides OS cursor affordances). Fails on touch. Reads as aesthetic-over-function — opposite of the editorial brief. | Not explicitly listed, but violates §6.4's "state transitions stay; orchestrated motion goes" and §7.1's signal-only accent rule. Add to anti-patterns. |
+| **Magnetic buttons** (cursor-pull hover) | Trendy 2023–2025 micro-interaction. | Requires mouse-tracking JS, adds bundle weight, breaks the "signal, not decoration" accent rule. Zero value for recruiters evaluating engineering skill. | Add to anti-patterns. |
+| **Background particles / noise canvas / WebGL hero** | Unique first impression. | v1.0 had one; v1.1 **deleted** it (MASTER §6.1: "CanvasHero.astro is deleted. No `<canvas>`... No WebGL"). | Explicitly forbidden — MASTER §8. |
+| **Lenis smooth scroll / custom scroll hijack** | Makes pages "feel nicer." | Overrides platform scroll physics, incompatible with Astro page loads, kills Find-in-Page precision, fights `prefers-reduced-motion`. Known compatibility issues with Astro (stack research flags it). | Implicitly forbidden — `package.json` research notes it as "do not use." |
+| **Parallax on hero or images** | Depth, visual interest. | Vestibular-motion trigger. Breaks on mobile. Reads as dated (peaked 2018). | Add to anti-patterns. |
+| **Scroll-driven video scrub / long pin-to-viewport sequences** | Apple product-page aesthetic. | Massive asset weight, destroys LCP, incompatible with static SSG, requires GSAP ScrollTrigger (removed v1.1). | Forbidden — MASTER §6.1 "scroll-trigger animations are gone." |
+| **Custom loading screen / splash** | "Premium" feel. | Static site LCP is under 2s already. A loading screen is literally slower than no loading screen. | Explicitly out-of-scope — PROJECT.md "Out of Scope" list. |
+| **Orchestrated stagger on every section** | Feels "animated." | Turns every scroll into a performance. By the second section the recruiter is impatient, not impressed. | Use stagger **sparingly** — only on heading reveals and the one-time work-list entrance. |
+| **Signature hero moment / hero animation** | Portfolios often have a "big first impression." | PROJECT.md milestone scope explicitly excludes this. The display wordmark is meant to be still. | Out of scope — v1.2 roadmap brief. |
+| **Page transitions longer than 400ms** | "Cinematic." | Creates perceived slowness. 200–300ms is the app-feel threshold. | Enforce in spec. |
+| **Animating `width` / `height` / `top` / `left`** | Easy to write. | Triggers layout reflow, jank on low-end devices. | Enforce: only `opacity`, `transform` (`translate`, `scale`), `color`. |
+| **Animated emoji / Lottie files** | Cheap visual pop. | Off-brand for an editorial monochrome system; adds runtime JSON + lottie-web. | Implicit via §7 ("if a user can't click it, it can't be accent"). |
+| **"Neon-glow" / box-shadow-on-hover cards** | Gaming / AI-startup aesthetic. | MASTER §8 forbids cards and `box-shadow` for work listings. | Explicitly forbidden — MASTER §8. |
+
+### 1.4 Motion — Global Rules
+
+These apply to *every* motion feature shipped in v1.2. They belong in an amendment to MASTER §6 rather than scattered across primitive specs.
+
+- **Property whitelist:** `opacity`, `transform` (`translate`, `scale`), `color`, `background-color`, `text-decoration-color`, `outline-offset`, `letter-spacing` (with Safari subpixel caveat). Nothing else.
+- **Duration bands:**
+  - **State transitions** (hover/focus/active): 100–180ms
+  - **Entrance animations** (scroll-reveal, page enter): 200–400ms
+  - **Looped signals** (pulse, typing dots): 900–2500ms
+  - **Nothing over 500ms for one-shot animation.**
+- **Default easing:** `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quint) for entrance, `ease` for state changes, `ease-in-out` for loops.
+- **Stagger default:** 40–80ms between siblings; never more than 6 staggered children in one sequence.
+- **Reduced-motion contract:** Every new animation block is wrapped in `@media (prefers-reduced-motion: no-preference) { ... }` OR paired with a `@media (prefers-reduced-motion: reduce) { animation: none; transition: none; }` override. Functional color/underline transitions under 200ms are exempt (MASTER §6.3 precedent).
+- **Reveal state default:** `[data-reveal]` elements start at final state (opacity 1, translate 0) — the JS ADDS the "hidden" class, IntersectionObserver removes it. This guarantees no-JS fallback renders correctly.
+- **One-shot per session:** Scroll-reveal animations never re-trigger. IntersectionObserver unobserves after first intersection.
+
+---
+
+## 2. Chat Knowledge Approaches — Feature Landscape
+
+The chat widget today uses a single `portfolio-context.json` fed into the Haiku system prompt. v1.2 goal: smarter answers to project-specific recruiter questions ("tell me about the X project," "what tech did he use for Y"). Below are the four viable approaches, with user-facing differences.
+
+### 2.1 Comparison Matrix
+
+| Approach | How It Works | Observable User Difference | Token Cost Per Query | Implementation Complexity | Best For |
+|----------|-------------|----------------------------|----------------------|---------------------------|----------|
+| **A. Context stuffing (current, improved)** | Concatenate all 6 project MDX frontmatter + abbreviated bodies + resume JSON into system prompt. Feed every query. | Fast, consistent answers. Occasionally misses nuance deep in a long case study. Quality of the curated `portfolio-context.json` is the ceiling. | ~4–8K input tokens per query (Haiku cached: ~$0.0004/query after first) | LOW — already built; just improve the context file | Portfolios with ≤10 projects and short bios. **This is Jack's case.** |
+| **B. Per-project context (keyword routing)** | Simple keyword match on user query → select which project's MDX to include in system prompt. Default: list all project titles only; on match, inject full project content. | Faster first-token latency (smaller system prompt). Occasional misfire when query is ambiguous ("what's his best project?"). | ~1–3K input tokens per query (60–80% reduction vs A) | MEDIUM — requires routing layer in Worker | Portfolios where project content volume exceeds ~15K tokens total. |
+| **C. Function-calling (tools)** | Expose `getProject(slug)`, `listProjects()`, `getResume()` as Anthropic tools. Model decides when to call. | Most *visible* polish — recruiter sees "let me look that up" behavior when asked about specific projects. Occasional extra round-trip adds 400–800ms to first answer. Risk: model hallucinates tool args. | Base query ~2K + tool invocations (each tool call = another message round-trip) | MEDIUM-HIGH — tool definitions, handlers in Worker, multi-turn orchestration | Portfolios wanting to *demonstrate* function-calling as a skill. Double-duty: the feature itself is a portfolio exhibit. |
+| **D. RAG with vector embeddings** | Embed project MDX chunks to vector store (Cloudflare Vectorize, Pinecone, pgvector). On query, retrieve top-K chunks, inject into system prompt. | Best answer quality on deep, specific questions. Slowest first-token (100–300ms embed + retrieve overhead). Overkill for 6 projects. | ~1–2K input tokens per query + ~1K embedding cost | HIGH — embedding pipeline, vector DB, retrieval logic, reindex on content change | Portfolios with blog content, papers, or >50 retrievable documents. **Not worth it for 6 projects.** |
+
+### 2.2 Recommendation
+
+**Ship B (per-project keyword routing) as the v1.2 target, with A as the "everything always" fallback.**
+
+Reasoning:
+- The site has **exactly 6 projects + resume + bio** — small enough that full context stuffing (A) already fits in Haiku's 200K window with room to spare, even with full MDX bodies.
+- Keyword routing (B) cuts steady-state cost ~70% without new infrastructure. Falls back to A gracefully when routing is uncertain.
+- RAG (D) is engineering theater at this scale — the infrastructure doesn't earn its keep. Recruiters also see through it: building a RAG pipeline for 6 documents reads as "added complexity to look impressive."
+- Function-calling (C) is seductive because it demonstrates a named skill, but the extra round-trip latency and hallucination risk cost more than the signal earns. **Revisit C post-v1.2** if Jack wants an explicit "AI tooling" project to add to the portfolio.
+
+**Differentiator option to consider:** write a single `Projects/<slug>/README.md` per project (source-of-truth doc that seeds the MDX) and feed those — not the MDX — into the context. Keeps public case studies crisp while giving chat deeper material. This is already implied by the v1.2 scope ("update Projects/ folder docs as source-of-truth").
+
+### 2.3 System Prompt / Persona Tuning (companion work)
+
+Not a knowledge question, but in-scope for v1.2. Expected behaviors:
+
+| Feature | What Good Looks Like |
+|---------|----------------------|
+| **Persona consistency** | Chat answers in third person about Jack ("Jack built this using..."), never first person. Never claims to *be* Jack. |
+| **Scope bounds** | Declines to answer off-topic questions (politics, coding tasks, jokes) with a short redirect ("I only answer questions about Jack's work — what would you like to know?"). |
+| **Recruiter-friendly defaults** | When asked "what's he looking for?", chat surfaces the one-line status from the homepage + links to resume/contact. |
+| **Transparency** | When it doesn't know, it says so — never invents projects, companies, or technologies. |
+| **Conversation cap respect** | Preserve v1.1 rate limit (5/60s), 50-msg localStorage cap, 24h TTL. No regression. |
+
+---
+
+## 3. Case Study Content Template
+
+### 3.1 Strong Junior-Engineer Case Study Sections
+
+Based on how Toptal, Semplice, UX Planet, and hiring-manager blog posts describe strong engineer case studies, and adjusted for editorial brevity (MASTER.md §3: `.body` max-width 68ch, avoid long prose walls). Target: **600–900 words per project**, readable in under 4 minutes.
+
+### 3.2 Concrete Template (copy-paste-ready for each project MDX)
+
+```mdx
+---
+title: "Project Name"
+slug: "project-slug"
+year: 2026
+stack: ["Tool", "Tool", "Tool"]
+role: "solo" | "team of N" | "contributor"
+status: "shipped" | "archived" | "ongoing"
+repo: "https://github.com/..."
+live: "https://..."       # omit if none
+summary: "One-sentence what-and-why — shows in work list and OG cards."
+---
+
+## Problem
+
+One or two short paragraphs. What was broken / missing / interesting? Who felt the pain? Why did solving it matter? No jargon a non-engineer recruiter can't parse. End with the question the project answers.
+
+## Approach
+
+How Jack thought about it before coding. What assumptions he made. What he chose NOT to do. One paragraph — this is where engineering maturity shows. Name tradeoffs explicitly ("I considered X but picked Y because Z").
+
+## Architecture
+
+2–4 bullets or a short prose block. The one-screen mental model. Include a single code fence only if it's the clearest way to show something structural (file tree, data flow, one critical function). No tutorial-style walkthroughs.
+
+## Key Tradeoffs
+
+Bulleted list, 2–4 items. Each bullet: **Decision → Reason → Cost**. Example:
+- **Cloudflare Workers over AWS Lambda** — zero cold start at edge, free tier covers expected load. Cost: stuck with Workers-compatible libs (no native Node APIs).
+- **localStorage over IndexedDB for chat history** — 50-message cap + 24h TTL fits in 5MB quota. Cost: no cross-device sync.
+
+## Outcome
+
+What actually shipped. Concrete metrics if available (bundle size, Lighthouse, perf numbers, user count, deployment cadence). If no metrics, describe observable behavior ("site now handles X scenario that it couldn't before"). One paragraph max.
+
+## What I Learned
+
+The honest reflection. What Jack would do differently next time. A specific technique, pattern, or mental model he kept. This section signals self-awareness — the thing that separates junior engineers who'll grow from those who won't. One paragraph.
+
+## Links
+
+- [Repo](https://github.com/...)
+- [Live](https://...) — omit if none
+- [Commit that shipped it](https://github.com/.../commit/...) — optional, very nice when it fits
+```
+
+### 3.3 Section-Level Expectations
+
+| Section | Words | Complexity | What a Recruiter Gets from It |
+|---------|-------|------------|-------------------------------|
+| Frontmatter | N/A | LOW | Scannable signal for 30-second scans (year, stack, role). |
+| Problem | 80–150 | LOW — write once | "Does he understand why software gets built?" |
+| Approach | 100–200 | MEDIUM — requires reflection | "Can he think before he types?" |
+| Architecture | 100–200 + optional code | MEDIUM | "Does he have a mental model of systems?" |
+| Key Tradeoffs | 100–200 (bulleted) | HIGH — this is the hardest section to write well | "Has he made real engineering decisions under constraint?" **This section is the single strongest junior-vs-senior signal.** |
+| Outcome | 50–100 | LOW if metrics exist; HIGH if inventing signals | "Did the thing he built actually do the thing?" |
+| What I Learned | 80–150 | HIGH — requires honesty | "Is he self-aware? Will he grow on the job?" |
+| Links | N/A | LOW | Trust: recruiter can verify. |
+
+### 3.4 Anti-Patterns in Case Study Writing
+
+- **"Tutorial voice"** — walking through every step of the build. Recruiters don't need a how-to; they need the decisions.
+- **Tech logos / skill icons** — forbidden by MASTER §8 ("no skill icons... no SVG illustrations"). Use the `stack` frontmatter array.
+- **Marketing language** ("leveraged a cutting-edge stack to deliver seamless UX") — reads as insincere. Plain English only.
+- **No tradeoffs section** — suggests junior engineer who didn't face any decisions, which is a lie.
+- **No learnings section** — suggests the project taught him nothing, which is either true (bad project) or false (hidden humility, also bad).
+- **Placeholder metrics** ("10x faster," "significantly better") without numbers. Either give a number or describe qualitatively.
+- **Screenshots without context** — every image needs an alt that explains what it's showing and why it matters.
+
+---
+
+## 4. Analytics — Recruiter Engagement Signals
+
+### 4.1 Platform Decision
+
+**Plausible** is the best fit. Rationale:
+- Privacy-friendly (no cookie banner needed, GDPR-safe) — a portfolio shouldn't have a cookie banner; it looks unprofessional.
+- Native scroll-depth tracking in 2026 (no plugin required).
+- Custom events via CSS class names or a small JS helper.
+- <1KB script — doesn't regress the Lighthouse 100 performance score.
+- Cloudflare Analytics is also zero-cost and bundled with Pages hosting, but its event model is weaker. Umami is a good alternative if Jack wants to self-host; functionally equivalent for events.
+
+### 4.2 Events to Instrument (Ranked by Recruiter-Signal Value)
+
+| Event | Type | Why It Matters | Implementation |
+|-------|------|----------------|----------------|
+| **Page view** (default) | Pageview | Baseline — which pages get visited, traffic source, device. | Automatic. |
+| **Scroll depth per page** (default) | Built-in | How deep recruiters read on each page. Case study scroll depth is the clearest "engaged" signal short of chat. | Automatic — Plausible 2026 ships this natively. |
+| **Time on page** (default) | Metric | Bounce rate + time on page + scroll depth together = engagement quality. | Automatic. |
+| **Resume PDF download** | Custom event `Resume Download` | **The single strongest buying signal.** Recruiter who downloads the PDF is actively evaluating. | `onclick` event on `<a href="resume.pdf" download>` → `plausible('Resume Download')`. |
+| **External link click — GitHub** | Custom event `Outbound: GitHub` (with `{ project: slug }` prop) | Shows which projects drove curiosity to verify on GitHub. | Click handler on `a[href*="github.com"]`. |
+| **External link click — LinkedIn** | Custom event `Outbound: LinkedIn` | Recruiters who LinkedIn-click are moving toward contact. | Click handler. |
+| **External link click — Email** (`mailto:`) | Custom event `Outbound: Email` | The conversion event — closest proxy to "they want to talk." | Click handler on `a[href^="mailto:"]`. |
+| **Chat widget opened** | Custom event `Chat Open` | Interest in interactive engagement. Indicates recruiter wants more than the static copy. | Event fired from `chat.ts` when panel mounts. |
+| **Chat message sent** (with `{ message_index: N }` prop) | Custom event `Chat Message` | How many turns. 3+ turns = strong engagement. Do NOT capture message content (privacy + PII). | Event fired per send. |
+| **Project case study view** (with `{ project: slug }` prop) | Custom event `Project View` | Which projects drive the most interest. Informs which to feature higher on the index. | Fired from per-project layout `<script>`. |
+| **Project live-link click** | Custom event `Outbound: Live` (with `{ project: slug }`) | Recruiter opened the live demo — high-intent. | Click handler. |
+| **Project repo click** | Custom event `Outbound: Repo` (with `{ project: slug }`) | Same as above for GitHub repo links inside case studies. | Click handler. |
+| **404 hits** | Custom event `404` | Hygiene — catches broken deep links. | Fired from 404 page. |
+
+### 4.3 Events to Explicitly NOT Instrument
+
+| Non-Event | Why Not |
+|-----------|---------|
+| Mouse movement / heatmaps | Over-instrumentation for a static portfolio. Adds weight. Invasive. Not GDPR-light. |
+| Session replay | Same as above, plus privacy problem. |
+| Individual chat message content | PII risk, no analytics value. |
+| Form field focus events | No forms exist on the site (by design — PROJECT.md out-of-scope). |
+| A/B test variants | No budget/volume to A/B a portfolio. |
+| UTM tracking beyond default | Standard Plausible handles `utm_source`/`utm_medium`/`utm_campaign`. No custom taxonomy needed. |
+
+### 4.4 Implementation Complexity
+
+Whole analytics instrumentation is **LOW complexity** — two work units:
+1. Add Plausible script tag to `BaseLayout.astro` head (+ `data-domain="jackcutrara.com"`).
+2. Add a tiny `src/scripts/analytics.ts` (~30 lines) exposing `track(eventName, props?)` and wire it into:
+   - Chat widget (`chat.ts`) for `Chat Open` and `Chat Message`
+   - Resume download link (single `onclick`)
+   - Global delegated click listener on `document` for `a[href^="http"]`, `a[href^="mailto"]`, `a[href$=".pdf"]` (handles every external link uniformly)
+   - Per-project layout for `Project View`
+
+The delegated click listener is the key — instrument once, cover every future link automatically.
+
+---
+
+## 5. Feature Dependencies
 
 ```
-[Responsive Design]
-    └──required-by──> [Every other feature]
+[Motion global rules amendment to MASTER §6]
+    └──enables──> [All motion features below]
 
-[Navigation System]
-    └──required-by──> [All pages]
+[Scroll-reveal IntersectionObserver primitive]
+    └──enables──> [Section heading word-stagger]
+    └──enables──> [Work list row stagger]
 
-[Design System / Theme]
-    └──required-by──> [Dark/Light Mode Toggle]
-    └──required-by──> [All page layouts]
-    └──required-by──> [Print Styles]
+[Astro View Transitions re-enable]  (requires MASTER amendment)
+    └──enables──> [Page enter fade]
+    └──enables──> [Project → project morph (optional)]
+    └──conflicts-with──> [Phase 7 chat persistence model] — must retest localStorage survives astro:after-swap
 
-[Projects Page (card grid)]
-    └──required-by──> [Project Detail/Case Study Pages]
+[Real project MDX content]
+    └──enables──> [Chat knowledge upgrade] — chat context quality is gated on content quality
+    └──enables──> [Case study scroll-depth metric] — no point measuring engagement on placeholder content
 
-[Project Detail Page Template]
-    └──required-by──> [Structured Case Studies]
-    └──required-by──> [Live Demo Links]
-    └──required-by──> [Project Screenshots/Visuals]
+[Projects/ folder docs source-of-truth]
+    └──feeds──> [Project MDX case studies]
+    └──feeds──> [Chat context] — whichever knowledge approach is chosen
 
-[SEO Meta Structure]
-    └──required-by──> [Structured Data / JSON-LD]
-    └──required-by──> [Open Graph Tags]
+[portfolio-context.json improvements]
+    └──blocks──> [Chat persona tuning] — can't tune persona without accurate facts
+    └──blocks──> [Chat knowledge approach selection] — approach depends on final content volume
 
-[Performance Optimization]
-    └──enhanced-by──> [Image Optimization / Lazy Loading]
-    └──enhanced-by──> [Animations (must not degrade perf)]
-
-[Accessibility Foundation]
-    └──enhanced-by──> [Dark/Light Mode (contrast compliance in both)]
-    └──enhanced-by──> [Print Styles (alternative access)]
+[Plausible script install]
+    └──enables──> [All custom events]
+    └──enables──> [Baseline metrics before other v1.2 work ships] — instrument FIRST to measure impact
 ```
 
 ### Dependency Notes
 
-- **Design System / Theme required by Dark/Light Mode:** Must establish color tokens, spacing, typography as CSS custom properties BEFORE implementing theme switching. Building dark mode after-the-fact with hardcoded colors is a rewrite.
-- **Projects Page required by Case Studies:** The card grid is the entry point. Case study pages are drill-downs. Build the index before the details.
-- **Responsive Design required by everything:** Mobile-first CSS must be the foundation, not an afterthought. Every component built must work on mobile from day one.
-- **Performance Optimization enhanced by Image Handling:** Screenshots and visuals are the heaviest assets. Lazy loading, responsive images (`srcset`), and modern formats (WebP/AVIF) must be part of the image strategy from the start.
-- **Accessibility Foundation enhanced by Theme Toggle:** Both light and dark themes must independently pass WCAG AA contrast ratios. This constraint must be designed in, not patched later.
+- **Analytics first:** Plausible should ship *before* content pass and motion layer so Jack has before/after data on engagement impact.
+- **Content before chat:** Chat knowledge upgrades depend on real MDX content — do not tune system prompt against placeholder content.
+- **Motion amendment before motion features:** Writing the MASTER §6 amendment (property whitelist, duration bands, reveal primitive spec) once is cheaper than re-arguing the rules per primitive.
+- **View Transitions conflict:** Re-enabling `<ClientRouter />` (required for native Astro page-fade) conflicts with MASTER §6.1. Decision needed in roadmap: either (a) amend §6.1 to carve out View Transitions, (b) use a CSS-only crossfade that doesn't need ClientRouter, or (c) skip page-enter motion in v1.2.
 
-## MVP Definition
+---
 
-### Launch With (v1)
+## 6. v1.2 Feature Prioritization Matrix
 
-Minimum viable portfolio -- enough to send to recruiters and not be embarrassed.
+| Feature | Recruiter Value | Implementation Cost | Priority |
+|---------|----------------|---------------------|----------|
+| Real project MDX content (4 files) | HIGH — placeholder content is the single biggest credibility leak | MEDIUM — writing is the work; no code | **P1** |
+| Plausible instrumentation | MEDIUM — invisible to recruiters; high value to Jack for iteration | LOW | **P1** |
+| Scroll-reveal (sections + work list) | MEDIUM-HIGH — site feels alive, remains editorial | LOW | **P1** |
+| Hover microinteractions (WorkRow arrow slide) | MEDIUM — polish signal | LOW | **P1** |
+| Chat persona + system prompt tuning | HIGH — one great chat answer beats a pretty animation | LOW (just prompt work) | **P1** |
+| Chat knowledge approach (keyword routing) | MEDIUM | MEDIUM | **P2** |
+| Page enter fade via View Transitions | MEDIUM | MEDIUM — MASTER amendment needed | **P2** |
+| Chat pulse / typing dots (restored) | LOW-MEDIUM — chat is already a differentiator; motion adds polish | LOW | **P2** |
+| Heading word-stagger | LOW-MEDIUM — nice-to-have | MEDIUM | **P2** |
+| Project → project view transition morph | LOW — impressive but niche, most users don't navigate project→project | HIGH — conflicts with MASTER | **P3** |
+| About page narrative audit | MEDIUM — already decent per v1.1 audit | LOW | **P2** |
+| Homepage/resume copy audit | LOW-MEDIUM — current copy is current | LOW | **P2** |
+| 7 tech debt items | LOW individually, MEDIUM cumulatively (hygiene + future-proofing) | LOW-MEDIUM | **P2** |
 
-- [ ] **Hero section with identity** -- Name, role, one-liner, primary CTA (view projects)
-- [ ] **Navigation** -- Fixed/sticky, links to all pages, mobile responsive
-- [ ] **Home page** -- Hero + featured projects preview + brief intro
-- [ ] **About page** -- Background, education, path into engineering, interests
-- [ ] **Projects page** -- Card grid with 5-6 projects (title, description, tech tags, thumbnail)
-- [ ] **Project detail pages** -- Case study template with placeholder content for all projects, at least 2 fully written
-- [ ] **Resume page** -- Viewable content + PDF download button
-- [ ] **Contact section** -- Email, LinkedIn, GitHub links (dedicated page or prominent section)
-- [ ] **Responsive design** -- Mobile-first, tested across breakpoints
-- [ ] **Performance** -- Sub-2-second LCP, Lighthouse 90+ across categories
-- [ ] **Basic SEO** -- Title tags, meta descriptions, OG tags per page
-- [ ] **HTTPS + custom domain** -- Professional URL, secure connection
-- [ ] **Accessibility baseline** -- Semantic HTML, keyboard nav, color contrast, alt text
-- [ ] **Design system** -- Color tokens, typography scale, spacing as CSS custom properties (enables future dark mode)
+**Priority key:** P1 = must ship for v1.2. P2 = should ship. P3 = defer.
 
-### Add After Launch (v1.x)
+---
 
-Features to add once core is live and initial feedback is gathered.
+## 7. Dependencies on Existing v1.1 Surface
 
-- [ ] **Dark/light mode toggle** -- After design system tokens are solid, add theme switching with OS preference detection
-- [ ] **Subtle page animations** -- Scroll-triggered reveals, page transitions. Add once performance baseline is confirmed stable.
-- [ ] **Structured data / JSON-LD** -- Person and CreativeWork schemas. Low effort but lower priority than core content.
-- [ ] **Print-friendly resume** -- @media print stylesheet. Quick win post-launch.
-- [ ] **Remaining case studies fully written** -- Fill in placeholder content for all 5-6 projects
-- [ ] **Project screenshots and visual polish** -- Real screenshots, GIFs of interactive features, optimized images
+Features in v1.2 will *touch* the following v1.1 surfaces. The roadmap must budget amendment or integration work against each.
 
-### Future Consideration (v2+)
+| v1.1 Surface | v1.2 Work That Touches It | Amendment Needed? |
+|--------------|---------------------------|-------------------|
+| `MASTER.md §6` (Motion) | Motion layer — scroll reveal, page enter, pulse restore | **YES** — add §6.5 "v1.2 motion extensions" with property whitelist, duration bands, reveal primitive spec. The existing §6.1 dead-list has to stay; add carve-outs explicitly. |
+| `MASTER.md §5.5` (WorkRow) | Arrow slide-in, optional letter-spacing tighten | **YES** — additive amendment to §5.5 motion line ("opacity + 4px translateX"). |
+| `MASTER.md §5.8` (MobileMenu) | Backdrop fade-in | **YES** — §5.8 currently says "overlay opens instantly via display toggle only." Amendment: allow backdrop opacity transition; keep links instant. |
+| `MASTER.md §6.1 D-27` (Chat motion no-ops) | Chat pulse / typing / panel scale-in restored | **PARTIAL** — §6.1 already carves out "looped CSS @keyframes when actively signaling state" and notes "restoration via CSS @keyframes if desired." Formalize as a Phase 10 follow-through item in §6 changelog. |
+| `MASTER.md §8` (Anti-patterns) | View transitions re-enable | **YES** — §8 forbids `<ClientRouter />` and `::view-transition-*` keyframes. Remove those bullets OR scope them to "v1.1-era removals, reinstatable with justification." |
+| `src/scripts/chat.ts` | Chat knowledge approach, persona tuning, analytics events | **NO** — additive. Preserve Phase 7 architecture (SSE, focus trap, DOMPurify, rate limit). |
+| `src/content/projects/*.mdx` | Content pass | **NO** — content work only; Zod schema unchanged unless case study template proposes new frontmatter fields. |
+| `src/pages/api/chat.ts` | Chat knowledge (routing logic) | **NO** — additive. |
+| `BaseLayout.astro` | Plausible script, optional `<ClientRouter />` | **PARTIAL** — script injection is trivial; ClientRouter decision gated on §8 amendment. |
+| `v1.1-MILESTONE-AUDIT.md` 7 tech debt items | Individual fixes | **NO** — documented as v1.1 known issues. |
 
-Features to defer until the portfolio has proven its value and Jack has more content.
+---
 
-- [ ] **Blog section** -- Only if Jack commits to writing regularly
-- [ ] **Testimonials** -- Only when real, credible testimonials are available
-- [ ] **Analytics** -- Lightweight tracking (Plausible/Umami) post-launch
-- [ ] **Interactive project demos** -- Embedded live demos for select projects (iframe or similar)
-- [ ] **i18n** -- Only if targeting non-English markets
+## 8. Out of Scope for v1.2
 
-## Feature Prioritization Matrix
+Restating for clarity — these are NOT v1.2 features. Revisit post-v1.2.
 
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Hero/identity section | HIGH | LOW | P1 |
-| Navigation system | HIGH | LOW | P1 |
-| Projects card grid | HIGH | MEDIUM | P1 |
-| Project detail/case study template | HIGH | HIGH | P1 |
-| Responsive design | HIGH | MEDIUM | P1 |
-| Resume page + PDF download | HIGH | LOW | P1 |
-| Contact links | HIGH | LOW | P1 |
-| About page | MEDIUM | LOW | P1 |
-| Fast performance (<2s LCP) | HIGH | MEDIUM | P1 |
-| Basic SEO/meta tags | MEDIUM | LOW | P1 |
-| HTTPS + custom domain | MEDIUM | LOW | P1 |
-| Accessibility baseline | MEDIUM | MEDIUM | P1 |
-| Design system (CSS custom properties) | HIGH | MEDIUM | P1 |
-| Dark/light mode toggle | MEDIUM | MEDIUM | P2 |
-| Subtle animations | MEDIUM | MEDIUM | P2 |
-| Project screenshots/visuals | HIGH | MEDIUM | P2 |
-| Structured data / JSON-LD | LOW | LOW | P2 |
-| Print-friendly resume | LOW | LOW | P2 |
-| Full case study content (all projects) | HIGH | HIGH | P2 |
-| Live demo links | MEDIUM | LOW | P2 |
-| Blog section | LOW | MEDIUM | P3 |
-| Analytics integration | LOW | LOW | P3 |
+- **Signature hero moment / hero animation** — PROJECT.md milestone scope excludes it.
+- **Dark mode** — permanently dead (MASTER §8).
+- **Blog / writing section** — PROJECT.md out-of-scope.
+- **CMS / contact form** — PROJECT.md out-of-scope.
+- **Function-calling chat tools (C)** — defer; not worth the complexity at current content volume.
+- **RAG pipeline (D)** — defer; doesn't earn its keep for 6 projects.
+- **Three.js / WebGL / Canvas anything** — permanently dead.
+- **Custom cursor / mouse effects** — add to anti-patterns list during MASTER §6 amendment.
+- **Skills graphics / progress bars / GitHub contribution graph** — forbidden by MASTER §8 and PROJECT.md.
 
-**Priority key:**
-- P1: Must have for launch -- the site is incomplete without these
-- P2: Should have, add post-launch -- these elevate from "functional" to "impressive"
-- P3: Nice to have, future consideration -- only if circumstances warrant
-
-## Competitor Feature Analysis
-
-Analysis of widely-cited exemplary developer portfolio patterns.
-
-| Feature | Brittany Chiang (gold standard) | Typical Junior Portfolio | Jack's Approach |
-|---------|--------------------------------|--------------------------|-----------------|
-| Identity clarity | Immediately clear: name, title, one-liner | Often buried or unclear | Bold hero with name + role + one-liner above fold |
-| Navigation | Sticky sidebar, scannable sections | Basic navbar, sometimes broken on mobile | Fixed top nav, clear labels, mobile hamburger menu |
-| Project presentation | Cards with context, links to detail | GitHub links only or screenshot dumps | Cards with description + tech tags, linking to full case studies |
-| Case study depth | Detailed role descriptions, tech decisions | "I built this with React" and nothing more | Structured: Problem > Solution > Tech > Challenges > Results |
-| Visual design | Consistent color scheme, clean typography, dark theme | Template-default or inconsistent | Custom design system, professional typography, deliberate color palette |
-| Performance | Fast, minimal JS | Often bloated with unused framework code | Sub-2s LCP, Lighthouse 90+, SSG for static content |
-| Responsiveness | Excellent mobile experience | Broken or neglected mobile | Mobile-first development |
-| Theme toggle | Not present (committed to dark) | Rare at junior level | v1.x addition -- OS preference default + manual toggle |
-| Resume access | Not prominent | Often missing or broken link | Dedicated page with inline view + PDF download |
-| Contact approach | Email link in nav | Contact form (often broken) | Direct links: email, LinkedIn, GitHub on every page |
+---
 
 ## Sources
 
-- [Colorlib - 21 Best Developer Portfolios 2026](https://colorlib.com/wp/developer-portfolios/)
-- [Zencoder - How to Create a Software Engineer Portfolio 2026](https://zencoder.ai/blog/how-to-create-software-engineer-portfolio)
-- [Codecademy - Junior Developer Portfolio Must-Haves](https://www.codecademy.com/resources/blog/what-to-include-in-a-junior-developer-portfolio)
-- [WebPortfolios.dev - Junior Developer Portfolio Guide 2025](https://www.webportfolios.dev/blog/junior-developer-portfolio-guide-2025)
-- [Hakia - Building a Portfolio That Gets Hired 2025](https://www.hakia.com/skills/building-portfolio/)
-- [Open Doors Careers - 6 Mistakes in 150+ Portfolio Reviews](https://blog.opendoorscareers.com/p/the-6-mistakes-i-saw-most-in-150-portfolio-reviews-and-how-to-fix-them)
-- [Codementor - 12 Things Web Developers Must Include](https://www.codementor.io/learn-programming/12-important-things-to-include-in-web-dev-portfolios)
-- [8seneca - Software Engineer Portfolio Guide](https://www.8seneca.com/en/blog/technology/software-engineer-portfolio-guide-what-to-include-and-what-to-avoid)
-- [Brittany Chiang Portfolio](https://brittanychiang.com/)
-- [Shipixen - SEO Checklist for Developer Portfolios](https://shipixen.com/blog/seo-checklist-for-developer-portfolios-and-landing-pages)
-- [Pingdom - Page Load Time and Bounce Rate](https://www.pingdom.com/blog/page-load-time-really-affect-bounce-rate/)
-- [Tooltester - Website Load Time Statistics 2026](https://www.tooltester.com/en/blog/website-loading-time-statistics/)
+### Motion
+- [10 Websites with Great Animation in 2026 — School of Motion](https://www.schoolofmotion.com/blog/10-websites-with-great-animation-in-2026) — HIGH (confirms "restrained sophistication" as the 2026 aesthetic)
+- [Scroll-Triggered Animation best practices — Motion docs](https://motion.dev/docs/react-scroll-animations) — HIGH (duration/easing references; confirms transform+opacity-only rule)
+- [Astro View Transitions docs](https://docs.astro.build/en/guides/view-transitions/) — HIGH (fade/slide/none built-in, prefers-reduced-motion auto-disable)
+- [IntersectionObserver fade-in patterns — dev.to aggregation](https://dev.to/ljcdev/introduction-to-scroll-animations-with-intersection-observer-d05) — MEDIUM (pattern validation; 250–300ms duration sweet spot)
+- [Rauno Freiberg — Killer Portfolio feature](https://www.killerportfolio.com/by/rauno-freiberg) — MEDIUM (reference for "invisible details" microinteraction philosophy)
+- [Brian Lovin — brianlovin.com](https://brianlovin.com/) — MEDIUM (reference for editorial polish in product-design portfolio)
+- [Invisible Details of Interaction Design — Rauno Freiberg](https://every.to/p/invisible-details-of-interaction-design) — HIGH (canonical essay on microinteraction restraint)
+- [Lenis smooth-scroll — known issues with Astro](https://github.com/darkroomengineering/lenis) — MEDIUM (confirms Astro compatibility concerns)
+
+### Chat Knowledge
+- [RAG vs Context Stuffing — MarkTechPost](https://www.marktechpost.com/2026/02/24/rag-vs-context-stuffing-why-selective-retrieval-is-more-efficient-and-reliable-than-dumping-all-data-into-the-prompt/) — HIGH (benchmark: RAG 278 vs stuffing 775 tokens, 1250x cost efficiency at scale)
+- [Building Ask — RAG portfolio chatbot — Cameron Rye](https://rye.dev/blog/building-ask-rag-portfolio-chatbot/) — MEDIUM (real-world portfolio RAG case study)
+- [Shane Drumm — 10,000 → 600 token chatbot optimization](https://shanedrumm.com/my-first-agent-the-shane-chatbot/) — HIGH (concrete optimization: keyword routing saved 94% tokens)
+- [Function Calling with LLMs — Prompting Guide](https://www.promptingguide.ai/applications/function_calling) — HIGH (function-calling semantics; system prompt reinforcement pattern)
+- [RAG vs Function Calling — Stream](https://getstream.io/blog/rag-function-calling/) — MEDIUM (comparison framing)
+- [Claude Haiku 4.5 Pricing](https://pricepertoken.com/pricing-page/model/anthropic-claude-haiku-4.5) — HIGH ($1/M input, $5/M output; 90% discount on cached input)
+
+### Case Study Structure
+- [UX Case Study Structure — uxfol.io](https://blog.uxfol.io/ux-case-study-structure/) — HIGH (recruiter-logic structure)
+- [All About Process: Dissecting Case Study Portfolios — Toptal](https://www.toptal.com/designers/ui/case-study-portfolio) — HIGH (problem/approach/outcome pattern validation)
+- [How to Write a Case Study for Design Portfolio — Format](https://www.format.com/magazine/resources/design/how-to-write-design-case-study) — MEDIUM (800–1500 words guideline)
+- [UX Portfolio Case Study Template — UX Planet / Calvin](https://uxplanet.org/ux-portfolio-case-study-template-plus-examples-from-successful-hires-86d5b0faa2d6) — MEDIUM
+
+### Analytics
+- [Plausible Custom Events docs](https://plausible.io/docs/custom-event-goals) — HIGH
+- [Plausible Scroll Depth Tracking docs](https://plausible.io/docs/scroll-depth) — HIGH (native in 2026, no plugin needed)
+- [Plausible Custom Properties docs](https://plausible.io/docs/custom-props/introduction) — HIGH (required for per-project props)
+- [plausible-tracker npm](https://github.com/plausible/plausible-tracker) — HIGH (tracker helper library)
+- [Tracking Scroll Depth for Engagement — BugFactory](https://bugfactory.io/articles/tracking-scroll-depth-to-measure-visitor-engagement/) — MEDIUM
 
 ---
-*Feature research for: Junior SWE personal portfolio website*
-*Researched: 2026-03-22*
+
+*Feature research for: personal portfolio v1.2 polish milestone*
+*Researched: 2026-04-15*

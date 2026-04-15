@@ -1,496 +1,506 @@
-# Architecture Research
+# Architecture Research — v1.2 Polish
 
-**Domain:** Personal developer portfolio website (multi-page, content-driven, static-first)
-**Researched:** 2026-03-22
-**Confidence:** HIGH
+**Domain:** Astro 6 portfolio (subsequent milestone — polish on shipped v1.1)
+**Researched:** 2026-04-15
+**Confidence:** HIGH (integration surface is fully mapped by reading existing code)
 
-## Standard Architecture
-
-### System Overview
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     Presentation Layer                          │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
-│  │  Layouts  │  │  Pages   │  │Sections  │  │  Islands  │       │
-│  │ (shells)  │  │ (routes) │  │ (blocks) │  │(interact)│       │
-│  └─────┬────┘  └─────┬────┘  └─────┬────┘  └─────┬────┘       │
-│        │             │             │             │              │
-├────────┴─────────────┴─────────────┴─────────────┴──────────────┤
-│                     Component Layer                              │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Reusable UI Components (buttons, cards, tags, etc.)     │   │
-│  └──────────────────────────────────────────────────────────┘   │
-├─────────────────────────────────────────────────────────────────┤
-│                     Content Layer                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │   Projects    │  │    Site      │  │   Resume     │          │
-│  │  Collection   │  │   Metadata   │  │    Data      │          │
-│  └──────────────┘  └──────────────┘  └──────────────┘          │
-├─────────────────────────────────────────────────────────────────┤
-│                     Infrastructure Layer                         │
-│  ┌────────┐  ┌──────────┐  ┌─────────┐  ┌──────────────┐      │
-│  │  Build  │  │   SEO    │  │  View   │  │   Static     │      │
-│  │ (Vite)  │  │ (meta/OG)│  │ Trans.  │  │  Hosting     │      │
-│  └────────┘  └──────────┘  └─────────┘  └──────────────┘      │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-This is an **Islands Architecture** -- the entire site renders as static HTML at build time, with small "islands" of JavaScript hydrated only where interactivity is explicitly needed. This means near-zero JavaScript shipped by default, with progressive enhancement for interactive elements.
-
-### Component Responsibilities
-
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| **Layouts** | Page shells providing consistent chrome (header, footer, meta tags, transitions) | Astro layout components wrapping `<slot />` |
-| **Pages** | Route definitions, data fetching, section composition | Astro `.astro` files in `src/pages/` |
-| **Sections** | Full-width page blocks (Hero, ProjectGrid, SkillsList, Timeline) | Astro components receiving data as props |
-| **Islands** | Interactive UI elements that require client-side JavaScript | Framework components (React/Preact) with `client:*` directives |
-| **UI Components** | Atomic, reusable building blocks (Button, Card, Tag, Badge) | Astro components or framework components depending on interactivity |
-| **Content Collections** | Typed, schema-validated project data, resume data, site metadata | Markdown/MDX files + Zod schemas in `src/content/` |
-| **SEO Layer** | Meta tags, Open Graph, JSON-LD structured data, sitemap, robots.txt | Head component + Astro integrations (`@astrojs/sitemap`) |
-| **View Transitions** | Smooth animated page navigation without full page reloads | Astro `<ClientRouter />` + `transition:animate` directives |
-
-## Recommended Project Structure
-
-```
-src/
-├── pages/                    # Route definitions (file-based routing)
-│   ├── index.astro           # Home page
-│   ├── about.astro           # About page
-│   ├── projects/
-│   │   ├── index.astro       # Projects listing page
-│   │   └── [slug].astro      # Dynamic project detail/case study pages
-│   ├── resume.astro          # Resume page
-│   └── contact.astro         # Contact page
-├── layouts/                  # Page shell templates
-│   ├── BaseLayout.astro      # Root layout (html, head, body, meta, transitions)
-│   └── ProjectLayout.astro   # Layout for project case study pages
-├── components/               # Reusable UI components
-│   ├── sections/             # Full-width page sections
-│   │   ├── Hero.astro        # Home hero section
-│   │   ├── ProjectGrid.astro # Projects listing grid
-│   │   ├── SkillsList.astro  # Technical skills display
-│   │   ├── Timeline.astro    # Experience/education timeline
-│   │   └── ContactLinks.astro# Contact info section
-│   ├── ui/                   # Atomic UI elements
-│   │   ├── Button.astro
-│   │   ├── Card.astro
-│   │   ├── Tag.astro
-│   │   ├── Badge.astro
-│   │   └── SectionHeading.astro
-│   ├── navigation/           # Navigation components
-│   │   ├── Header.astro
-│   │   ├── Footer.astro
-│   │   ├── NavLinks.astro
-│   │   └── MobileMenu.tsx    # Island: requires JS for toggle
-│   └── seo/                  # SEO-related components
-│       ├── Head.astro        # Meta tags, OG tags, JSON-LD
-│       └── Schema.astro      # Structured data generation
-├── content/                  # Content collections (Markdown/MDX/JSON)
-│   └── projects/             # Project case studies
-│       ├── project-one.mdx
-│       ├── project-two.mdx
-│       └── ...
-├── data/                     # Static data files (not collections)
-│   ├── site.ts               # Site metadata (name, description, links)
-│   ├── resume.ts             # Resume/CV structured data
-│   ├── skills.ts             # Skills/technologies list
-│   └── navigation.ts         # Navigation links config
-├── styles/                   # Global styles
-│   └── global.css            # Base styles, CSS custom properties, Tailwind directives
-├── assets/                   # Optimized images and static assets
-│   ├── images/               # Project screenshots, headshot, etc.
-│   └── icons/                # Custom SVG icons
-├── lib/                      # Utility functions
-│   └── utils.ts              # Date formatting, slug generation, etc.
-└── content.config.ts         # Content collection schemas
-public/
-├── favicon.svg
-├── resume.pdf                # Downloadable resume PDF
-├── robots.txt
-└── og-image.png              # Default Open Graph image
-```
-
-### Structure Rationale
-
-- **`pages/`:** Astro's file-based routing. Each `.astro` file becomes a route. Dynamic `[slug].astro` generates one page per project from the content collection -- this is the mechanism that turns 5-6 Markdown files into 5-6 detail pages automatically.
-- **`layouts/`:** Separated from components because layouts define page-level shells. `BaseLayout` handles the HTML document structure, meta tags, header/footer, and View Transitions. `ProjectLayout` extends it with case-study-specific chrome (back navigation, project metadata sidebar).
-- **`components/sections/`:** These are the big building blocks that compose pages. Each section is a self-contained, full-width block. Pages import and arrange sections -- a page is essentially a list of sections in order.
-- **`components/ui/`:** Small, reusable atoms. Sections compose these. The design system lives here.
-- **`components/navigation/`:** Separated because nav is structurally special -- it lives in layouts, not in page sections, and the mobile menu is one of the few interactive islands.
-- **`content/`:** Astro Content Collections. Project data lives as MDX files with typed frontmatter schemas. Placeholder content goes here initially and gets swapped for real content later without touching any component code.
-- **`data/`:** TypeScript data files for structured, non-collection data. Resume entries, skills lists, navigation config. These are imported directly (not queried like collections) and provide type safety through TypeScript interfaces.
-
-## Architectural Patterns
-
-### Pattern 1: Islands Architecture (Zero-JS Default)
-
-**What:** The entire site renders as static HTML at build time. JavaScript is only loaded for components explicitly marked with `client:*` directives. Each interactive "island" hydrates independently.
-
-**When to use:** Every component by default. Only opt into JavaScript when a component genuinely needs client-side interactivity (e.g., mobile menu toggle, image lightbox, theme switcher).
-
-**Trade-offs:**
-- Pro: Near-perfect Lighthouse scores, minimal bundle size, fastest possible page loads
-- Pro: Each island hydrates independently -- one slow island does not block others
-- Con: Cannot share state between islands without external coordination
-- Con: Requires deliberate thought about what needs interactivity vs. what does not
-
-**Example:**
-```astro
----
-// Static by default -- no JavaScript shipped
-import ProjectCard from '../components/ui/Card.astro';
-import MobileMenu from '../components/navigation/MobileMenu.tsx';
 ---
 
-<!-- This renders as pure HTML, zero JS -->
-<ProjectCard title="My App" description="A cool project" />
+## 1. Existing Architecture Snapshot (baseline — DO NOT re-derive)
 
-<!-- This becomes an interactive island, JS loaded only when visible -->
-<MobileMenu client:media="(max-width: 768px)" />
+```
+                    Cloudflare Pages (static) + Workers (SSR)
+                          jackcutrara.com
+┌───────────────────────────────────────────────────────────────────────┐
+│  BaseLayout.astro (head, SEO, Fonts API, SkipToContent)               │
+│    ├── Header.astro + MobileMenu.astro    [primitives/]               │
+│    ├── <main><slot/></main>                                           │
+│    ├── Footer.astro                                                   │
+│    └── ChatWidget.astro  ◄── <script>import "../../scripts/chat.ts"   │
+└───────────────┬──────────────────────────────────────┬────────────────┘
+                │ pages import primitives              │ chat.ts (client)
+                ▼                                      ▼ POST /api/chat
+   src/pages/*.astro   src/pages/projects/[id].astro   src/pages/api/chat.ts
+     (index, about,       ↑                              (prerender=false
+      projects,           ↑                               SSE stream,
+      contact, 404)       ↑                               Haiku 4.5,
+                          └──── src/content/projects/*.mdx (Zod schema)
+                                (6 MDX, loaded via glob loader)
+
+                          src/data/portfolio-context.json ──► system-prompt.ts
+                                (static JSON, stuffed into every request)
 ```
 
-**Likely islands in this portfolio:**
-- Mobile menu (hamburger toggle) -- `client:media="(max-width: 768px)"`
-- Theme toggle (if dark mode) -- `client:load`
-- Project filter/sort (if interactive filtering on projects page) -- `client:visible`
-- Everything else: pure static HTML
+**Primitives library** (`src/components/primitives/`):
+Container · Footer · Header · MetaLabel · MobileMenu · SectionHeader · StatusDot · WorkRow
+— all scoped `<style>`, consume `var(--*)` tokens, no Tailwind for styling internals.
 
-### Pattern 2: Content-Driven Pages via Collections
+**Client scripts** (`src/scripts/`): only `chat.ts` today. Pattern is: module-level
+initialization guard, `astro:page-load` listener + DOMContentLoaded fallback, dispatches
+`CustomEvent("chat:analytics", { detail: { action, label, timestamp }})` on `document`.
 
-**What:** Project case studies and other structured content are defined as Markdown/MDX files with Zod-validated frontmatter schemas. Pages query collections at build time and render typed data.
+**Content flow today:**
+- `Projects/*.md` (Jack's hand-written Markdown, 6 files, `1 - SEATWATCH.md` style names,
+  ~200–900 lines of narrative per file, NO frontmatter).
+- `src/content/projects/*.mdx` (6 files, ~44–56 lines each — thin MDX with full Zod
+  frontmatter; 2 are real case studies, 4 still have placeholder prose).
+- `src/data/portfolio-context.json` (hand-curated 6-project summary + skills/education).
 
-**When to use:** Any content that follows a repeating structure (projects, blog posts, testimonials). The project case studies are the primary use case here.
+The two sources drift independently today. v1.2 must reconcile them.
 
-**Trade-offs:**
-- Pro: Type-safe content -- build fails if frontmatter is invalid, catching errors early
-- Pro: Content authors (or future-Jack) edit Markdown files, never touch components
-- Pro: Adding a new project means adding one `.mdx` file -- no code changes
-- Con: Schema changes require updating all existing content files
-
-**Example:**
-```typescript
-// src/content.config.ts
-import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
-import { z } from 'astro/zod';
-
-const projects = defineCollection({
-  loader: glob({ pattern: "**/*.mdx", base: "./src/content/projects" }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    thumbnail: z.string(),
-    tags: z.array(z.string()),
-    featured: z.boolean().default(false),
-    order: z.number(),            // Controls display order
-    status: z.enum(['placeholder', 'draft', 'published']),
-    overview: z.string(),         // One-line for fast-scan mode
-    techStack: z.array(z.string()),
-    challenges: z.string().optional(),
-    lessons: z.string().optional(),
-    liveUrl: z.string().url().optional(),
-    repoUrl: z.string().url().optional(),
-  }),
-});
-
-export const collections = { projects };
-```
-
-```astro
 ---
-// src/pages/projects/[slug].astro
-import { getCollection } from 'astro:content';
-import ProjectLayout from '../../layouts/ProjectLayout.astro';
 
-export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((project) => ({
-    params: { slug: project.id },
-    props: { project },
-  }));
+## 2. v1.2 Feature Integration — component by component
+
+### 2.1 Motion layer
+
+**Decision: CSS-first (@keyframes + IntersectionObserver), no ClientRouter.**
+
+The motion work must not reintroduce `<ClientRouter />`. v1.1 explicitly removed it as
+D-29 in `design-system/MASTER.md §8` (anti-pattern list), and the entire chat
+localStorage persistence architecture (`src/scripts/chat.ts:66-107`) is the workaround for
+its absence. Re-adding it breaks the chat lifecycle contract (`transition:persist` is
+gone; messages would duplicate on replay) and contradicts the locked anti-pattern list.
+**Astro View Transitions via ClientRouter is off the table.**
+
+The four candidates (a/b/c/d in the question) resolve as:
+
+| Option | Verdict | Where it belongs |
+|---|---|---|
+| (a) CSS `@starting-style` + `@keyframes` in global.css layers | **USE for page-enter fades** | New layer in `src/styles/global.css` — target `main`, `header`, `footer` on initial paint only. |
+| (b) Reintroduce ClientRouter | **REJECTED** — contradicts §8 anti-patterns, breaks chat persistence model | n/a |
+| (c) IntersectionObserver module in `src/scripts/` | **USE for scroll-reveal** | New file `src/scripts/motion.ts`, follow chat.ts's init-guard + astro:page-load pattern. Toggle `data-motion-revealed="true"` on elements with `[data-motion]`. |
+| (d) Per-primitive scoped `<style>` microinteractions | **USE for primitive hover/focus polish** | Inside each of WorkRow, MobileMenu, StatusDot, chat bubble — augment existing `<style>` blocks. Cheapest, most local. |
+
+**Lifecycle model (motion.ts):**
+
+```ts
+// src/scripts/motion.ts — mirrors chat.ts bootstrap pattern
+let motionInitialized = false;
+let observer: IntersectionObserver | null = null;
+
+function initMotion(): void {
+  if (motionInitialized) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return; // honor user
+  const targets = document.querySelectorAll<HTMLElement>("[data-motion]");
+  if (targets.length === 0) return;
+  observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.setAttribute("data-motion-revealed", "true");
+        observer?.unobserve(entry.target); // one-shot
+      }
+    }
+  }, { rootMargin: "0px 0px -10% 0px", threshold: 0.1 });
+  targets.forEach((el) => observer!.observe(el));
+  motionInitialized = true;
 }
 
-const { project } = Astro.props;
-const { Content } = await project.render();
----
-
-<ProjectLayout project={project.data}>
-  <Content />
-</ProjectLayout>
+// Matches chat.ts exactly — page-load fires on navigation;
+// DOMContentLoaded is the first-paint fallback.
+document.addEventListener("astro:page-load", initMotion);
+if (document.readyState !== "loading") initMotion();
+else document.addEventListener("DOMContentLoaded", initMotion);
 ```
 
-### Pattern 3: Section Composition
+**No-JS fallback:** `[data-motion]` starts at `opacity: 1` in CSS. The observer only sets
+`data-motion-revealed` for users who get JS; the reveal state is additive, never blocking.
+For users WITH JS and without reduce-motion, CSS inverts the initial: `[data-motion]:not([data-motion-revealed])`
+starts hidden, and the attribute toggle reveals. This avoids FOUC on first paint — the
+module-level guard runs synchronously on DOMContentLoaded, before any layout shift.
 
-**What:** Pages are composed by arranging section components in order, passing data as props. Sections are self-contained, full-width blocks. This creates a clear, scannable page composition.
+**Layout-thrash avoidance:** only animate `opacity` and `transform: translateY()` —
+never `height`, `top`, or `margin`. All reveals under 400ms. Follow MASTER.md §6.2's
+"sub-200ms state changes pose no vestibular risk" rule for hover microinteractions;
+scroll reveals can go to 400ms because they are one-shot on enter.
 
-**When to use:** All pages. Each page is a "stack of sections."
+**`prefers-reduced-motion` is the first check** in `initMotion()` — if reduced, the
+observer never attaches and `[data-motion]` stays at its `opacity:1` default. CSS also
+includes the safety net:
 
-**Trade-offs:**
-- Pro: Pages are extremely readable -- you see the structure at a glance
-- Pro: Sections are independently testable and reusable across pages
-- Pro: Reordering page content means reordering component imports
-- Con: Deep nesting if sections contain sub-sections (keep it flat)
+```css
+@media (prefers-reduced-motion: reduce) {
+  [data-motion], [data-motion-revealed] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+```
 
-**Example:**
+**Page-enter fade** (not scroll-reveal — the initial paint transition for `<main>`):
+Pure CSS `@starting-style` on `main` with a `0.3s` opacity + 8px translateY. No JS.
+85%+ browser support in 2026 — older browsers get instant render, which is the correct
+degradation.
+
+**Microinteractions on primitives** live inside each component's scoped `<style>` — no
+global sprawl. Examples: WorkRow arrow currently at 120ms (§5.5, required) — add
+`translateX(2px)` on the arrow during hover. Chat bubble `startPulse` is a no-op today
+(chat.ts:433) — replace with a CSS `@keyframes` class toggled by chat.ts rather than
+reintroducing JS animation.
+
+---
+
+### 2.2 Chat knowledge upgrade
+
+**Decision: context-stuffing via build-time codegen, NOT RAG, NOT tool-calling.**
+
+Reasoning:
+
+| Approach | Pros | Cons | Fit |
+|---|---|---|---|
+| **Build-time codegen** (merge MDX frontmatter + prose into `portfolio-context.json`) | Zero runtime cost, zero new infra, no Worker cold-start penalty, single deploy artifact, Haiku 4.5's 200K context window trivially accommodates 6 case studies (~3–5K tokens total) | Every request pays the full context token cost | **PICK** |
+| **RAG with Cloudflare Vectorize** | Scales to 100s of docs, smaller per-request token cost at scale | 6 projects → 50K+ tokens total, nowhere near Vectorize's sweet spot. Adds embedding pipeline, vector index management, retrieval latency (~100–300ms pre-first-token), and cost. Over-engineered for a 6-project portfolio. | **REJECT** |
+| **Tool-calling** (`getProject(id)`, `listProjects()`) | Model fetches on demand | Breaks current SSE streaming contract — Anthropic tool_use events require multi-turn loop (tool_use → client call → tool_result → continue). The `controller.enqueue(text_delta)` loop in `src/pages/api/chat.ts:92-103` would need to handle `tool_use` / `input_json_delta` events, execute a lookup, create a second `messages.create` call, and stream THAT. Triples complexity. | **REJECT** |
+
+**Concrete implementation:**
+
+1. **New build script** `scripts/build-chat-context.mjs` runs before `astro build`:
+   - Read `src/content/projects/*.mdx` via `gray-matter` (or Astro's own content API
+     via a dev-time query, but gray-matter is simpler here and has zero production cost).
+   - For each file, extract frontmatter + strip markdown → produce
+     `{ name, tagline, description, techStack, problem, approach, techDetail, challenges,
+        year, status, featured, githubUrl, demoUrl, page }`.
+   - Merge with hand-curated `src/data/portfolio-context.static.json` (rename — the
+     human-authored skills/education/contact fields stay static).
+   - Emit `src/data/portfolio-context.json` (generated, gitignored).
+
+2. **Update `package.json` build chain**:
+   `"build": "wrangler types && node scripts/build-chat-context.mjs && astro check && astro build && node scripts/pages-compat.mjs"`.
+
+3. **Worker bundle impact**: `portfolio-context.json` is imported at module scope by
+   `src/pages/api/chat.ts:6`. Bundling 6 fully-written case studies adds ~30–50KB to
+   the Worker bundle (plain UTF-8, no base64). Cloudflare Workers paid tier = 10MB
+   zipped, free tier = 3MB zipped — this is a rounding error.
+
+4. **Cold-start latency**: zero. The JSON is already in the bundle; V8 parses it once
+   on isolate init (sub-millisecond for ~50KB). No network calls, no KV reads.
+
+5. **Tune `max_tokens`** from 512 → 768 now that responses can reference deeper detail.
+   Keep `claude-haiku-4-5` (cheapest capable model; 200K context is overkill-but-fine).
+
+6. **System prompt refinement** (`src/prompts/system-prompt.ts`): currently dumps the
+   entire JSON as `<knowledge>`. That still works at 6 projects × ~3KB each. Add a
+   `<project-deep-dive>` section that lists available detailed project docs by slug,
+   and instruct the model to quote from `approach`/`techDetail` when depth is warranted.
+
+7. **Prompt persona tuning** is a copy change in the same file — no architecture impact.
+
+**If the portfolio ever grows to 20+ projects or adds a blog**: revisit RAG with
+Cloudflare Vectorize (`@cf/baai/bge-base-en-v1.5` embeddings, `VECTORIZE` binding).
+That is a v1.3+ concern, not v1.2.
+
+**SSE streaming loop changes:** none. The `messages.create({...stream: true})` call
+stays identical. The only diff is that `portfolioContext` now contains more text.
+
+---
+
+### 2.3 Analytics
+
+**Decision: Cloudflare Web Analytics (pageviews) + Plausible (custom events), no consent banner.**
+
+Reasoning:
+
+| Option | Privacy | Setup | Fit |
+|---|---|---|---|
+| Cloudflare Web Analytics | No cookies, no PII, free, zero config (already on CF Pages), GDPR-clean → **no consent banner required** | One `<script>` tag in BaseLayout.astro | **PICK — primary pageviews** |
+| Plausible Cloud | No cookies, EU-hosted, $9/mo (or free tier for custom events in some configurations) | One script | **PICK — custom events bridge from chat.ts** |
+| Plausible Self-Hosted / Umami | Free if self-hosted | Requires DB + hosting | Overkill for a portfolio |
+| Google Analytics 4 | Cookies, consent banner needed, ugly dashboard | | **REJECT** — consent/DNT complexity, slower pageloads, wrong product for this audience |
+
+Cloudflare Web Analytics handles pageviews for free with the infra already in place.
+Plausible (or an equivalent) handles the richer custom-event layer that chat.ts emits.
+
+**Script tag placement** (`src/layouts/BaseLayout.astro`):
+Add both beacons just before `</body>` (after `<ChatWidget />`). Both `<script defer>`
+so neither blocks first paint. Combined size ~4KB.
+
+**DNT / consent:** Cloudflare Web Analytics is documented as GDPR/CCPA-compliant
+without consent because it collects no PII and sets no cookies. **No consent banner
+needed for v1.2.** Optional courtesy — respect `navigator.doNotTrack`:
+
 ```astro
----
-// src/pages/index.astro
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/sections/Hero.astro';
-import FeaturedProjects from '../components/sections/FeaturedProjects.astro';
-import SkillsOverview from '../components/sections/SkillsOverview.astro';
-import CallToAction from '../components/sections/CallToAction.astro';
-import { getCollection } from 'astro:content';
-
-const featuredProjects = await getCollection('projects',
-  ({ data }) => data.featured === true
-);
----
-
-<BaseLayout title="Jack Cutrara | Software Engineer">
-  <Hero />
-  <FeaturedProjects projects={featuredProjects} />
-  <SkillsOverview />
-  <CallToAction />
-</BaseLayout>
+{!Astro.request.headers.get("DNT") && (
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" ...></script>
+)}
 ```
 
-### Pattern 4: Dual Reading Mode via Content Structure
+3 lines, optional.
 
-**What:** Support both 30-second recruiter scans and 10-minute engineer deep dives through content structure, not toggle switches. Use progressive disclosure: scannable headlines and summaries at the top, technical depth below.
+**Custom event bridge** — the rich signal (did the recruiter actually talk to the bot?):
 
-**When to use:** Project detail pages and the projects listing page.
+`src/scripts/chat.ts:369-378` already fires `document.dispatchEvent(new CustomEvent("chat:analytics", { detail: { action, label, timestamp } }))` for `chat_open`, `message_sent`, `chip_click`, `chat_error`. This was built in Phase 7 D-36 explicitly to be consumer-agnostic.
 
-**Trade-offs:**
-- Pro: No JavaScript needed -- it is a content/layout strategy, not an interactive feature
-- Pro: Works perfectly for both audiences without making either feel unwelcome
-- Con: Requires thoughtful content writing (structure in the Markdown, not the component)
+**New file** `src/scripts/analytics.ts`:
 
-**Implementation approach:**
-- **Projects listing page:** Each card shows title, one-line description, tech tags. This is the fast-scan surface.
-- **Project detail page:** Structured in sections: Overview (scan-friendly) -> Tech Stack -> Challenges -> Architecture -> Lessons (deep-dive). Bold headers and short paragraphs serve scanners. Full paragraphs serve engineers.
-- The frontmatter `overview` field provides the scan-friendly summary. The MDX body contains the deep dive.
-
-### Pattern 5: View Transitions for App-Like Navigation
-
-**What:** Astro's View Transitions API enables smooth animated navigation between pages without a full page reload, giving a single-page app feel to a multi-page static site.
-
-**When to use:** Globally, via `<ClientRouter />` in the base layout.
-
-**Trade-offs:**
-- Pro: Professional, polished feel -- pages slide/fade between each other
-- Pro: Browser-native (85%+ support in 2025), progressively enhanced
-- Pro: Zero JavaScript in non-supporting browsers -- falls back to normal navigation
-- Con: Requires `transition:name` attributes for matched element animations
-
-**Example:**
-```astro
----
-// src/layouts/BaseLayout.astro
-import { ClientRouter } from 'astro:transitions';
----
-<html>
-  <head>
-    <ClientRouter />
-  </head>
-  <body>
-    <Header transition:persist />
-    <main transition:animate="fade">
-      <slot />
-    </main>
-    <Footer />
-  </body>
-</html>
+```ts
+// src/scripts/analytics.ts — forwards chat:analytics to Plausible
+document.addEventListener("chat:analytics", (e: Event) => {
+  const detail = (e as CustomEvent).detail as { action: string; label?: string };
+  window.plausible?.(detail.action, { props: { label: detail.label ?? "" } });
+});
 ```
 
-## Data Flow
+Injected via `<script>import "../../scripts/analytics.ts";</script>` inside BaseLayout.
 
-### Build-Time Content Flow (Primary)
-
-```
-Content Files (MDX/MD)        TypeScript Data Files
-  src/content/projects/         src/data/site.ts
-  src/content/...               src/data/resume.ts
-         │                            │
-         ▼                            ▼
-  Zod Schema Validation        Direct TypeScript Import
-  (content.config.ts)          (type-safe by default)
-         │                            │
-         ▼                            ▼
-  getCollection() / getEntry()   import { siteData }
-         │                            │
-         ├────────────┬───────────────┘
-         ▼            ▼
-       Page Components
-       (src/pages/*.astro)
-              │
-              ▼
-       Section Components
-       (receive data as props)
-              │
-              ▼
-       UI Components
-       (render atoms)
-              │
-              ▼
-       Static HTML Output
-       (deployed to CDN)
-```
-
-### Runtime Flow (Islands Only)
-
-```
-Page Load (static HTML renders instantly)
-         │
-         ▼
-  Browser evaluates client:* directives
-         │
-         ├── client:load → Hydrate immediately (theme toggle)
-         ├── client:media → Hydrate when media query matches (mobile menu)
-         ├── client:visible → Hydrate when scrolled into view (project filter)
-         └── client:idle → Hydrate when browser is idle
-         │
-         ▼
-  Island JavaScript downloads + executes
-  (independently, does not block other islands or static content)
-```
-
-### Key Data Flows
-
-1. **Project listing:** `getCollection('projects')` in `projects/index.astro` -> filters/sorts -> passes array to `ProjectGrid` section -> each project renders as a `Card` component.
-2. **Project detail:** `getStaticPaths()` generates one route per project -> `getEntry()` provides typed data -> `ProjectLayout` renders metadata sidebar + MDX body.
-3. **Home page featured projects:** `getCollection('projects', filter)` in `index.astro` -> passes filtered subset to `FeaturedProjects` section.
-4. **Resume data:** Direct import from `src/data/resume.ts` -> passed to timeline and skills sections on the resume page.
-5. **SEO metadata:** Each page passes title/description to `BaseLayout` -> `Head` component renders meta tags, OG tags, and JSON-LD.
-
-## Scaling Considerations
-
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| Current (personal site, <1K visitors/month) | Pure static. Deploy to any CDN (Vercel, Netlify, Cloudflare Pages). Zero server costs. This is the target. |
-| Growth (shared widely, 10K+ visitors/month) | Still pure static. CDN handles any traffic volume. No changes needed. |
-| Feature expansion (blog, CMS, analytics) | Add content collections for blog posts. Consider Astro's server mode only if dynamic features emerge (unlikely for a portfolio). |
-
-### Scaling Priorities
-
-1. **First bottleneck: Content management, not traffic.** A static site on a CDN handles virtually unlimited traffic. The real scaling challenge is content maintenance -- as projects grow, keeping Markdown files organized matters. The content collection schema prevents drift.
-2. **Second bottleneck: Build time.** With 5-6 projects, builds take seconds. If the site grows to include dozens of blog posts, Astro's incremental builds and content caching keep this fast.
-
-## Anti-Patterns
-
-### Anti-Pattern 1: Over-Hydration
-
-**What people do:** Mark every component as `client:load` "just in case" or use a React-heavy approach where everything is an interactive component.
-**Why it's wrong:** Defeats the purpose of Islands Architecture. You end up shipping as much JavaScript as a Next.js site but with more complexity. Performance degrades from sub-1s to 2-3s page loads.
-**Do this instead:** Start with zero islands. Ask "does this component NEED JavaScript?" for each one. Most portfolio components (cards, grids, text sections, hero) do not need interactivity.
-
-### Anti-Pattern 2: Content in Components
-
-**What people do:** Hardcode project titles, descriptions, and details directly in `.astro` component files.
-**Why it's wrong:** Makes content updates require editing code. Violates the requirement for "placeholder content that's easy to swap." Prevents non-developers from ever updating content.
-**Do this instead:** All project content lives in `src/content/` as Markdown/MDX files. Components receive data through props. Updating content means editing a Markdown file, never a component.
-
-### Anti-Pattern 3: Page-Level Data Fetching in Sections
-
-**What people do:** Have section components directly call `getCollection()` internally.
-**Why it's wrong:** Hides data dependencies, makes sections non-reusable (tied to specific collections), and makes the page composition opaque.
-**Do this instead:** Pages fetch data and pass it to sections as props. Sections are pure rendering components that take data in and produce HTML out.
-
-### Anti-Pattern 4: Monolithic Pages
-
-**What people do:** Write entire pages as single files with all HTML inline -- 500+ line `.astro` files with embedded styles.
-**Why it's wrong:** Impossible to maintain, test, or reuse. When the design changes, you are editing a giant monolith.
-**Do this instead:** Compose pages from sections. Each section is its own component file. A page file should be short -- imports, data fetching, and section arrangement.
-
-### Anti-Pattern 5: CSS-in-JS for Static Content
-
-**What people do:** Use styled-components, Emotion, or other CSS-in-JS libraries that require JavaScript runtime.
-**Why it's wrong:** Adds unnecessary JavaScript to a static site. Tailwind CSS utility classes and Astro's built-in scoped `<style>` tags produce zero-JS styling.
-**Do this instead:** Use Tailwind CSS for utility-first styling. Use Astro's scoped `<style>` blocks for component-specific styles. Both compile to static CSS at build time.
-
-## Integration Points
-
-### External Services
-
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| CDN hosting (Vercel/Netlify/CF Pages) | Git push triggers build + deploy | Zero-config with Astro adapters. Static output means no server runtime. |
-| Google Fonts / Font hosting | `<link>` in `Head.astro` or self-hosted in `public/fonts/` | Self-hosting preferred for performance (eliminates external request). |
-| Google Search Console | Sitemap submission + meta verification tag | `@astrojs/sitemap` generates sitemap automatically. |
-| Analytics (optional, post-launch) | Script tag in `BaseLayout.astro` | Plausible or Fathom for privacy-respecting, lightweight analytics. |
-
-### Internal Boundaries
-
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| Pages <-> Content Collections | `getCollection()` / `getEntry()` at build time | Type-safe. Schema validation catches errors at build. |
-| Pages <-> Sections | Props (data down) | One-directional. Sections never fetch their own data. |
-| Sections <-> UI Components | Props (data down) | Sections compose UI atoms. Pure rendering. |
-| Layouts <-> Pages | `<slot />` composition | Layout wraps page content. Page content fills the slot. |
-| Static HTML <-> Islands | `client:*` directives | Islands hydrate independently. No shared state needed for this portfolio. |
-
-## Build Order (Dependencies Between Components)
-
-This ordering reflects what must exist before other things can be built:
-
-```
-Phase 1: Foundation (no dependencies)
-  ├── Project scaffolding (Astro + Tailwind + TypeScript config)
-  ├── Content collection schema (content.config.ts)
-  ├── Global styles / CSS custom properties
-  └── Data files skeleton (src/data/site.ts, navigation.ts)
-
-Phase 2: Shell (depends on Phase 1)
-  ├── BaseLayout (html, head, meta, slot)
-  ├── Head/SEO component
-  ├── Header + NavLinks
-  ├── Footer
-  └── View Transitions setup
-
-Phase 3: UI Components (depends on Phase 1 styles)
-  ├── Button, Card, Tag, Badge, SectionHeading
-  └── Any other atomic components identified during design
-
-Phase 4: Sections + Pages (depends on Phases 2 + 3)
-  ├── Home page sections (Hero, FeaturedProjects, SkillsOverview, CTA)
-  ├── About page sections (Bio, Timeline, Interests)
-  ├── Projects listing page + ProjectGrid section
-  ├── Resume page sections
-  ├── Contact page sections
-  └── Mobile menu island
-
-Phase 5: Project Detail System (depends on Phase 4 + content schema)
-  ├── ProjectLayout (extends BaseLayout)
-  ├── Dynamic [slug].astro route
-  ├── Placeholder project MDX content (5-6 files)
-  └── Project detail sections (overview, tech, challenges, etc.)
-
-Phase 6: Polish (depends on all above)
-  ├── View Transition animations fine-tuning
-  ├── SEO audit (all meta tags, OG images, JSON-LD)
-  ├── Responsive QA across breakpoints
-  ├── Accessibility audit
-  ├── Performance optimization (image optimization, font loading)
-  └── Deployment configuration
-```
-
-## Sources
-
-- [Astro Project Structure - Official Docs](https://docs.astro.build/en/basics/project-structure/)
-- [Astro Content Collections - Official Docs](https://docs.astro.build/en/guides/content-collections/)
-- [Astro Islands Architecture - Official Docs](https://docs.astro.build/en/concepts/islands/)
-- [Astro View Transitions - Official Docs](https://docs.astro.build/en/guides/view-transitions/)
-- [Astro View Transitions - Chrome for Developers](https://developer.chrome.com/blog/astro-view-transitions)
-- [Astro vs Next.js: Real Benchmarks, SEO & Costs (2026)](https://senorit.de/en/blog/astro-vs-nextjs-2025)
-- [Astro vs Next.js: The Technical Truth Behind 40% Faster Static Site Performance](https://eastondev.com/blog/en/posts/dev/20251202-astro-vs-nextjs-comparison/)
-- [Tailwind CSS with Astro - Official Guide](https://tailwindcss.com/docs/guides/astro)
-- [Complete Guide to Astro Website SEO](https://eastondev.com/blog/en/posts/dev/20251202-astro-seo-complete-guide/)
-- [Astro View Transitions: App-Like Experience](https://eastondev.com/blog/en/posts/dev/20251202-astro-view-transitions-guide/)
-- [Building a Modern Portfolio with Next.js 15](https://richardporter.dev/blog/building-modern-portfolio-nextjs-15)
-- [Portfolio Design Trends 2026](https://colorlib.com/wp/portfolio-design-trends/)
+**Critical: D-36 contract (no conversation content in events)** is preserved — chat.ts
+already omits user message bodies from the CustomEvent detail. `analytics.ts` must
+never add any. One-line tripwire in a test: assert that dispatched events for
+`message_sent` have no `content` field.
 
 ---
-*Architecture research for: Personal developer portfolio website*
-*Researched: 2026-03-22*
+
+### 2.4 Content sync
+
+**Decision: `Projects/` is checked into the repo (it already is) as human-authored source of truth; new sync script generates MDX body.**
+
+`Projects/` exists at repo root right now with 6 files matching the 6 MDX files — but
+the two are not currently kept in sync. Jack writes long-form narrative in
+`Projects/N - NAME.md` (plain markdown, no frontmatter), and someone (or
+Claude-via-GSD) has to translate that into MDX with frontmatter. This drift is the root
+cause of 4 of 6 MDX files still having placeholder prose.
+
+**v1.2 solution — a one-way sync script** `scripts/sync-projects.mjs`:
+
+1. Read all `Projects/*.md` files.
+2. For each file, the script expects a corresponding MDX in `src/content/projects/`
+   whose basename matches a slug derived from the Projects filename (e.g.
+   `1 - SEATWATCH.md` → `seatwatch.mdx`; maintain a small explicit map in the script
+   for names that don't transliterate cleanly, e.g., `6 - DAYTRADE.md` →
+   `crypto-breakout-trader.mdx`).
+3. The sync script **does not touch frontmatter** — frontmatter is authored manually in
+   the MDX because it encodes editorial decisions (order, featured, tagline) that don't
+   belong in the prose source. The script only replaces the body section (everything
+   after the second `---` line).
+4. Zod enforcement happens automatically during `astro check` — if a sync corrupts
+   required frontmatter fields, the build fails.
+5. Add `"sync:projects": "node scripts/sync-projects.mjs"` to `package.json`. Run
+   manually — **not wired into `build`** because production builds should never need
+   to sync (the repo is the source of truth, the sync is authoring-time only).
+
+**Why not external / submodule / symlink:**
+
+- Submodule would split the repo across two GitHub projects for no benefit.
+- Symlink breaks on Windows dev setup (Jack's env) and on Cloudflare Pages build env.
+- External CMS (Sanity, Notion) is explicitly Out of Scope per `.planning/PROJECT.md`.
+
+**Why not manual copy (the status quo):**
+
+- Manual copy is exactly what caused the 4-of-6-placeholder drift in the first place.
+- A script that reads Projects/ and writes to src/content/projects/ with git diff
+  visible makes the translation auditable.
+
+**Schema contract** (enforced today, unchanged in v1.2):
+`src/content.config.ts` already uses `glob({ pattern: "**/*.mdx", base: "./src/content/projects" })` and a Zod schema requiring title, tagline, description, techStack, featured, status, category, order, year. The sync script writes body-only, leaving frontmatter as the human contract surface. `astro check` catches schema violations before build.
+
+---
+
+### 2.5 Tech debt — full mapping of all 7 items
+
+From `.planning/milestones/v1.1-MILESTONE-AUDIT.md` `tech_debt` block:
+
+| # | Item | File(s) | Fix shape |
+|---|---|---|---|
+| 1 | 4 lightning-css `Unexpected token Delim('*')` warnings | `.planning/phases/09-primitives/deferred-items.md` (tracking). Root cause is literal `var(--token-*)` strings in `.planning/` files picked up by Tailwind v4 Oxide. Already partially fixed in `src/styles/global.css:37-39` via `@source not "../../.planning/**"`. | Verify the `@source not` globs actually cover all files; audit `.planning/`/`design-system/` for any remaining `var(--token-*)` example strings; if any survive, quote them in backticks to avoid Oxide's detector, or extend the `@source not` list. |
+| 2 | WR-01: MobileMenu focus trap — middle elements behind backdrop remain in tab order | `src/components/primitives/MobileMenu.astro` (focus-trap script block) | When menu opens, set `inert` attribute (or `aria-hidden="true" + tabindex="-1"`) on all siblings except the menu itself. Remove on close. ~10-line diff. |
+| 3 | WR-03: OG image URL builder corrupts absolute URLs | `src/layouts/BaseLayout.astro:38-40` | **Already fixed** — `resolveOg()` function with `/^https?:\/\//i` guard. Verify with a test: pass `ogImage="https://cdn.example.com/img.png"` and confirm passthrough. Close the debt item. |
+| 4 | WR-04: `/dev/primitives.astro previewYears[i]` can produce `undefined` | (none — route deleted Phase 11) | **Already resolved** — close the debt item. |
+| 5 | IN-06: `#666` hex in print stylesheet outside 6-token palette | `src/styles/global.css:174` (approximately — print-only @media block) | Either replace with `var(--ink-muted)` (closest token at `#52525B`) or add a print-only exception note to MASTER.md §2.3 Lock contract. Recommend: replace with token. One-line CSS diff. |
+| 6 | Live vs replayed chat copy button mismatch (SVG icon vs "COPY" text) | `src/scripts/chat.ts:302` (live, SVG) vs `src/scripts/chat.ts:555` (replay, text) | Pick one and standardize. The replay version (text label) is more accessible and uses the already-defined `.label-mono` class. Port the text-label + hover-reveal pattern to the `createBotMessageEl` function so live and replay are identical. ~15-line diff. |
+| 7 | `--ink-faint` (2.5:1) fails WCAG AA contrast on decorative metadata | `src/styles/global.css:12` (token definition) + `design-system/MASTER.md §2.1` | Intentionally accepted per MASTER.md. Two options: (a) **do nothing** — this is a documented design trade-off, Lighthouse a11y = 95 is acceptable; (b) darken `--ink-faint` from `#A1A1AA` to `#71717A` (Zinc 500 → Zinc 600) which lifts contrast to ~4.6:1 and restores Lighthouse 100. Option (b) is a **design decision** and must route through the frontend-design skill per PROJECT.md's constraints. Flag it — do not fix unilaterally. |
+
+All 7 map to existing files. None require new architecture. The bulk of the fixes are
+scoped to `src/scripts/chat.ts`, `src/components/primitives/MobileMenu.astro`, and
+`src/styles/global.css`.
+
+---
+
+## 3. Recommended directory tree (new vs modified)
+
+Legend: **+** = new in v1.2 · **~** = modified in v1.2 · unmarked = unchanged
+
+```
+portfolio/
+├── Projects/                                    # source-of-truth narrative markdown
+│   ~ 1 - SEATWATCH.md   (already real — unchanged)
+│   ~ 2 - NFL_PREDICT.md  (content pass if narrative changed)
+│   ~ 3 - SOLSNIPER.md
+│   ~ 4 - OPTIMIZE_AI.md
+│   ~ 5 - CLIPIFY.md
+│   ~ 6 - DAYTRADE.md
+│
+├── scripts/
+│   + sync-projects.mjs                          # Projects/*.md → src/content/projects/*.mdx body sync
+│   + build-chat-context.mjs                     # MDX → portfolio-context.json (build step)
+│     pages-compat.mjs                           # existing — untouched
+│
+├── src/
+│   ├── content/projects/
+│   │   ~ clipify.mdx                            # content pass (4 of 6 were placeholder)
+│   │   ~ crypto-breakout-trader.mdx
+│   │   ~ nfl-predict.mdx
+│   │   ~ optimize-ai.mdx
+│   │     seatwatch.mdx                          # already real — unchanged
+│   │     solsniper.mdx                          # already real — unchanged
+│   │
+│   ├── data/
+│   │   + portfolio-context.static.json          # hand-authored (skills, education, contact, personal) — split from current
+│   │   ~ portfolio-context.json                 # GENERATED by build-chat-context.mjs — gitignored
+│   │
+│   ├── scripts/
+│   │     chat.ts                                # ~ tech debt #6 (copy button normalization); already emits chat:analytics
+│   │   + motion.ts                              # IntersectionObserver scroll-reveal
+│   │   + analytics.ts                           # listens to chat:analytics, forwards to Plausible
+│   │
+│   ├── components/
+│   │   ├── primitives/
+│   │   │   ~ MobileMenu.astro                   # tech debt #2 (inert siblings); polish hover
+│   │   │   ~ WorkRow.astro                      # microinteraction: arrow translateX on hover
+│   │   │   ~ StatusDot.astro                    # microinteraction: subtle pulse via CSS @keyframes
+│   │   │   ~ Footer.astro                       # data-motion attribute for scroll-reveal entry
+│   │   │   ~ SectionHeader.astro                # data-motion attribute
+│   │   │     Header.astro, Container.astro, MetaLabel.astro    # unchanged
+│   │   │
+│   │   └── chat/
+│   │       ~ ChatWidget.astro                   # optional: CSS @keyframes bubble pulse (replace no-op JS stub)
+│   │
+│   ├── layouts/
+│   │   ~ BaseLayout.astro                       # add CF Web Analytics + Plausible beacons; inject analytics.ts/motion.ts scripts; close OG URL tech debt #3 (already landed)
+│   │
+│   ├── prompts/
+│   │   ~ system-prompt.ts                       # refine persona + add <project-deep-dive> section referencing enriched context
+│   │
+│   ├── pages/api/
+│   │     chat.ts                                # unchanged structure; max_tokens 512 → 768 is the only diff
+│   │
+│   └── styles/
+│       ~ global.css                             # tech debt #5 (#666 → token); tech debt #7 (conditional: darken --ink-faint if design-approved); new motion layer with [data-motion], @starting-style main, @keyframes pulse for StatusDot/chat-bubble; reduced-motion safety net
+│
+├── design-system/
+│     MASTER.md                                  # locked — v1.2 does not amend (motion layers ON TOP intentionally per PROJECT.md)
+│
+├── .planning/
+│   + milestones/v1.2-MILESTONE-AUDIT.md         # (created at milestone close)
+│   + research/{SUMMARY,STACK,FEATURES,ARCHITECTURE,PITFALLS}.md   # this file + siblings
+│
+├── package.json                                 # ~ add sync:projects script; update build to call build-chat-context.mjs; add gray-matter dep
+└── astro.config.mjs                             # unchanged
+```
+
+**Net new code surface:** 2 build scripts (~150 LOC), 2 client scripts (~80 LOC),
+~10 line modifications across 6 Astro components, ~60 lines of new CSS in global.css.
+Under ~300 LOC of net code for the entire milestone.
+
+---
+
+## 4. Suggested phase build order
+
+Ordering is driven by three constraints:
+- Content unblocks chat (real MDX → better stuffed context).
+- Tech debt in motion-adjacent files must land before motion layers on top.
+- Analytics must ship early enough to collect data from the polish work itself.
+
+**Phase order (5 phases):**
+
+1. **Phase 12 — Tech Debt Sweep** (ships first; unblocks everything)
+   - All 7 audit items (#3, #4 already resolved — close them; #1, #2, #5, #6 are fixes; #7 routed to design-skill for go/no-go).
+   - Outcome: clean baseline with zero known debt. Files touched: WorkRow, MobileMenu, BaseLayout, chat.ts, global.css.
+   - **Why first:** every subsequent phase touches these files. Doing debt after motion means re-testing motion after debt fixes.
+
+2. **Phase 13 — Content Pass + Sync Infrastructure** (ships second; unblocks chat)
+   - Write real case studies in `Projects/` for the 4 placeholder projects.
+   - Build `scripts/sync-projects.mjs`.
+   - Run sync, verify Zod schema passes, commit regenerated MDX.
+   - Audit About page narrative, Homepage lead copy, Resume link.
+   - Outcome: 6/6 real case studies live, `Projects/ → src/content/projects/` pipeline documented and automated.
+   - **Why second:** chat upgrade in Phase 14 reads the content generated here. Doing chat first means re-stuffing context a phase later.
+
+3. **Phase 14 — Chat Knowledge Upgrade** (depends on Phase 13)
+   - Build `scripts/build-chat-context.mjs` to merge MDX into `portfolio-context.json`.
+   - Split `portfolio-context.static.json` from the generated one.
+   - Wire build step, gitignore the generated JSON.
+   - Tune system prompt persona + add `<project-deep-dive>` references.
+   - Bump `max_tokens` 512 → 768.
+   - Manual QA: 20+ conversation turns across recruiter/engineer personas.
+   - Outcome: chat references actual project detail, not placeholder summaries.
+   - **Why third:** must come after Phase 13 or the build step embeds placeholder prose.
+
+4. **Phase 15 — Analytics Instrumentation** (independent; can run parallel with 13/14 but cheaper after them)
+   - Add CF Web Analytics beacon + Plausible script to BaseLayout.
+   - Build `src/scripts/analytics.ts` to bridge `chat:analytics` events to Plausible custom events.
+   - Verify DNT handling decision (ship without banner per CF's GDPR posture).
+   - Set up Plausible + CF Web Analytics dashboards, document them in PROJECT.md.
+   - Outcome: measurable recruiter engagement signal from day one of the polish motion layer.
+   - **Why fourth:** shipping motion without analytics means you can't see whether it helped. Shipping analytics before content means initial traffic data is measuring placeholder-site.
+
+5. **Phase 16 — Motion Layer** (ships last; layers on stable content/components)
+   - New `src/scripts/motion.ts` IntersectionObserver module.
+   - New motion CSS layer in `global.css` (`@starting-style` page-enter, `[data-motion]` scroll-reveal, `@keyframes` StatusDot pulse, chat bubble pulse).
+   - Per-primitive microinteraction polish (WorkRow arrow slide, MobileMenu, Footer icon hover, chat bubble).
+   - Verify `prefers-reduced-motion` on all additions — both the JS guard and the CSS safety net.
+   - Re-run Lighthouse — must stay ≥90 Performance.
+   - Outcome: tasteful motion on top of stable, well-measured, fully-content-complete site.
+   - **Why last:** MASTER.md §6 explicitly says "editorial system is mostly motionless" and motion layers ON TOP intentionally — this phase cannot be justified until the motionless system is actually stable and the content underneath is real (jittering placeholder content is worse than static placeholder content).
+
+**Phases 13 and 14 can be merged** into a single "Content + Chat" phase if milestone
+scope pressure demands — they share files and reviewer context. Phases 12, 15, 16 should
+stay separate.
+
+---
+
+## 5. Integration risks & call-outs
+
+**High-confidence risks:**
+
+- **Motion + chat widget lifecycle:** `src/scripts/chat.ts` uses `astro:page-load`.
+  `src/scripts/motion.ts` will use the same event. Both modules have independent init
+  guards, so no contention — but BOTH must handle the case where Astro View Transitions
+  is NOT active (no ClientRouter), so `astro:page-load` fires ONCE per page load. This
+  matches existing chat.ts behavior. **No new risk.**
+
+- **Build-step ordering**: `scripts/build-chat-context.mjs` MUST run before `astro build`
+  so the generated JSON exists for the Worker bundle. Current package.json build order
+  is `wrangler types → astro check → astro build → pages-compat.mjs`. Insert the
+  context build **before** `astro check` so schema errors surface early:
+  `wrangler types → build-chat-context.mjs → astro check → astro build → pages-compat.mjs`.
+
+- **Analytics + chat CustomEvent contract (D-36)**: Phase 7 D-36 documented that
+  `chat:analytics` events contain NO conversation content. `src/scripts/analytics.ts`
+  must preserve that — never forward `message_sent` with message body. Audit: current
+  chat.ts dispatches `trackChatEvent("message_sent")` with no second arg, and only
+  `chip_click` forwards the chip label (which is static UI text, not user input).
+  Safe as-is. Just don't add a conversation-content forwarder in `analytics.ts`.
+
+**Lower-confidence risks:**
+
+- **Plausible + CF Web Analytics double-count pageviews**: both will record. That's
+  fine for v1.2 — CF is ground truth, Plausible is for custom events. If the double-count
+  is cosmetically bothersome, swap Plausible's script to `script.manual.js` to disable
+  auto-pageviews and call `plausible()` only for custom events.
+
+- **`inert` attribute browser support**: supported in all evergreen browsers since 2023.
+  Safari 15.4+, Firefox 112+, Chrome 102+. For MobileMenu focus trap (tech debt #2),
+  `inert` is cleaner than `aria-hidden + tabindex="-1"`. If Jack needs Safari <15.4 for
+  recruiters on older MacBooks, fall back to the two-attribute pattern. **LOW risk** —
+  2026 browser share makes this moot.
+
+- **`@starting-style` browser support**: ~85% in early 2026. Older browsers skip the
+  entry animation and render instantly — correct degradation, no JS polyfill needed.
+
+---
+
+## 6. Sources
+
+- `src/layouts/BaseLayout.astro` (read) — OG URL builder already fixed at lines 38-40 via `resolveOg()`.
+- `src/pages/api/chat.ts` (read) — SSE stream structure, `portfolio-context.json` import, Haiku 4.5 model, `max_tokens: 512`.
+- `src/scripts/chat.ts` (read) — module-level init guard pattern, `chat:analytics` CustomEvent contract, localStorage persistence at lines 66-107, live-vs-replay copy button divergence at lines 302 and 555.
+- `design-system/MASTER.md §6 Motion, §8 Anti-patterns` (read) — the pragmatic motion line; ClientRouter and view transitions are anti-patterns; GSAP is uninstalled permanently; MobileMenu has no entrance animation.
+- `.planning/milestones/v1.1-MILESTONE-AUDIT.md` (read) — all 7 tech debt items with exact file:line references.
+- `src/content.config.ts` (read) — Zod schema contract for project MDX frontmatter.
+- `astro.config.mjs` + `wrangler.jsonc` (read) — CF Pages + CF Workers rate-limit binding, Cloudflare adapter, Fonts API config.
+- `package.json` (read) — build chain, no gray-matter yet (must add for build-chat-context.mjs), Anthropic SDK 0.82, Astro 6.0.8.
+- [Cloudflare Web Analytics docs](https://developers.cloudflare.com/web-analytics/) (HIGH confidence, existing platform) — cookieless, no consent banner required.
+- [MDN `@starting-style`](https://developer.mozilla.org/en-US/docs/Web/CSS/@starting-style) (HIGH) — ~85% browser support in 2026; instant-render fallback for older browsers.
+- [Anthropic tool-use streaming](https://docs.anthropic.com/claude/docs/tool-use#streaming-with-tool-use) (MEDIUM) — confirms tool_use events break single-pass SSE streaming, supporting the reject decision.
+- [Cloudflare Workers size limits](https://developers.cloudflare.com/workers/platform/limits/#worker-size) (HIGH) — 3MB free / 10MB paid zipped; 50KB JSON import is negligible.
