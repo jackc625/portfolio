@@ -7,21 +7,5 @@
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist/client"
-  },
-  // D-10 specifies ~20 messages/hour, but Cloudflare rate limit bindings
-  // only support periods of 10 or 60 seconds — hourly windows are not available.
-  // Using limit:5/period:60 (5 requests per 60 seconds) as a UX-friendly
-  // implementation that allows small bursts (e.g., recruiter asking follow-ups)
-  // while still preventing abuse (~300 requests/hour theoretical max).
-  // Addresses review concern: 3/60s was too aggressive for UX per Claude+Codex feedback.
-  "rate_limits": [
-    {
-      "binding": "CHAT_RATE_LIMITER",
-      "namespace_id": "1001",
-      "simple": {
-        "limit": 5,
-        "period": 60
-      }
-    }
-  ]
+  }
 }
