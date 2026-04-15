@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { CONTACT } from "../../src/data/contact";
 
 describe("Contact data integrity (CONTACT-02)", () => {
-  it("email is jack@jackcutrara.com", () => {
-    expect(CONTACT.email).toBe("jack@jackcutrara.com");
+  it("email is jackcutrara@gmail.com", () => {
+    expect(CONTACT.email).toBe("jackcutrara@gmail.com");
   });
 
   it("github starts with https://", () => {
