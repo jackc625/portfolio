@@ -35,7 +35,7 @@
 
 **Milestone Goal:** Raise the bar on what already shipped — tasteful motion, real content everywhere, smarter chat, zero tech debt, measurable recruiter engagement. Additive on top of the shipped v1.1 editorial system; zero new runtime dependencies on the preferred path; MASTER.md §8 anti-pattern list stays intact.
 
-- [ ] **Phase 12: Tech Debt Sweep** — Close all v1.1 audit items; zero build warnings; stable base for every subsequent phase
+- [x] **Phase 12: Tech Debt Sweep** — Close all v1.1 audit items; zero build warnings; stable base for every subsequent phase (completed 2026-04-15)
 - [ ] **Phase 13: Content Pass + Projects/ Sync** — Real case studies on all 6 projects; About/home/resume copy verified; `Projects/` → MDX sync tooling
 - [ ] **Phase 14: Chat Knowledge Upgrade** — Build-time context generation, Anthropic prompt caching, tuned persona, prompt-injection hardening
 - [ ] **Phase 15: Analytics Instrumentation** — Umami + CF Web Analytics in production; recruiter-engagement events visible in dashboard
@@ -59,7 +59,7 @@
 - [x] 12-03-chat-copy-button-parity-PLAN.md — createCopyButton helper + vitest parity test + D-26 gate (DEBT-04)
 - [x] 12-04-og-url-production-verify-PLAN.md — 5-URL curl sweep against prod, record in 12-VALIDATION.md (DEBT-03)
 - [x] 12-05-master-token-exceptions-PLAN.md — MASTER.md §2.4 Accepted token exceptions + §11 changelog (DEBT-05)
-- [ ] 12-06-audit-closeout-PLAN.md — Annotate all 7 carried items in v1.1-MILESTONE-AUDIT.md (DEBT-06)
+- [x] 12-06-audit-closeout-PLAN.md — Annotate all 7 carried items in v1.1-MILESTONE-AUDIT.md (DEBT-06)
 
 ### Phase 13: Content Pass + Projects/ Sync
 **Goal**: Every page a recruiter or engineer reads reflects Jack's real work — six real case studies, an accurate About narrative, verified homepage and resume copy, and a diff-reviewable sync pipeline that keeps `Projects/` as the single source of truth.
@@ -150,7 +150,7 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 9. Primitives | v1.1 | 8/8 | Complete | 2026-04-11 |
 | 10. Page Port | v1.1 | 8/8 | Complete | 2026-04-13 |
 | 11. Polish | v1.1 | 3/3 | Complete | 2026-04-13 |
-| 12. Tech Debt Sweep | v1.2 | 5/6 | In Progress|  |
+| 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
 | 13. Content Pass + Projects/ Sync | v1.2 | 0/TBD | Not started | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 0/TBD | Not started | - |
 | 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |

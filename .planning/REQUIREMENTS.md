@@ -19,7 +19,7 @@
 - [x] **DEBT-03**: OG URL builder verified correct in production — absolute URLs, no latent path bugs
 - [x] **DEBT-04**: Chat copy button markup identical between live-streamed and localStorage-replayed bot messages
 - [x] **DEBT-05**: `--ink-faint` contrast exception documented in MASTER.md with rationale (decorative metadata only; non-text UI 3:1 threshold)
-- [ ] **DEBT-06**: All remaining v1.1 audit items closed or explicitly documented as accepted trade-offs
+- [x] **DEBT-06**: All remaining v1.1 audit items closed or explicitly documented as accepted trade-offs
 
 ### Content (CONT)
 
@@ -95,7 +95,7 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | DEBT-03 | Phase 12 | Complete |
 | DEBT-04 | Phase 12 | Complete |
 | DEBT-05 | Phase 12 | Complete |
-| DEBT-06 | Phase 12 | Pending |
+| DEBT-06 | Phase 12 | Complete |
 | CONT-01 | Phase 13 | Pending |
 | CONT-02 | Phase 13 | Pending |
 | CONT-03 | Phase 13 | Pending |

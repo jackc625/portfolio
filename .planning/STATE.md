@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
-status: executing
-stopped_at: Completed 12-05-master-token-exceptions-PLAN.md; one plan remaining (12-06 audit closeout)
-last_updated: "2026-04-15T20:57:38.916Z"
+status: verifying
+stopped_at: Completed 12-06-audit-closeout-PLAN.md — Phase 12 tech-debt-sweep 6/6 plans done
+last_updated: "2026-04-15T21:06:33.247Z"
 last_activity: 2026-04-15
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 6
-  completed_plans: 5
-  percent: 83
+  completed_plans: 6
+  percent: 100
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 
 Phase: 12 (tech-debt-sweep) — EXECUTING
 Plan: 6 of 6
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-04-15
 Branch: main
 
@@ -76,6 +76,8 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 12-tech-debt-sweep]: 12-03: jsdom in vitest env does not round-trip style.cssText via setter — canonical-markup test uses toBeInstanceOf + outerHTML parity instead; real-browser inline style verified in D-26 manual smoke.
 - [Phase 12-tech-debt-sweep]: 12-04: Curl-captured string evidence is sufficient to close DEBT-03; Task 2 human eyeball + Facebook Sharing Debugger deferred to phase-end consolidated review (same pattern as 12-03)
 - [Phase 12-tech-debt-sweep]: 12-05: §2.4 inserted after §2.3 with two | Property | Value | entries; no inline CSS comments at usage sites (D-15)
+- [Phase 12-tech-debt-sweep]: 12-06: WR-04 added to body-prose bullet list (was frontmatter-only) so all 7 carried items are grep-resolvable in audit body; frontmatter keys preserved byte-for-byte per PATTERNS.md
+- [Phase 12-tech-debt-sweep]: 12-06: 'Phase 12 Close-out' summary paragraph uses plain closed/accepted prose (no bold markers) so phrase-count acceptance criteria target only the per-bullet annotations
 
 ### Pending Todos
 
@@ -109,9 +111,10 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 | Phase 12-tech-debt-sweep P03-chat-copy-button-parity | 8min | 3 tasks | 4 files |
 | Phase 12-tech-debt-sweep P04-og-url-production-verify | 3min | 2 tasks | 1 files |
 | Phase 12-tech-debt-sweep P05 | 5min | 1 tasks | 1 files |
+| Phase 12-tech-debt-sweep P06 | 15 minutes | 2 tasks | 1 files |
 
 ## Session Continuity
 
-Last session: 2026-04-15T20:57:38.905Z
-Stopped at: Completed 12-05-master-token-exceptions-PLAN.md; one plan remaining (12-06 audit closeout)
+Last session: 2026-04-15T21:06:01.738Z
+Stopped at: Completed 12-06-audit-closeout-PLAN.md — Phase 12 tech-debt-sweep 6/6 plans done
 Resume file: None
