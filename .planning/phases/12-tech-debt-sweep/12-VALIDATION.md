@@ -136,6 +136,88 @@ created: 2026-04-15
 
 ---
 
+## D-26 Chat Regression Gate — Plan 12-03
+
+**Run:** 2026-04-15T16:17:00Z (local)
+**Commit SHA:** `23cd3f0` (Plan 12-03 Task 2 — `createCopyButton` helper + both call-site swaps)
+**Surface touched:** `src/scripts/chat.ts` — direct edit (copy-button helper extraction, live-stream SVG block deleted, replay inline block deleted, clipboard idempotency rewire at :815-827 preserved byte-identical).
+
+### Automated (run locally from clean tree post-commit `23cd3f0`)
+
+| Gate item | Command | Result | Evidence |
+|-----------|---------|--------|----------|
+| XSS sanitization — `tests/client/markdown.test.ts` (12 tests) | `npx vitest run tests/client/markdown` | PASS | File fully green in full-suite run |
+| CORS exact-origin whitelist — `tests/api/chat.test.ts` + `tests/api/security.test.ts` | `npx vitest run` | PASS | Both files fully green |
+| SSE stream contract — `tests/api/chat.test.ts` streaming mock + error-event tests | `npx vitest run` | PASS | File fully green |
+| Body size guard — `tests/api/chat.test.ts` body-size test | `npx vitest run` | PASS | File fully green |
+| Prompt injection defense — `tests/api/security.test.ts` (12 tests) | `npx vitest run` | PASS | File fully green |
+| `createCopyButton` helper — `tests/client/chat-copy-button.test.ts` (5 tests) | `npx vitest run tests/client/chat-copy-button` | PASS | 5/5 green: canonical markup, live/replay parity (outerHTML byte-equal), COPY→COPIED→COPY transition with accent color flip, click-time getContent invocation, cloneNode idempotency compat |
+| Zero-warning build | `pnpm build` | PASS | `- 0 errors / - 0 warnings`; final line `pages-compat: restructured dist/client/ for Cloudflare Pages` |
+| Lint | `pnpm lint` | PASS | Empty stdout (clean) |
+| Astro check | `pnpm exec astro check` | PASS | `Result (46 files): 0 errors, 0 warnings, 0 hints` |
+
+**Full-suite result:** 97 passed / 1 failed (98 total). The 1 failure is `tests/client/contact-data.test.ts > email is jack@jackcutrara.com` — pre-existing unrelated failure already tracked in `.planning/phases/12-tech-debt-sweep/deferred-items.md` for Plan 12-06 closeout. Plan 12-03 does not touch contact data.
+
+**Idempotency block preservation check:**
+
+```bash
+git show HEAD~1:src/scripts/chat.ts | sed -n '820,832p'  # pre-Task-2
+git show HEAD:src/scripts/chat.ts   | sed -n '817,827p'  # post-Task-2
+```
+
+Pre/post diff: **byte-identical** — `copyBtn.replaceWith(copyBtn.cloneNode(true))` rewire block at chat.ts:817-827 is preserved verbatim per RESEARCH.md A2 / D-08 invariant.
+
+**Acceptance-criteria greps (post-Task-2 HEAD):**
+
+| Grep | Expected | Actual |
+|------|----------|--------|
+| `^export function createCopyButton` | 1 | 1 ✓ |
+| `createCopyButton(() => content)` | 1 | 1 ✓ (live-stream path, `createBotMessageEl`) |
+| `createCopyButton(() => msg.content)` | 1 | 1 ✓ (replay path, `openPanel` history replay) |
+| `copyBtn.innerHTML` | 0 | 0 ✓ (SVG block removed — XSS surface eliminated per T-12-03-01) |
+| `<svg` in chat.ts | 0 | 0 ✓ |
+| `copyBtn.replaceWith(copyBtn.cloneNode(true))` | 1 | 1 ✓ (idempotency guard preserved) |
+
+### Manual (requires human + browser + preview/prod deploy) — PENDING
+
+The following items require a human with a running `pnpm preview` (or staging deploy) to verify per 12-RESEARCH.md §D-26 Chat Regression Gate Checklist lines 337-367:
+
+**Part A — Chat widget functional smoke on preview (`pnpm build && pnpm preview`):**
+
+- [ ] Open chat panel — focus lands in input; Tab cycles stay inside panel (focus trap re-query on every Tab)
+- [ ] Send "Hello" — SSE stream renders tokens live; typing indicator visible during stream
+- [ ] **COPY BUTTON — LIVE STREAM:** on the streamed bot reply, click COPY. Expect:
+  - [ ] Text flips from `COPY` to `COPIED`
+  - [ ] Color flips from `var(--ink-faint)` to `var(--accent)` (DevTools computed style)
+  - [ ] After 1 second, reverts to `COPY` in `var(--ink-faint)`
+  - [ ] Clipboard contains the bot message content (paste into scratch doc)
+- [ ] Reload page (localStorage replay triggers)
+- [ ] **COPY BUTTON — REPLAY:** on the same rehydrated bot reply, click COPY. Expect IDENTICAL markup + IDENTICAL behavior to the live-stream bullet. Inspect element on both buttons — `outerHTML` should be byte-equal except for the post-click transient text state.
+- [ ] **IDEMPOTENCY:** on a bot message, double-click COPY within the 1s window. Expect only ONE transition (no double-flip, no double-clipboard-write). Confirms JS boolean + DOM data-attribute guards from Phase 7 still operate.
+- [ ] 30s AbortController timeout — kill network mid-stream; client recovers, error message rendered, panel still usable
+- [ ] Rate limit 5/60s — send 6 messages rapidly; 6th rejected with user-facing error
+- [ ] localStorage persistence + cap — send 51 messages; verify 50-msg cap via DevTools Application → Local Storage
+- [ ] 24h TTL — set `Date.now()` mock in DevTools console; reopen chat; expired messages purged
+- [ ] Markdown rendering — bot reply with `**bold**`, `*italic*`, `- list`, `` `code` ``, `[link](https://…)` — all render via DOMPurify strict whitelist (no `<script>`, no inline handlers)
+- [ ] Focus trap re-query — open chat, Tab 20+ times; `document.activeElement` never leaves chat panel subtree
+
+**Part B — Phase-12-specific D-26 additions:** N/A for Plan 12-03 (no inert change — that was Plan 12-02, already approved).
+
+**Part C — Lighthouse CI:**
+
+- [ ] Homepage: Performance ≥99 / Accessibility ≥95 / Best Practices 100 / SEO 100
+- [ ] One project detail (e.g. `/projects/seatwatch`): same thresholds
+
+**Part D — Inspection evidence:**
+
+- [ ] Screenshot or `outerHTML` DevTools excerpt of the live-stream copy button
+- [ ] Same for a replayed copy button (post-reload)
+- [ ] Diff confirms byte-equal markup except for post-click transient state
+
+**D-26 Gate Verdict for Plan 12-03:** AUTOMATED ALL GREEN (9/9). MANUAL smoke + Lighthouse pending human verification. Update this section with timestamps + verdicts after human confirms on preview deploy.
+
+---
+
 ## Validation Sign-Off
 
 - [ ] All tasks have `<automated>` verify or Wave 0 dependencies
