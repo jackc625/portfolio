@@ -31,9 +31,10 @@
 
 /* Scope Tailwind class detection to source files only.
  * Tailwind v4 auto-detects template files in the repo. The .planning/ directory
- * contains v1.0 plan artifacts with literal class examples like px-[var(--token-*)]
- * that generate lightning-css parse warnings. The @source not directives exclude
- * .planning/ and design-system/ from Tailwind's detection surface. */
+ * contains v1.0 plan artifacts with bracket-syntax utility class examples that
+ * generated lightning-css parse warnings when Tailwind scanned them. The
+ * @source not directives exclude .planning/ and design-system/ from Tailwind's
+ * detection surface so those example strings never enter the class graph. */
 @source "../**/*.{astro,html,js,jsx,ts,tsx,md,mdx}";
 @source not "../../.planning/**";
 @source not "../../design-system/**";
