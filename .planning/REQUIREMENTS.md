@@ -86,8 +86,49 @@
 
 ## Traceability
 
-To be filled by `gsd-roadmapper` when creating ROADMAP.md — each requirement maps to exactly one phase.
+Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DEBT-01 | Phase 12 | Pending |
+| DEBT-02 | Phase 12 | Pending |
+| DEBT-03 | Phase 12 | Pending |
+| DEBT-04 | Phase 12 | Pending |
+| DEBT-05 | Phase 12 | Pending |
+| DEBT-06 | Phase 12 | Pending |
+| CONT-01 | Phase 13 | Pending |
+| CONT-02 | Phase 13 | Pending |
+| CONT-03 | Phase 13 | Pending |
+| CONT-04 | Phase 13 | Pending |
+| CONT-05 | Phase 13 | Pending |
+| CONT-06 | Phase 13 | Pending |
+| CONT-07 | Phase 13 | Pending |
+| CHAT-03 | Phase 14 | Pending |
+| CHAT-04 | Phase 14 | Pending |
+| CHAT-05 | Phase 14 | Pending |
+| CHAT-06 | Phase 14 | Pending |
+| CHAT-07 | Phase 14 | Pending |
+| CHAT-08 | Phase 14 | Pending |
+| CHAT-09 | Phase 14 | Pending |
+| ANAL-01 | Phase 15 | Pending |
+| ANAL-02 | Phase 15 | Pending |
+| ANAL-03 | Phase 15 | Pending |
+| ANAL-04 | Phase 15 | Pending |
+| ANAL-05 | Phase 15 | Pending |
+| ANAL-06 | Phase 15 | Pending |
+| MOTN-01 | Phase 16 | Pending |
+| MOTN-02 | Phase 16 | Pending |
+| MOTN-03 | Phase 16 | Pending |
+| MOTN-04 | Phase 16 | Pending |
+| MOTN-05 | Phase 16 | Pending |
+| MOTN-06 | Phase 16 | Pending |
+| MOTN-07 | Phase 16 | Pending |
+| MOTN-08 | Phase 16 | Pending |
+| MOTN-09 | Phase 16 | Pending |
+| MOTN-10 | Phase 16 | Pending |
+
+**Coverage:** 36 / 36 v1.2 requirements mapped. No orphans. No duplicates.
 
 ---
 
-*Last updated: 2026-04-15 — milestone v1.2 requirements defined. Next: roadmap creation.*
+*Last updated: 2026-04-15 — milestone v1.2 roadmap created; traceability filled. Next: `/gsd-plan-phase 12`.*
