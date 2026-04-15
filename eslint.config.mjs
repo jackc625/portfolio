@@ -3,7 +3,7 @@ import tseslint from "typescript-eslint";
 
 export default [
   {
-    ignores: [".astro/", "dist/", ".claude/", ".ship-safe/"],
+    ignores: [".astro/", "dist/", ".claude/", ".ship-safe/", "worker-configuration.d.ts"],
   },
   ...tseslint.configs.recommended,
   ...eslintPluginAstro.configs.recommended,
