@@ -268,9 +268,15 @@ function isActive(href: string): boolean {
       // header/main/footer elements are removed from the tab order and the
       // a11y tree. `inert` has 95%+ browser support in 2026 and is the
       // canonical modal-dialog pattern per ARIA authoring practices.
+      // Phase 12 (DEBT-02): .chat-widget is a BaseLayout body-level sibling,
+      // so it needs the same treatment — the chat bubble (and any open panel)
+      // would otherwise remain tabbable/clickable behind the menu backdrop.
+      // Applied to the `.chat-widget` root so both bubble-only and panel-open
+      // states are covered by a single attribute toggle.
       document.querySelector("header")?.setAttribute("inert", "");
       document.querySelector("main")?.setAttribute("inert", "");
       document.querySelector("footer")?.setAttribute("inert", "");
+      document.querySelector(".chat-widget")?.setAttribute("inert", "");
       // Focus the close button first so keyboard users land inside the dialog
       closeBtn!.focus();
       document.addEventListener("keydown", handleKeyDown);
@@ -283,9 +289,12 @@ function isActive(href: string): boolean {
       trigger!.setAttribute("aria-label", "Open menu");
       document.body.style.overflow = "";
       // WR-01: Restore the rest of the page to the tab order / a11y tree.
+      // Phase 12 (DEBT-02): mirror `.chat-widget` removal to match openMenu's
+      // set — any mismatch would leave the chat bubble permanently inert.
       document.querySelector("header")?.removeAttribute("inert");
       document.querySelector("main")?.removeAttribute("inert");
       document.querySelector("footer")?.removeAttribute("inert");
+      document.querySelector(".chat-widget")?.removeAttribute("inert");
       document.removeEventListener("keydown", handleKeyDown);
       if (returnFocus) trigger!.focus();
     }
