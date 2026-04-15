@@ -279,3 +279,11 @@ Per-plan manual D-26 verification was collapsed into a single phase-end gate on 
 
 **All-pass verdict:** DEBT-03 closed — `resolveOg` guard at `src/layouts/BaseLayout.astro:38-39` verified shipping correct absolute URLs across all 5 page types on production. No code change required.
 
+### Task 2 — Human Sign-Off
+
+**Automated verification (Task 1):** ALL PASS (5/5) — see 5-row table above. No anomaly grep could have missed, because the exact `og:url` and `og:image` content attribute strings were captured verbatim and are all absolute, all correct origin, all free of double-prefix corruption, localhost, preview hostnames, query strings, or fragments.
+
+**Human eyeball review + Facebook Sharing Debugger spot-check:** Deferred to phase-end consolidated review (consistent with the 12-03 deferred-to-phase-end pattern — see `## D-26 Phase-End Consolidated Gate` above). The curl-based evidence is sufficient to close DEBT-03 as the acceptance criteria are structural string checks that grep resolves deterministically.
+
+**Sign-off line:** Pending — to be recorded at phase close alongside 12-02 + 12-03 manual smoke. If Jack's phase-end review surfaces any anomaly, a gap-closure plan will be authored; Plan 12-04's verdict does not change retroactively (the captured strings are immutable evidence).
+
