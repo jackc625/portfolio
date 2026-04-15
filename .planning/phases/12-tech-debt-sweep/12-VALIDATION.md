@@ -224,20 +224,22 @@ Per-plan manual D-26 verification was collapsed into a single phase-end gate on 
 
 **Run after:** all 6 plans complete (12-06 commits).
 
+**Verdict:** APPROVED (Jack, 2026-04-15) — blanket approval covering all 12 items below. No regressions reported.
+
 **Coverage (union of 12-02 Part A/B/C/D + 12-03 Part A/C/D):**
 
-- [ ] Keyboard-cycle test (mobile menu open → Tab/Shift+Tab 30× on `/projects`; focus never escapes menu; inert on header/main/footer/.chat-widget confirmed in DevTools)
-- [ ] Mobile menu × chat interaction matrix (menu open with chat closed; menu open with chat open; inert restoration on menu close)
-- [ ] Chat panel functional smoke (open, Tab cycle, send, SSE stream renders tokens, typing indicator)
-- [ ] COPY button live-stream: text flip COPY→COPIED, color flip faint→accent, 1s revert, clipboard contents correct
-- [ ] COPY button replay (after reload): byte-identical markup to live-stream, same behavior, idempotent on double-click
-- [ ] 30s AbortController timeout recovery
-- [ ] Rate limit 5/60s — 6th message rejected with user-facing error
-- [ ] localStorage 50-msg cap + 24h TTL
-- [ ] Markdown rendering via DOMPurify strict whitelist
-- [ ] Focus trap re-query never escapes chat panel
-- [ ] DevTools `outerHTML` diff: live-stream vs replay copy buttons byte-equal (except post-click transient)
-- [ ] Lighthouse CI on `/` + one project detail: Performance ≥99 / Accessibility ≥95 / Best Practices 100 / SEO 100
+- [x] Keyboard-cycle test (mobile menu open → Tab/Shift+Tab 30× on `/projects`; focus never escapes menu; inert on header/main/footer/.chat-widget confirmed in DevTools) — APPROVED (Jack, 2026-04-15)
+- [x] Mobile menu × chat interaction matrix (menu open with chat closed; menu open with chat open; inert restoration on menu close) — APPROVED (Jack, 2026-04-15)
+- [x] Chat panel functional smoke (open, Tab cycle, send, SSE stream renders tokens, typing indicator) — APPROVED (Jack, 2026-04-15)
+- [x] COPY button live-stream: text flip COPY→COPIED, color flip faint→accent, 1s revert, clipboard contents correct — APPROVED (Jack, 2026-04-15)
+- [x] COPY button replay (after reload): byte-identical markup to live-stream, same behavior, idempotent on double-click — APPROVED (Jack, 2026-04-15)
+- [x] 30s AbortController timeout recovery — APPROVED (Jack, 2026-04-15)
+- [x] Rate limit 5/60s — 6th message rejected with user-facing error — APPROVED (Jack, 2026-04-15)
+- [x] localStorage 50-msg cap + 24h TTL — APPROVED (Jack, 2026-04-15)
+- [x] Markdown rendering via DOMPurify strict whitelist — APPROVED (Jack, 2026-04-15)
+- [x] Focus trap re-query never escapes chat panel — APPROVED (Jack, 2026-04-15)
+- [x] DevTools `outerHTML` diff: live-stream vs replay copy buttons byte-equal (except post-click transient) — APPROVED (Jack, 2026-04-15)
+- [x] Lighthouse CI on `/` + one project detail: Performance ≥99 / Accessibility ≥95 / Best Practices 100 / SEO 100 — APPROVED (Jack, 2026-04-15)
 
 ---
 
