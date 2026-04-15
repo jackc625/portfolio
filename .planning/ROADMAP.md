@@ -57,7 +57,7 @@
 - [x] 12-01-build-warnings-sweep-PLAN.md — Wrangler upgrade + rate_limits schema fix + ESLint/CSS clean-up (DEBT-01)
 - [x] 12-02-mobilemenu-chatwidget-inert-PLAN.md — Extend inert to .chat-widget in MobileMenu openMenu/closeMenu (DEBT-02)
 - [x] 12-03-chat-copy-button-parity-PLAN.md — createCopyButton helper + vitest parity test + D-26 gate (DEBT-04)
-- [ ] 12-04-og-url-production-verify-PLAN.md — 5-URL curl sweep against prod, record in 12-VALIDATION.md (DEBT-03)
+- [x] 12-04-og-url-production-verify-PLAN.md — 5-URL curl sweep against prod, record in 12-VALIDATION.md (DEBT-03)
 - [ ] 12-05-master-token-exceptions-PLAN.md — MASTER.md §2.4 Accepted token exceptions + §11 changelog (DEBT-05)
 - [ ] 12-06-audit-closeout-PLAN.md — Annotate all 7 carried items in v1.1-MILESTONE-AUDIT.md (DEBT-06)
 
@@ -150,7 +150,7 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 9. Primitives | v1.1 | 8/8 | Complete | 2026-04-11 |
 | 10. Page Port | v1.1 | 8/8 | Complete | 2026-04-13 |
 | 11. Polish | v1.1 | 3/3 | Complete | 2026-04-13 |
-| 12. Tech Debt Sweep | v1.2 | 3/6 | In Progress|  |
+| 12. Tech Debt Sweep | v1.2 | 4/6 | In Progress|  |
 | 13. Content Pass + Projects/ Sync | v1.2 | 0/TBD | Not started | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 0/TBD | Not started | - |
 | 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |

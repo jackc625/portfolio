@@ -16,7 +16,7 @@
 
 - [x] **DEBT-01**: Zero `pnpm build` warnings — lightning-css, astro check, ESLint all clean
 - [x] **DEBT-02**: MobileMenu background elements inert when menu is open (focus-trap middle-element edge case fixed via `inert` attribute)
-- [ ] **DEBT-03**: OG URL builder verified correct in production — absolute URLs, no latent path bugs
+- [x] **DEBT-03**: OG URL builder verified correct in production — absolute URLs, no latent path bugs
 - [x] **DEBT-04**: Chat copy button markup identical between live-streamed and localStorage-replayed bot messages
 - [ ] **DEBT-05**: `--ink-faint` contrast exception documented in MASTER.md with rationale (decorative metadata only; non-text UI 3:1 threshold)
 - [ ] **DEBT-06**: All remaining v1.1 audit items closed or explicitly documented as accepted trade-offs
@@ -92,7 +92,7 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 |-------------|-------|--------|
 | DEBT-01 | Phase 12 | Complete |
 | DEBT-02 | Phase 12 | Complete |
-| DEBT-03 | Phase 12 | Pending |
+| DEBT-03 | Phase 12 | Complete |
 | DEBT-04 | Phase 12 | Complete |
 | DEBT-05 | Phase 12 | Pending |
 | DEBT-06 | Phase 12 | Pending |

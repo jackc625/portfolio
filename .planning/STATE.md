@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Completed 12-03-chat-copy-button-parity-PLAN.md automated portions (Tasks 1+2); Task 3 D-26 manual smoke + Lighthouse awaiting human verification on pnpm preview
-last_updated: "2026-04-15T20:24:18.096Z"
+stopped_at: Completed 12-04-og-url-production-verify-PLAN.md; Task 2 human sign-off deferred to phase-end consolidated review
+last_updated: "2026-04-15T20:50:29.821Z"
 last_activity: 2026-04-15
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 6
-  completed_plans: 3
-  percent: 50
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 12 (tech-debt-sweep) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute
 Last activity: 2026-04-15
 Branch: main
@@ -74,6 +74,7 @@ All decisions logged in PROJECT.md Key Decisions table.
 - [Phase 12-tech-debt-sweep]: 12-02: Single .chat-widget selector covers both bubble-only and panel-open states for inert (Claude's-discretion resolution per CONTEXT.md D-12); handleKeyDown preserved byte-for-byte per D-10 belt-and-suspenders for Safari <15.5 / Firefox <112
 - [Phase 12-tech-debt-sweep]: 12-03: createCopyButton(getContent: () => string) — closure over callback (not captured string) so live-stream can read final botContent at click-time; keeps chat.ts:817-827 cloneNode idempotency guard byte-identical and additive.
 - [Phase 12-tech-debt-sweep]: 12-03: jsdom in vitest env does not round-trip style.cssText via setter — canonical-markup test uses toBeInstanceOf + outerHTML parity instead; real-browser inline style verified in D-26 manual smoke.
+- [Phase 12-tech-debt-sweep]: 12-04: Curl-captured string evidence is sufficient to close DEBT-03; Task 2 human eyeball + Facebook Sharing Debugger deferred to phase-end consolidated review (same pattern as 12-03)
 
 ### Pending Todos
 
@@ -105,9 +106,10 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 | Phase 12-tech-debt-sweep P01-build-warnings-sweep | 8min | 6 tasks | 6 files |
 | Phase 12-tech-debt-sweep P02-mobilemenu-chatwidget-inert | 6min | 2 tasks | 2 files |
 | Phase 12-tech-debt-sweep P03-chat-copy-button-parity | 8min | 3 tasks | 4 files |
+| Phase 12-tech-debt-sweep P04-og-url-production-verify | 3min | 2 tasks | 1 files |
 
 ## Session Continuity
 
-Last session: 2026-04-15T20:24:18.085Z
-Stopped at: Completed 12-03-chat-copy-button-parity-PLAN.md automated portions (Tasks 1+2); Task 3 D-26 manual smoke + Lighthouse awaiting human verification on pnpm preview
+Last session: 2026-04-15T20:50:29.811Z
+Stopped at: Completed 12-04-og-url-production-verify-PLAN.md; Task 2 human sign-off deferred to phase-end consolidated review
 Resume file: None
