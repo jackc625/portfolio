@@ -238,6 +238,36 @@ async function copyToClipboard(text: string, button: HTMLElement): Promise<void>
   }
 }
 
+/**
+ * DEBT-04 / D-01, D-02: Single source of truth for the chat copy button.
+ * Both live-stream and localStorage-replay paths call this helper so markup,
+ * classes, inline styles, aria-label, and post-click transitions are identical.
+ * Canonical behavior lifted verbatim from the replay path (pre-dedup chat.ts:553-569).
+ *
+ * @param getContent Callback returning the current message text to copy.
+ *                   Invoked at CLICK TIME (not creation time) so the live-stream
+ *                   path can read the final `botContent` after streaming completes
+ *                   while the cloneNode idempotency rewire at chat.ts ~822-832 still works.
+ */
+export function createCopyButton(getContent: () => string): HTMLButtonElement {
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "chat-copy-btn label-mono";
+  copyBtn.textContent = "COPY";
+  copyBtn.setAttribute("aria-label", "Copy message");
+  copyBtn.type = "button";
+  copyBtn.style.cssText = "position: absolute; top: -4px; right: 0; background: none; border: none; cursor: pointer;";
+  copyBtn.addEventListener("click", () => {
+    copyToClipboard(getContent(), copyBtn);
+    copyBtn.textContent = "COPIED";
+    copyBtn.style.color = "var(--accent)";
+    setTimeout(() => {
+      copyBtn.textContent = "COPY";
+      copyBtn.style.color = "var(--ink-faint)";
+    }, 1000);
+  });
+  return copyBtn;
+}
+
 // ============================================
 // Message Rendering
 // ============================================
@@ -281,28 +311,8 @@ function createBotMessageEl(content: string): HTMLElement {
   // Sanitized HTML — safe to use innerHTML after marked + DOMPurify pipeline
   bubble.innerHTML = renderMarkdown(content);
 
-  // Copy button
-  const copyBtn = document.createElement("button");
-  copyBtn.className = "chat-copy-btn";
-  copyBtn.setAttribute("aria-label", "Copy message");
-  copyBtn.style.cssText = `
-    position: absolute;
-    top: -4px;
-    right: 0;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-  `;
-  copyBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-faint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-  copyBtn.addEventListener("click", () => {
-    copyToClipboard(content, copyBtn);
-  });
+  // Copy button (DEBT-04: single shared helper — canonical COPY/COPIED label)
+  const copyBtn = createCopyButton(() => content);
 
   wrapper.appendChild(bubble);
   wrapper.appendChild(copyBtn);
@@ -549,23 +559,8 @@ function initChat(): void {
             bubble.style.cssText = "max-width: 90%; border-left: 2px solid var(--rule); padding: 8px 0 8px 12px; color: var(--ink-muted); font-size: 1rem; word-break: break-word;";
             bubble.innerHTML = renderMarkdown(msg.content);
             wrapper.appendChild(bubble);
-            // Add copy button (same pattern as live messages)
-            const copyBtn = document.createElement("button");
-            copyBtn.className = "chat-copy-btn label-mono";
-            copyBtn.textContent = "COPY";
-            copyBtn.setAttribute("aria-label", "Copy message");
-            copyBtn.type = "button";
-            copyBtn.style.cssText = "position: absolute; top: -4px; right: 0; background: none; border: none; cursor: pointer;";
-            const capturedContent = msg.content;
-            copyBtn.addEventListener("click", () => {
-              copyToClipboard(capturedContent, copyBtn);
-              copyBtn.textContent = "COPIED";
-              copyBtn.style.color = "var(--accent)";
-              setTimeout(() => {
-                copyBtn.textContent = "COPY";
-                copyBtn.style.color = "var(--ink-faint)";
-              }, 1000);
-            });
+            // Add copy button (DEBT-04: single shared helper — byte-identical to live-stream path)
+            const copyBtn = createCopyButton(() => msg.content);
             wrapper.appendChild(copyBtn);
           }
           fragment.appendChild(wrapper);
