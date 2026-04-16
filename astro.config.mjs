@@ -21,6 +21,12 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    // Prewarm deps that are otherwise discovered lazily on first SSR/client
+    // request; without this, the first `pnpm dev` load triggers a re-bundle
+    // race with `@cloudflare/vite-plugin`'s miniflare loopback and logs a
+    // spurious "file does not exist in optimize deps directory" error.
+    optimizeDeps: { include: ["astro-seo", "marked", "dompurify"] },
+    ssr: { optimizeDeps: { include: ["astro-seo"] } },
   },
   fonts: [
     {
