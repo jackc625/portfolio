@@ -9,7 +9,7 @@ source:
   - 12-05-master-token-exceptions-SUMMARY.md
   - 12-06-audit-closeout-SUMMARY.md
 started: 2026-04-15T00:00:00Z
-updated: 2026-04-15T05:00:00Z
+updated: 2026-04-15T06:00:00Z
 ---
 
 ## Current Test
@@ -20,7 +20,7 @@ updated: 2026-04-15T05:00:00Z
 
 ### 1. Cold Start Smoke Test
 expected: Kill any running dev server. Run `pnpm dev` from clean shell. Server boots without errors/warnings, http://localhost:4321 renders hero+nav+chat bubble, no console errors.
-result: issue
+result: fixed
 reported: "It boots and renders fine, but first the console throws an error. Read the file LOGS.txt for context."
 severity: minor
 evidence: |
@@ -31,6 +31,12 @@ evidence: |
   .vite/deps/audit-GII5XVTN.js missing after optimizer reloaded for
   marked/dompurify. Pages render correctly; errors are dev-only startup
   noise from the Vite dep optimizer race under the Cloudflare vite-plugin.
+fix: |
+  Diagnosed in .planning/debug/vite-dep-optimizer-cold-start.md as a
+  Vite cold-start race amplified by @cloudflare/vite-plugin's miniflare
+  loopback. Shipped 6-line fix in astro.config.mjs: optimizeDeps.include
+  for [astro-seo, marked, dompurify] + ssr.optimizeDeps.include for
+  [astro-seo]. Verified clean cold start by Jack 2026-04-15. Commit f36818a.
 
 ### 2. Mobile Menu Traps Focus (Chat Widget Inert)
 expected: Narrow the browser so the header container is ≤380px wide (design D-06 container query — hamburger trigger only appears at that width). Open mobile menu via hamburger. Tab/Shift+Tab cycles only through menu links + close button. Chat bubble cannot be reached by keyboard. Close menu — chat bubble is Tab-reachable again.
@@ -63,20 +69,23 @@ evidence: |
 
 total: 5
 passed: 2
-issues: 2
+issues: 1
+fixed: 1
 pending: 0
 skipped: 1
 
 ## Gaps
 
 - truth: "Cold start `pnpm dev` boots without console errors; first page load succeeds without Vite dep-optimizer errors"
-  status: failed
+  status: closed
   reason: "User reported: It boots and renders fine, but first the console throws an error. Read the file LOGS.txt for context."
   severity: minor
   test: 1
   artifacts:
     - LOGS.txt
+    - .planning/debug/vite-dep-optimizer-cold-start.md
   missing: []
+  resolution: "Fixed inline 2026-04-15 by adding optimizeDeps.include + ssr.optimizeDeps.include in astro.config.mjs (commit f36818a). Cold-start re-verified clean by Jack."
 
 - truth: "Production social-media unfurls show a designed OG image on every page"
   status: failed
