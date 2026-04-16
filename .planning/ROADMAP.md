@@ -70,7 +70,16 @@
   2. The About page narrative, homepage display hero, work list entries, and resume PDF copy all reflect Jack's current status and have been explicitly verified as of the milestone date
   3. `Projects/*.md` files are the authoritative source for project case-study bodies; `src/content/projects/*.mdx` frontmatter stays human-authored; `docs/CONTENT-SCHEMA.md` and `docs/VOICE-GUIDE.md` document both contracts
   4. `scripts/sync-projects.mjs` runs idempotently on manual trigger, writes only MDX body content, preserves frontmatter, and produces a reviewable `git diff` that `astro check` validates against the Zod schema
-**Plans**: TBD
+**Plans**: 9 plans
+- [ ] 13-01-test-stubs-wave-zero-PLAN.md — Author 13 RED test stubs (3 sync-script + 7 content/data + 3 docs/ROADMAP) covering every CONT-XX validation row
+- [ ] 13-02-sync-infra-PLAN.md — sync-projects.mjs (named exports, S1/S2/S3/S6) + Zod source: extension + package.json scripts + .gitattributes + first GH Actions workflow (CONT-05, CONT-06)
+- [ ] 13-03-docs-and-roadmap-PLAN.md — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP.md success criterion #1 amended per D-02 (CONT-07)
+- [ ] 13-04-daytrade-rename-and-anchors-PLAN.md — git mv crypto-breakout-trader.mdx → daytrade.mdx; source: field added to all 6 MDX; portfolio-context.json patched; about.ts dated annotations (CONT-04, CONT-05)
+- [ ] 13-05-case-studies-batch-a-PLAN.md — Case studies for SeatWatch + NFL Prediction (Projects/*.md fenced blocks + sync) (CONT-01, CONT-02)
+- [ ] 13-06-case-studies-batch-b-PLAN.md — Case studies for SolSniper + Optimize AI (CONT-01, CONT-02)
+- [ ] 13-07-case-studies-batch-c-PLAN.md — Case studies for Clipify + Daytrade body (CONT-01, CONT-02)
+- [ ] 13-08-uat-and-about-audit-PLAN.md — 13-UAT.md authored + Jack's manual UAT signoff for CONT-03 + CONT-04
+- [ ] 13-09-phase-gate-d26-and-build-PLAN.md — D-26 chat regression battery + Lighthouse CI gate + final test sweep + phase close-out SUMMARY
 
 ### Phase 14: Chat Knowledge Upgrade
 **Goal**: The chat widget answers project-specific questions from the real MDX content shipped in Phase 13, speaks in a tuned third-person persona, refuses off-scope and injection attempts, and preserves every Phase 7 security/streaming/a11y guarantee.
@@ -151,7 +160,7 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 10. Page Port | v1.1 | 8/8 | Complete | 2026-04-13 |
 | 11. Polish | v1.1 | 3/3 | Complete | 2026-04-13 |
 | 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
-| 13. Content Pass + Projects/ Sync | v1.2 | 0/TBD | Not started | - |
+| 13. Content Pass + Projects/ Sync | v1.2 | 0/9 | Planned | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 0/TBD | Not started | - |
 | 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |
 | 16. Motion Layer | v1.2 | 0/TBD | Not started | - |
