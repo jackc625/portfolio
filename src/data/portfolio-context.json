@@ -49,10 +49,10 @@
       "page": "/projects/clipify"
     },
     {
-      "name": "Crypto Breakout Trader",
+      "name": "Daytrade",
       "description": "An automated cryptocurrency day-trading system implementing momentum breakout detection on 5-minute candles with composable signal filters, risk-based position sizing, and atomic state persistence.",
       "tech": ["Python", "CCXT", "pandas", "pandas-ta", "Pydantic"],
-      "page": "/projects/crypto-breakout-trader"
+      "page": "/projects/daytrade"
     }
   ],
   "experience": "Jack is a recent CS graduate actively seeking a software engineering role. He learns by building — every project in this portfolio was designed, architected, and coded by Jack to solve a real problem. His projects span full-stack web apps, trading systems, ML pipelines, and AI-powered SaaS products. He is currently looking for a software engineering role where he can contribute to a team building something that matters.",
