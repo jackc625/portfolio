@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 13 Plan 03 complete — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP Phase 13 SC#1 amended 6-H2 → 5-H2 per D-02
-last_updated: "2026-04-19T13:10:00.000Z"
-last_activity: 2026-04-19 -- Phase 13 Plan 03 complete (docs + ROADMAP, 3 atomic commits, 3 docs/ROADMAP test files flipped RED → GREEN)
+stopped_at: Phase 13 Plan 04 complete — crypto-breakout-trader.mdx renamed to daytrade.mdx via git mv (99% similarity), source: field added to all 6 MDX, portfolio-context.json patched in D-26 lockstep, 4 dated D-18 annotations on about.ts
+last_updated: "2026-04-19T13:30:00.000Z"
+last_activity: 2026-04-19 -- Phase 13 Plan 04 complete (daytrade rename + anchors, 3 atomic commits, 4 test files flipped RED → GREEN)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 9
-  percent: 60
+  completed_plans: 10
+  percent: 66
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 13 (content-pass-projects-sync) — EXECUTING
-Plan: 3 of 9 complete
-Status: Wave 2 complete (13-02 sync-infra + 13-03 docs/roadmap both landed). Wave 3 next target: 13-04 Daytrade rename + add `source:` to all 6 MDX frontmatters (unblocks Zod + sync --check going GREEN).
-Last activity: 2026-04-19 -- Phase 13 Plan 03 complete
+Plan: 4 of 9 complete
+Status: Wave 3 complete (13-04 daytrade rename + anchors landed). Zod + sync --check boundary moved from "missing source:" to "missing CASE-STUDY-START fence" — exactly the Wave-4 handoff. Next target: Wave 4 Plans 13-05/06/07 case-study body batches (MDX body rewrites to 5-H2 shape using the source: anchors this plan landed).
+Last activity: 2026-04-19 -- Phase 13 Plan 04 complete
 Branch: main
 
-Progress: [███░░░░░░░] 33% (3 / 9 plans)
+Progress: [████░░░░░░] 44% (4 / 9 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,15 @@ Progress: [███░░░░░░░] 33% (3 / 9 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 13 decisions (Plan 04):**
+
+- [Phase 13-04]: daytrade.mdx description kept byte-identical to the pre-rename "Crypto Breakout Trader" value. DAYTRADE.md confirms every phrase in the existing description is a real feature; DAYTRADE.md additionally describes a walk-forward validation / promotion-gate dimension, but that is case-study body content (Plan 07 scope), not structural frontmatter. Byte-preservation also satisfies D-26 lockstep trivially — daytrade.mdx description and portfolio-context.json description stayed byte-identical across the rename.
+- [Phase 13-04]: `source:` field placed as the LAST frontmatter line before closing `---` in all 6 MDX for consistency. Zod is order-agnostic, but one consistent placement minimizes future diff noise. For seatwatch.mdx this meant source: AFTER demoUrl:; for the other 5 it meant source: AFTER year:.
+- [Phase 13-04]: portfolio-context.json diff is exactly 2+2 (only `name` and `page` changed; description and tech preserved byte-for-byte). This is the minimum diff satisfying D-26 chat-context lockstep — the chat system prompt serialization stays deterministic across the rename.
+- [Phase 13-04]: about.ts D-18 annotations use the actual execute-time date (2026-04-19 from `date +%Y-%m-%d`), NOT the planning date (2026-04-16). Per D-18, "git blame on the annotation is the durable evidence" — the timestamp must reflect when verification happened, not when the plan was authored.
+- [Phase 13-04]: D-26 early-warning chat smoke check DEFERRED to Plan 09 per plan text authorization. The plan's Task 3 `<action>` block contains an embedded `checkpoint:human-verify` sub-step, but the plan text itself labels the smoke advisory-only and names Plan 09 Task 1 as the authoritative D-26 gate. Subagent cannot drive the manual browser smoke; Plan 09 orchestrator runs the full Phase 7 chat regression battery.
+- [Phase 13-04]: git mv rename recorded at 99% similarity (`rename src/content/projects/{crypto-breakout-trader.mdx => daytrade.mdx} (99%)`). Git's rename detection survived the post-move frontmatter edit (2 lines changed out of 46); git blame on the body still resolves to the original authoring commits.
 
 **Phase 13 decisions (Plan 03):**
 
@@ -131,6 +140,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-19T13:10:00.000Z
-Stopped at: Phase 13 Plan 03 complete — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP Phase 13 SC#1 amended 6-H2 → 5-H2 per D-02 (3 docs/ROADMAP test files GREEN; Zod + sync.mjs still intentionally reject all 6 MDX until Plan 04 adds `source:` fields)
-Resume file: .planning/phases/13-content-pass-projects-sync/13-04-daytrade-rename-and-anchors-PLAN.md
+Last session: 2026-04-19T13:30:00.000Z
+Stopped at: Phase 13 Plan 04 complete — crypto-breakout-trader.mdx renamed to daytrade.mdx via git mv (99% similarity); source: added to all 6 MDX frontmatters (Zod now 0 errors); portfolio-context.json daytrade entry replaces crypto-breakout entry in D-26 lockstep (description + tech byte-identical to daytrade.mdx); 4 dated /* Verified: 2026-04-19 */ annotations landed on about.ts exports (D-18). 4 test files flipped RED → GREEN. Full suite: 22/23 files GREEN, 143/149 tests GREEN — only case-studies-shape.test.ts RED (6 tests), which is the Plan 05/06/07 body-rewrite scope.
+Resume file: .planning/phases/13-content-pass-projects-sync/13-05-case-studies-batch-a-PLAN.md

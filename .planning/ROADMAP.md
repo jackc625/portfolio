@@ -74,7 +74,7 @@
 - [x] 13-01-test-stubs-wave-zero-PLAN.md — Author 13 RED test stubs (3 sync-script + 7 content/data + 3 docs/ROADMAP) covering every CONT-XX validation row (2026-04-19)
 - [x] 13-02-sync-infra-PLAN.md — sync-projects.mjs (named exports, S1/S2/S3/S6) + Zod source: extension + package.json scripts + .gitattributes + first GH Actions workflow (CONT-05, CONT-06) (2026-04-19)
 - [x] 13-03-docs-and-roadmap-PLAN.md — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP.md success criterion #1 amended per D-02 (CONT-07) (2026-04-19)
-- [ ] 13-04-daytrade-rename-and-anchors-PLAN.md — git mv crypto-breakout-trader.mdx → daytrade.mdx; source: field added to all 6 MDX; portfolio-context.json patched; about.ts dated annotations (CONT-04, CONT-05)
+- [x] 13-04-daytrade-rename-and-anchors-PLAN.md — git mv crypto-breakout-trader.mdx → daytrade.mdx; source: field added to all 6 MDX; portfolio-context.json patched; about.ts dated annotations (CONT-04, CONT-05) (2026-04-19)
 - [ ] 13-05-case-studies-batch-a-PLAN.md — Case studies for SeatWatch + NFL Prediction (Projects/*.md fenced blocks + sync) (CONT-01, CONT-02)
 - [ ] 13-06-case-studies-batch-b-PLAN.md — Case studies for SolSniper + Optimize AI (CONT-01, CONT-02)
 - [ ] 13-07-case-studies-batch-c-PLAN.md — Case studies for Clipify + Daytrade body (CONT-01, CONT-02)
