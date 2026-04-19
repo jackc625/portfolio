@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 13 Plan 05 complete — SeatWatch (855 words) and NFL Prediction (898 words) case studies authored in source fenced blocks, synced into MDX bodies in 5-H2 D-01 shape; 2 shape-test cases flipped RED → GREEN; 6 voice judgment calls flagged for Jack's review before Plans 06/07
-last_updated: "2026-04-19T14:00:00.000Z"
-last_activity: 2026-04-19 -- Phase 13 Plan 05 complete (case studies batch A: SeatWatch + NFL Prediction, 2 atomic commits, 2 tests RED→GREEN, full suite 145/149)
+stopped_at: Phase 13 Plan 06 complete — SolSniper (899 words) and Optimize AI (900 words) case studies authored in source fenced blocks, synced into MDX bodies in 5-H2 D-01 shape; 2 additional shape-test cases flipped RED → GREEN (cumulative 4 of 6 case studies shipped); voice judgment calls flagged for Jack's review before Plan 07
+last_updated: "2026-04-19T14:30:00.000Z"
+last_activity: 2026-04-19 -- Phase 13 Plan 06 complete (case studies batch B: SolSniper + Optimize AI, 2 atomic commits, 2 tests RED→GREEN, full suite 147/149)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 11
-  percent: 73
+  completed_plans: 12
+  percent: 80
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 13 (content-pass-projects-sync) — EXECUTING
-Plan: 5 of 9 complete
-Status: Wave 4 batch A complete (13-05 SeatWatch + NFL Prediction case studies landed, 855 + 898 words, both in 5-H2 D-01 shape, 2 shape tests flipped RED → GREEN). Remaining Wave 4 plans 13-06 (SolSniper + Optimize AI) and 13-07 (Clipify + Daytrade body) close the other 4 case studies. Jack should review Voice Judgment Calls in 13-05-SUMMARY.md before Plans 06/07 run to calibrate voice.
-Last activity: 2026-04-19 -- Phase 13 Plan 05 complete
+Plan: 6 of 9 complete
+Status: Wave 4 batch B complete (13-06 SolSniper + Optimize AI case studies landed, 899 + 900 words, both in 5-H2 D-01 shape, 2 more shape tests flipped RED → GREEN for a cumulative 4 of 6 case studies shipped). Only 13-07 (Clipify + Daytrade body) remains to close the final 2 case studies. Jack should review Voice Judgment Calls in 13-05-SUMMARY.md and 13-06-SUMMARY.md before Plan 07 runs.
+Last activity: 2026-04-19 -- Phase 13 Plan 06 complete
 Branch: main
 
-Progress: [█████░░░░░] 55% (5 / 9 plans)
+Progress: [██████░░░░] 66% (6 / 9 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,17 @@ Progress: [█████░░░░░] 55% (5 / 9 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 13 decisions (Plan 06):**
+
+- [Phase 13-06]: Used first-person past tense consistently across SolSniper and Optimize AI ("I architected", "I wanted", "I chose", "I built") — matching Plan 05's voice choice. D-09 site voice is first person; the chat widget is the third-person surface (CHAT-06). This stays in lockstep with 13-05 while Voice Judgment Call #6 from that SUMMARY remains open for Jack's review.
+- [Phase 13-06]: SolSniper body required 11 surgical trim passes (1115 → 1043 → 993 → 960 → 953 → 934 → 928 → 912 → 905 → 903 → 899) to land inside 600-900 band. Every trim preserved named systems and quantified numbers; compression was prose-level only. No structural content removed (all 8 safety checks, 3 tiers, 6 sell-ladder steps, Token-2022 balance lesson, and structuredClone rollback lesson retained). Source README is exceptionally dense — 310 lines of technical detail — which explains the overshoot.
+- [Phase 13-06]: Optimize AI body required 15 surgical trim passes (1083 → 1035 → 995 → 974 → 964 → 957 → 949 → 933 → 928 → 919 → 907 → 902 → 901 → 900). Landed exactly at 900 (band ceiling). All 9 RLS-enforced tables enumerated by name; Mifflin-St Jeor pipeline retained with concrete numbers (+5/−161 offsets, 1.2×/1.55×/1.9× multipliers, −400/+250/0 goal offsets); streak-bug learning + child-table-RLS learning both preserved.
+- [Phase 13-06]: SolSniper Outcome dropped a full detail-listing of Vitest file counts by subsystem (ten safety + nine execution + etc.) that was in the first draft, in favor of a compressed list. Retained the "thirty-nine `.test.ts` files" headline number and the Nyquist-validation pattern callout (HTTP 409 on concurrent force-sell). Flagged in SUMMARY voice judgment calls.
+- [Phase 13-06]: Optimize AI Outcome dropped "five fitness domains (workouts, nutrition, habits, weight, profile)" list from the test-coverage paragraph (kept it in the opening sentence). Dropped "canvas-confetti on habit completion" mention to save words — the source README flags it twice as a feature, so flagged in SUMMARY.
+- [Phase 13-06]: SolSniper architecture paragraph enumerated 8 subsystems (Config, Detection, Safety, Execution, Position, Persistence, Recovery, Dashboard) in the exact order `src/index.ts` initializes them per README line 33 (`Order: Config → Detection → Safety → Execution → Position → Persistence → Recovery → Dashboard → Monitoring`). Dropped "Monitoring" from the enumeration during trim (it would have made nine, not eight); the source README lists it as subordinate to Dashboard so this is technically accurate but flagged for Jack's verification.
+- [Phase 13-06]: Optimize AI "cookie-bridge pattern" phrasing is drawn from README §"Authentication & Session Management" ("Middleware-protected dashboard routes via cookie bridge pattern") — matches source. The `startsWith("/") && !startsWith("//")` open-redirect check is quoted verbatim from README §"Security & Production Considerations" line 191. Both passes are 1:1 source traceable.
+- [Phase 13-06]: S6 sync idempotency verified after both tasks: `pnpm sync:projects` reports both slugs as `unchanged` on re-run. Frontmatter byte-preserved on both MDX (verified by diff scope). `pnpm check` clean. Full suite: 22/23 files GREEN, 147/149 tests GREEN (+2 vs Plan 05).
 
 **Phase 13 decisions (Plan 05):**
 
@@ -149,6 +160,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-19T14:00:00.000Z
-Stopped at: Phase 13 Plan 05 complete — SeatWatch (855 words, commit 0c2c25a) and NFL Prediction System (898 words, commit 70aa277) case studies authored from scratch in each source file's fenced block, then synced into the MDX bodies. Both bodies in 5-H2 D-01 shape, zero D-11 banlist words, first-person past tense, named systems cited, quantified numbers pulled from source READMEs. `pnpm check` 0 errors; `pnpm sync:check` reports both slugs `unchanged` (S6 idempotency verified); frontmatter byte-preserved on both MDX. case-studies-shape.test.ts flipped 2 of 6 slugs RED → GREEN (seatwatch, nfl-predict). Full suite: 22/23 files GREEN, 145/149 tests GREEN (+2 vs Plan 04). 6 voice judgment calls flagged in SUMMARY for Jack's review before Plans 06/07 run.
-Resume file: .planning/phases/13-content-pass-projects-sync/13-06-case-studies-batch-b-PLAN.md
+Last session: 2026-04-19T14:30:00.000Z
+Stopped at: Phase 13 Plan 06 complete — SolSniper (899 words, commit bd1db92) and Optimize AI (900 words, commit 00c6406) case studies authored from scratch in each source file's fenced block, then synced into the MDX bodies. Both bodies in 5-H2 D-01 shape, zero D-11 banlist words, first-person past tense, named systems cited, quantified numbers pulled from source READMEs. `pnpm check` 0 errors; `pnpm sync:projects` reports all 4 completed slugs (seatwatch/nfl-predict/solsniper/optimize-ai) `unchanged` on re-run (S6 idempotency verified); frontmatter byte-preserved on both MDX. case-studies-shape.test.ts flipped 2 more slugs RED → GREEN (solsniper, optimize-ai); cumulative 4 of 6. Full suite: 22/23 files GREEN, 147/149 tests GREEN (+2 vs Plan 05). Remaining 2 RED slugs (clipify, daytrade) are Plan 07's scope. Voice judgment calls flagged in 13-06-SUMMARY.md for Jack's review before Plan 07 runs.
+Resume file: .planning/phases/13-content-pass-projects-sync/13-07-case-studies-batch-c-PLAN.md

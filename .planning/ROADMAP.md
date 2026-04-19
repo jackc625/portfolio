@@ -76,7 +76,7 @@
 - [x] 13-03-docs-and-roadmap-PLAN.md — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP.md success criterion #1 amended per D-02 (CONT-07) (2026-04-19)
 - [x] 13-04-daytrade-rename-and-anchors-PLAN.md — git mv crypto-breakout-trader.mdx → daytrade.mdx; source: field added to all 6 MDX; portfolio-context.json patched; about.ts dated annotations (CONT-04, CONT-05) (2026-04-19)
 - [x] 13-05-case-studies-batch-a-PLAN.md — Case studies for SeatWatch + NFL Prediction (Projects/*.md fenced blocks + sync) (CONT-01, CONT-02) (2026-04-19)
-- [ ] 13-06-case-studies-batch-b-PLAN.md — Case studies for SolSniper + Optimize AI (CONT-01, CONT-02)
+- [x] 13-06-case-studies-batch-b-PLAN.md — Case studies for SolSniper + Optimize AI (CONT-01, CONT-02) (2026-04-19)
 - [ ] 13-07-case-studies-batch-c-PLAN.md — Case studies for Clipify + Daytrade body (CONT-01, CONT-02)
 - [ ] 13-08-uat-and-about-audit-PLAN.md — 13-UAT.md authored + Jack's manual UAT signoff for CONT-03 + CONT-04
 - [ ] 13-09-phase-gate-d26-and-build-PLAN.md — D-26 chat regression battery + Lighthouse CI gate + final test sweep + phase close-out SUMMARY
