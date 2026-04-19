@@ -1,5 +1,5 @@
 ---
-status: pending
+status: complete
 phase: 13-content-pass-projects-sync
 source:
   - 13-01-test-stubs-wave-zero-SUMMARY.md
@@ -10,12 +10,12 @@ source:
   - 13-06-case-studies-batch-b-SUMMARY.md
   - 13-07-case-studies-batch-c-SUMMARY.md
 started: 2026-04-19T19:34:42Z
-updated: 2026-04-19T19:34:42Z
+updated: 2026-04-19T20:45:00Z
 ---
 
 ## Current Test
 
-[all tests pending]
+[complete — all 14 surfaces passed Jack's batch UAT 2026-04-19]
 
 ## Tests
 
@@ -31,7 +31,7 @@ expected: |
     "Software engineer building reliable, production-grade systems."
 
   No additional hype copy, no marketing adjectives, no version/date suffix.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -44,7 +44,7 @@ expected: |
     "AVAILABLE FOR WORK"
   (all caps, monospace label-mono style, with the animated accent-colored
   dot glyph rendered to its left per StatusDot.astro).
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -56,7 +56,7 @@ expected: |
   (src/pages/index.astro line 52) must show exactly:
     "EST. 2026 · NORTHERN VA"
   (all caps, monospace, middle-dot separator U+00B7, color="ink-muted").
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -87,7 +87,7 @@ expected: |
     href: /projects/solsniper
 
   Section-header count indicator must read "3 / 6".
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -116,7 +116,7 @@ expected: |
 
   The "READ MORE →" link text (line 81) must be all caps with a
   right-arrow U+2192.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -152,7 +152,7 @@ expected: |
   Every `export const ABOUT_*` line has a `/* Verified: 2026-04-19 */`
   comment above it (D-18). If Jack edits any string during this UAT,
   refresh the adjacent Verified: comment to today's date.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -187,7 +187,7 @@ expected: |
   words ("revolutionary", "seamless", "leverage", "robust" unqualified,
   "dive deeper", emoji). Links (if any githubUrl/demoUrl were present)
   would resolve without 404.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -214,7 +214,7 @@ expected: |
   Tradeoffs, Outcome, Learnings). Body word count = 888 words. The old
   slug `/projects/crypto-breakout-trader` must 404 (no redirect per D-05).
   Voice matches first-person engineering-journal tone; no banned hype.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -239,7 +239,7 @@ expected: |
 
   Body has exactly 5 H2s in D-01 order. Body word count = 886 words.
   Voice matches first-person engineering-journal tone; no banned hype.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -264,7 +264,7 @@ expected: |
 
   Body has exactly 5 H2s in D-01 order. Body word count = 888 words.
   Voice matches first-person engineering-journal tone; no banned hype.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -293,7 +293,7 @@ expected: |
   engineering-journal tone; named systems ("dual-strategy booking engine",
   "distributed booking lock", "per-user circuit breaker", "26-profile
   browser identity pool"); no banned hype.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -318,7 +318,7 @@ expected: |
 
   Body has exactly 5 H2s in D-01 order. Body word count = 887 words.
   Voice matches first-person engineering-journal tone; no banned hype.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -350,7 +350,7 @@ expected: |
   re-export, mark result: skipped with reason explaining the deferral.
 
   If content is current as-is: mark passed.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -377,7 +377,7 @@ expected: |
     Test 13
 
   No 404s, no placeholder URLs, no stale social handles.
-result: pending
+result: passed
 reported: ""
 severity: ""
 evidence: |
@@ -386,8 +386,10 @@ fix: |
 ## Summary
 
 total: 14
-passed: 0
+passed: 14
 issues: 0
 fixed: 0
-pending: 14
+pending: 0
 skipped: 0
+
+_Batch UAT run by Jack on 2026-04-19 against `pnpm dev` at http://localhost:4321 and the built PDF at `public/jack-cutrara-resume.pdf`. All 14 surfaces verified; no fixes required; no surfaces deferred._

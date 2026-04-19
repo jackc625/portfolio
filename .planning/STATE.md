@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 13 Plan 07 complete — Clipify (899 words) and Daytrade (900 words) case studies authored in source fenced blocks, synced into MDX bodies in 5-H2 D-01 shape; final 2 shape-test cases flipped RED → GREEN (ALL 6 of 6 case studies shipped); CONT-01 + CONT-02 closed at automated test layer; full suite now fully GREEN (149/149); voice judgment calls flagged for Jack's review; redline cycle (D-07) is Jack's responsibility before phase completion
-last_updated: "2026-04-19T14:45:00.000Z"
-last_activity: 2026-04-19 -- Phase 13 Plan 07 complete (case studies batch C: Clipify + Daytrade, 2 atomic commits, final 2 tests RED→GREEN, full suite 149/149)
+stopped_at: Phase 13 Plan 08 complete — UAT checklist authored and Jack signed off all 14 CONT-03/CONT-04 surfaces in one batch pass (14 passed, 0 issues, 0 skipped). No content edits required during UAT — all surfaces matched their authored baselines.
+last_updated: "2026-04-19T20:45:00.000Z"
+last_activity: 2026-04-19 -- Phase 13 Plan 08 complete (14/14 UAT surfaces passed, zero fixes required)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 13
-  percent: 86
+  completed_plans: 14
+  percent: 93
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 13 (content-pass-projects-sync) — EXECUTING
-Plan: 7 of 9 complete
-Status: Wave 4 complete (13-07 Clipify + Daytrade case studies landed, 899 + 900 words, both in 5-H2 D-01 shape, final 2 shape tests flipped RED → GREEN for ALL 6 of 6 case studies shipped). CONT-01 + CONT-02 closed at the automated test layer phase-wide. Full suite now fully GREEN (149/149 tests across 23/23 files). Plan 13-08 (UAT + About audit) and 13-09 (D-26 + Lighthouse + phase close-out) remain. Jack should review Voice Judgment Calls in 13-05-SUMMARY.md, 13-06-SUMMARY.md, and 13-07-SUMMARY.md before Plan 08 runs.
-Last activity: 2026-04-19 -- Phase 13 Plan 07 complete
+Plan: 8 of 9 complete
+Status: Wave 5 complete. Jack's batch UAT passed all 14 CONT-03/CONT-04 surfaces (homepage hero/status/meta/work-list/about-strip, About page, 6 project detail pages, resume PDF, contact links) with zero issues and zero fixes. Plan 13-09 (D-26 chat regression + Lighthouse CI + production build + phase close-out) remains — this is the final plan of Phase 13 and is also `autonomous: false` (needs Jack for D-26 manual smoke + Lighthouse interpretation).
+Last activity: 2026-04-19 -- Phase 13 Plan 08 complete
 Branch: main
 
-Progress: [███████░░░] 77% (7 / 9 plans)
+Progress: [████████░░] 88% (8 / 9 plans)
 
 ## Performance Metrics
 
@@ -171,6 +171,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-19T14:45:00.000Z
-Stopped at: Phase 13 Plan 07 complete — Clipify (899 words, commit d7147f4) and Daytrade (900 words, commit d0bb998) case studies authored from scratch in each source file's fenced block, then synced into the MDX bodies. Both bodies in 5-H2 D-01 shape, zero D-11 banlist words, first-person past tense, named systems cited, quantified numbers pulled from source READMEs. Daytrade MDX body contains zero "Crypto Breakout Trader" residue (anti-regression check passed). `pnpm check` 0 errors; `pnpm sync:projects` reports ALL 6 slugs `unchanged` on re-run (S6 idempotency verified phase-wide); `pnpm sync:check` exits 0; frontmatter byte-preserved on both MDX (daytrade.mdx frontmatter still byte-identical to Plan 04 Task 1 end-state). case-studies-shape.test.ts flipped the final 2 slugs RED → GREEN (clipify, daytrade); ALL 6 of 6 slugs now GREEN. Full suite: 23/23 files GREEN, 149/149 tests GREEN (+2 vs Plan 06). CONT-01 + CONT-02 closed at automated test layer. Voice judgment calls flagged in 13-07-SUMMARY.md for Jack's review; redline cycle (D-07) is Jack's responsibility before phase closes.
-Resume file: .planning/phases/13-content-pass-projects-sync/13-08-uat-and-about-audit-PLAN.md
+Last session: 2026-04-19T20:45:00.000Z
+Stopped at: Phase 13 Plan 08 complete — 13-UAT.md authored by subagent with exact-string assertions for all 14 D-18 surfaces (commit 35cc787), then Jack ran a batch UAT pass against `pnpm dev` and the built resume PDF. Result: 14/14 passed, 0 issues, 0 fixes, 0 skipped. Homepage display hero/status/meta/work-list/about-strip, About page four paragraphs, all 6 project detail pages (including `/projects/crypto-breakout-trader` correctly 404-ing post-rename and `/projects/seatwatch` correctly rendering the https://seat.watch demo link), 2026-04-13 resume PDF export accepted as current, and contact section links all match their authored baselines. No content edits required. CONT-03 + CONT-04 closed at the human-verification layer. Only Plan 13-09 (D-26 chat regression + Lighthouse CI + production build + phase SUMMARY) remains.
+Resume file: .planning/phases/13-content-pass-projects-sync/13-09-phase-gate-d26-and-build-PLAN.md
