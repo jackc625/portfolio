@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 13 Plan 01 complete — Wave-0 RED test stubs landed
-last_updated: "2026-04-19T00:00:00.000Z"
-last_activity: 2026-04-19 -- Phase 13 Plan 01 complete (13 RED test stubs, 3 atomic commits)
+stopped_at: Phase 13 Plan 02 complete — sync-projects.mjs + Zod source: field + CI drift gate landed
+last_updated: "2026-04-19T12:55:00.000Z"
+last_activity: 2026-04-19 -- Phase 13 Plan 02 complete (sync-infra, 3 atomic commits, 3 sync-script test files flipped RED → GREEN)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 7
-  percent: 46
+  completed_plans: 8
+  percent: 53
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 13 (content-pass-projects-sync) — EXECUTING
-Plan: 1 of 9 complete
-Status: Wave 1 complete (13 RED test stubs). Wave 2 next (13-02 sync-infra + 13-03 docs/roadmap).
-Last activity: 2026-04-19 -- Phase 13 Plan 01 complete
+Plan: 2 of 9 complete
+Status: Wave 2 half-complete (13-02 sync-infra done; 13-03 docs/roadmap remaining). Wave 3 next target: 13-04 Daytrade rename + add `source:` to all 6 MDX frontmatters (unblocks Zod + sync --check).
+Last activity: 2026-04-19 -- Phase 13 Plan 02 complete
 Branch: main
 
-Progress: [█░░░░░░░░░] 11% (1 / 9 plans)
+Progress: [██░░░░░░░░] 22% (2 / 9 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,14 @@ Progress: [█░░░░░░░░░] 11% (1 / 9 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 13 decisions (Plan 02):**
+
+- [Phase 13-02]: `extractFence(sourceContent, sourceLabel?)` — made `sourceLabel` optional to satisfy Plan 01 tests that call `extractFence(src)` with one argument. Label (when present, as in `syncOne`) prefixes error messages; when absent, errors read `missing <!-- CASE-STUDY-START -->` directly. Handler preserves both call sites without branching.
+- [Phase 13-02]: CLI guard uses `process.argv[1] === fileURLToPath(import.meta.url)` so the test file can `import` helpers without triggering `main()` (which would hit the real `src/content/projects/*.mdx` and blow up on missing `source:`). Module-entry detection is the standard Node 22 pattern.
+- [Phase 13-02]: Current repo is intentionally RED on `pnpm check` AND `pnpm sync:check` after this plan — both reject all 6 existing MDX files for missing `source:` frontmatter. This is the correct contract boundary; Plan 13-04 closes it by adding 6 `source:` fields (5 existing + 1 new daytrade).
+- [Phase 13-02]: GitHub Actions workflow pinned to `pull_request` (not `pull_request_target`) — T-13-03 mitigation so untrusted PR fork code cannot abuse repo secrets. All action versions locked to `@v4`; pnpm 10; node 22; `--frozen-lockfile` preserves S8 (zero-new-deps gate).
+- [Phase 13-02]: `.gitattributes` created with `* text=auto eol=lf` for the entire repo — not just the sync script's target files. Rationale: the sync script uses `normalize()` (S2) on every read, but other content (tests, scripts, content) would still churn if authored CRLF on Windows. One line for repo-wide hygiene.
 
 **v1.2 roadmap decisions:**
 
@@ -115,6 +123,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-19T00:00:00.000Z
-Stopped at: Phase 13 Plan 01 complete — Wave-0 RED test stubs landed
-Resume file: .planning/phases/13-content-pass-projects-sync/13-02-sync-infra-PLAN.md
+Last session: 2026-04-19T12:55:00.000Z
+Stopped at: Phase 13 Plan 02 complete — sync-projects.mjs + Zod source: field + CI drift gate landed (3 sync-script test files GREEN; Zod + sync.mjs intentionally reject all 6 MDX until Plan 04 adds `source:` fields)
+Resume file: .planning/phases/13-content-pass-projects-sync/13-03-docs-and-roadmap-PLAN.md

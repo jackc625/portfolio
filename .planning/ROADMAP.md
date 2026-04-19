@@ -72,7 +72,7 @@
   4. `scripts/sync-projects.mjs` runs idempotently on manual trigger, writes only MDX body content, preserves frontmatter, and produces a reviewable `git diff` that `astro check` validates against the Zod schema
 **Plans**: 9 plans
 - [x] 13-01-test-stubs-wave-zero-PLAN.md — Author 13 RED test stubs (3 sync-script + 7 content/data + 3 docs/ROADMAP) covering every CONT-XX validation row (2026-04-19)
-- [ ] 13-02-sync-infra-PLAN.md — sync-projects.mjs (named exports, S1/S2/S3/S6) + Zod source: extension + package.json scripts + .gitattributes + first GH Actions workflow (CONT-05, CONT-06)
+- [x] 13-02-sync-infra-PLAN.md — sync-projects.mjs (named exports, S1/S2/S3/S6) + Zod source: extension + package.json scripts + .gitattributes + first GH Actions workflow (CONT-05, CONT-06) (2026-04-19)
 - [ ] 13-03-docs-and-roadmap-PLAN.md — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP.md success criterion #1 amended per D-02 (CONT-07)
 - [ ] 13-04-daytrade-rename-and-anchors-PLAN.md — git mv crypto-breakout-trader.mdx → daytrade.mdx; source: field added to all 6 MDX; portfolio-context.json patched; about.ts dated annotations (CONT-04, CONT-05)
 - [ ] 13-05-case-studies-batch-a-PLAN.md — Case studies for SeatWatch + NFL Prediction (Projects/*.md fenced blocks + sync) (CONT-01, CONT-02)
@@ -160,7 +160,7 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 10. Page Port | v1.1 | 8/8 | Complete | 2026-04-13 |
 | 11. Polish | v1.1 | 3/3 | Complete | 2026-04-13 |
 | 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
-| 13. Content Pass + Projects/ Sync | v1.2 | 0/9 | Planned | - |
+| 13. Content Pass + Projects/ Sync | v1.2 | 2/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 0/TBD | Not started | - |
 | 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |
 | 16. Motion Layer | v1.2 | 0/TBD | Not started | - |
