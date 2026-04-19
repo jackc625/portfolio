@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 13 Plan 04 complete — crypto-breakout-trader.mdx renamed to daytrade.mdx via git mv (99% similarity), source: field added to all 6 MDX, portfolio-context.json patched in D-26 lockstep, 4 dated D-18 annotations on about.ts
-last_updated: "2026-04-19T13:30:00.000Z"
-last_activity: 2026-04-19 -- Phase 13 Plan 04 complete (daytrade rename + anchors, 3 atomic commits, 4 test files flipped RED → GREEN)
+stopped_at: Phase 13 Plan 05 complete — SeatWatch (855 words) and NFL Prediction (898 words) case studies authored in source fenced blocks, synced into MDX bodies in 5-H2 D-01 shape; 2 shape-test cases flipped RED → GREEN; 6 voice judgment calls flagged for Jack's review before Plans 06/07
+last_updated: "2026-04-19T14:00:00.000Z"
+last_activity: 2026-04-19 -- Phase 13 Plan 05 complete (case studies batch A: SeatWatch + NFL Prediction, 2 atomic commits, 2 tests RED→GREEN, full suite 145/149)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 10
-  percent: 66
+  completed_plans: 11
+  percent: 73
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 13 (content-pass-projects-sync) — EXECUTING
-Plan: 4 of 9 complete
-Status: Wave 3 complete (13-04 daytrade rename + anchors landed). Zod + sync --check boundary moved from "missing source:" to "missing CASE-STUDY-START fence" — exactly the Wave-4 handoff. Next target: Wave 4 Plans 13-05/06/07 case-study body batches (MDX body rewrites to 5-H2 shape using the source: anchors this plan landed).
-Last activity: 2026-04-19 -- Phase 13 Plan 04 complete
+Plan: 5 of 9 complete
+Status: Wave 4 batch A complete (13-05 SeatWatch + NFL Prediction case studies landed, 855 + 898 words, both in 5-H2 D-01 shape, 2 shape tests flipped RED → GREEN). Remaining Wave 4 plans 13-06 (SolSniper + Optimize AI) and 13-07 (Clipify + Daytrade body) close the other 4 case studies. Jack should review Voice Judgment Calls in 13-05-SUMMARY.md before Plans 06/07 run to calibrate voice.
+Last activity: 2026-04-19 -- Phase 13 Plan 05 complete
 Branch: main
 
-Progress: [████░░░░░░] 44% (4 / 9 plans)
+Progress: [█████░░░░░] 55% (5 / 9 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,15 @@ Progress: [████░░░░░░] 44% (4 / 9 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 13 decisions (Plan 05):**
+
+- [Phase 13-05]: Used first-person past tense ("I built", "I wanted", "I trained", "I accepted") throughout both case studies, matching VOICE-GUIDE.md D-09 + D-11 Rule 3 + the canonical post-rewrite seatwatch.mdx exemplar. The executor prompt mentioned "third-person, past tense" as a voice rule but VOICE-GUIDE.md, D-09, D-11, the existing seatwatch.mdx exemplar, and the test acceptance criteria all mandate FIRST person for MDX case studies (chat widget is the third-person surface per CHAT-06, Phase 14). Plan contract wins — flagged explicitly in SUMMARY Voice Judgment Calls #6 so Jack can override before Plans 06/07.
+- [Phase 13-05]: NFL Prediction body initially drafted at 921 words (over 900 band). Two surgical trim passes landed at 898: (a) Problem paragraph compressed from 175 → ~155 by tightening the two-hazard framing; (b) Outcome removed the literal artifact hashes (wp_20260327_114739, ats_20260326_163724, ou_20260326_163930, blend_20260324_023118) because they consumed 24 words on specificity readers cannot act on. Zero structural content loss, all named systems and quantified claims preserved. D-16 is soft warning only; the plan's success criteria still wanted in-band compliance, which is why the trim was pursued.
+- [Phase 13-05]: SeatWatch Outcome uses 64,400 lines / 419 files (from current SEATWATCH.md Codebase Metrics table) instead of the pre-rewrite MDX's 48,000 lines / 329 files. The README is the authoritative source per D-12; Jack should confirm the 64,400 figure reflects his current project state (flagged in SUMMARY Voice Judgment Calls #2).
+- [Phase 13-05]: Relabeled SeatWatch's existing `## Architecture` to `## Architecture (FULL TECHNICAL REFERENCE)` per RESEARCH §2 disambiguation so the case-study `## Approach & Architecture` H2 does not collide inside the same file. NFL_PREDICT.md kept its existing `## Overview` heading unchanged since it does not collide with any D-01 heading.
+- [Phase 13-05]: Flagged 6 voice judgment calls in SUMMARY for Jack's review: (1) SeatWatch "roughly 5× clock-time variance" Poisson qualifier is my inference not source quote; (2) 48K → 64,400 LOC update needs his verification; (3) "yet to produce a double-book in production" claim lacks measurement window; (4) NFL market-edge framing compressed to 1 sentence (room to re-expand ~40 words in Problem); (5) "UIAP-01 is the architectural lesson I am most proud of" is editorial elevation not source quote; (6) first-person voice choice (vs executor-prompt third-person framing) — all six documented with actionable redline suggestions.
+- [Phase 13-05]: Fence placement in NFL_PREDICT.md went AFTER the v1.0 ship-date paragraph and BEFORE the `---` horizontal rule that introduces `## Overview`. Ensures fence is above the large ASCII-art architecture diagram (which lives in a triple-backtick code fence) per Pitfall 3 (fence must precede any code fence). SeatWatch fence went between intro paragraphs and the existing (relabeled) `## Architecture` section — same rule.
 
 **Phase 13 decisions (Plan 04):**
 
@@ -140,6 +149,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-19T13:30:00.000Z
-Stopped at: Phase 13 Plan 04 complete — crypto-breakout-trader.mdx renamed to daytrade.mdx via git mv (99% similarity); source: added to all 6 MDX frontmatters (Zod now 0 errors); portfolio-context.json daytrade entry replaces crypto-breakout entry in D-26 lockstep (description + tech byte-identical to daytrade.mdx); 4 dated /* Verified: 2026-04-19 */ annotations landed on about.ts exports (D-18). 4 test files flipped RED → GREEN. Full suite: 22/23 files GREEN, 143/149 tests GREEN — only case-studies-shape.test.ts RED (6 tests), which is the Plan 05/06/07 body-rewrite scope.
-Resume file: .planning/phases/13-content-pass-projects-sync/13-05-case-studies-batch-a-PLAN.md
+Last session: 2026-04-19T14:00:00.000Z
+Stopped at: Phase 13 Plan 05 complete — SeatWatch (855 words, commit 0c2c25a) and NFL Prediction System (898 words, commit 70aa277) case studies authored from scratch in each source file's fenced block, then synced into the MDX bodies. Both bodies in 5-H2 D-01 shape, zero D-11 banlist words, first-person past tense, named systems cited, quantified numbers pulled from source READMEs. `pnpm check` 0 errors; `pnpm sync:check` reports both slugs `unchanged` (S6 idempotency verified); frontmatter byte-preserved on both MDX. case-studies-shape.test.ts flipped 2 of 6 slugs RED → GREEN (seatwatch, nfl-predict). Full suite: 22/23 files GREEN, 145/149 tests GREEN (+2 vs Plan 04). 6 voice judgment calls flagged in SUMMARY for Jack's review before Plans 06/07 run.
+Resume file: .planning/phases/13-content-pass-projects-sync/13-06-case-studies-batch-b-PLAN.md
