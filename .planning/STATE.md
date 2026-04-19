@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 13 Plan 02 complete — sync-projects.mjs + Zod source: field + CI drift gate landed
-last_updated: "2026-04-19T12:55:00.000Z"
-last_activity: 2026-04-19 -- Phase 13 Plan 02 complete (sync-infra, 3 atomic commits, 3 sync-script test files flipped RED → GREEN)
+stopped_at: Phase 13 Plan 03 complete — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP Phase 13 SC#1 amended 6-H2 → 5-H2 per D-02
+last_updated: "2026-04-19T13:10:00.000Z"
+last_activity: 2026-04-19 -- Phase 13 Plan 03 complete (docs + ROADMAP, 3 atomic commits, 3 docs/ROADMAP test files flipped RED → GREEN)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 8
-  percent: 53
+  completed_plans: 9
+  percent: 60
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 13 (content-pass-projects-sync) — EXECUTING
-Plan: 2 of 9 complete
-Status: Wave 2 half-complete (13-02 sync-infra done; 13-03 docs/roadmap remaining). Wave 3 next target: 13-04 Daytrade rename + add `source:` to all 6 MDX frontmatters (unblocks Zod + sync --check).
-Last activity: 2026-04-19 -- Phase 13 Plan 02 complete
+Plan: 3 of 9 complete
+Status: Wave 2 complete (13-02 sync-infra + 13-03 docs/roadmap both landed). Wave 3 next target: 13-04 Daytrade rename + add `source:` to all 6 MDX frontmatters (unblocks Zod + sync --check going GREEN).
+Last activity: 2026-04-19 -- Phase 13 Plan 03 complete
 Branch: main
 
-Progress: [██░░░░░░░░] 22% (2 / 9 plans)
+Progress: [███░░░░░░░] 33% (3 / 9 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,14 @@ Progress: [██░░░░░░░░] 22% (2 / 9 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 13 decisions (Plan 03):**
+
+- [Phase 13-03]: docs/CONTENT-SCHEMA.md Section 1 heading stripped parenthetical "(Zod)" from the RESEARCH.md skeleton to match the plan's acceptance-criteria grep exactly (`^## 1\. Frontmatter Schema`). Test regex matches either form; kept the minimal form to avoid future regex drift.
+- [Phase 13-03]: docs/CONTENT-SCHEMA.md Section 2 received one additive clarification not in the RESEARCH.md skeleton — a 4-bullet "Fence conventions:" subsection enumerating the literal-HTML-comment, each-once, before-any-code-fence, and start-before-end invariants explicitly. Rule 2 (missing critical documentation functionality). The sync script enforces these, but a reader landing on Section 2 without reading sync-projects.mjs previously had no paper trail.
+- [Phase 13-03]: docs/VOICE-GUIDE.md includes two references to seatwatch.mdx — the RESEARCH.md skeleton's "canonical example" line plus the plan-mandated "See src/content/projects/seatwatch.mdx — its 5 H2s..." cross-reference after the Engineering-Journal bullets. Both match /seatwatch\\.mdx/; test is satisfied either way; keeping both because they answer different questions (which file vs. what to study in it).
+- [Phase 13-03]: Resume PDF external-source location (D-19) kept abstract in CONTENT-SCHEMA.md per T-13-DOC-01 disposition ("executor instructed not to invent a URL"). Current wording: "Jack maintains the actual source separately (Google Doc / LaTeX template)." Jack can fill in the real URL during execution of a later plan if a paper trail inside the repo becomes useful.
+- [Phase 13-03]: ROADMAP amendment diff is exactly 1+1 (one deletion, one insertion), no collateral whitespace or punctuation drift. Used Edit tool with the OLD string copied from the file's current bytes (preserving en-dash "–" in "600–900" and em-dash " — " at end of line) rather than retyping Unicode by hand.
 
 **Phase 13 decisions (Plan 02):**
 
@@ -123,6 +131,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-19T12:55:00.000Z
-Stopped at: Phase 13 Plan 02 complete — sync-projects.mjs + Zod source: field + CI drift gate landed (3 sync-script test files GREEN; Zod + sync.mjs intentionally reject all 6 MDX until Plan 04 adds `source:` fields)
-Resume file: .planning/phases/13-content-pass-projects-sync/13-03-docs-and-roadmap-PLAN.md
+Last session: 2026-04-19T13:10:00.000Z
+Stopped at: Phase 13 Plan 03 complete — docs/CONTENT-SCHEMA.md + docs/VOICE-GUIDE.md authored; ROADMAP Phase 13 SC#1 amended 6-H2 → 5-H2 per D-02 (3 docs/ROADMAP test files GREEN; Zod + sync.mjs still intentionally reject all 6 MDX until Plan 04 adds `source:` fields)
+Resume file: .planning/phases/13-content-pass-projects-sync/13-04-daytrade-rename-and-anchors-PLAN.md
