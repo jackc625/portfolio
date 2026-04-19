@@ -1,0 +1,2 @@
+# Repo-wide LF line endings (S2 — Phase 13). Prevents CRLF/LF churn between Windows authoring + Linux CI.
+* text=auto eol=lf

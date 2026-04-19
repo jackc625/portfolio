@@ -18,6 +18,7 @@ const projects = defineCollection({
       category: z.enum(["web-app", "cli-tool", "library", "api", "other"]),
       order: z.number().int().min(1),
       year: z.string().regex(/^\d{4}$/),
+      source: z.string(), // D-15. File existence validated by sync script, not Zod (Pitfall 7).
     }),
 });
 

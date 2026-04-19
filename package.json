@@ -16,7 +16,9 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "test": "vitest run",
-    "astro": "astro"
+    "astro": "astro",
+    "sync:projects": "node scripts/sync-projects.mjs",
+    "sync:check": "node scripts/sync-projects.mjs --check"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.82.0",
