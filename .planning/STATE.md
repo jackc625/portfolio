@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: executing
-stopped_at: Phase 13 Plan 06 complete — SolSniper (899 words) and Optimize AI (900 words) case studies authored in source fenced blocks, synced into MDX bodies in 5-H2 D-01 shape; 2 additional shape-test cases flipped RED → GREEN (cumulative 4 of 6 case studies shipped); voice judgment calls flagged for Jack's review before Plan 07
-last_updated: "2026-04-19T14:30:00.000Z"
-last_activity: 2026-04-19 -- Phase 13 Plan 06 complete (case studies batch B: SolSniper + Optimize AI, 2 atomic commits, 2 tests RED→GREEN, full suite 147/149)
+stopped_at: Phase 13 Plan 07 complete — Clipify (899 words) and Daytrade (900 words) case studies authored in source fenced blocks, synced into MDX bodies in 5-H2 D-01 shape; final 2 shape-test cases flipped RED → GREEN (ALL 6 of 6 case studies shipped); CONT-01 + CONT-02 closed at automated test layer; full suite now fully GREEN (149/149); voice judgment calls flagged for Jack's review; redline cycle (D-07) is Jack's responsibility before phase completion
+last_updated: "2026-04-19T14:45:00.000Z"
+last_activity: 2026-04-19 -- Phase 13 Plan 07 complete (case studies batch C: Clipify + Daytrade, 2 atomic commits, final 2 tests RED→GREEN, full suite 149/149)
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 12
-  percent: 80
+  completed_plans: 13
+  percent: 86
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 ## Current Position
 
 Phase: 13 (content-pass-projects-sync) — EXECUTING
-Plan: 6 of 9 complete
-Status: Wave 4 batch B complete (13-06 SolSniper + Optimize AI case studies landed, 899 + 900 words, both in 5-H2 D-01 shape, 2 more shape tests flipped RED → GREEN for a cumulative 4 of 6 case studies shipped). Only 13-07 (Clipify + Daytrade body) remains to close the final 2 case studies. Jack should review Voice Judgment Calls in 13-05-SUMMARY.md and 13-06-SUMMARY.md before Plan 07 runs.
-Last activity: 2026-04-19 -- Phase 13 Plan 06 complete
+Plan: 7 of 9 complete
+Status: Wave 4 complete (13-07 Clipify + Daytrade case studies landed, 899 + 900 words, both in 5-H2 D-01 shape, final 2 shape tests flipped RED → GREEN for ALL 6 of 6 case studies shipped). CONT-01 + CONT-02 closed at the automated test layer phase-wide. Full suite now fully GREEN (149/149 tests across 23/23 files). Plan 13-08 (UAT + About audit) and 13-09 (D-26 + Lighthouse + phase close-out) remain. Jack should review Voice Judgment Calls in 13-05-SUMMARY.md, 13-06-SUMMARY.md, and 13-07-SUMMARY.md before Plan 08 runs.
+Last activity: 2026-04-19 -- Phase 13 Plan 07 complete
 Branch: main
 
-Progress: [██████░░░░] 66% (6 / 9 plans)
+Progress: [███████░░░] 77% (7 / 9 plans)
 
 ## Performance Metrics
 
@@ -53,6 +53,17 @@ Progress: [██████░░░░] 66% (6 / 9 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 13 decisions (Plan 07):**
+
+- [Phase 13-07]: Used first-person past tense consistently across Clipify and Daytrade ("I built", "I wanted", "I ran", "I chose", "I looked", "I flipped") — matching Plans 05 + 06 voice choice. D-09 site voice is first person; the chat widget is the third-person surface (CHAT-06). All 6 case studies now follow the same voice contract. If Jack flips the voice contract, Plans 05 + 06 + 07 all re-draft together.
+- [Phase 13-07]: Clipify body required 6 surgical trim passes (965 → 942 → 924 → 909 → 901 → 900 → 899) to land inside 600-900 band. Every trim preserved named systems and quantified numbers. Source README (366 lines) is dense — 3-stage BullMQ decoupled pipeline, 5-stage moment-detection pipeline with GPT rubric, 17 API routes, 12 Prisma models, 3-tier Stripe billing with 5-event webhook flow — which explains the overshoot.
+- [Phase 13-07]: Daytrade body required 5 surgical trim passes (932 → 910 → 906 → 901 → 900). Landed exactly at 900 (band ceiling). Zero "Crypto Breakout Trader" residue in MDX body verified — anti-regression check passed. Case-study body refers to system as "Daytrade" at product level per plan instructions (D-04 rename is semantic); internal technical component names from source (BreakoutStrategy, PaperBroker, FilterChain, etc.) retained verbatim because they are real code identifiers.
+- [Phase 13-07]: Clipify Learnings centers on the cost/quality curve of LLM-based moment detection and the architectural inversion from "LLM sees everything" to "LLM refines the top-15 candidates" as the key insight. Source-traceable to README §Technical Highlights ("Adaptive clip windowing" + "Idempotent job processing") but the synthesized lesson framing ("LLM scoring is a last-mile refinement, not a first-pass filter — the tempting shape of LLM sees everything is the one that burns money") is editorial. Flagged in SUMMARY VJC #2.
+- [Phase 13-07]: Daytrade Learnings foregrounds the promotion-gate-as-refusal framing. Source README explicitly treats PROMOTION.FAILED verdict as a feature ("this is the validation pipeline doing exactly what it was built to do"); the compressed one-liner "backtest's job is to refuse promotion, not to rubber-stamp it" is editorial synthesis. Flagged in SUMMARY VJC #3.
+- [Phase 13-07]: Daytrade cites the real shipped PROMOTION.json artifact (verdict: FAILED at Gemini 1.20% taker / 0.60% maker base-tier fees, 5 of 7 gates failed) per source README line 26 — every quantified claim is source-traceable. "~300 passing tests" sourced from README §Testing.
+- [Phase 13-07]: Fence insertion BEFORE any triple-backtick code fence in both files (Pitfall 3 mitigation). CLIPIFY has ASCII architecture diagram in code fence below fence placement; DAYTRADE has live-path + backtest-path ASCII diagrams in code fences below fence placement.
+- [Phase 13-07]: S6 sync idempotency verified after both tasks: `pnpm sync:projects` reports ALL 6 slugs as `unchanged` on re-run. `pnpm sync:check` exits 0 (zero drift across all 6 Projects/*.md ↔ MDX pairs). Frontmatter byte-preserved on both MDX (daytrade.mdx frontmatter still byte-identical to Plan 04 Task 1 end-state). `pnpm check` clean. Full suite: 23/23 files GREEN, 149/149 tests GREEN (+2 vs Plan 06). This plan closes the final case-study shape-test gap phase-wide.
 
 **Phase 13 decisions (Plan 06):**
 
@@ -160,6 +171,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-19T14:30:00.000Z
-Stopped at: Phase 13 Plan 06 complete — SolSniper (899 words, commit bd1db92) and Optimize AI (900 words, commit 00c6406) case studies authored from scratch in each source file's fenced block, then synced into the MDX bodies. Both bodies in 5-H2 D-01 shape, zero D-11 banlist words, first-person past tense, named systems cited, quantified numbers pulled from source READMEs. `pnpm check` 0 errors; `pnpm sync:projects` reports all 4 completed slugs (seatwatch/nfl-predict/solsniper/optimize-ai) `unchanged` on re-run (S6 idempotency verified); frontmatter byte-preserved on both MDX. case-studies-shape.test.ts flipped 2 more slugs RED → GREEN (solsniper, optimize-ai); cumulative 4 of 6. Full suite: 22/23 files GREEN, 147/149 tests GREEN (+2 vs Plan 05). Remaining 2 RED slugs (clipify, daytrade) are Plan 07's scope. Voice judgment calls flagged in 13-06-SUMMARY.md for Jack's review before Plan 07 runs.
-Resume file: .planning/phases/13-content-pass-projects-sync/13-07-case-studies-batch-c-PLAN.md
+Last session: 2026-04-19T14:45:00.000Z
+Stopped at: Phase 13 Plan 07 complete — Clipify (899 words, commit d7147f4) and Daytrade (900 words, commit d0bb998) case studies authored from scratch in each source file's fenced block, then synced into the MDX bodies. Both bodies in 5-H2 D-01 shape, zero D-11 banlist words, first-person past tense, named systems cited, quantified numbers pulled from source READMEs. Daytrade MDX body contains zero "Crypto Breakout Trader" residue (anti-regression check passed). `pnpm check` 0 errors; `pnpm sync:projects` reports ALL 6 slugs `unchanged` on re-run (S6 idempotency verified phase-wide); `pnpm sync:check` exits 0; frontmatter byte-preserved on both MDX (daytrade.mdx frontmatter still byte-identical to Plan 04 Task 1 end-state). case-studies-shape.test.ts flipped the final 2 slugs RED → GREEN (clipify, daytrade); ALL 6 of 6 slugs now GREEN. Full suite: 23/23 files GREEN, 149/149 tests GREEN (+2 vs Plan 06). CONT-01 + CONT-02 closed at automated test layer. Voice judgment calls flagged in 13-07-SUMMARY.md for Jack's review; redline cycle (D-07) is Jack's responsibility before phase closes.
+Resume file: .planning/phases/13-content-pass-projects-sync/13-08-uat-and-about-audit-PLAN.md
