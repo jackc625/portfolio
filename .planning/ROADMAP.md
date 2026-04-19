@@ -66,7 +66,7 @@
 **Depends on**: Phase 12
 **Requirements**: CONT-01, CONT-02, CONT-03, CONT-04, CONT-05, CONT-06, CONT-07
 **Success Criteria** (what must be TRUE):
-  1. A visitor opening any of the 6 project detail pages reads a real 600–900 word case study structured Problem → Approach → Architecture → Tradeoffs → Outcome → Learnings — no placeholder prose remains
+  1. A visitor opening any of the 6 project detail pages reads a real 600–900 word case study structured Problem → Approach & Architecture → Tradeoffs → Outcome → Learnings — no placeholder prose remains
   2. The About page narrative, homepage display hero, work list entries, and resume PDF copy all reflect Jack's current status and have been explicitly verified as of the milestone date
   3. `Projects/*.md` files are the authoritative source for project case-study bodies; `src/content/projects/*.mdx` frontmatter stays human-authored; `docs/CONTENT-SCHEMA.md` and `docs/VOICE-GUIDE.md` document both contracts
   4. `scripts/sync-projects.mjs` runs idempotently on manual trigger, writes only MDX body content, preserves frontmatter, and produces a reviewable `git diff` that `astro check` validates against the Zod schema
