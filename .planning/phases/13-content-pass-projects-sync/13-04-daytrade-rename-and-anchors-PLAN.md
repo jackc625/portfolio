@@ -381,16 +381,17 @@ daytrade.mdx        → Projects/6 - DAYTRADE.md (post-rename)
 
     Repeat for ABOUT_P1, ABOUT_P2, ABOUT_P3.
 
-    D-26 smoke test (after both file edits):
-    ```bash
-    pnpm dev &
-    sleep 5
-    # In a browser or via curl, send a chat message to localhost:4321 chat endpoint
-    # asking about the Daytrade project. Verify response mentions "Daytrade".
-    # If unable to test interactively from CLI, manually verify in browser.
-    pkill -f "astro dev" || true   # tear down dev server
-    ```
-    The full Phase 7 regression battery is Plan 09's responsibility — this is just an early-warning smoke check. Record the smoke outcome (PASS / NEEDS-CHECKING / FAIL) in SUMMARY.md regardless.
+    D-26 early-warning smoke check (HUMAN sub-step, not automated — `pkill` is unreliable on Windows + Git Bash):
+
+    This sub-step is a checkpoint:human-verify checkpoint inside the task. Do NOT script the dev server lifecycle from CLI. Instead, present these instructions to Jack and pause for confirmation:
+
+    1. In a separate terminal, Jack starts the dev server: `pnpm dev` (he leaves it running).
+    2. Jack opens `http://localhost:4321`, opens the chat widget, and asks: "What did Jack build for Daytrade?"
+    3. Jack confirms the response mentions "Daytrade" (and does NOT say "Crypto Breakout Trader").
+    4. Jack stops the dev server with Ctrl-C in his terminal (no `pkill`, no `taskkill`).
+    5. Jack reports the outcome (PASS / NEEDS-CHECKING / FAIL) which Claude records in SUMMARY.md.
+
+    This is an early-warning smoke check ONLY. The binding D-26 regression gate lives in Plan 09 Task 1 — that is where the full Phase 7 chat regression battery runs. If this smoke fails, surface the failure but continue toward Plan 09; the Plan 09 gate is the authoritative D-26 signoff.
   </action>
   <acceptance_criteria>
     - portfolio-context.json contains `"name": "Daytrade"` (verify: `grep -c '"name": "Daytrade"' src/data/portfolio-context.json` returns 1).

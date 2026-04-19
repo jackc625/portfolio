@@ -149,15 +149,13 @@ on:
 
     1. **Add `export` to all helper functions.** The skeleton currently declares them as bare `function readSourceField(...)`. Change to `export function readSourceField(...)` for: `readSourceField`, `sliceFrontmatter`, `extractFence`, `wordCount`, `checkH2Shape`. The `normalize` constant and `syncOne` / `main` stay non-exported (internal).
 
-    2. **Add S3 path-traversal guard inside `syncOne`.** After the line `const absSource = join(PROJECT_ROOT, sourcePath);` and BEFORE the `await access(absSource);` call, insert:
+    2. **Add S3 path-traversal guard inside `syncOne`.** `sep` is imported at the top of the file (see Imports below) — DO NOT use `(await import("node:path")).sep`. After the line `const absSource = join(PROJECT_ROOT, sourcePath);` and BEFORE the `await access(absSource);` call, insert:
     ```javascript
-    // S3 / T-13-01: path traversal guard
-    const sep = (await import("node:path")).sep;
+    // S3 / T-13-01: path traversal guard (uses top-level `sep` import — see Imports section below)
     if (!absSource.startsWith(PROJECT_ROOT + sep) && absSource !== PROJECT_ROOT) {
       throw new Error(`${slug}.mdx: source path escapes project root: ${sourcePath}`);
     }
     ```
-    Note: prefer importing `sep` at the top with `import { join, basename, sep } from "node:path";` to avoid the dynamic import — cleaner. Use that form.
 
     3. **Replace the bottom-of-file `await main();` with a CLI guard** so tests can import the helpers without triggering main():
     ```javascript

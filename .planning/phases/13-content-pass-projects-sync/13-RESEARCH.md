@@ -971,17 +971,17 @@ implementation.
 | A4 | The fenced HTML comment will round-trip through MDX rendering unchanged | Pattern 1 | Rendered MDX has visible `<!-- CASE-STUDY-START -->` text. **CRITICAL**: only the body BETWEEN the fences is extracted; the fence markers themselves are NOT written into the MDX. They live ONLY in `Projects/*.md`. [VERIFIED by reading the skeleton in §3 — `slice(startIdx, endIdx)` excludes both markers] |
 | A5 | The chat-context smoke test for "Daytrade" question is sufficient verification of the rename's chat impact | Runtime State Inventory | Subtle prompt-cache or system-prompt drift breaks chat in production. Mitigation: full Phase 7 regression battery per D-26. [MEDIUM risk — D-26 explicitly applies] |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **`pnpm` vs `npm` lockfile in CI.** `package.json` has a `pnpm` block but no `pnpm-lock.yaml` was checked during research. The CI step assumes pnpm.
+1. **`pnpm` vs `npm` lockfile in CI.** RESOLVED: Plan 02 Task 3 standardizes on pnpm 10 with `--frozen-lockfile` in the CI drift check; the planner verified pnpm is the project standard (engines + scripts). `package.json` has a `pnpm` block but no `pnpm-lock.yaml` was checked during research. The CI step assumes pnpm.
    - What we know: `package.json` has `pnpm.onlyBuiltDependencies` and the project uses `pnpm` in scripts ("pnpm sync:projects" referenced in CONTEXT.md).
    - What's unclear: whether `pnpm-lock.yaml` is committed (likely yes; not verified).
    - Recommendation: planner verifies `pnpm-lock.yaml` exists; if not, the CI step should `npm install` instead. Trivial to swap.
 
-2. **Where does the resume's external source doc live?** D-19 says "Google Docs / LaTeX / external" — Jack must specify the actual URL/path so `CONTENT-SCHEMA.md` §3 can document it concretely.
+2. **Where does the resume's external source doc live?** RESOLVED: Plan 03 Task 1 documents D-19 as a `{TBD — fill at first resume update}` placeholder inside CONTENT-SCHEMA.md §3; Jack populates the concrete URL/path on first resume sync rather than blocking phase planning. D-19 says "Google Docs / LaTeX / external" — Jack must specify the actual URL/path so `CONTENT-SCHEMA.md` §3 can document it concretely.
    - Recommendation: planner adds a discuss-ask before the docs/CONTENT-SCHEMA.md draft task.
 
-3. **Is `.gitattributes` committed with `* text=auto eol=lf`?** Not verified; Pitfall 4 mitigation depends on it (or the script's `normalize()` and unconditional LF write covers it regardless).
+3. **Is `.gitattributes` committed with `* text=auto eol=lf`?** RESOLVED: Plan 02 Task 2 audits the file and creates it with `* text=auto eol=lf` if absent; the sync script's `normalize()` + unconditional LF write makes this defense-in-depth. Not verified; Pitfall 4 mitigation depends on it (or the script's `normalize()` and unconditional LF write covers it regardless).
    - Recommendation: planner adds `.gitattributes` audit to the sync-script task; create file if absent.
 
 ## Environment Availability

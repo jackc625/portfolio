@@ -10,6 +10,7 @@ files_modified:
   - .planning/ROADMAP.md
 autonomous: true
 requirements: [CONT-07]
+wave_note: "Plan 03 runs in parallel with Plan 02 (both Wave 2). All verify commands target Plan-03-owned test files explicitly (tests/content/docs-content-schema.test.ts, tests/content/docs-voice-guide.test.ts, tests/content/roadmap-amendment.test.ts) — no bare `pnpm test` invocations. files_modified (docs/CONTENT-SCHEMA.md, docs/VOICE-GUIDE.md, .planning/ROADMAP.md) has zero overlap with Plan 02's files_modified."
 must_haves:
   truths:
     - "docs/CONTENT-SCHEMA.md exists with the four required sections (D-17): Frontmatter Schema, Sync Contract, Author Workflow, Failure-Mode Matrix"

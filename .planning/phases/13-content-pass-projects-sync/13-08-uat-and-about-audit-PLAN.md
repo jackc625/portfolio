@@ -259,7 +259,7 @@ skipped: <N>
     Step 6 — Stop the dev server (`pkill -f "astro dev"` or Ctrl-C in the dev terminal).
   </how-to-verify>
   <action>This is a checkpoint:human-verify task. Jack performs the verification interactively per the &lt;how-to-verify&gt; block above. Claude does NOT execute the verification; Claude pauses and waits for Jack's resume-signal. After resume, Claude commits the updated 13-UAT.md plus any file edits Jack applied during the UAT cycle.</action>
-  <verify><automated>grep -c "^result: pending" .planning/phases/13-content-pass-projects-sync/13-UAT.md | awk '{ if (\ == 0) exit 0; else exit 1 }'</automated></verify>
+  <verify><automated>grep -c "^result: pending" .planning/phases/13-content-pass-projects-sync/13-UAT.md | awk '{ if ($1 == 0) exit 0; else exit 1 }'</automated></verify>
   <done>13-UAT.md has zero pending result rows; status frontmatter is complete; updated date is today; any UAT-applied edits are in working tree (committed by Plan 09 phase orchestrator).</done>
   <resume-signal>Type "approved" when 13-UAT.md status is "complete" and all 14 tests have non-pending results, OR describe any blocker you encountered (e.g., "all UI checks passed but the resume PDF needs re-export which I'll do tomorrow — set test 13 to skipped").</resume-signal>
 </task>
