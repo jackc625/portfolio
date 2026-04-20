@@ -36,7 +36,7 @@
 **Milestone Goal:** Raise the bar on what already shipped — tasteful motion, real content everywhere, smarter chat, zero tech debt, measurable recruiter engagement. Additive on top of the shipped v1.1 editorial system; zero new runtime dependencies on the preferred path; MASTER.md §8 anti-pattern list stays intact.
 
 - [x] **Phase 12: Tech Debt Sweep** — Close all v1.1 audit items; zero build warnings; stable base for every subsequent phase (completed 2026-04-15)
-- [ ] **Phase 13: Content Pass + Projects/ Sync** — Real case studies on all 6 projects; About/home/resume copy verified; `Projects/` → MDX sync tooling
+- [x] **Phase 13: Content Pass + Projects/ Sync** — Real case studies on all 6 projects; About/home/resume copy verified; `Projects/` → MDX sync tooling (completed 2026-04-19)
 - [ ] **Phase 14: Chat Knowledge Upgrade** — Build-time context generation, Anthropic prompt caching, tuned persona, prompt-injection hardening
 - [ ] **Phase 15: Analytics Instrumentation** — Umami + CF Web Analytics in production; recruiter-engagement events visible in dashboard
 - [ ] **Phase 16: Motion Layer** — Tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse gate holds
@@ -79,7 +79,7 @@
 - [x] 13-06-case-studies-batch-b-PLAN.md — Case studies for SolSniper + Optimize AI (CONT-01, CONT-02) (2026-04-19)
 - [x] 13-07-case-studies-batch-c-PLAN.md — Case studies for Clipify + Daytrade body (CONT-01, CONT-02) (2026-04-19)
 - [x] 13-08-uat-and-about-audit-PLAN.md — 13-UAT.md authored + Jack's manual UAT signoff for CONT-03 + CONT-04 (2026-04-19)
-- [ ] 13-09-phase-gate-d26-and-build-PLAN.md — D-26 chat regression battery + Lighthouse CI gate + final test sweep + phase close-out SUMMARY
+- [x] 13-09-phase-gate-d26-and-build-PLAN.md — D-26 chat regression battery + Lighthouse CI gate + final test sweep + phase close-out SUMMARY (2026-04-19)
 
 ### Phase 14: Chat Knowledge Upgrade
 **Goal**: The chat widget answers project-specific questions from the real MDX content shipped in Phase 13, speaks in a tuned third-person persona, refuses off-scope and injection attempts, and preserves every Phase 7 security/streaming/a11y guarantee.
