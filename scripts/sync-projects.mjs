@@ -49,10 +49,21 @@ const normalize = (s) => s.replace(/\r\n/g, "\n");
 
 /**
  * Parse just the `source:` field from a frontmatter block.
- * Returns the unquoted string value, or null if not found.
+ *
+ * Accepts either a fully-quoted value (`source: "Projects/1 - SEATWATCH.md"`)
+ * or a fully-unquoted value (`source: Projects/1 - SEATWATCH.md`) and
+ * returns the inner string. Returns null when the field is absent, blank,
+ * or has mismatched quotes (opening quote with no close, or vice versa).
+ *
+ * Mismatched-quote rejection is intentional: a partial regex that permitted
+ * an optional close quote would silently accept frontmatter that is likely
+ * malformed, surfacing later as "source file not found" rather than the
+ * clearer "frontmatter syntax" class of error.
  */
 export function readSourceField(frontmatterBlock) {
-  const m = frontmatterBlock.match(/^source:\s*"?([^"\n]+?)"?\s*$/m);
+  const m =
+    frontmatterBlock.match(/^source:\s*"([^"\n]+)"\s*$/m) ??
+    frontmatterBlock.match(/^source:\s*([^"\n]+?)\s*$/m);
   return m ? m[1].trim() : null;
 }
 

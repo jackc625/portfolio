@@ -25,6 +25,16 @@ describe("readSourceField (CONT-06 / S1)", () => {
     const fm = "title: X\ndescription: Y\n";
     expect(readSourceField(fm)).toBe(null);
   });
+
+  it("returns null on mismatched quotes (opening quote, no close)", () => {
+    const fm = 'title: X\nsource: "Projects/1 - SEATWATCH.md\n';
+    expect(readSourceField(fm)).toBe(null);
+  });
+
+  it("returns null on mismatched quotes (no open, trailing close)", () => {
+    const fm = 'title: X\nsource: Projects/1 - SEATWATCH.md"\n';
+    expect(readSourceField(fm)).toBe(null);
+  });
 });
 
 describe("sliceFrontmatter (CONT-06 / S2)", () => {
