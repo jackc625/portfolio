@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
-status: verifying
-stopped_at: Phase 14 context gathered
-last_updated: "2026-04-20T02:06:56.790Z"
-last_activity: 2026-04-19 -- Phase 13 complete
+status: ready_to_execute
+stopped_at: Phase 14 planned (6 plans, 5 waves)
+last_updated: "2026-04-20T09:35:00.000Z"
+last_activity: 2026-04-20 -- Phase 14 planned
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 15
+  total_plans: 21
   completed_plans: 15
-  percent: 100
+  percent: 71
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 
 ## Current Position
 
-Phase: 13 (content-pass-projects-sync) — COMPLETE (ready for /gsd-verify-work)
-Plan: 9 of 9 complete
-Status: Phase 13 shipped. All 7 CONT-XX requirements closed with automated + human-verified evidence. D-26 chat regression PASS (Q1 Daytrade response grounded in updated portfolio-context.json, Q2 SeatWatch control passed, Q3 resume refusal routes to contact channels; 40/40 api tests GREEN). Lighthouse CI PASS on / and /projects/seatwatch (Performance 100/100, A11y 95/95, BP 100/100, SEO 100/100, TBT 70ms/70ms, CLS 0.002/0.000). Full suite 149/149 GREEN across 23 files. S8 zero-new-deps gate held (package.json diff = scripts block only). Next: Phase 14 (Chat Knowledge Upgrade) requires `/gsd-plan-phase 14` or `/gsd-discuss-phase 14` from Jack when ready.
-Last activity: 2026-04-19 -- Phase 13 complete
+Phase: 14 (chat-knowledge-upgrade) — PLANNED (ready for /gsd-execute-phase 14)
+Plan: 0 of 6 complete
+Status: Phase 14 planned. 6 plans across 5 waves. All 7 CHAT-XX requirements covered (CHAT-03/04 in 14-01+14-02, CHAT-05/07 in 14-03, CHAT-06 in 14-04, CHAT-08 in 14-01+14-05, CHAT-09 in 14-06). Plan-checker PASS iteration 2/3 with 0 blockers. All 7 T-14-* threats modeled (T-14-CACHE, T-14-PERSONA, T-14-INJECTION, T-14-PII-LEAK, T-14-BUILD, T-14-REGRESSION, T-14-DATA-INTEGRITY). All 24 D-01..D-24 decisions honored. Zero-new-deps gate holds (only package.json `scripts` addition). Wave 0: RED test stubs + eval fixture. Wave 1: generator + static/generated split. Wave 2: SDK wire-up + system prompt rewrite + widget header (parallel). Wave 3: injection battery GREEN. Wave 4: 9-item D-26 verification + Lighthouse CI + phase close-out (autonomous: false — human-verify checkpoint for 3 preview-deploy manual rows). Next: `/gsd-execute-phase 14`.
+Last activity: 2026-04-20 -- Phase 14 planned
 Branch: main
 
 Progress: [██████████] 100% (9 / 9 plans)
