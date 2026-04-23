@@ -19,7 +19,7 @@ export interface ChatMessage {
  *
  * Shape invariants (locked by tests/api/chat.test.ts):
  *   - model: "claude-haiku-4-5"
- *   - max_tokens: 768                                    (CHAT-07)
+ *   - max_tokens: 1500                                   (CHAT-07 / gap-closure 14-07)
  *   - system: [{ type, text, cache_control }]             (CHAT-05 / D-12 -- array, NOT string)
  *   - system[0].cache_control.type: "ephemeral"           (CHAT-05)
  *   - stream: true
@@ -30,7 +30,7 @@ export function buildChatRequestArgs(
 ) {
   return {
     model: "claude-haiku-4-5",
-    max_tokens: 768, // CHAT-07
+    max_tokens: 1500, // CHAT-07 (gap-closure 14-07 — raised from 768 to cover verbose grounded project answers; Haiku 4.5 ceiling is 8192)
     system: [
       {
         type: "text" as const,

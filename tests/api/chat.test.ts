@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -220,8 +220,8 @@ describe("Chat API Endpoint Contract (D-09)", () => {
       { role: "user", content: "Hello" },
     ]);
 
-    it("max_tokens is 768 (CHAT-07 -- up from Phase 7's 512)", () => {
-      expect(args.max_tokens).toBe(768);
+    it("max_tokens is 1500 (CHAT-07 -- raised from 768 in gap-closure 14-07 to fix truncation)", () => {
+      expect(args.max_tokens).toBe(1500);
     });
 
     it("system is an ARRAY of TextBlockParam, NOT a bare string (L2 landmine guard -- structural)", () => {
@@ -269,6 +269,7 @@ describe("Chat API Endpoint Contract (D-09)", () => {
       ).toContain("buildChatRequestArgs(portfolioContext, messages)");
       // Negative guards against the pre-plan inline shapes.
       expect(chatSource).not.toContain("max_tokens: 512");
+      expect(chatSource).not.toContain("max_tokens: 768"); // gap-closure 14-07 — prior value must not resurface
       expect(chatSource).not.toMatch(/system:\s*buildSystemPrompt\(portfolioContext\)/);
     });
 
@@ -286,6 +287,183 @@ describe("Chat API Endpoint Contract (D-09)", () => {
         "utf8"
       );
       expect(helperSource).toContain("stream: true");
+    });
+  });
+
+  // gap-closure 14-07 — proves the truncation diagnostic frame is emitted on max_tokens and suppressed on end_turn. Mirror of chat.ts stream-loop branching; if this drifts from chat.ts, the Plan 14-03 source-text regex guard (line 265+) fires.
+  describe("Stream consumer — message_delta truncation signal (gap-closure 14-07)", () => {
+    it("emits {truncated:true} frame before [DONE] when stop_reason is max_tokens", async () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      const mockEvents = [
+        {
+          type: "content_block_delta",
+          delta: { type: "text_delta", text: "Hello" },
+        },
+        {
+          type: "message_delta",
+          delta: { stop_reason: "max_tokens", stop_sequence: null },
+          usage: {},
+        },
+      ];
+
+      const encoder = new TextEncoder();
+      const decoder = new TextDecoder();
+      const chunks: string[] = [];
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          let truncated = false;
+          for (const event of mockEvents) {
+            if (
+              event.type === "content_block_delta" &&
+              "delta" in event &&
+              event.delta &&
+              "type" in event.delta &&
+              event.delta.type === "text_delta"
+            ) {
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({
+                    text: (event.delta as { text: string }).text,
+                  })}\n\n`
+                )
+              );
+            } else if (event.type === "message_delta") {
+              if (
+                (event.delta as { stop_reason: string }).stop_reason ===
+                "max_tokens"
+              ) {
+                truncated = true;
+                console.warn("chat.truncated", { stop_reason: "max_tokens" });
+              }
+            }
+          }
+          if (truncated) {
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ truncated: true })}\n\n`
+              )
+            );
+          }
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        },
+      });
+
+      const reader = stream.getReader();
+      let done = false;
+      while (!done) {
+        const result = await reader.read();
+        if (result.done) {
+          done = true;
+        } else {
+          chunks.push(decoder.decode(result.value));
+        }
+      }
+
+      const fullOutput = chunks.join("");
+      const truncatedIdx = fullOutput.indexOf('data: {"truncated":true}');
+      const doneIdx = fullOutput.indexOf("data: [DONE]");
+
+      expect(truncatedIdx).toBeGreaterThan(-1);
+      expect(doneIdx).toBeGreaterThan(-1);
+      expect(truncatedIdx).toBeLessThan(doneIdx);
+
+      // Guard against accidental double-emit.
+      const truncatedMatches = fullOutput.match(/"truncated":true/g) ?? [];
+      expect(truncatedMatches).toHaveLength(1);
+
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(warnSpy).toHaveBeenCalledWith(
+        "chat.truncated",
+        expect.objectContaining({ stop_reason: "max_tokens" })
+      );
+
+      warnSpy.mockRestore();
+    });
+
+    it("does NOT emit truncated frame when stop_reason is end_turn", async () => {
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+      const mockEvents = [
+        {
+          type: "content_block_delta",
+          delta: { type: "text_delta", text: "Hello" },
+        },
+        {
+          type: "message_delta",
+          delta: { stop_reason: "end_turn", stop_sequence: null },
+          usage: {},
+        },
+      ];
+
+      const encoder = new TextEncoder();
+      const decoder = new TextDecoder();
+      const chunks: string[] = [];
+
+      const stream = new ReadableStream({
+        async start(controller) {
+          let truncated = false;
+          for (const event of mockEvents) {
+            if (
+              event.type === "content_block_delta" &&
+              "delta" in event &&
+              event.delta &&
+              "type" in event.delta &&
+              event.delta.type === "text_delta"
+            ) {
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({
+                    text: (event.delta as { text: string }).text,
+                  })}\n\n`
+                )
+              );
+            } else if (event.type === "message_delta") {
+              if (
+                (event.delta as { stop_reason: string }).stop_reason ===
+                "max_tokens"
+              ) {
+                truncated = true;
+                console.warn("chat.truncated", { stop_reason: "max_tokens" });
+              }
+            }
+          }
+          if (truncated) {
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ truncated: true })}\n\n`
+              )
+            );
+          }
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+          controller.close();
+        },
+      });
+
+      const reader = stream.getReader();
+      let done = false;
+      while (!done) {
+        const result = await reader.read();
+        if (result.done) {
+          done = true;
+        } else {
+          chunks.push(decoder.decode(result.value));
+        }
+      }
+
+      const fullOutput = chunks.join("");
+
+      expect(fullOutput).not.toContain('"truncated":true');
+      expect(fullOutput).toContain("data: [DONE]");
+
+      const warnCallsForTruncation = warnSpy.mock.calls.filter(
+        (args) => args[0] === "chat.truncated"
+      );
+      expect(warnCallsForTruncation).toHaveLength(0);
+
+      warnSpy.mockRestore();
     });
   });
 });
