@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 14 Plan 01 complete (Wave 0 test stubs + fixture)
-last_updated: "2026-04-23T16:22:42.000Z"
-last_activity: 2026-04-23 -- Phase 14 Plan 01 complete
+stopped_at: Phase 14 Plan 02 complete (build-chat-context generator + static/generated split)
+last_updated: "2026-04-23T12:38:00.000Z"
+last_activity: 2026-04-23 -- Phase 14 Plan 02 complete
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 21
-  completed_plans: 16
-  percent: 76
+  completed_plans: 17
+  percent: 81
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-15)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 14 in-progress — Plan 01 (Wave 0 test stubs) complete, Plan 02 (generator) next
+**Current focus:** Phase 14 in-progress — Plans 01 + 02 complete, Plan 03 (SDK wire-up) next
 
 ## Current Position
 
-Phase: 14 (chat-knowledge-upgrade) — IN PROGRESS (1 of 6 plans complete)
-Plan: 1 of 6 complete
-Status: Phase 14 Plan 01 complete. Wave 0 RED test stubs + fixture landed (3 new files, 3 atomic test commits, 37 new test cases — 23 GREEN / 14 RED against current implementation). `tests/fixtures/chat-eval-dataset.ts` locks D-22 injection vectors + D-16 refusal copy + D-21 banlist as pure-data named exports. `tests/api/prompt-injection.test.ts` (28 tests, 19 GREEN / 9 RED) is Plan 14-04's completion gate. `tests/build/chat-context-integrity.test.ts` (9 tests, 4 GREEN / 5 RED) is Plan 14-02's completion gate. groundedQA anchor pre-validation (REVIEWS.md Codex MEDIUM) closed — evidence grid of 25 anchors in 14-01-SUMMARY.md. Zero new devDependencies, no `vi.mock` (L6 landmine avoided), `pnpm check` clean. Next: Plan 14-02 — build-chat-context.mjs generator + static/generated split (CHAT-03, CHAT-04).
-Last activity: 2026-04-23 -- Phase 14 Plan 01 complete
+Phase: 14 (chat-knowledge-upgrade) — IN PROGRESS (2 of 6 plans complete)
+Plan: 2 of 6 complete
+Status: Phase 14 Plan 02 complete. Build-time knowledge generator shipped (scripts/build-chat-context.mjs, 434 lines, 7 named exports, --check drift mode, multi-threshold token-budget observability, paragraph-boundary truncation, duplicate slug/source detection). Static/generated split seam landed: src/data/portfolio-context.static.json owns 5 hand-curated identity keys; src/data/portfolio-context.json regenerated with 6 projects alphabetically sorted, each with caseStudy (MDX body) + extendedReference (below-fence Projects/*.md content, daytrade truncated at 5000w paragraph boundary) + new structured about block. PortfolioContext interface extracted to src/prompts/portfolio-context-types.ts (REVIEWS.md Codex HIGH-2 decoupling — Plan 14-04 has zero type-shape overlap). system-prompt.ts function body byte-identical. build:chat-context + build:chat-context:check scripts wired into package.json build chain. 49005 estimated tokens (12x above Haiku 4.5 4096 cache floor). All 9 chat-context-integrity tests GREEN. Two grounded-QA anchor tests in prompt-injection.test.ts flipped GREEN collateral (SeatWatch anchors, "entry-level"). Zero new dependencies. `pnpm check` clean. Next: Plan 14-03 — SDK wire-up with cache_control: ephemeral + max_tokens (CHAT-05, CHAT-07).
+Last activity: 2026-04-23 -- Phase 14 Plan 02 complete
 Branch: main
 
-Progress: [██████████] 100% (10 / 10 plans)
+Progress: [████████░░] 81% (17 / 21 plans)
 
 ## Performance Metrics
 
@@ -51,6 +51,7 @@ Progress: [██████████] 100% (10 / 10 plans)
 | Plan | Duration | Tasks | Files | Commits |
 |------|----------|-------|-------|---------|
 | 14-01 | 9min | 3 tasks | 3 files | 77a4b0e, 0a76a4f, 5b96892 |
+| 14-02 | 22min | 4 tasks | 7 files | 53f1ae0, 5078ca0, 1910544, 7308cfb |
 
 *Full per-phase timing retained in milestones/v1.1-STATE.md archive.*
 
@@ -59,6 +60,18 @@ Progress: [██████████] 100% (10 / 10 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 14 decisions (Plan 02):**
+
+- [Phase 14-02]: Extended readArrayField regex in scripts/build-chat-context.mjs to match multi-line inline bracket form (`[\\s\\S]+?` across newlines + optional `\\n?\\s*` between `:` and `[`). 5 of 6 MDX files use that shape (techStack on one line, `[` on next line, one item per indented line, closing `]`). Only daytrade.mdx uses single-line inline. Without this fix, the generator would have silently emitted empty `tech: []` arrays for 5 of 6 projects — a Rule 3 blocking-issue fix caught during Task 1 authoring, before first commit.
+- [Phase 14-02]: 49005 estimated tokens in regenerated portfolio-context.json — 12x above the Haiku 4.5 4096-token cache floor. Breakdown: daytrade=10722 (truncated), nfl-predict=9917, seatwatch=8516, clipify=6997, solsniper=6533, optimize-ai=5382. INFO threshold (40000) crossed but WARN (60000) and CAP (80000) comfortably below. Token budget is healthy for the cache-stability invariant.
+- [Phase 14-02]: Daytrade is the only project to trigger truncation (extendedReference.truncated=true). Its Projects/6 - DAYTRADE.md has ~7246 words of below-fence content; the 5000-word paragraph-boundary truncator returned 4844 extracted words with marker "… see /projects/daytrade for the full technical reference". Other 5 projects below the cap: seatwatch=3629w extRef, nfl-predict=2662w, clipify=2201w, solsniper=1976w, optimize-ai=1689w.
+- [Phase 14-02]: Extracted PortfolioContext interface to new file src/prompts/portfolio-context-types.ts (REVIEWS.md Codex HIGH-2 decoupling). Plan 14-04's scope no longer overlaps with this plan's interface shape — Plan 14-04 touches only buildSystemPrompt's function body, not the type. system-prompt.ts function body is byte-identical to pre-plan; the only change is the import line swap.
+- [Phase 14-02]: experience one-liner kept as synthesis of about.intro + about.p1 + about.p3 for backward compat. The NEW canonical source is the structured about{intro,p1,p2,p3} block. Documented inline in build-chat-context.mjs so future contributors don't confuse the two fields. REVIEWS.md LOW closed.
+- [Phase 14-02]: Deterministic alphabetical project ordering via localeCompare on .page field — stable cache keys + predictable diff review. Projects array order: clipify, daytrade, nfl-predict, optimize-ai, seatwatch, solsniper. `pnpm build:chat-context:check` exits 0 back-to-back (idempotency gate).
+- [Phase 14-02]: parseAboutExports produces named, actionable errors when the about.ts string literal shape changes. Current about.ts uses `export const NAME =\\n  "..."` (newline between `=` and `"`); the regex `"export const ${name}\\s*=\\s*(...)"` matches. A future multi-line template literal would fail loudly with instructions to either normalize back to double-quoted literal OR extend the parser — no silent degradation. REVIEWS.md MEDIUM (about.ts parser fragility) closed.
+- [Phase 14-02]: Test flip summary — chat-context-integrity.test.ts 4/9 GREEN → 9/9 GREEN. prompt-injection.test.ts 19/28 GREEN → 22/28 GREEN (SeatWatch anchors + "entry-level" anchors + one breadcrumb-related test flipped as collateral from the richer JSON). 6 remaining RED are all Plan 14-04 targets (section order, D-16 copy, D-17 attack list, third-person framing, D-19 never padding, Projects/7 banlist reinforcement in prompt body).
+- [Phase 14-02]: Zero new dependencies. 11 deps + 12 devDeps unchanged. Generator uses only node:fs/promises + node:path + node:url stdlib + named imports from scripts/sync-projects.mjs. No gray-matter, no js-yaml, no ast parser — regex-only frontmatter reads. Zero-new-deps gate holds.
 
 **Phase 14 decisions (Plan 01):**
 
@@ -186,6 +199,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-23T16:22:42.000Z
-Stopped at: Phase 14 Plan 01 complete — Wave 0 RED test stubs + fixture
-Resume file: .planning/phases/14-chat-knowledge-upgrade/14-02-PLAN.md
+Last session: 2026-04-23T12:38:00.000Z
+Stopped at: Phase 14 Plan 02 complete — build-chat-context generator + static/generated split + build-chain wiring
+Resume file: .planning/phases/14-chat-knowledge-upgrade/14-03-PLAN.md
