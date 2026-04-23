@@ -38,6 +38,13 @@ const ogTitle = title || "Jack Cutrara | Software Engineer";
 const resolveOg = (img: string) =>
   /^https?:\/\//i.test(img) ? img : `${siteUrl}${img}`;
 const resolvedOgImage = resolveOg(ogImage);
+
+// Phase 15 / D-03: Umami Cloud website ID. Public literal (visible in HTML
+// to every visitor — Umami website IDs are not secrets, matching the CF
+// Web Analytics token pattern). Jack replaces this placeholder with the
+// real Umami Cloud UUID pre-deploy per .planning/phases/
+// 15-analytics-instrumentation/15-01-PLAN.md user_setup.dashboard_config.
+const WEBSITE_ID = "TODO_PHASE_15_UMAMI_ID";
 ---
 
 <html lang="en">
@@ -78,6 +85,14 @@ const resolvedOgImage = resolveOg(ogImage);
         imageAlt: `${ogTitle} - Jack Cutrara Portfolio`,
       }}
     />
+    {/* Phase 15 ANAL-01 — Umami Cloud analytics tag (D-01 / D-02 / D-03). */}
+    {/* PROD gate (D-01 belt-and-suspenders): tag absent from HTML on dev + preview. */}
+    {/* Server-side hostname allow-list on the tag narrows ingest to prod. */}
+    {/* Astro directive preserves external script tag + vendor attrs verbatim. */}
+    {/* Non-blocking load via deferred script semantics (no parser block). */}
+    {import.meta.env.PROD && (
+      <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id={WEBSITE_ID} data-domains="jackcutrara.com" />
+    )}
     <Font cssVariable="--font-display-src" />
     <Font cssVariable="--font-body-src" />
     <Font cssVariable="--font-mono-src" />
