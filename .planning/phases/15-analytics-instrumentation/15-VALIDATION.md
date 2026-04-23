@@ -1,8 +1,8 @@
 ---
 phase: 15
 slug: analytics-instrumentation
-status: draft
-nyquist_compliant: false
+status: approved
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-04-23
 ---
@@ -83,11 +83,11 @@ created: 2026-04-23
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all NEW test files listed above
-- [ ] No watch-mode flags in plan tasks (CI-compatible commands only)
-- [ ] Feedback latency < 15s per wave
-- [ ] `nyquist_compliant: true` set in frontmatter after planner completes mapping
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all NEW test files listed above
+- [x] No watch-mode flags in plan tasks (CI-compatible commands only)
+- [x] Feedback latency < 15s per wave
+- [x] `nyquist_compliant: true` set in frontmatter after planner completes mapping
 
-**Approval:** pending (flips to approved when planner finalizes per-task verify mapping and all automated rows have runnable commands)
+**Approval:** approved 2026-04-23 via /gsd-plan-phase verification

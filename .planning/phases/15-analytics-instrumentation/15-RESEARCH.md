@@ -1015,22 +1015,25 @@ All risks are **operational noise** not classical vulnerabilities — Phase 15 a
 
 ---
 
-## Open Questions (for planner, not blockers)
+## Open Questions (RESOLVED)
 
 1. **Exact Umami UUID to commit in D-03**
    - What we know: must be a UUID string; static literal in BaseLayout.astro.
    - What's unclear: the actual UUID to use — Jack generates this during Umami Cloud website-entry creation.
    - Recommendation: planner authors BaseLayout.astro with a placeholder like `const WEBSITE_ID = "TODO_PHASE_15_UMAMI_ID";` and adds a pre-deploy Task in `15-VERIFICATION.md` for Jack to replace it before merge.
+   - **RESOLVED:** Plan 01 Task 2 ships `data-website-id="TODO_PHASE_15_UMAMI_ID"` placeholder; Plan 05 Task 3 checkpoint blocks on Jack committing real UUID pre-deploy.
 
 2. **Fallback CF Web Analytics token if auto-inject fails**
    - What we know: CF dashboard issues a token if manual path is chosen.
    - What's unclear: whether auto-inject WILL work.
    - Recommendation: plan assumes happy path (D-04); plan includes a branched fallback task gated on verification result.
+   - **RESOLVED:** Plan 05 §5 post-deploy curl + grep check; fallback explicit `<script>` in BaseLayout documented in Plan 05 §5.2.
 
 3. **`motion.ts` consolidation in Phase 16**
    - What we know: Phase 16 ships `motion.ts` for scroll-reveal (MOTN-02) using IntersectionObserver on the same route.
    - What's unclear: whether Phase 16 wants to consolidate Phase 15's scroll-depth observer into a shared base.
    - Recommendation: Phase 15 ships scroll-depth as its own closure/file. Phase 16 refactors if/when it sees a clean factoring. Don't preemptively couple.
+   - **RESOLVED:** Plan 03 ships scroll-depth.ts as its own file per CONTEXT.md Claude's Discretion; Phase 16 may refactor later.
 
 ---
 
