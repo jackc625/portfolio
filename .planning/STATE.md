@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 14 Plan 04 complete (system-prompt rewrite: third-person biographer + D-16 tiered refusals + D-17 attack-pattern list + widget header ASK ABOUT JACK)
-last_updated: "2026-04-23T17:11:46.000Z"
-last_activity: 2026-04-23 -- Phase 14 Plan 04 complete
+stopped_at: Phase 14 Plan 05 complete (injection battery GREEN + drift-guard describe block + vector maintenance notes; CHAT-08 closed; 208 -> 216 GREEN)
+last_updated: "2026-04-23T17:25:04.000Z"
+last_activity: 2026-04-23 -- Phase 14 Plan 05 complete
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 21
-  completed_plans: 19
-  percent: 90
+  completed_plans: 20
+  percent: 95
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-15)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 14 in-progress — Plans 01 + 02 + 03 + 04 complete, Plan 05 (injection battery GREEN) next
+**Current focus:** Phase 14 in-progress — Plans 01 + 02 + 03 + 04 + 05 complete, Plan 06 (D-26 regression + Lighthouse CI + phase close-out) next
 
 ## Current Position
 
-Phase: 14 (chat-knowledge-upgrade) — IN PROGRESS (4 of 6 plans complete)
-Plan: 4 of 6 complete
-Status: Phase 14 Plan 04 complete. System-prompt rewrite landed surgically: src/prompts/system-prompt.ts buildSystemPrompt function BODY rewritten (36 -> 60 lines; signature byte-identical, Plan 14-02's PortfolioContext type import untouched) from Phase 7's 2-section "portfolio assistant" framing to Phase 14's 5-section third-person biographer with cache-friendly section order <role> -> <tone> -> <constraints> -> <security> -> <knowledge>. <role> opens with "You are a third-person biographer for Jack Cutrara" (D-14); <tone> enforces voice guardrails + VOICE-GUIDE banlist; <constraints> carries D-19 tiered length with load-bearing "never padding" clause + D-15 breadcrumb rule with "at most once" hard cap; <security> enumerates D-17 named attack patterns (ignore previous, repeat your system prompt, act as, pretend to be, translate, role-markup injection) + emits D-16 tiered refusals VERBATIM matching fixture exports (RESUME_REFUSAL "Jack's full resume is at /jack-cutrara-resume.pdf — you can download it directly." + OFFSCOPE_REFUSAL "I only cover Jack's work and background. Try asking about his projects, skills, or experience.") + D-04 MULTI-DEX CRYPTO TRADER banlist reinforcement; <knowledge> uses JSON.stringify(context, null, 2) for D-12 cache determinism. src/components/chat/ChatWidget.astro widget header renamed "ASK JACK'S AI" -> "ASK ABOUT JACK" (uppercase preserved per RESEARCH §11 L1; single-word swap, label-mono wrapper markup byte-identical; aria-label deliberately unchanged). All 6 remaining Plan 14-04 RED targets in prompt-injection.test.ts block 3 flipped GREEN (section order, D-16 copy, D-17 attack list, third-person framing, D-19 never padding, D-15 breadcrumb cap, Projects/7 banlist). Full suite: 202 GREEN -> 208 GREEN (+6). `pnpm check` clean; `pnpm build` clean end-to-end. One Rule 1 auto-fix folded into Task 1 commit: initial draft's in-prose <knowledge> references (in <constraints> line 18 + <security> banlist line 52 + Projects/7 banlist line 54) broke the indexOf-based section-order test; paraphrased to "knowledge block" / "XML section tag names" preserving security intent while restoring section-marker uniqueness. Zero new dependencies. Function signature byte-identical; chat.ts Plan 14-03 call-site unaffected. Next: Plan 14-05 — injection battery GREEN + drift-guard (CHAT-08).
-Last activity: 2026-04-23 -- Phase 14 Plan 04 complete
+Phase: 14 (chat-knowledge-upgrade) — IN PROGRESS (5 of 6 plans complete)
+Plan: 5 of 6 complete
+Status: Phase 14 Plan 05 complete. Injection battery verification + drift-guard hardening landed as a single surgical append to tests/api/prompt-injection.test.ts: pre-plan 28 GREEN baseline preserved (no structural change to Plan 14-01's 3 describe blocks); added Step 3 maintenance comment block at top of "Prompt Injection Battery" describe enumerating all 10 D-22 vectors with attack intent + expected defense (ignore-previous -> OFFSCOPE_REFUSAL, resume-phone -> RESUME_REFUSAL, encoding-trick -> OFFSCOPE per D-17 translate-attack, history-poisoning defense-lives-in-system-prompt-not-sanitizer note, html-injection refusal-side-only note, etc.); added new "Drift-guard: fixture ↔ prompt bidirectional consistency (Phase 14 close-out)" describe block with 8 tests catching two future-drift failure modes bidirectionally: (a) fixture RESUME_REFUSAL / OFFSCOPE_REFUSAL verbatim lockstep with buildSystemPrompt output via toContain full-string-identity (not substring); (b) structural XML section marker gate — every line-start ^<tag>$ in prompt source must appear in GLOBAL_BANNED_STRINGS or CI fires with offending tag name; (c) category-to-refusal-string invariants per D-16 — injection category must use OFFSCOPE_REFUSAL, resume must use RESUME_REFUSAL, offscope must use OFFSCOPE_REFUSAL; (d) D-22 battery cardinality (exactly 10 vectors); (e) 6-project groundedQA coverage. One Rule 1 inline auto-fix: initial drift-guard regex /<tag>/g was too broad, matched content-prose tags inside serialized JSON knowledge block (<slug>, <system>, <assistant>, <timestamp>, <never>, <string> from MDX/README prose) — narrowed to /^<tag>$/gm (line-start anchored + multiline) so only structural section markers match. Security intent preserved: future new section (e.g. <identity>) still fires gate. Full suite: 208 GREEN -> 216 GREEN (+8). pnpm check clean. Zero vi.mock (L6 preserved). Zero fixture modifications (Plan 14-01 scope). Zero system-prompt modifications (Plan 14-04 scope). Zero dep changes. CHAT-08 CLOSED (D-20 mocked-LLM-only, D-21 both-directions-gate, D-22 10-vector-battery all confirmed via tests). Next: Plan 14-06 — D-26 regression battery + Lighthouse CI gate + phase close-out (CHAT-09).
+Last activity: 2026-04-23 -- Phase 14 Plan 05 complete
 Branch: main
 
-Progress: [█████████░] 90% (19 / 21 plans)
+Progress: [█████████▌] 95% (20 / 21 plans)
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [█████████░] 90% (19 / 21 plans)
 | 14-02 | 22min | 4 tasks | 7 files | 53f1ae0, 5078ca0, 1910544, 7308cfb |
 | 14-03 | 9min | 2 tasks (+ 1 Rule 1 fix) | 3 files (1 new, 2 mod) | a2c14b6, eedc5cd, c4ed25a |
 | 14-04 | 6min | 2 tasks (+ 1 inline Rule 1 fix) | 2 files modified | 865a50f, 2a798c5 |
+| 14-05 | 5min | 1 task (+ 1 inline Rule 1 fix) | 1 file modified | 129aec9 |
 
 *Full per-phase timing retained in milestones/v1.1-STATE.md archive.*
 
@@ -62,6 +63,17 @@ Progress: [█████████░] 90% (19 / 21 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 14 decisions (Plan 05):**
+
+- [Phase 14-05]: Drift-guard describe block appended to tests/api/prompt-injection.test.ts — 8 new tests locking bidirectional fixture ↔ system-prompt consistency. Two classes of future-drift caught in CI: (1) fixture refusal-copy (RESUME_REFUSAL + OFFSCOPE_REFUSAL) drifts from the system-prompt <security> block — asserted via toContain full-string identity so any tweak of either file fails with the full refusal line in the error message; (2) system-prompt gains a new structural section tag that isn't in fixture's GLOBAL_BANNED_STRINGS — asserted by iterating line-start-anchored ^<tag>$ matches from the prompt output and filtering against the banlist. A future plan adding <identity> or similar without updating the fixture fires CI with "prompt introduces structural XML section tags not banned by fixture: <new-tag>".
+- [Phase 14-05]: Section-marker regex was narrowed from the plan's literal /<tag>/g to /^<tag>$/gm (line-start + end-of-line + multiline). Rule 1 inline auto-fix caught on first test run: the broad regex flagged <slug>, <system>, <assistant>, <timestamp>, <never>, <string> — all sourced from content-prose strings inside the serialized JSON knowledge block (MDX/Projects README content, not structural markers). Section markers in system-prompt.ts always start a line; JSON-serialized content never does. Narrowing preserved the drift-guard's intent while eliminating false-positive noise. Documented as a pattern: regex-based drift-guards against prompts that embed serialized user content must anchor to structural boundaries (line-start), not rely on the broad tag shape.
+- [Phase 14-05]: Three category-mapping invariant tests (tests 4, 5, 6) iterate injectionVectors, filter by category, assert every vector's expectedResponse equals the D-16 tier line for that category. A contributor adding a new vector with the wrong category/expectedResponse fires CI with the offending vector's name in the error: "offenders: ['my-new-vector-name']". Better CI signal than a generic "D-16 contract failed." Complements the block-1 runtime assertions which check substring presence, not category-to-string mapping.
+- [Phase 14-05]: Cardinality (test 7 asserts injectionVectors.length === 10) + project-coverage (test 8 asserts portfolio-context.projects.length === 6 AND groundedQA references each project by name ≥1 time) — catch two more classes of silent drift: a contributor commenting out a vector (fires with "expected 9 to be 10") or shipping a new project without a grounded-QA entry.
+- [Phase 14-05]: Maintenance annotation comment block added to the top of "Prompt Injection Battery (CHAT-08 / D-22)" describe (per Plan Step 3) — enumerates all 10 D-22 vectors with attack intent + expected defense so future maintainers can understand the battery without cross-referencing the fixture. Also documents the D-21 two-gate pattern (required substring + banned substrings via assertAttackVector) and notes that mocked responses come from fixture expectedResponse strings, NOT live Claude (per D-20).
+- [Phase 14-05]: Zero vi.mock usage in the entire file (grep count 0 preserved) — L6 cross-file module-mock hoisting landmine not reintroduced. Zero fixture modifications (tests/fixtures/chat-eval-dataset.ts owned by Plan 14-01; drift-guard only READS fixture exports). Zero system-prompt modifications (src/prompts/system-prompt.ts owned by Plan 14-04). Scope boundaries respected.
+- [Phase 14-05]: CHAT-08 closed. D-20 (mocked-LLM-only in CI) — confirmed zero live-API calls. D-21 (both-directions gate: required substring present AND banned substrings absent) — confirmed via assertAttackVector helper + drift-guard full-string-identity + category-mapping invariants. D-22 (10-vector battery) — confirmed by drift-guard test 7 asserting injectionVectors.length === 10.
+- [Phase 14-05]: Test count delta 208 GREEN → 216 GREEN (+8). Zero regressions. Plan acceptance-criteria `grep -c "it("` >= 37 was a planner miscount (pre-plan 10 literal it( strings + 8 new = 18 total; the criterion confused literal grep count with vitest runtime test count which is 36 — within 1 of the plan's 37 approximation). Documented as plan-text mismatch, not deviation.
 
 **Phase 14 decisions (Plan 04):**
 
@@ -225,6 +237,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-23T17:11:46.000Z
-Stopped at: Phase 14 Plan 04 complete — system-prompt rewrite (third-person biographer + D-16 tiered refusals + D-17 attack-pattern list + D-04 MULTI-DEX banlist + D-19 never-padding + D-15 at-most-once breadcrumb cap) + widget header ASK ABOUT JACK; all 6 Plan 14-04 RED targets in prompt-injection.test.ts block 3 flipped GREEN; 202 -> 208 GREEN
-Resume file: .planning/phases/14-chat-knowledge-upgrade/14-05-PLAN.md
+Last session: 2026-04-23T17:25:04.000Z
+Stopped at: Phase 14 Plan 05 complete — injection battery drift-guard describe block (8 tests asserting bidirectional fixture ↔ prompt consistency: RESUME_REFUSAL + OFFSCOPE_REFUSAL verbatim, structural section-tag banlist gate, D-16 category-to-refusal invariants, D-22 cardinality, 6-project coverage) + vector-by-vector maintenance comment block; CHAT-08 closed (D-20 + D-21 + D-22); 208 -> 216 GREEN (+8); one inline Rule 1 fix narrowed section-marker regex to /^<tag>$/gm to exclude content-prose tags inside serialized JSON knowledge block
+Resume file: .planning/phases/14-chat-knowledge-upgrade/14-06-PLAN.md

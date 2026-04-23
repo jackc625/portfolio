@@ -95,7 +95,7 @@
 - [x] 14-02-PLAN.md — Generator + static/generated split + build-chain (CHAT-03, CHAT-04) (2026-04-23)
 - [x] 14-03-PLAN.md — SDK wire-up: cache_control + max_tokens (CHAT-05, CHAT-07) (2026-04-23)
 - [x] 14-04-PLAN.md — System prompt rewrite + widget header rename (CHAT-06) (2026-04-23)
-- [ ] 14-05-PLAN.md — Injection battery GREEN + drift-guard (CHAT-08)
+- [x] 14-05-PLAN.md — Injection battery GREEN + drift-guard (CHAT-08) (2026-04-23)
 - [ ] 14-06-PLAN.md — D-26 regression + Lighthouse CI + phase close-out (CHAT-09)
 
 ### Phase 15: Analytics Instrumentation
