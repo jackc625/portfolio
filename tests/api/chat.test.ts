@@ -1,10 +1,14 @@
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   validateRequest,
   sanitizeMessages,
   isAllowedOrigin,
   MAX_BODY_SIZE,
 } from "../../src/lib/validation";
+import { buildChatRequestArgs } from "../../src/pages/api/chat-request-shape";
+import portfolioContext from "../../src/data/portfolio-context.json";
 
 // These tests exercise the validation + SSE formatting logic as unit tests.
 // We test the contract: validation rules, CORS checks, body size limits, and SSE format.
@@ -184,6 +188,81 @@ describe("Chat API Endpoint Contract (D-09)", () => {
         expect(sanitized[0].role).toBe("user");
         expect(sanitized[1].role).toBe("assistant");
       }
+    });
+  });
+
+  describe("SDK request shape (CHAT-05 / CHAT-07)", () => {
+    // Primary -- structural: call the exported helper and introspect the returned object.
+    const args = buildChatRequestArgs(portfolioContext as never, [
+      { role: "user", content: "Hello" },
+    ]);
+
+    it("max_tokens is 768 (CHAT-07 -- up from Phase 7's 512)", () => {
+      expect(args.max_tokens).toBe(768);
+    });
+
+    it("system is an ARRAY of TextBlockParam, NOT a bare string (L2 landmine guard -- structural)", () => {
+      expect(Array.isArray(args.system)).toBe(true);
+      expect((args.system as unknown[]).length).toBe(1);
+      const block = (args.system as Array<{
+        type: string;
+        text: string;
+        cache_control: { type: string };
+      }>)[0];
+      expect(block.type).toBe("text");
+      expect(typeof block.text).toBe("string");
+      // Text content must come from buildSystemPrompt -- i.e., contain "<role>" after the rewrite.
+      expect(block.text.length).toBeGreaterThan(100);
+      expect(block.text).toContain("<role>");
+    });
+
+    it("cache_control is { type: \"ephemeral\" } per D-12 (CHAT-05 -- structural)", () => {
+      const block = (args.system as Array<{
+        cache_control: { type: string };
+      }>)[0];
+      expect(block.cache_control).toEqual({ type: "ephemeral" });
+    });
+
+    it("model is claude-haiku-4-5 and stream is true (Phase 7 D-26 invariants preserved in helper)", () => {
+      expect(args.model).toBe("claude-haiku-4-5");
+      expect(args.stream).toBe(true);
+    });
+
+    it("messages array is passed through unmodified", () => {
+      expect(args.messages).toEqual([{ role: "user", content: "Hello" }]);
+    });
+
+    // Secondary -- source-text guards on chat.ts. Cheap regression protection against
+    // a future refactor that replaces buildChatRequestArgs() with an inline literal.
+    const chatSource = readFileSync(
+      join(process.cwd(), "src", "pages", "api", "chat.ts"),
+      "utf8"
+    );
+
+    it("chat.ts calls buildChatRequestArgs() (L2 secondary guard -- no inline literal)", () => {
+      expect(
+        chatSource,
+        "chat.ts must call buildChatRequestArgs -- replacing it with an inline literal risks cache-silent-disable drift"
+      ).toContain("buildChatRequestArgs(portfolioContext, messages)");
+      // Negative guards against the pre-plan inline shapes.
+      expect(chatSource).not.toContain("max_tokens: 512");
+      expect(chatSource).not.toMatch(/system:\s*buildSystemPrompt\(portfolioContext\)/);
+    });
+
+    it("preserves the Cloudflare-SSE Content-Encoding: none header (AI-SPEC pitfall #4)", () => {
+      expect(chatSource).toContain('"Content-Encoding": "none"');
+    });
+
+    it("preserves Phase 7 D-26 invariants: CORS, rate-limiter, sanitize, stream:true call site", () => {
+      expect(chatSource).toContain("isAllowedOrigin(origin)");
+      expect(chatSource).toContain("rateLimiter.limit({ key: ip })");
+      expect(chatSource).toContain("sanitizeMessages(validation.data.messages)");
+      // stream:true is in the helper file now -- assert it there.
+      const helperSource = readFileSync(
+        join(process.cwd(), "src", "pages", "api", "chat-request-shape.ts"),
+        "utf8"
+      );
+      expect(helperSource).toContain("stream: true");
     });
   });
 });
