@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 15 context gathered — ready for /gsd-plan-phase 15
-last_updated: "2026-04-24T00:15:00.000Z"
-last_activity: 2026-04-23 -- Phase 15 discuss-phase complete (15-CONTEXT.md + 15-DISCUSSION-LOG.md committed)
+stopped_at: Phase 15 planned — ready for /gsd-execute-phase 15
+last_updated: "2026-04-23T00:00:00.000Z"
+last_activity: 2026-04-23 -- Phase 15 plan-phase complete (5 plans across 3 waves, RESEARCH + VALIDATION + PATTERNS committed)
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 22
+  total_plans: 27
   completed_plans: 22
-  percent: 100
+  percent: 81
 ---
 
 # Project State
@@ -25,13 +25,13 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 
 ## Current Position
 
-Phase: 15 (analytics-instrumentation) — CONTEXT GATHERED (ready for /gsd-plan-phase)
-Plan: 6 of 6 complete
-Status: Phase 14 COMPLETE. All 6 plans shipped (14-01 through 14-06) on branch `phase-14-preview`. CHAT-03..CHAT-09 all closed in REQUIREMENTS.md. All 7 T-14-* threats RETIRED with cited evidence in 14-SUMMARY.md + 14-VERIFICATION.md. D-26 9-item regression gate closed: 6/6 automated PASS, rows 4 + 7 PASS via DevTools manual on CF Pages preview, row 3 is pre-existing binding gap (code path byte-identical to Phase 7; follow-up todo at `.planning/todos/pending/2026-04-23-configure-chat-rate-limiter-binding.md`). Lighthouse holds on both `/` and `/projects/seatwatch`: Performance 100 / A11y 95 / BP 100 / TBT 0 ms / CLS <=0.002 (SEO 66 on preview is CF Pages auto-noindex; production will score 100 — confirmed via header sweep on jackcutrara.com). Live-model injection sanity (REVIEWS.md Codex HIGH-1): 5 PASS + 3 NOTE + 0 FAIL across 8 vectors; zero banned-substring leaks. Full suite: 220/220 GREEN across 26 files (up from Plan 14-05's 216 due to +4 CORS preview-subdomain tests added via the adjacent CORS fix commit e17d0f8). pnpm check clean. pnpm build clean end-to-end. CF Pages build command confirmed default (`pnpm run build`, output `dist/client`). Zero new runtime dependencies across the entire phase. Next: /gsd-verify-work against 14-SUMMARY.md; merge `phase-14-preview` -> `main`; /gsd-discuss-phase 15 (Analytics — ANAL-03 observability hook picks up cache-hit-rate + per-IP request counter wiring seams left by this phase).
-Last activity: 2026-04-23 -- Phase 14 complete
+Phase: 15 (analytics-instrumentation) — READY TO EXECUTE (5 plans across 3 waves)
+Plan: 0 of 5 complete
+Status: Phase 15 PLANNED. Artifacts in `.planning/phases/15-analytics-instrumentation/`: 15-CONTEXT.md (discuss, 15 decisions D-01..D-15), 15-RESEARCH.md (all decisions validated, Validation Architecture feeds 15-VALIDATION.md, MEDIUM callout on CF Pages custom-domain auto-inject — fallback pre-approved), 15-VALIDATION.md (Nyquist approved, nyquist_compliant: true), 15-PATTERNS.md (7 files classified with in-codebase analogs), 15-01..05-PLAN.md (Wave 1: 15-01 BaseLayout Umami `<script is:inline>` PROD gate + build test, 15-03 scroll-depth observer + sentinels; Wave 2: 15-02 analytics.ts forwarder + outbound classifier + resume dedup + BaseLayout import wiring for both scripts, 15-04 chat.ts 4-line SSE truncated-frame parser additive diff + D-26 client-only re-run; Wave 3: 15-05 VERIFICATION.md scaffold + cache-hit-rate backlog todo + Umami UUID human-action checkpoint). Plan-checker VERIFICATION PASSED after 1 revision iteration (3 blockers + 5 warnings fully resolved). Coverage: ANAL-01..06 all mapped. 13 threats registered (T-15-*). D-15 server byte-identical gate enforced in Plan 04 acceptance criteria. D-26 Chat Regression Gate scoped to client surface only per D-15 (4 items mapped: XSS, focus trap, localStorage, SSE parse). Zero new runtime dependencies. Next: /gsd-execute-phase 15 after `/clear`.
+Last activity: 2026-04-23 -- Phase 15 plan-phase complete
 Branch: phase-14-preview (ahead of main by the Phase 14 series + CORS adjacent fix e17d0f8 + close-out commits; awaiting merge)
 
-Progress: [██████████] 100% (21 / 21 plans)
+Progress: [████████░░] 81% (22 / 27 plans — Phase 15 adds 5 planned)
 
 ## Performance Metrics
 
