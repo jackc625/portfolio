@@ -19,13 +19,29 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response("Forbidden", { status: 403 });
   }
 
-  // Body size check — reject before parsing JSON to prevent memory abuse
+  // Body size check — reject before parsing JSON to prevent memory abuse.
+  // Uses Number() (not parseInt) so malformed values are explicitly rejected:
+  //   "abc"     → NaN       → reject
+  //   "-1"      → -1        → reject (negative)
+  //   "32768.5" → 32768.5   → reject (non-integer)
+  // parseInt would treat these as "within limits" (NaN > limit is false,
+  // -1 > limit is false, fractional → floor), silently bypassing the guard.
+  // Cloudflare Workers enforces its own body cap upstream, so this is
+  // defense-in-depth — the intent is fail-fast before body is read.
   const contentLength = request.headers.get("Content-Length");
-  if (contentLength && parseInt(contentLength, 10) > MAX_BODY_SIZE) {
-    return new Response(JSON.stringify({ error: "payload_too_large" }), {
-      status: 413,
-      headers: { "Content-Type": "application/json" },
-    });
+  if (contentLength) {
+    const parsed = Number(contentLength);
+    if (
+      !Number.isFinite(parsed) ||
+      !Number.isInteger(parsed) ||
+      parsed < 0 ||
+      parsed > MAX_BODY_SIZE
+    ) {
+      return new Response(JSON.stringify({ error: "payload_too_large" }), {
+        status: 413,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   // S5/D-10/D-24: Rate limiting via Cloudflare binding (skipped in local dev

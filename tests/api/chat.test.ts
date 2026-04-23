@@ -33,18 +33,41 @@ describe("Chat API Endpoint Contract (D-09)", () => {
       }
     });
 
+    // Mirrors the endpoint's Content-Length check (WR-02). Uses Number() so
+    // malformed values (NaN, negative, fractional) are rejected as "too large"
+    // instead of being silently accepted like parseInt would have.
+    const rejectsContentLength = (raw: string): boolean => {
+      const parsed = Number(raw);
+      return (
+        !Number.isFinite(parsed) ||
+        !Number.isInteger(parsed) ||
+        parsed < 0 ||
+        parsed > MAX_BODY_SIZE
+      );
+    };
+
     it("rejects Content-Length exceeding MAX_BODY_SIZE (32KB)", () => {
-      // Simulates the endpoint's Content-Length check
-      const contentLength = "65536";
-      const exceeds = parseInt(contentLength, 10) > MAX_BODY_SIZE;
-      expect(exceeds).toBe(true);
+      expect(rejectsContentLength("65536")).toBe(true);
       expect(MAX_BODY_SIZE).toBe(32768);
     });
 
     it("accepts Content-Length within MAX_BODY_SIZE", () => {
-      const contentLength = "1024";
-      const exceeds = parseInt(contentLength, 10) > MAX_BODY_SIZE;
-      expect(exceeds).toBe(false);
+      expect(rejectsContentLength("1024")).toBe(false);
+    });
+
+    it("rejects malformed Content-Length (non-numeric)", () => {
+      // "abc" → NaN → must be rejected, not silently allowed
+      expect(rejectsContentLength("abc")).toBe(true);
+    });
+
+    it("rejects negative Content-Length", () => {
+      // "-1" → -1 → must be rejected, not silently allowed
+      expect(rejectsContentLength("-1")).toBe(true);
+    });
+
+    it("rejects fractional Content-Length", () => {
+      // "32768.5" → non-integer → reject
+      expect(rejectsContentLength("32768.5")).toBe(true);
     });
   });
 
