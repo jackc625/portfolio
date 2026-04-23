@@ -15,14 +15,23 @@ declare global {
 
 export {};
 
-// Skeleton — Task 2 fills in the body. Keep signature stable for the test file.
+// Handle a single observer entry: fire umami scroll_depth event and unobserve target.
+// Exported for unit testing — driven synthetically with mock IntersectionObserverEntry.
 export function handleScrollEntry(
   entry: IntersectionObserverEntry,
   observer: IntersectionObserver
 ): void {
-  // TODO(Task 2): fire scroll_depth event + unobserve
-  void entry;
-  void observer;
+  if (!entry.isIntersecting) return;
+  const percentAttr = (entry.target as HTMLElement).getAttribute("data-percent");
+  if (!percentAttr) return;
+  const percent = Number(percentAttr);
+  const pathname = typeof location !== "undefined" ? location.pathname : "";
+  const slug = pathname.split("/").pop() || "unknown";
+  // Optional-chaining guards the L10 load-race window where Umami's <script>
+  // hasn't loaded yet — silent no-op rather than thrown error.
+  window.umami?.track("scroll_depth", { percent, slug });
+  // D-08: one-shot per page-view; reloads refire (matches GA4 semantics).
+  observer.unobserve(entry.target);
 }
 
 let scrollDepthInitialized = false;
@@ -30,9 +39,25 @@ let scrollDepthInitialized = false;
 export function initScrollDepth(): void {
   if (scrollDepthInitialized) return;
   const sentinels = document.querySelectorAll<HTMLElement>(".scroll-sentinel");
-  if (sentinels.length === 0) return; // Not on a /projects/[id] route — no-op
+  if (sentinels.length === 0) return; // Not on a /projects/[id] route (D-05 scope gate)
   scrollDepthInitialized = true;
-  // TODO(Task 2): construct observer + observe each sentinel
+
+  // D-06: single IntersectionObserver watches all 4 sentinels.
+  // D-07: threshold 0 + sentinel-top-enters-viewport semantics.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        handleScrollEntry(entry, observer);
+      }
+    },
+    { threshold: 0, rootMargin: "0px" }
+  );
+
+  sentinels.forEach((el) => observer.observe(el));
+
+  if (import.meta.env.DEV) {
+    console.log("[scroll-depth] observer attached to", sentinels.length, "sentinels");
+  }
 }
 
 if (typeof document !== "undefined") {

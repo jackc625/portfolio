@@ -77,10 +77,36 @@ const { Content } = await render(project);
         <NextProject project={nextProject} />
       </Container>
     </section>
+
+    {/* Phase 15 D-06: scroll-depth sentinels — 4 invisible divs at CSS */}
+    {/* top 25/50/75/100% of <article> height. Observer in */}
+    {/* src/scripts/scroll-depth.ts fires scroll_depth events per D-05..D-08. */}
+    <div class="scroll-sentinel" data-percent="25" aria-hidden="true"></div>
+    <div class="scroll-sentinel" data-percent="50" aria-hidden="true"></div>
+    <div class="scroll-sentinel" data-percent="75" aria-hidden="true"></div>
+    <div class="scroll-sentinel" data-percent="100" aria-hidden="true"></div>
   </article>
 </BaseLayout>
 
 <style>
+  /* Phase 15 D-06, D-07: scroll-depth sentinels. <article> needs position: relative
+     so sentinels position as percent of article height (survives reflow). No layout
+     impact on existing children — none are absolutely positioned. */
+  article {
+    position: relative;
+  }
+  .scroll-sentinel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    pointer-events: none;
+  }
+  .scroll-sentinel[data-percent="25"]  { top: 25%; }
+  .scroll-sentinel[data-percent="50"]  { top: 50%; }
+  .scroll-sentinel[data-percent="75"]  { top: 75%; }
+  .scroll-sentinel[data-percent="100"] { top: 100%; }
+
   /* Project header */
   .project-meta {
     color: var(--ink-muted);
