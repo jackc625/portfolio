@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 15 planned — ready for /gsd-execute-phase 15
-last_updated: "2026-04-23T00:00:00.000Z"
-last_activity: 2026-04-23 -- Phase 15 plan-phase complete (5 plans across 3 waves, RESEARCH + VALIDATION + PATTERNS committed)
+stopped_at: Phase 15 Plan 01 complete — Umami tag in BaseLayout + 7 source-text tests GREEN; ready for Plan 02 (or Wave 1 sibling Plan 03)
+last_updated: "2026-04-23T23:45:08Z"
+last_activity: 2026-04-23 -- Plan 15-01 executed (RED a696b34 + GREEN 39cb2d1; 235/235 tests; pnpm build clean)
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 27
-  completed_plans: 22
-  percent: 81
+  completed_plans: 23
+  percent: 85
 ---
 
 # Project State
@@ -25,13 +25,13 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 
 ## Current Position
 
-Phase: 15 (analytics-instrumentation) — READY TO EXECUTE (5 plans across 3 waves)
-Plan: 0 of 5 complete
-Status: Phase 15 PLANNED. Artifacts in `.planning/phases/15-analytics-instrumentation/`: 15-CONTEXT.md (discuss, 15 decisions D-01..D-15), 15-RESEARCH.md (all decisions validated, Validation Architecture feeds 15-VALIDATION.md, MEDIUM callout on CF Pages custom-domain auto-inject — fallback pre-approved), 15-VALIDATION.md (Nyquist approved, nyquist_compliant: true), 15-PATTERNS.md (7 files classified with in-codebase analogs), 15-01..05-PLAN.md (Wave 1: 15-01 BaseLayout Umami `<script is:inline>` PROD gate + build test, 15-03 scroll-depth observer + sentinels; Wave 2: 15-02 analytics.ts forwarder + outbound classifier + resume dedup + BaseLayout import wiring for both scripts, 15-04 chat.ts 4-line SSE truncated-frame parser additive diff + D-26 client-only re-run; Wave 3: 15-05 VERIFICATION.md scaffold + cache-hit-rate backlog todo + Umami UUID human-action checkpoint). Plan-checker VERIFICATION PASSED after 1 revision iteration (3 blockers + 5 warnings fully resolved). Coverage: ANAL-01..06 all mapped. 13 threats registered (T-15-*). D-15 server byte-identical gate enforced in Plan 04 acceptance criteria. D-26 Chat Regression Gate scoped to client surface only per D-15 (4 items mapped: XSS, focus trap, localStorage, SSE parse). Zero new runtime dependencies. Next: /gsd-execute-phase 15 after `/clear`.
-Last activity: 2026-04-23 -- Phase 15 plan-phase complete
-Branch: phase-14-preview (ahead of main by the Phase 14 series + CORS adjacent fix e17d0f8 + close-out commits; awaiting merge)
+Phase: 15 (analytics-instrumentation) — IN PROGRESS (1 of 5 plans complete; 15-01 shipped, Wave 1 sibling 15-03 may run next or in parallel)
+Plan: 1 of 5 complete (15-01 done; 15-02, 15-03, 15-04, 15-05 pending)
+Status: Plan 15-01 COMPLETE. Umami Cloud `<script is:inline defer src="https://cloud.umami.is/script.js" data-website-id={WEBSITE_ID} data-domains="jackcutrara.com" />` injected into `src/layouts/BaseLayout.astro` `<head>` between `<SEO/>` (line 87) and first `<Font/>` preload (line 96), wrapped in `{import.meta.env.PROD && (...)}` belt-and-suspenders gate. WEBSITE_ID = "TODO_PHASE_15_UMAMI_ID" static literal at frontmatter line 47 (D-03; Jack replaces pre-deploy per `user_setup.dashboard_config`). 7 source-text assertions in `tests/build/umami-tag-present.test.ts` lock the tag-shape contract: cloud.umami.is/script.js src, is:inline directive, data-domains filter, defer attribute, data-website-id present, PROD gate, drift-guard `is:inline` count <= 2. Test counts: 228 pre-existing + 7 new = 235/235 GREEN. `pnpm check` clean (0/0/0). `pnpm build` clean end-to-end; `dist/client/index.html` emits `<script defer src="https://cloud.umami.is/script.js" data-website-id="TODO_PHASE_15_UMAMI_ID" data-domains="jackcutrara.com">` (Astro strips compile-time `is:inline` directive, preserves src + data-* verbatim). Landmines L2 (defer-only), L3 (is:inline mandatory), L4 (conditional in template position) all addressed per 15-RESEARCH.md. ANAL-01 + ANAL-06 marked complete in REQUIREMENTS.md. ANAL-02 still operational/dashboard-toggle (Plan 05 verifies). D-15 server-byte-identical gate untouched (server `src/pages/api/chat.ts` not modified). D-26 chat client-only surface untouched (chat.ts diff lives in Plan 04). Two operational tasks captured for pre-deploy: (1) Umami Cloud website entry + UUID swap on BaseLayout.astro:47; (2) CF Web Analytics dashboard toggle. Both documented in `15-01-SUMMARY.md §User Setup Required`. Next: Plan 15-03 (scroll-depth observer + sentinels — Wave 1 sibling, no file overlap with 15-01) or Plan 15-02 (analytics.ts forwarder — Wave 2, depends on 15-01).
+Last activity: 2026-04-23T23:45:08Z -- Plan 15-01 GREEN
+Branch: main (Plan 15-01 commits a696b34 + 39cb2d1 on main per branching_strategy: none + use_worktrees: false)
 
-Progress: [████████░░] 81% (22 / 27 plans — Phase 15 adds 5 planned)
+Progress: [████████▌░] 85% (23 / 27 plans — 1 of Phase 15's 5 plans complete)
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Progress: [████████░░] 81% (22 / 27 plans — Phase 15 adds 
 | 14-04 | 6min | 2 tasks (+ 1 inline Rule 1 fix) | 2 files modified | 865a50f, 2a798c5 |
 | 14-05 | 5min | 1 task (+ 1 inline Rule 1 fix) | 1 file modified | 129aec9 |
 | 14-06 | ~4h (3 session handoffs) | 5 tasks (Tasks 1+2 auto, Task 3 human-verify, Tasks 4+5 close-out) + 1 adjacent CORS fix | 4 files (14-VERIFICATION.md, 14-SUMMARY.md, STATE.md, ROADMAP.md) + 2 touched for adjacent fix (src/lib/validation.ts, tests/api/security.test.ts) | efaac4d, 01f7c07, e17d0f8, 4424d9f, 33f6de9 |
+| 15-01 | 6min | 2 tasks (TDD: RED + GREEN) | 2 files (1 new test, 1 modified layout) | a696b34, 39cb2d1 |
 
 *Full per-phase timing retained in milestones/v1.1-STATE.md archive.*
 
@@ -64,6 +65,18 @@ Progress: [████████░░] 81% (22 / 27 plans — Phase 15 adds 
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 15 decisions (Plan 01):**
+
+- [Phase 15-01]: Umami `<script is:inline defer src="https://cloud.umami.is/script.js" data-website-id={WEBSITE_ID} data-domains="jackcutrara.com">` lands at `src/layouts/BaseLayout.astro:94` between `<SEO/>` (line 87) and the first `<Font cssVariable="--font-display-src"/>` (line 96), wrapped in `{import.meta.env.PROD && (...)}` JSX-expression gate (D-01 belt-and-suspenders). Vite static-replaces the branch to `false` in dev + preview builds so the tag is literally absent from HTML. `data-domains` is the second-line server-side filter that drops events from mismatched `window.location.hostname` values. dist/client/index.html (and all 11 prerendered routes) emit the tag verbatim minus the compile-time `is:inline` directive (Astro strips it from output but preserves src + data-* — landmine L3 addressed).
+- [Phase 15-01]: WEBSITE_ID `const = "TODO_PHASE_15_UMAMI_ID"` lives at frontmatter line 47 with a 5-line comment annotation cross-referencing D-03 + plan `user_setup.dashboard_config`. Public literal pattern (Umami IDs are visible in HTML to every visitor — not secrets); matches CF Web Analytics token pattern; one fewer Cloudflare Pages env binding to manage. Single-point pre-deploy replacement on line 47 propagates through every page via JSX-expression interpolation in the `data-website-id={WEBSITE_ID}` attribute.
+- [Phase 15-01]: Landmine L2 (async vs defer) resolved as `defer`-only. CONTEXT.md D-02 said "async+defer" but HTML spec + Umami reference snippet converge on defer-only — when both attributes are present `async` wins and parser-blocking semantics regress. Task 2 acceptance criterion `grep -c 'async' src/layouts/BaseLayout.astro` returns 0 locking this; if a future contributor adds `async` the test guard fires.
+- [Phase 15-01]: Test file `tests/build/umami-tag-present.test.ts` ships 7 source-text assertions (no DOM env, pure node + readFileSync against `process.cwd()`/src/layouts/BaseLayout.astro). Mirrors `tests/client/chat-widget-header.test.ts:1-23` verbatim per 15-PATTERNS.md — the only existing pattern in the repo for asserting on `.astro` source. 6 of 7 went RED at Task 1 commit (a696b34) and flipped GREEN after Task 2 (39cb2d1); test #7 (drift guard `is:inline` count <= 2) was GREEN at baseline by design — flips RED only if BaseLayout grows >2 `is:inline` directives. Plan-text mismatch documented (planner expected 7 RED; same Phase 14-05 documented pattern).
+- [Phase 15-01]: Single-line `<script>` attribute layout in BaseLayout.astro (vs the multi-line shape originally drafted) — required to satisfy the line-oriented `grep -cE 'defer[[:space:]]+src="https://cloud\.umami\.is'` acceptance criterion. JSX comment annotations rewritten to describe intent ("Astro directive preserves external script tag + vendor attrs verbatim") rather than quote literal attribute names — prevents the comments from inflating `grep -c 'is:inline'` / `grep -c 'data-domains="..."'` / `grep -c 'async'` counts beyond the 1/1/0 acceptance targets. Final state: all 8 grep-based acceptance criteria pass exactly.
+- [Phase 15-01]: D-04 CF Web Analytics fallback path NOT shipped — auto-inject is assumed; Plan 05 `15-VERIFICATION.md` will curl jackcutrara.com post-deploy and grep for `cloudflareinsights.com` to confirm beacon presence. Explicit-`<script>` fallback is pre-approved in CONTEXT.md Claude's Discretion if Plan 05 finds auto-inject missing — no CONTEXT amendment needed.
+- [Phase 15-01]: D-26 Chat Regression Gate client-only surface unaffected. `src/scripts/chat.ts`, `src/components/chat/ChatWidget.astro`, all chat tests byte-identical. D-26 full client-only re-run remains scoped to Plan 04's chat.ts SSE-truncation parser change per D-15. Server `src/pages/api/chat.ts` byte-identical (D-15 server-byte-identical gate holds).
+- [Phase 15-01]: ANAL-01 + ANAL-06 marked complete in REQUIREMENTS.md. ANAL-02 stays Pending — operational dashboard toggle covered by Plan 05's verification cycle, not a code change. Two operational pre-deploy tasks captured in `15-01-SUMMARY.md §User Setup Required`: (1) create Umami Cloud website entry for jackcutrara.com, swap UUID into BaseLayout.astro:47; (2) enable CF Web Analytics in CF dashboard for portfolio Pages project + capture screenshot for 15-VERIFICATION.md.
+- [Phase 15-01]: Zero new dependencies (runtime or dev). Zero `pnpm install` runs. Zero new tooling. Test count delta 228 → 235 (+7). `pnpm test` 235/235 GREEN. `pnpm check` 0 errors / 0 warnings / 0 hints. `pnpm build` clean end-to-end (build:chat-context → wrangler types → astro check → astro build → pages-compat). Task duration ~6 minutes start to commit.
 
 **Phase 15 decisions (discuss-phase):**
 
@@ -261,6 +274,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-24T00:15:00.000Z
-Stopped at: Phase 15 context gathered — 15-CONTEXT.md + 15-DISCUSSION-LOG.md committed (commit 41f97a4, on main). All 4 gray areas discussed interactively with research-before-questions enabled: Umami + CF placement (D-01..D-04), scroll-depth strategy (D-05..D-08), outbound + event taxonomy (D-09..D-12), chat observability (D-13..D-16). Cache-hit-rate deferred to v1.3+; truncation wire-up completed client-only (server chat.ts byte-identical; minimal D-26 surface). User took every recommended option across all 16 decisions. Next: `/gsd-plan-phase 15` to draft executable plans.
-Resume file: .planning/phases/15-analytics-instrumentation/15-CONTEXT.md
+Last session: 2026-04-23T23:45:08Z
+Stopped at: Plan 15-01 complete on main. Two commits: a696b34 (test RED stubs) + 39cb2d1 (feat GREEN BaseLayout Umami tag). 15-01-SUMMARY.md authored at .planning/phases/15-analytics-instrumentation/15-01-SUMMARY.md. ANAL-01 + ANAL-06 marked complete in REQUIREMENTS.md. ROADMAP.md plan 15-01 row checked. STATE.md progress 22/27 → 23/27 (81% → 85%). Next plan in Phase 15 wave order: 15-03 (scroll-depth observer + sentinels — Wave 1 sibling, no file overlap with 15-01) or 15-02 (analytics.ts forwarder — Wave 2, depends on 15-01). Operational pre-deploy reminders captured in 15-01-SUMMARY.md §User Setup Required (Umami UUID swap on BaseLayout.astro:47 + CF Web Analytics dashboard toggle).
+Resume file: .planning/phases/15-analytics-instrumentation/15-01-SUMMARY.md

@@ -43,12 +43,12 @@
 
 ### Analytics (ANAL)
 
-- [ ] **ANAL-01**: Umami Cloud (free tier) integrated via `<script>` in BaseLayout, env-gated to production hostname only
+- [x] **ANAL-01**: Umami Cloud (free tier) integrated via `<script>` in BaseLayout, env-gated to production hostname only
 - [ ] **ANAL-02**: Cloudflare Web Analytics enabled as secondary for Core Web Vitals
 - [ ] **ANAL-03**: `src/scripts/analytics.ts` forwards existing `chat:analytics` CustomEvent (content-free per Phase 7 D-36) to Umami
 - [ ] **ANAL-04**: Delegated outbound-link tracking — clicks on `a[href^="http"]`, `mailto:`, and `.pdf` emit Umami events
 - [ ] **ANAL-05**: Recruiter-engagement events instrumented: resume download, chat widget open, outbound social link clicks, project-page scroll depth
-- [ ] **ANAL-06**: No cookie consent banner required (Umami + CF Web Analytics are cookie-free by design)
+- [x] **ANAL-06**: No cookie consent banner required (Umami + CF Web Analytics are cookie-free by design)
 
 ### Motion (MOTN)
 
@@ -110,12 +110,12 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | CHAT-07 | Phase 14 | Complete (14-03) |
 | CHAT-08 | Phase 14 | Complete (14-05) |
 | CHAT-09 | Phase 14 | Complete (14-06) |
-| ANAL-01 | Phase 15 | Pending |
+| ANAL-01 | Phase 15 | Complete (15-01) |
 | ANAL-02 | Phase 15 | Pending |
 | ANAL-03 | Phase 15 | Pending |
 | ANAL-04 | Phase 15 | Pending |
 | ANAL-05 | Phase 15 | Pending |
-| ANAL-06 | Phase 15 | Pending |
+| ANAL-06 | Phase 15 | Complete (15-01) |
 | MOTN-01 | Phase 16 | Pending |
 | MOTN-02 | Phase 16 | Pending |
 | MOTN-03 | Phase 16 | Pending |

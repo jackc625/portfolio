@@ -109,7 +109,7 @@
   3. The existing `chat:analytics` CustomEvent (content-free per Phase 7 D-36) forwards to Umami via `src/scripts/analytics.ts` with no new PII exposure and no change to Phase 7 streaming semantics
   4. Cloudflare Web Analytics is live as the secondary Core Web Vitals source, and the site ships without a cookie-consent banner because Umami + CF Web Analytics are cookie-free by design
 **Plans**: 5 plans
-- [ ] 15-01-PLAN.md — Umami `<script is:inline>` in BaseLayout with PROD gate + build-output tag-presence test + CF Web Analytics pre-deploy checklist (ANAL-01, ANAL-02, ANAL-06)
+- [x] 15-01-PLAN.md — Umami `<script is:inline>` in BaseLayout with PROD gate + build-output tag-presence test + CF Web Analytics pre-deploy checklist (ANAL-01, ANAL-02, ANAL-06) (2026-04-23)
 - [ ] 15-02-PLAN.md — `src/scripts/analytics.ts` forwarder + delegated outbound listener + resume-download dedup + 15 client tests (ANAL-03, ANAL-04, ANAL-05)
 - [ ] 15-03-PLAN.md — Scroll-depth observer `src/scripts/scroll-depth.ts` + 4 sentinels in `/projects/[id].astro` + 8 observer tests (ANAL-05)
 - [ ] 15-04-PLAN.md — chat.ts SSE truncated-frame parser (4-line additive diff) + streamChat export + sse-truncation.test.ts + D-26 client-only re-run (ANAL-05, D-14, D-15)
