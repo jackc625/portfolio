@@ -93,7 +93,7 @@
 **Plans**: 6 plans
 - [x] 14-01-PLAN.md — RED test stubs + eval fixture (Wave 0) (2026-04-23)
 - [x] 14-02-PLAN.md — Generator + static/generated split + build-chain (CHAT-03, CHAT-04) (2026-04-23)
-- [ ] 14-03-PLAN.md — SDK wire-up: cache_control + max_tokens (CHAT-05, CHAT-07)
+- [x] 14-03-PLAN.md — SDK wire-up: cache_control + max_tokens (CHAT-05, CHAT-07) (2026-04-23)
 - [ ] 14-04-PLAN.md — System prompt rewrite + widget header rename (CHAT-06)
 - [ ] 14-05-PLAN.md — Injection battery GREEN + drift-guard (CHAT-08)
 - [ ] 14-06-PLAN.md — D-26 regression + Lighthouse CI + phase close-out (CHAT-09)
@@ -167,6 +167,6 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 11. Polish | v1.1 | 3/3 | Complete | 2026-04-13 |
 | 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
-| 14. Chat Knowledge Upgrade | v1.2 | 2/6 | In progress | - |
+| 14. Chat Knowledge Upgrade | v1.2 | 3/6 | In progress | - |
 | 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |
 | 16. Motion Layer | v1.2 | 0/TBD | Not started | - |

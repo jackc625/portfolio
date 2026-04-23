@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 14 Plan 02 complete (build-chat-context generator + static/generated split)
-last_updated: "2026-04-23T12:38:00.000Z"
-last_activity: 2026-04-23 -- Phase 14 Plan 02 complete
+stopped_at: Phase 14 Plan 03 complete (SDK wire-up: cache_control: ephemeral + max_tokens: 768 via buildChatRequestArgs helper)
+last_updated: "2026-04-23T16:56:40.000Z"
+last_activity: 2026-04-23 -- Phase 14 Plan 03 complete
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 21
-  completed_plans: 17
-  percent: 81
+  completed_plans: 18
+  percent: 86
 ---
 
 # Project State
@@ -25,13 +25,13 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 
 ## Current Position
 
-Phase: 14 (chat-knowledge-upgrade) — IN PROGRESS (2 of 6 plans complete)
-Plan: 2 of 6 complete
-Status: Phase 14 Plan 02 complete. Build-time knowledge generator shipped (scripts/build-chat-context.mjs, 434 lines, 7 named exports, --check drift mode, multi-threshold token-budget observability, paragraph-boundary truncation, duplicate slug/source detection). Static/generated split seam landed: src/data/portfolio-context.static.json owns 5 hand-curated identity keys; src/data/portfolio-context.json regenerated with 6 projects alphabetically sorted, each with caseStudy (MDX body) + extendedReference (below-fence Projects/*.md content, daytrade truncated at 5000w paragraph boundary) + new structured about block. PortfolioContext interface extracted to src/prompts/portfolio-context-types.ts (REVIEWS.md Codex HIGH-2 decoupling — Plan 14-04 has zero type-shape overlap). system-prompt.ts function body byte-identical. build:chat-context + build:chat-context:check scripts wired into package.json build chain. 49005 estimated tokens (12x above Haiku 4.5 4096 cache floor). All 9 chat-context-integrity tests GREEN. Two grounded-QA anchor tests in prompt-injection.test.ts flipped GREEN collateral (SeatWatch anchors, "entry-level"). Zero new dependencies. `pnpm check` clean. Next: Plan 14-03 — SDK wire-up with cache_control: ephemeral + max_tokens (CHAT-05, CHAT-07).
-Last activity: 2026-04-23 -- Phase 14 Plan 02 complete
+Phase: 14 (chat-knowledge-upgrade) — IN PROGRESS (3 of 6 plans complete)
+Plan: 3 of 6 complete
+Status: Phase 14 Plan 03 complete. SDK wire-up landed surgically: src/prompts/chat-request-shape.ts (new 45-line pure helper exporting buildChatRequestArgs) returns the exact args object passed to Anthropic's messages.create -- system is Array<TextBlockParam> with cache_control: { type: "ephemeral" } on the single TextBlockParam wrapping buildSystemPrompt output (CHAT-05 / D-12), max_tokens bumped 512 -> 768 (CHAT-07), model/stream/messages passthrough preserved. src/pages/api/chat.ts surgical diff: 2 hunks, net -4 lines (131 -> 127); inline messages.create literal collapsed to 3-line helper call. All Phase 7 D-26 invariants byte-preserved (CORS isAllowedOrigin, rate-limiter binding, sanitizeMessages, SSE framing, Content-Encoding:none). tests/api/chat.test.ts gains 8 new tests (5 structural via buildChatRequestArgs import + 3 secondary source-text guards); 13 existing tests stay GREEN. Full suite: 194 GREEN -> 202 GREEN (+8). Zero @ts-ignore, zero casts beyond 3 `as const` literal narrowings. Zero new dependencies; @anthropic-ai/sdk@0.82.0 unchanged. One Rule 1 auto-fix commit: helper initially placed in src/pages/api/ was auto-exposed as public Astro route (/api/chat-request-shape) at build time; moved to src/prompts/ alongside system-prompt.ts, imports adjusted, tests still GREEN, dist/client/api/ now empty. `pnpm check` clean; `pnpm build` clean end-to-end. D-13 cache-hit-rate observability stays deferred (no usage-field reads added to for-await loop). Next: Plan 14-04 — buildSystemPrompt body rewrite (third-person biographer, tiered refusals, attack-pattern hardening per D-14..D-17; 6 RED tests in prompt-injection.test.ts become GREEN).
+Last activity: 2026-04-23 -- Phase 14 Plan 03 complete
 Branch: main
 
-Progress: [████████░░] 81% (17 / 21 plans)
+Progress: [█████████░] 86% (18 / 21 plans)
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [████████░░] 81% (17 / 21 plans)
 |------|----------|-------|-------|---------|
 | 14-01 | 9min | 3 tasks | 3 files | 77a4b0e, 0a76a4f, 5b96892 |
 | 14-02 | 22min | 4 tasks | 7 files | 53f1ae0, 5078ca0, 1910544, 7308cfb |
+| 14-03 | 9min | 2 tasks (+ 1 Rule 1 fix) | 3 files (1 new, 2 mod) | a2c14b6, eedc5cd, c4ed25a |
 
 *Full per-phase timing retained in milestones/v1.1-STATE.md archive.*
 
@@ -60,6 +61,17 @@ Progress: [████████░░] 81% (17 / 21 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 14 decisions (Plan 03):**
+
+- [Phase 14-03]: Helper file lives at src/prompts/chat-request-shape.ts (NOT src/pages/api/). Astro auto-discovers ANY .ts under src/pages/ as a public route. First-draft placement at src/pages/api/ emitted dist/client/api/chat-request-shape (returning runtime TypeError but publicly reachable as a URL). Rule 1 auto-fix (commit c4ed25a) moved the file to src/prompts/ alongside system-prompt.ts, updated imports in chat.ts and chat.test.ts, adjusted the test's source-text guard path. Pattern established repo-wide: pure helpers belong in src/prompts/ or src/lib/, never src/pages/. Caught by running `pnpm build` after initial Task 1+2 commits per plan success criteria -- cost 1 extra commit + ~2 minutes, not a deploy-time incident.
+- [Phase 14-03]: cache_control: { type: "ephemeral" } placed on the single TextBlockParam wrapping buildSystemPrompt output (D-12 single-breakpoint model). No beta headers, no ttl field (5m default used). @anthropic-ai/sdk@0.82.0 TextBlockParam type accepts cache_control natively -- zero @ts-ignore, zero `as unknown as`, zero casts beyond three `as const` literal-type narrowings on "text", "ephemeral", and `true` (required for SDK overload matching, not type circumvention).
+- [Phase 14-03]: chat.ts diff surface is exactly 2 hunks (imports + messages.create block), 1 line changed in first hunk + 7-lines-removed / 3-lines-added in second = net -4 lines (131 -> 127). All Phase 7 D-26 invariants byte-preserved: CORS `isAllowedOrigin(origin)` (grep=1), rate-limiter binding `CHAT_RATE_LIMITER` (grep=1) + `rateLimiter.limit({ key: ip })` (grep=1), `MAX_BODY_SIZE` guard (grep=1), `validateRequest` (grep=1), `sanitizeMessages(validation.data.messages)` (grep=1), `"Content-Encoding": "none"` (grep=1), mid-stream error handling structure byte-identical.
+- [Phase 14-03]: Test count diverged from plan narrative. Plan's `<action>` block drafted 5 structural tests; plan's `<acceptance_criteria>` required "at least 8 more than pre-plan state (8 new tests: 5 structural + 3 secondary source-text guards)". Executed per acceptance criteria = 8 new tests. The extra 3 tests split compound invariant checks into named it() blocks so CI failures surface the specific broken invariant ("cache_control.type is 'ephemeral'" vs "chat.ts calls buildChatRequestArgs()" vs "Content-Encoding:none preserved") rather than a blanket "the SDK-shape test failed". Better CI signal; not a deviation.
+- [Phase 14-03]: REVIEWS.md MEDIUM structural-test pattern shipped: `const args = buildChatRequestArgs(portfolioContext as never, [...]); expect(Array.isArray(args.system)).toBe(true); expect(block.cache_control).toEqual({type:"ephemeral"})`. L6 cross-file module-mock hoisting landmine avoided -- zero `vi.mock` usage across tests/api/chat.test.ts (grep=0). The helper extraction pattern is repo-wide reusable: any future SDK-args refactor should extract to a pure helper that the test can introspect.
+- [Phase 14-03]: D-13 cache observability stays deferred (no usage.cache_read_input_tokens / cache_creation_input_tokens reads added to the for-await loop in chat.ts). The for-await loop is byte-identical to pre-plan -- cache activation is LLM-API-side only. Phase 15 Analytics is the natural home for cache-hit-rate observability (content-free CustomEvent pattern).
+- [Phase 14-03]: Test suite state after this plan -- 202 pass / 6 fail (208 total). 6 failures are unchanged Plan 14-04 RED targets in prompt-injection.test.ts (section order, D-16 tiered refusal copy, D-17 attack-pattern list, third-person persona framing, D-19 never-padding clause, Projects/7 banlist reinforcement in prompt body). Delta vs Plan 14-02 end state: +8 new SDK-shape tests GREEN, zero flips in prompt-injection RED/GREEN mix.
+- [Phase 14-03]: Zero new dependencies, zero SDK version bump. @anthropic-ai/sdk@0.82.0 stable namespace unchanged. 11 deps + 12 devDeps unchanged. Full build chain (pnpm build:chat-context && wrangler types && astro check && astro build && pages-compat) runs clean end-to-end; dist/client/api/ is empty post-Rule-1 fix (chat endpoint served by dist/_worker.js SSR only).
 
 **Phase 14 decisions (Plan 02):**
 
@@ -199,6 +211,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-23T12:38:00.000Z
-Stopped at: Phase 14 Plan 02 complete — build-chat-context generator + static/generated split + build-chain wiring
-Resume file: .planning/phases/14-chat-knowledge-upgrade/14-03-PLAN.md
+Last session: 2026-04-23T16:56:40.000Z
+Stopped at: Phase 14 Plan 03 complete — SDK wire-up (cache_control: ephemeral + max_tokens: 768) via buildChatRequestArgs helper; Rule 1 auto-fix moved helper out of src/pages/api/
+Resume file: .planning/phases/14-chat-knowledge-upgrade/14-04-PLAN.md
