@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 phase: 14-chat-knowledge-upgrade
 source:
   - 14-SUMMARY.md
@@ -8,8 +8,9 @@ source:
   - 14-03-SUMMARY.md
   - 14-04-SUMMARY.md
   - 14-05-SUMMARY.md
+  - 14-07-SUMMARY.md
 started: 2026-04-23T19:38:26Z
-updated: 2026-04-23T20:12:00Z
+updated: 2026-04-23T23:45:00Z
 ---
 
 ## Current Test
@@ -129,7 +130,10 @@ blocked: 0
 ## Gaps
 
 - truth: "Chat reply about a project uses real MDX content AND completes coherently end-to-end (no mid-section truncation)"
-  status: failed
+  status: resolved
+  resolved_by: 14-07-PLAN.md
+  resolved_at: 2026-04-23T23:45:00Z
+  resolution_note: "Gap-closure 14-07: max_tokens raised 768 → 1500 in src/prompts/chat-request-shape.ts + message_delta handler added to src/pages/api/chat.ts that logs console.warn('chat.truncated', ...) and emits {\"truncated\":true} SSE frame when stop_reason === 'max_tokens'. Full suite 225/225 GREEN (+2 new tests covering both branches). 14-VERIFICATION.md amended with 6 gap-closure 14-07 annotations. See 14-07-SUMMARY.md."
   reason: "User reported: Response is project-grounded and accurate (correct stack, architecture, concurrency details from seatwatch.mdx) but the end of the message is truncated. Reply ends mid-section with the heading 'Why It Matters' and no body content — the closing paragraph never streams in. Likely the max_tokens: 768 ceiling raised in Plan 14-03 is clipping verbose project answers (SeatWatch MDX is one of the longer entries)."
   severity: major
   test: 3

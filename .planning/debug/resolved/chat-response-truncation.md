@@ -1,8 +1,9 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Chat reply about SeatWatch is grounded and accurate but ends mid-section at the heading 'Why It Matters' with no body content; SSE stream simply terminates early."
 created: 2026-04-23T00:00:00Z
-updated: 2026-04-23T00:00:00Z
+updated: 2026-04-23T23:45:00Z
+resolved_by: .planning/phases/14-chat-knowledge-upgrade/14-07-PLAN.md
 ---
 
 ## Current Focus

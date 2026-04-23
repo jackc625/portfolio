@@ -97,7 +97,7 @@
 - [x] 14-04-PLAN.md — System prompt rewrite + widget header rename (CHAT-06) (2026-04-23)
 - [x] 14-05-PLAN.md — Injection battery GREEN + drift-guard (CHAT-08) (2026-04-23)
 - [x] 14-06-PLAN.md — D-26 regression + Lighthouse CI + phase close-out (CHAT-09) (2026-04-23)
-- [ ] 14-07-PLAN.md — Gap closure: raise max_tokens 768 → 1500 + message_delta truncation observability (CHAT-07, CHAT-09; UAT test 3) (2026-04-23)
+- [x] 14-07-PLAN.md — Gap closure: raise max_tokens 768 → 1500 + message_delta truncation observability (CHAT-07, CHAT-09; UAT test 3) (2026-04-23)
 
 ### Phase 15: Analytics Instrumentation
 **Goal**: Jack can observe recruiter engagement on the live site — resume downloads, chat opens, outbound link clicks, and project scroll depth — via a Umami dashboard that fires only on production, uses zero cookies, and requires no consent banner.
