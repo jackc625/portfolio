@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 14 complete (incl. gap-closure 14-07) — ready for /gsd-verify-work
-last_updated: "2026-04-23T23:55:00.000Z"
-last_activity: 2026-04-23 -- Phase 14 gap-closure 14-07 complete
+stopped_at: Phase 15 context gathered — ready for /gsd-plan-phase 15
+last_updated: "2026-04-24T00:15:00.000Z"
+last_activity: 2026-04-23 -- Phase 15 discuss-phase complete (15-CONTEXT.md + 15-DISCUSSION-LOG.md committed)
 progress:
   total_phases: 5
   completed_phases: 3
@@ -21,11 +21,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-15)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 14 complete — all 6 plans shipped, 14-VERIFICATION.md signed off, 14-SUMMARY.md authored. Ready for /gsd-verify-work, then merge `phase-14-preview` -> `main`, then /gsd-discuss-phase 15.
+**Current focus:** Phase 15 context gathered — 15-CONTEXT.md + 15-DISCUSSION-LOG.md committed (commit 41f97a4). Ready for /gsd-plan-phase 15.
 
 ## Current Position
 
-Phase: 14 (chat-knowledge-upgrade) — COMPLETE (ready for /gsd-verify-work)
+Phase: 15 (analytics-instrumentation) — CONTEXT GATHERED (ready for /gsd-plan-phase)
 Plan: 6 of 6 complete
 Status: Phase 14 COMPLETE. All 6 plans shipped (14-01 through 14-06) on branch `phase-14-preview`. CHAT-03..CHAT-09 all closed in REQUIREMENTS.md. All 7 T-14-* threats RETIRED with cited evidence in 14-SUMMARY.md + 14-VERIFICATION.md. D-26 9-item regression gate closed: 6/6 automated PASS, rows 4 + 7 PASS via DevTools manual on CF Pages preview, row 3 is pre-existing binding gap (code path byte-identical to Phase 7; follow-up todo at `.planning/todos/pending/2026-04-23-configure-chat-rate-limiter-binding.md`). Lighthouse holds on both `/` and `/projects/seatwatch`: Performance 100 / A11y 95 / BP 100 / TBT 0 ms / CLS <=0.002 (SEO 66 on preview is CF Pages auto-noindex; production will score 100 — confirmed via header sweep on jackcutrara.com). Live-model injection sanity (REVIEWS.md Codex HIGH-1): 5 PASS + 3 NOTE + 0 FAIL across 8 vectors; zero banned-substring leaks. Full suite: 220/220 GREEN across 26 files (up from Plan 14-05's 216 due to +4 CORS preview-subdomain tests added via the adjacent CORS fix commit e17d0f8). pnpm check clean. pnpm build clean end-to-end. CF Pages build command confirmed default (`pnpm run build`, output `dist/client`). Zero new runtime dependencies across the entire phase. Next: /gsd-verify-work against 14-SUMMARY.md; merge `phase-14-preview` -> `main`; /gsd-discuss-phase 15 (Analytics — ANAL-03 observability hook picks up cache-hit-rate + per-IP request counter wiring seams left by this phase).
 Last activity: 2026-04-23 -- Phase 14 complete
@@ -64,6 +64,14 @@ Progress: [██████████] 100% (21 / 21 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 15 decisions (discuss-phase):**
+
+- [Phase 15-discuss]: D-01..D-04 — Umami + CF Web Analytics placement locked. Belt-and-suspenders prod gate: `import.meta.env.PROD` conditional AROUND the `<script>` tag + `data-domains="jackcutrara.com"` attribute on the tag. Script not in HTML on dev/preview; Umami also drops mismatched hostnames server-side. Preview subdomains (`*.portfolio-5wl.pages.dev`) silent by default. Placement: `<head>` after `<SEO />`, before `<Font>` preloads, async+defer. `data-website-id` is a committed static literal (Umami IDs are public HTML). CF Web Analytics enabled via CF dashboard auto-inject — no BaseLayout `<script>` tag for ANAL-02 (no preview-deploy leakage risk).
+- [Phase 15-discuss]: D-05..D-08 — Scroll-depth strategy locked. Scope = `/projects/[id]` detail pages only per ANAL-05 literal "project-page scroll depth"; 4 sentinel `<div>`s at 25/50/75/100% of `<article>` (computed via CSS percent, not JS math — survives reflow), single `IntersectionObserver` watching all four, threshold 0 (sentinel top enters viewport = "crossed this point"), per-page-view dedup via `observer.unobserve(entry.target)` on fire. Reloads refire (matches GA4 scroll-depth semantics). Net-new pattern — grep confirms no existing `IntersectionObserver` in `src/`.
+- [Phase 15-discuss]: D-09..D-12 — Outbound + event taxonomy locked. `/jack-cutrara-resume.pdf` click fires `resume_download` ONLY (delegated listener checks `.pdf` first, emits, returns early — prevents double-counting the headline recruiter metric). Outbound taxonomy = single `outbound_click` event with `{type, href}` metadata; `type` ∈ `{github, linkedin, email, external, pdf}`. `analytics.ts` forwards ALL 4 existing `chat:analytics` actions to Umami (`chat_open`, `message_sent`, `chip_click`, `chat_error`) — full chat funnel, not just top-of-funnel ANAL-05 names. Href metadata policy = hostname+pathname only (strip query+fragment); `mailto:` stored as literal string `"mailto"` not the email — preserves Phase 7 D-36 content-free discipline against future drift.
+- [Phase 15-discuss]: D-13..D-16 — Chat observability scope locked. Cache-hit-rate (`cache_read_input_tokens` / `cache_creation_input_tokens`) DEFERRED entirely to v1.3+ — Phase 14 D-13 already deferred; STATE.md claim of `chat-cache.ts` + `content-snapshot.ts` log seams was overstated (those files don't exist in `src/`). At portfolio traffic the wiring cost is out-of-proportion. Truncation wire-up COMPLETED: client-side `src/scripts/chat.ts` gains a tiny additive parser that, on seeing the existing `{truncated: true}` SSE diagnostic frame (shipped by Phase 14 gap-closure 14-07 at `src/pages/api/chat.ts:129`), dispatches `chat:analytics` with `action='chat_truncated'` — rides D-11's all-actions forwarder into Umami as the 5th chat action. Server `src/pages/api/chat.ts` stays BYTE-IDENTICAL. D-26 regression runs on client surface only (markdown rendering, clipboard parity, focus trap, localStorage, SSE parsing) — lowest-risk gate surface possible. Deferred cache observability captured as a backlog todo at `.planning/todos/pending/2026-04-23-chat-cache-hit-rate-observability.md` (created at execution).
+- [Phase 15-discuss]: Commit landed (41f97a4) — `15-CONTEXT.md` + `15-DISCUSSION-LOG.md` on main. Checkpoint file (`15-DISCUSS-CHECKPOINT.json`) cleaned up after successful CONTEXT write. Next: `/gsd-plan-phase 15` to draft executable plans against these decisions.
 
 **Phase 14 decisions (Plan 06 + phase close-out):**
 
@@ -253,6 +261,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-23T23:50:00.000Z
-Stopped at: Phase 14 complete — all 6 plans shipped, 14-VERIFICATION.md signed off (commit 4424d9f), 14-SUMMARY.md authored (commit 33f6de9), ROADMAP.md + STATE.md flipped to Phase 14 Complete (this commit). Branch `phase-14-preview` awaiting merge to `main` after `/gsd-verify-work` sign-off. 220/220 tests GREEN, pnpm check clean, Lighthouse holds on /projects + /chat (Perf 100 / A11y 95 / BP 100 / TBT 0 ms / CLS <=0.002). All 7 T-14-* threats RETIRED with cited evidence.
-Resume file: .planning/phases/14-chat-knowledge-upgrade/14-SUMMARY.md
+Last session: 2026-04-24T00:15:00.000Z
+Stopped at: Phase 15 context gathered — 15-CONTEXT.md + 15-DISCUSSION-LOG.md committed (commit 41f97a4, on main). All 4 gray areas discussed interactively with research-before-questions enabled: Umami + CF placement (D-01..D-04), scroll-depth strategy (D-05..D-08), outbound + event taxonomy (D-09..D-12), chat observability (D-13..D-16). Cache-hit-rate deferred to v1.3+; truncation wire-up completed client-only (server chat.ts byte-identical; minimal D-26 surface). User took every recommended option across all 16 decisions. Next: `/gsd-plan-phase 15` to draft executable plans.
+Resume file: .planning/phases/15-analytics-instrumentation/15-CONTEXT.md
