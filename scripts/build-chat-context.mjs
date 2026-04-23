@@ -104,6 +104,22 @@ export function readArrayField(frontmatterBlock, fieldName) {
     "m"
   ).exec(frontmatterBlock);
   if (bracket) {
+    // Defensive: refuse commas inside quoted entries. Our `split(",")` below is
+    // a naive splitter that would mis-split `"Postgres, with advisory locks"`
+    // into two entries (REVIEW.md WR-04). No current MDX exercises this shape,
+    // so this hard-fails rather than silently mis-parses.
+    // Match each fully-quoted token (`"..."` with no embedded `"`) and check
+    // for commas inside it. Using the /g flag + exec loop isolates each
+    // entry so adjacent entries don't form a spurious "cross-entry" match.
+    const tokenRe = /"([^"]*)"/g;
+    let tokenMatch;
+    while ((tokenMatch = tokenRe.exec(bracket[1])) !== null) {
+      if (tokenMatch[1].includes(",")) {
+        throw new Error(
+          `${fieldName}: comma inside quoted array entry is not supported by readArrayField`
+        );
+      }
+    }
     return bracket[1]
       .split(",")
       .map((s) => s.trim().replace(/^["']|["']$/g, ""))
