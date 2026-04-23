@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import Anthropic from "@anthropic-ai/sdk";
 import { env } from "cloudflare:workers";
 import portfolioContext from "../../data/portfolio-context.json";
-import { buildChatRequestArgs } from "./chat-request-shape";
+import { buildChatRequestArgs } from "../../prompts/chat-request-shape";
 import {
   validateRequest,
   sanitizeMessages,

@@ -7,7 +7,7 @@ import {
   isAllowedOrigin,
   MAX_BODY_SIZE,
 } from "../../src/lib/validation";
-import { buildChatRequestArgs } from "../../src/pages/api/chat-request-shape";
+import { buildChatRequestArgs } from "../../src/prompts/chat-request-shape";
 import portfolioContext from "../../src/data/portfolio-context.json";
 
 // These tests exercise the validation + SSE formatting logic as unit tests.
@@ -259,7 +259,7 @@ describe("Chat API Endpoint Contract (D-09)", () => {
       expect(chatSource).toContain("sanitizeMessages(validation.data.messages)");
       // stream:true is in the helper file now -- assert it there.
       const helperSource = readFileSync(
-        join(process.cwd(), "src", "pages", "api", "chat-request-shape.ts"),
+        join(process.cwd(), "src", "prompts", "chat-request-shape.ts"),
         "utf8"
       );
       expect(helperSource).toContain("stream: true");

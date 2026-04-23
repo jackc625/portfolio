@@ -1,5 +1,5 @@
-import { buildSystemPrompt } from "../../prompts/system-prompt";
-import type { PortfolioContext } from "../../prompts/portfolio-context-types";
+import { buildSystemPrompt } from "./system-prompt";
+import type { PortfolioContext } from "./portfolio-context-types";
 
 /**
  * Message shape accepted by the Anthropic Messages API for user/assistant turns.
