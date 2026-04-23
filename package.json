@@ -8,7 +8,9 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "wrangler types && astro check && astro build && node scripts/pages-compat.mjs",
+    "build": "pnpm build:chat-context && wrangler types && astro check && astro build && node scripts/pages-compat.mjs",
+    "build:chat-context": "node scripts/build-chat-context.mjs",
+    "build:chat-context:check": "node scripts/build-chat-context.mjs --check",
     "types": "wrangler types",
     "preview": "astro preview",
     "check": "astro check",
