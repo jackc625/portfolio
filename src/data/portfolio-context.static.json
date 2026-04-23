@@ -1,0 +1,26 @@
+{
+  "personal": {
+    "name": "Jack Cutrara",
+    "title": "Software Engineer",
+    "location": "Virginia, USA",
+    "summary": "Software engineer who builds real systems, not tutorials. Every project in this portfolio exists because Jack saw a problem and decided to solve it. Passionate about clean architecture, strong fundamentals, and shipping code that works."
+  },
+  "education": {
+    "degree": "Bachelor of Science in Computer Science",
+    "school": "Western Governors University",
+    "graduation": "2026"
+  },
+  "skills": {
+    "languages": ["TypeScript", "Python", "Java", "JavaScript", "SQL"],
+    "frameworks": ["React", "Next.js", "Express", "FastAPI", "Node.js", "Spring Boot", "Astro", "Tailwind CSS"],
+    "databases": ["PostgreSQL", "Redis", "SQLite", "DuckDB"],
+    "tools": ["Git", "Docker", "Prisma", "Stripe", "Sentry", "GitHub Actions", "Railway", "AWS S3", "Cloudflare"]
+  },
+  "contact": {
+    "email": "jackcutrara@gmail.com",
+    "github": "https://github.com/jackc625",
+    "linkedin": "https://linkedin.com/in/jackcutrara",
+    "website": "https://jackcutrara.com"
+  },
+  "siteStack": ["Astro 6", "Tailwind CSS v4", "TypeScript", "Cloudflare Workers", "MDX"]
+}

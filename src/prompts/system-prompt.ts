@@ -1,28 +1,4 @@
-interface PortfolioContext {
-  personal: { name: string; title: string; location: string; summary: string };
-  education: { degree: string; school: string; graduation: string };
-  skills: {
-    languages: string[];
-    frameworks: string[];
-    databases: string[];
-    tools: string[];
-  };
-  projects: Array<{
-    name: string;
-    description: string;
-    tech: string[];
-    url?: string;
-    page: string;
-  }>;
-  experience: string;
-  contact: {
-    email: string;
-    github: string;
-    linkedin: string;
-    website: string;
-  };
-  siteStack: string[];
-}
+import type { PortfolioContext } from "./portfolio-context-types";
 
 export function buildSystemPrompt(context: PortfolioContext): string {
   return `<role>
