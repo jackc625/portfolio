@@ -108,7 +108,12 @@
   2. Recruiter-engagement events are visible end-to-end in the dashboard: resume PDF download, chat widget open, outbound social/mailto link clicks, and project-page scroll depth
   3. The existing `chat:analytics` CustomEvent (content-free per Phase 7 D-36) forwards to Umami via `src/scripts/analytics.ts` with no new PII exposure and no change to Phase 7 streaming semantics
   4. Cloudflare Web Analytics is live as the secondary Core Web Vitals source, and the site ships without a cookie-consent banner because Umami + CF Web Analytics are cookie-free by design
-**Plans**: TBD
+**Plans**: 5 plans
+- [ ] 15-01-PLAN.md — Umami `<script is:inline>` in BaseLayout with PROD gate + build-output tag-presence test + CF Web Analytics pre-deploy checklist (ANAL-01, ANAL-02, ANAL-06)
+- [ ] 15-02-PLAN.md — `src/scripts/analytics.ts` forwarder + delegated outbound listener + resume-download dedup + 15 client tests (ANAL-03, ANAL-04, ANAL-05)
+- [ ] 15-03-PLAN.md — Scroll-depth observer `src/scripts/scroll-depth.ts` + 4 sentinels in `/projects/[id].astro` + 8 observer tests (ANAL-05)
+- [ ] 15-04-PLAN.md — chat.ts SSE truncated-frame parser (4-line additive diff) + streamChat export + sse-truncation.test.ts + D-26 client-only re-run (ANAL-05, D-14, D-15)
+- [ ] 15-05-PLAN.md — 15-VERIFICATION.md scaffold (D-26 client-only + Umami dashboard checks + CF verification + cookie audit) + cache-hit-rate backlog todo + Umami UUID commit checkpoint (ANAL-01, ANAL-02, ANAL-05, ANAL-06)
 **UI hint**: yes
 
 ### Phase 16: Motion Layer
@@ -169,5 +174,5 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
-| 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |
+| 15. Analytics Instrumentation | v1.2 | 0/5 | Planned | - |
 | 16. Motion Layer | v1.2 | 0/TBD | Not started | - |
