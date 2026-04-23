@@ -37,7 +37,7 @@
 
 - [x] **Phase 12: Tech Debt Sweep** — Close all v1.1 audit items; zero build warnings; stable base for every subsequent phase (completed 2026-04-15)
 - [x] **Phase 13: Content Pass + Projects/ Sync** — Real case studies on all 6 projects; About/home/resume copy verified; `Projects/` → MDX sync tooling (completed 2026-04-19)
-- [ ] **Phase 14: Chat Knowledge Upgrade** — Build-time context generation, Anthropic prompt caching, tuned persona, prompt-injection hardening
+- [x] **Phase 14: Chat Knowledge Upgrade** — Build-time context generation, Anthropic prompt caching, tuned persona, prompt-injection hardening (completed 2026-04-23)
 - [ ] **Phase 15: Analytics Instrumentation** — Umami + CF Web Analytics in production; recruiter-engagement events visible in dashboard
 - [ ] **Phase 16: Motion Layer** — Tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse gate holds
 
@@ -96,7 +96,7 @@
 - [x] 14-03-PLAN.md — SDK wire-up: cache_control + max_tokens (CHAT-05, CHAT-07) (2026-04-23)
 - [x] 14-04-PLAN.md — System prompt rewrite + widget header rename (CHAT-06) (2026-04-23)
 - [x] 14-05-PLAN.md — Injection battery GREEN + drift-guard (CHAT-08) (2026-04-23)
-- [ ] 14-06-PLAN.md — D-26 regression + Lighthouse CI + phase close-out (CHAT-09)
+- [x] 14-06-PLAN.md — D-26 regression + Lighthouse CI + phase close-out (CHAT-09) (2026-04-23)
 
 ### Phase 15: Analytics Instrumentation
 **Goal**: Jack can observe recruiter engagement on the live site — resume downloads, chat opens, outbound link clicks, and project scroll depth — via a Umami dashboard that fires only on production, uses zero cookies, and requires no consent banner.
@@ -167,6 +167,6 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 11. Polish | v1.1 | 3/3 | Complete | 2026-04-13 |
 | 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
-| 14. Chat Knowledge Upgrade | v1.2 | 4/6 | In progress | - |
+| 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 0/TBD | Not started | - |
 | 16. Motion Layer | v1.2 | 0/TBD | Not started | - |

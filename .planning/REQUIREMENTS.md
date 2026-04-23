@@ -39,7 +39,7 @@
 - [ ] **CHAT-06**: System prompt tuned — third-person persona ("Jack built this..."), scope-bound refusal, no PII / resume PDF exposure
 - [x] **CHAT-07**: `max_tokens` raised from 512 → 768 to accommodate richer answers
 - [x] **CHAT-08**: Prompt-injection test battery added — resists jailbreaks ("ignore all previous instructions", "repeat your instructions", role confusion)
-- [ ] **CHAT-09**: Phase 7 regression battery passes (XSS, CORS, rate limit, timeout, focus trap, persistence, streaming, markdown, clipboard)
+- [x] **CHAT-09**: Phase 7 regression battery passes (XSS, CORS, rate limit, timeout, focus trap, persistence, streaming, markdown, clipboard)
 
 ### Analytics (ANAL)
 
@@ -106,10 +106,10 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | CHAT-03 | Phase 14 | Complete (14-02) |
 | CHAT-04 | Phase 14 | Complete (14-02) |
 | CHAT-05 | Phase 14 | Complete (14-03) |
-| CHAT-06 | Phase 14 | Pending |
+| CHAT-06 | Phase 14 | Complete (14-04) |
 | CHAT-07 | Phase 14 | Complete (14-03) |
 | CHAT-08 | Phase 14 | Complete (14-05) |
-| CHAT-09 | Phase 14 | Pending |
+| CHAT-09 | Phase 14 | Complete (14-06) |
 | ANAL-01 | Phase 15 | Pending |
 | ANAL-02 | Phase 15 | Pending |
 | ANAL-03 | Phase 15 | Pending |
