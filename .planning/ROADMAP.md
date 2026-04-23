@@ -90,13 +90,14 @@
   2. The chat refuses attempts to leak the resume PDF, expose PII, dump the system prompt, ignore prior instructions, or pivot to off-scope topics — verified by a committed prompt-injection test battery
   3. `portfolio-context.json` is regenerated at build time from MDX + About + Resume, split cleanly between static-authored and generated inputs, and cached via Anthropic `cache_control: ephemeral` on the knowledge block
   4. The full Phase 7 regression battery passes on production after the upgrade — XSS, CORS, rate limit, 30s timeout, focus trap, localStorage persistence, SSE streaming, markdown rendering, and copy-to-clipboard all behave identically to pre-upgrade baseline
-**Plans**: 6 plans
+**Plans**: 7 plans (6 shipped + 1 gap-closure from UAT)
 - [x] 14-01-PLAN.md — RED test stubs + eval fixture (Wave 0) (2026-04-23)
 - [x] 14-02-PLAN.md — Generator + static/generated split + build-chain (CHAT-03, CHAT-04) (2026-04-23)
 - [x] 14-03-PLAN.md — SDK wire-up: cache_control + max_tokens (CHAT-05, CHAT-07) (2026-04-23)
 - [x] 14-04-PLAN.md — System prompt rewrite + widget header rename (CHAT-06) (2026-04-23)
 - [x] 14-05-PLAN.md — Injection battery GREEN + drift-guard (CHAT-08) (2026-04-23)
 - [x] 14-06-PLAN.md — D-26 regression + Lighthouse CI + phase close-out (CHAT-09) (2026-04-23)
+- [ ] 14-07-PLAN.md — Gap closure: raise max_tokens 768 → 1500 + message_delta truncation observability (CHAT-07, CHAT-09; UAT test 3) (2026-04-23)
 
 ### Phase 15: Analytics Instrumentation
 **Goal**: Jack can observe recruiter engagement on the live site — resume downloads, chat opens, outbound link clicks, and project scroll depth — via a Umami dashboard that fires only on production, uses zero cookies, and requires no consent banner.
