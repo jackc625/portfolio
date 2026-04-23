@@ -97,6 +97,7 @@ export const POST: APIRoute = async ({ request }) => {
   const stream = new ReadableStream({
     async start(controller) {
       try {
+        let truncated = false;
         const response = await client.messages.create(
           buildChatRequestArgs(portfolioContext, messages)
         );
@@ -111,9 +112,26 @@ export const POST: APIRoute = async ({ request }) => {
                 `data: ${JSON.stringify({ text: event.delta.text })}\n\n`
               )
             );
+          } else if (event.type === "message_delta") {
+            // Anthropic signals final stop reason here. "max_tokens" means the model
+            // hit the output-token ceiling mid-generation and the reply is clipped.
+            // Log server-side for observability and emit a diagnostic SSE frame so
+            // the client can surface a truncation hint (Phase 15 ANAL-03 will wire
+            // the log line to the observability backend).
+            if (event.delta.stop_reason === "max_tokens") {
+              truncated = true;
+              console.warn("chat.truncated", { stop_reason: "max_tokens" });
+            }
           }
         }
 
+        if (truncated) {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ truncated: true })}\n\n`
+            )
+          );
+        }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
       } catch {
