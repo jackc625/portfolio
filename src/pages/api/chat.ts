@@ -4,7 +4,7 @@ import type { APIRoute } from "astro";
 import Anthropic from "@anthropic-ai/sdk";
 import { env } from "cloudflare:workers";
 import portfolioContext from "../../data/portfolio-context.json";
-import { buildSystemPrompt } from "../../prompts/system-prompt";
+import { buildChatRequestArgs } from "./chat-request-shape";
 import {
   validateRequest,
   sanitizeMessages,
@@ -81,13 +81,9 @@ export const POST: APIRoute = async ({ request }) => {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const response = await client.messages.create({
-          model: "claude-haiku-4-5",
-          max_tokens: 512,
-          system: buildSystemPrompt(portfolioContext),
-          messages,
-          stream: true,
-        });
+        const response = await client.messages.create(
+          buildChatRequestArgs(portfolioContext, messages)
+        );
 
         for await (const event of response) {
           if (
