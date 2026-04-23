@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
-status: ready_to_execute
-stopped_at: Phase 14 planned (6 plans, 5 waves)
-last_updated: "2026-04-20T09:35:00.000Z"
-last_activity: 2026-04-20 -- Phase 14 planned
+status: in_progress
+stopped_at: Phase 14 Plan 01 complete (Wave 0 test stubs + fixture)
+last_updated: "2026-04-23T16:22:42.000Z"
+last_activity: 2026-04-23 -- Phase 14 Plan 01 complete
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 21
-  completed_plans: 15
-  percent: 71
+  completed_plans: 16
+  percent: 76
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-15)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 13 complete — ready for verification
+**Current focus:** Phase 14 in-progress — Plan 01 (Wave 0 test stubs) complete, Plan 02 (generator) next
 
 ## Current Position
 
-Phase: 14 (chat-knowledge-upgrade) — PLANNED (ready for /gsd-execute-phase 14)
-Plan: 0 of 6 complete
-Status: Phase 14 planned. 6 plans across 5 waves. All 7 CHAT-XX requirements covered (CHAT-03/04 in 14-01+14-02, CHAT-05/07 in 14-03, CHAT-06 in 14-04, CHAT-08 in 14-01+14-05, CHAT-09 in 14-06). Plan-checker PASS iteration 2/3 with 0 blockers. All 7 T-14-* threats modeled (T-14-CACHE, T-14-PERSONA, T-14-INJECTION, T-14-PII-LEAK, T-14-BUILD, T-14-REGRESSION, T-14-DATA-INTEGRITY). All 24 D-01..D-24 decisions honored. Zero-new-deps gate holds (only package.json `scripts` addition). Wave 0: RED test stubs + eval fixture. Wave 1: generator + static/generated split. Wave 2: SDK wire-up + system prompt rewrite + widget header (parallel). Wave 3: injection battery GREEN. Wave 4: 9-item D-26 verification + Lighthouse CI + phase close-out (autonomous: false — human-verify checkpoint for 3 preview-deploy manual rows). Next: `/gsd-execute-phase 14`.
-Last activity: 2026-04-20 -- Phase 14 planned
+Phase: 14 (chat-knowledge-upgrade) — IN PROGRESS (1 of 6 plans complete)
+Plan: 1 of 6 complete
+Status: Phase 14 Plan 01 complete. Wave 0 RED test stubs + fixture landed (3 new files, 3 atomic test commits, 37 new test cases — 23 GREEN / 14 RED against current implementation). `tests/fixtures/chat-eval-dataset.ts` locks D-22 injection vectors + D-16 refusal copy + D-21 banlist as pure-data named exports. `tests/api/prompt-injection.test.ts` (28 tests, 19 GREEN / 9 RED) is Plan 14-04's completion gate. `tests/build/chat-context-integrity.test.ts` (9 tests, 4 GREEN / 5 RED) is Plan 14-02's completion gate. groundedQA anchor pre-validation (REVIEWS.md Codex MEDIUM) closed — evidence grid of 25 anchors in 14-01-SUMMARY.md. Zero new devDependencies, no `vi.mock` (L6 landmine avoided), `pnpm check` clean. Next: Plan 14-02 — build-chat-context.mjs generator + static/generated split (CHAT-03, CHAT-04).
+Last activity: 2026-04-23 -- Phase 14 Plan 01 complete
 Branch: main
 
-Progress: [██████████] 100% (9 / 9 plans)
+Progress: [██████████] 100% (10 / 10 plans)
 
 ## Performance Metrics
 
@@ -46,6 +46,12 @@ Progress: [██████████] 100% (9 / 9 plans)
 - Starting Lighthouse: Performance 100 / A11y 95 / BP 100 / SEO 100
 - Target Lighthouse gate: Performance ≥99 / A11y ≥95 / BP 100 / SEO 100 (every phase)
 
+**Phase 14 per-plan metrics:**
+
+| Plan | Duration | Tasks | Files | Commits |
+|------|----------|-------|-------|---------|
+| 14-01 | 9min | 3 tasks | 3 files | 77a4b0e, 0a76a4f, 5b96892 |
+
 *Full per-phase timing retained in milestones/v1.1-STATE.md archive.*
 
 ## Accumulated Context
@@ -53,6 +59,15 @@ Progress: [██████████] 100% (9 / 9 plans)
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 14 decisions (Plan 01):**
+
+- [Phase 14-01]: RESUME_REFUSAL copy locked as `"Jack's full resume is at /jack-cutrara-resume.pdf — you can download it directly."` and OFFSCOPE_REFUSAL locked as `"I only cover Jack's work and background. Try asking about his projects, skills, or experience."` in tests/fixtures/chat-eval-dataset.ts. Plan 14-04's system-prompt rewrite MUST emit these two strings verbatim — the fixture is the single source of truth for refusal copy.
+- [Phase 14-01]: Chose NO `vi.mock("@anthropic-ai/sdk")` in tests/api/prompt-injection.test.ts. Instead, hand-authored `expectedResponse` strings in the fixture carry "what a hardened model would say." Matches tests/api/chat.test.ts's hand-built-events pattern (lines 82-168) and avoids CONTEXT.md L6 landmine (cross-file module-mock hoisting collision). Plan 14-05 extends this: if the injection battery ever needs to test against a real mock, it adds the mock in its OWN file scope, not at the fixture layer.
+- [Phase 14-01]: groundedQA anchor pre-validation (REVIEWS.md Codex MEDIUM) closed with zero adjustments. All 25 `requiredAnchor` substrings across 10 entries verified present verbatim in shipped content (MDX case studies + portfolio-context.json + about.ts). Evidence grid of 25 source-file:line-number citations in 14-01-SUMMARY.md `## groundedQA Validation Evidence`. One anchor (`entry-level`) is intentionally test-target-for-Plan-14-02: it exists in about.ts but NOT current portfolio-context.json; Plan 14-02's generator folds about.ts in (D-03/D-08), which is why this anchor-test is RED today and flips GREEN when the generator ships.
+- [Phase 14-01]: Kept RESUME_REFUSAL import in prompt-injection.test.ts despite ts(6133) hint by adding a third assertion inside the D-16 contract test: `expect(RESUME_REFUSAL).toContain("/jack-cutrara-resume.pdf")`. This makes the import load-bearing AND makes fixture ↔ system-prompt copy drift test-detectable — upgrade, not workaround. Satisfies the plan's "Imports must include: RESUME_REFUSAL" acceptance criterion.
+- [Phase 14-01]: History-poisoning test (block 2) asserts `sanitized.length === 3` (crafted assistant turn passes through unchanged) rather than asserting the sanitizer strips it. Matches actual sanitizeMessages behavior (src/lib/validation.ts: strips role=system only, filters to last 20 entries). The test documents explicitly that the history-poisoning defense lives in the system prompt (no-echo-PII rule), not in the sanitizer — critical framing for Plan 14-04's rewrite.
+- [Phase 14-01]: Test state after this plan — `pnpm test` reports 186/200 GREEN (24 files pass, 2 files fail). 14 failing tests are the designed RED targets for downstream plans: 9 in prompt-injection.test.ts (Plan 14-04 rewrite) + 5 in chat-context-integrity.test.ts (Plan 14-02 generator). `pnpm check` clean. Zero new devDependencies.
 
 **Phase 13 decisions (Plan 07):**
 
@@ -171,6 +186,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-20T02:06:56.782Z
-Stopped at: Phase 14 context gathered
-Resume file: .planning/phases/14-chat-knowledge-upgrade/14-CONTEXT.md
+Last session: 2026-04-23T16:22:42.000Z
+Stopped at: Phase 14 Plan 01 complete — Wave 0 RED test stubs + fixture
+Resume file: .planning/phases/14-chat-knowledge-upgrade/14-02-PLAN.md

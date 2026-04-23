@@ -91,7 +91,7 @@
   3. `portfolio-context.json` is regenerated at build time from MDX + About + Resume, split cleanly between static-authored and generated inputs, and cached via Anthropic `cache_control: ephemeral` on the knowledge block
   4. The full Phase 7 regression battery passes on production after the upgrade — XSS, CORS, rate limit, 30s timeout, focus trap, localStorage persistence, SSE streaming, markdown rendering, and copy-to-clipboard all behave identically to pre-upgrade baseline
 **Plans**: 6 plans
-- [ ] 14-01-PLAN.md — RED test stubs + eval fixture (Wave 0)
+- [x] 14-01-PLAN.md — RED test stubs + eval fixture (Wave 0) (2026-04-23)
 - [ ] 14-02-PLAN.md — Generator + static/generated split + build-chain (CHAT-03, CHAT-04)
 - [ ] 14-03-PLAN.md — SDK wire-up: cache_control + max_tokens (CHAT-05, CHAT-07)
 - [ ] 14-04-PLAN.md — System prompt rewrite + widget header rename (CHAT-06)
