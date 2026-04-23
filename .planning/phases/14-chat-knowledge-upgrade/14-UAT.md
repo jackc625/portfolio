@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 14-chat-knowledge-upgrade
 source:
   - 14-SUMMARY.md
@@ -9,7 +9,7 @@ source:
   - 14-04-SUMMARY.md
   - 14-05-SUMMARY.md
 started: 2026-04-23T19:38:26Z
-updated: 2026-04-23T20:05:00Z
+updated: 2026-04-23T20:12:00Z
 ---
 
 ## Current Test
@@ -133,5 +133,19 @@ blocked: 0
   reason: "User reported: Response is project-grounded and accurate (correct stack, architecture, concurrency details from seatwatch.mdx) but the end of the message is truncated. Reply ends mid-section with the heading 'Why It Matters' and no body content — the closing paragraph never streams in. Likely the max_tokens: 768 ceiling raised in Plan 14-03 is clipping verbose project answers (SeatWatch MDX is one of the longer entries)."
   severity: major
   test: 3
-  artifacts: []
-  missing: []
+  root_cause: "Two compounding causes. (1) `max_tokens: 768` at src/prompts/chat-request-shape.ts:33 is too low for verbose context-grounded project answers — 768 output tokens ≈ 575 words, the SeatWatch reply needed ~600+. (2) The SSE consumer at src/pages/api/chat.ts:104-118 only handles `content_block_delta` events and ignores `message_delta`, so the `stop_reason: \"max_tokens\"` signal from Anthropic is silently discarded — the client receives a clean `data: [DONE]` and has no way to know the response was clipped."
+  artifacts:
+    - path: "src/prompts/chat-request-shape.ts:33"
+      issue: "max_tokens: 768 — too low for verbose project answers (SeatWatch caseStudy + extendedReference = 8516 tokens of source per 14-02-SUMMARY.md)"
+    - path: "src/pages/api/chat.ts:104-118"
+      issue: "Stream consumer only handles content_block_delta — ignores message_delta event whose delta.stop_reason carries \"max_tokens\" termination signal; emits unconditional [DONE] frame masking truncation"
+    - path: "src/prompts/system-prompt.ts:25"
+      issue: "Forbids markdown headings (\"NEVER headings (# or ##)\") yet model emitted \"Why It Matters\" heading — separate prompt-adherence drift, not the truncation cause but a related quality nit"
+    - path: "tests/api/chat.test.ts"
+      issue: "SDK-shape assertion currently locks max_tokens === 768 — must update when the budget is raised"
+  missing:
+    - "Raise max_tokens in src/prompts/chat-request-shape.ts:33 from 768 to ~1500 (Haiku 4.5 ceiling is 8192; 1500 ≈ 1100 words, comfortably covers verbose project deep-dives)"
+    - "Add a message_delta handler in src/pages/api/chat.ts that captures event.delta.stop_reason — surface 'max_tokens' termination as a diagnostic SSE event or at minimum server-side log so future truncation is observable, not silent"
+    - "Update the max_tokens === 768 assertion in tests/api/chat.test.ts to match the new budget; add a test asserting message_delta with stop_reason='max_tokens' is propagated/logged"
+    - "Optional follow-up: tighten the <constraints> section in src/prompts/system-prompt.ts with an explicit paragraph/word cap so long answers self-limit before reaching the higher budget; investigate the heading-emission prompt drift separately"
+  debug_session: ".planning/debug/chat-response-truncation.md"
