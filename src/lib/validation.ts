@@ -62,14 +62,23 @@ const ALLOWED_ORIGINS = [
   "https://www.jackcutrara.com",
 ];
 
+// Cloudflare Pages project hostname. Only subdomains of this hostname
+// (preview deployments of THIS project) pass CORS — not every *.pages.dev site.
+const PAGES_PREVIEW_SUFFIX = ".portfolio-5wl.pages.dev";
+
 export function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return true; // No origin header = same-origin or non-browser
-  // Allow localhost for development
+  let url: URL;
   try {
-    const url = new URL(origin);
-    if (url.hostname === "localhost" || url.hostname === "127.0.0.1") return true;
+    url = new URL(origin);
   } catch {
     return false; // Malformed origin
+  }
+  // Allow localhost for development
+  if (url.hostname === "localhost" || url.hostname === "127.0.0.1") return true;
+  // Allow preview subdomains of the project's pages.dev hostname (https only)
+  if (url.protocol === "https:" && url.hostname.endsWith(PAGES_PREVIEW_SUFFIX)) {
+    return true;
   }
   return ALLOWED_ORIGINS.includes(origin);
 }

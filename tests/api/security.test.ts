@@ -75,4 +75,26 @@ describe("CORS Origin Whitelist (S9)", () => {
   it("rejects http://jackcutrara.com (wrong protocol)", () => {
     expect(isAllowedOrigin("http://jackcutrara.com")).toBe(false);
   });
+
+  it("allows https://<branch>.portfolio-5wl.pages.dev (CF Pages preview)", () => {
+    expect(
+      isAllowedOrigin("https://phase-14-preview.portfolio-5wl.pages.dev")
+    ).toBe(true);
+  });
+
+  it("rejects https://portfolio-5wl.pages.dev (apex, no subdomain)", () => {
+    expect(isAllowedOrigin("https://portfolio-5wl.pages.dev")).toBe(false);
+  });
+
+  it("rejects http://phase-14-preview.portfolio-5wl.pages.dev (wrong protocol)", () => {
+    expect(
+      isAllowedOrigin("http://phase-14-preview.portfolio-5wl.pages.dev")
+    ).toBe(false);
+  });
+
+  it("rejects https://evil.portfolio-5wl.pages.dev.attacker.com (suffix-confusion attack)", () => {
+    expect(
+      isAllowedOrigin("https://evil.portfolio-5wl.pages.dev.attacker.com")
+    ).toBe(false);
+  });
 });
