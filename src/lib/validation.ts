@@ -64,6 +64,11 @@ const ALLOWED_ORIGINS = [
 
 // Cloudflare Pages project hostname. Only subdomains of this hostname
 // (preview deployments of THIS project) pass CORS — not every *.pages.dev site.
+// The "-5wl" random suffix is Cloudflare-assigned at project creation and is
+// load-bearing: it prevents another Cloudflare Pages user from registering a
+// colliding `portfolio.pages.dev` project and bypassing this check. If this
+// project is ever renamed, update this constant in lockstep — do NOT shorten
+// the suffix to a non-random form.
 const PAGES_PREVIEW_SUFFIX = ".portfolio-5wl.pages.dev";
 
 export function isAllowedOrigin(origin: string | null): boolean {
@@ -76,9 +81,13 @@ export function isAllowedOrigin(origin: string | null): boolean {
   }
   // Allow localhost for development
   if (url.hostname === "localhost" || url.hostname === "127.0.0.1") return true;
-  // Allow preview subdomains of the project's pages.dev hostname (https only)
+  // Allow preview subdomains of the project's pages.dev hostname (https only).
+  // Require exactly one non-empty label before the suffix — this rejects the
+  // apex `portfolio-5wl.pages.dev` and empty-label forms like
+  // `..portfolio-5wl.pages.dev` that some URL parsers normalize inconsistently.
   if (url.protocol === "https:" && url.hostname.endsWith(PAGES_PREVIEW_SUFFIX)) {
-    return true;
+    const prefix = url.hostname.slice(0, -PAGES_PREVIEW_SUFFIX.length);
+    if (prefix.length > 0 && !prefix.endsWith(".")) return true;
   }
   return ALLOWED_ORIGINS.includes(origin);
 }
