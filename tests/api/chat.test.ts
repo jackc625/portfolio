@@ -220,8 +220,8 @@ describe("Chat API Endpoint Contract (D-09)", () => {
       { role: "user", content: "Hello" },
     ]);
 
-    it("max_tokens is 768 (CHAT-07 -- up from Phase 7's 512)", () => {
-      expect(args.max_tokens).toBe(768);
+    it("max_tokens is 1500 (CHAT-07 -- raised from 768 in gap-closure 14-07 to fix truncation)", () => {
+      expect(args.max_tokens).toBe(1500);
     });
 
     it("system is an ARRAY of TextBlockParam, NOT a bare string (L2 landmine guard -- structural)", () => {
@@ -269,6 +269,7 @@ describe("Chat API Endpoint Contract (D-09)", () => {
       ).toContain("buildChatRequestArgs(portfolioContext, messages)");
       // Negative guards against the pre-plan inline shapes.
       expect(chatSource).not.toContain("max_tokens: 512");
+      expect(chatSource).not.toContain("max_tokens: 768"); // gap-closure 14-07 — prior value must not resurface
       expect(chatSource).not.toMatch(/system:\s*buildSystemPrompt\(portfolioContext\)/);
     });
 
