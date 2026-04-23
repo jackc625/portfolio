@@ -60,13 +60,25 @@ export const estimateTokens = (str) => Math.ceil(str.length / 4);
  * Read a quoted OR unquoted single-line string field from a frontmatter block.
  * Accepts:  field: "value"   OR   field: value
  * Returns null when absent or malformed.
+ *
+ * Unquoted branch strips YAML inline comments (`field: foo # TODO` → `foo`) to
+ * match YAML semantics (REVIEW.md WR-03). All current MDX files use quoted
+ * form, so this is latent-defect hardening, not a live-bug fix.
  */
 export function readStringField(frontmatterBlock, fieldName) {
   const escaped = fieldName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re =
-    new RegExp(`^${escaped}:\\s*"([^"\\n]+)"\\s*$`, "m").exec(frontmatterBlock) ??
-    new RegExp(`^${escaped}:\\s*([^"\\n]+?)\\s*$`, "m").exec(frontmatterBlock);
-  return re ? re[1].trim() : null;
+  const quoted = new RegExp(
+    `^${escaped}:\\s*"([^"\\n]+)"\\s*$`,
+    "m"
+  ).exec(frontmatterBlock);
+  if (quoted) return quoted[1].trim();
+  const unquoted = new RegExp(
+    `^${escaped}:\\s*([^"\\n]+?)\\s*$`,
+    "m"
+  ).exec(frontmatterBlock);
+  if (!unquoted) return null;
+  // Strip inline YAML comment — `#` preceded by whitespace starts a comment.
+  return unquoted[1].replace(/\s+#.*$/, "").trim() || null;
 }
 
 /**
