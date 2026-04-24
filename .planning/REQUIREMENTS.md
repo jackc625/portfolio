@@ -47,7 +47,7 @@
 - [ ] **ANAL-02**: Cloudflare Web Analytics enabled as secondary for Core Web Vitals
 - [x] **ANAL-03**: `src/scripts/analytics.ts` forwards existing `chat:analytics` CustomEvent (content-free per Phase 7 D-36) to Umami
 - [x] **ANAL-04**: Delegated outbound-link tracking — clicks on `a[href^="http"]`, `mailto:`, and `.pdf` emit Umami events
-- [ ] **ANAL-05**: Recruiter-engagement events instrumented: resume download, chat widget open, outbound social link clicks, project-page scroll depth
+- [x] **ANAL-05**: Recruiter-engagement events instrumented: resume download, chat widget open, outbound social link clicks, project-page scroll depth (chat_truncated 5th action wired in 15-04; full surface verified end-to-end in 15-05)
 - [x] **ANAL-06**: No cookie consent banner required (Umami + CF Web Analytics are cookie-free by design)
 
 ### Motion (MOTN)
@@ -114,7 +114,7 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | ANAL-02 | Phase 15 | Pending |
 | ANAL-03 | Phase 15 | Complete (15-02) |
 | ANAL-04 | Phase 15 | Complete (15-02) |
-| ANAL-05 | Phase 15 | Partial (15-03 scroll-depth + 15-02 outbound/resume/chat:analytics shipped; 15-05 verifies the full surface end-to-end) |
+| ANAL-05 | Phase 15 | Complete (15-03 scroll-depth + 15-02 outbound/resume/chat:analytics + 15-04 chat_truncated 5th action; 15-05 verifies end-to-end against production Umami dashboard) |
 | ANAL-06 | Phase 15 | Complete (15-01) |
 | MOTN-01 | Phase 16 | Pending |
 | MOTN-02 | Phase 16 | Pending |
