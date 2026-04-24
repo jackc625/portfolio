@@ -137,7 +137,13 @@ function initAnalytics(): void {
 
 // Bootstrap (matches 15-PATTERNS.md Shared Pattern — Bootstrap on
 // astro:page-load + DOMContentLoaded; mirrors scroll-depth.ts and chat.ts).
-if (typeof document !== "undefined") {
+// WR-01: bootstrap-level guard prevents document listener pile-up if this
+// module is re-evaluated across Astro view transitions. The internal
+// analyticsInitialized guard already prevents duplicate observable behavior,
+// so this is purely a slow-GC hygiene fix for long sessions.
+let analyticsBootstrapped = false;
+if (typeof document !== "undefined" && !analyticsBootstrapped) {
+  analyticsBootstrapped = true;
   document.addEventListener("astro:page-load", initAnalytics);
   if (document.readyState !== "loading") {
     initAnalytics();
