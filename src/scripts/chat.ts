@@ -137,7 +137,7 @@ let cleanupFocusTrap: (() => void) | null = null;
 
 // Addresses review concern: all 3 reviewers flagged missing stream abort/error handling.
 // Client-side AbortController timeout prevents stuck "typing" state on connection drops.
-async function streamChat(
+export async function streamChat(
   chatMessages: ChatMessage[],
   onToken: (text: string) => void,
   onDone: () => void,
