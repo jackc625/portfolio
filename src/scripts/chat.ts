@@ -192,6 +192,14 @@ export async function streamChat(
             onError("api_error");
             return;
           }
+          // Phase 15 D-14: recognize server truncation diagnostic frame.
+          // {"truncated": true} arrives just before [DONE] when stop_reason === "max_tokens".
+          // Forward to Umami via the existing chat:analytics CustomEvent (5th action).
+          // Plan 02 analytics.ts owns the forwarder — this dispatch rides that infrastructure.
+          if (parsed.truncated === true) {
+            trackChatEvent("chat_truncated");
+            continue; // L7: skip onToken — this frame has no .text, would render "undefined"
+          }
           onToken(parsed.text);
         } catch {
           /* skip malformed SSE line */
