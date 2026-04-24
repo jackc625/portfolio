@@ -111,7 +111,7 @@
 **Plans**: 5 plans
 - [x] 15-01-PLAN.md — Umami `<script is:inline>` in BaseLayout with PROD gate + build-output tag-presence test + CF Web Analytics pre-deploy checklist (ANAL-01, ANAL-02, ANAL-06) (2026-04-23)
 - [ ] 15-02-PLAN.md — `src/scripts/analytics.ts` forwarder + delegated outbound listener + resume-download dedup + 15 client tests (ANAL-03, ANAL-04, ANAL-05)
-- [ ] 15-03-PLAN.md — Scroll-depth observer `src/scripts/scroll-depth.ts` + 4 sentinels in `/projects/[id].astro` + 8 observer tests (ANAL-05)
+- [x] 15-03-PLAN.md — Scroll-depth observer `src/scripts/scroll-depth.ts` + 4 sentinels in `/projects/[id].astro` + 8 observer tests (ANAL-05) (2026-04-23)
 - [ ] 15-04-PLAN.md — chat.ts SSE truncated-frame parser (4-line additive diff) + streamChat export + sse-truncation.test.ts + D-26 client-only re-run (ANAL-05, D-14, D-15)
 - [ ] 15-05-PLAN.md — 15-VERIFICATION.md scaffold (D-26 client-only + Umami dashboard checks + CF verification + cookie audit) + cache-hit-rate backlog todo + Umami UUID commit checkpoint (ANAL-01, ANAL-02, ANAL-05, ANAL-06)
 **UI hint**: yes

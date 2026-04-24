@@ -114,7 +114,7 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | ANAL-02 | Phase 15 | Pending |
 | ANAL-03 | Phase 15 | Pending |
 | ANAL-04 | Phase 15 | Pending |
-| ANAL-05 | Phase 15 | Pending |
+| ANAL-05 | Phase 15 | Partial (15-03 scroll-depth shipped; 15-02 ships outbound + resume + chat:analytics forwarder) |
 | ANAL-06 | Phase 15 | Complete (15-01) |
 | MOTN-01 | Phase 16 | Pending |
 | MOTN-02 | Phase 16 | Pending |
