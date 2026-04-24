@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 15 Plan 15-04 complete — chat.ts SSE parse loop wires `data: {"truncated":true}` server diagnostic frame to chat:analytics CustomEvent (5th action: chat_truncated); D-15 server byte-identical hard gate held (api/chat.ts 0 lines diff); D-26 client-only regression GREEN; 262/262 tests GREEN; ready for Plan 15-05 (Wave 3 verification — Umami dashboard checks + cookie audit + cache-hit-rate backlog todo)
-last_updated: "2026-04-24T00:34:45Z"
-last_activity: 2026-04-24 -- Plan 15-04 executed (RED b43b558 + GREEN a10f840; 262/262 tests; pnpm check 0/0/0; pnpm build clean; chat.ts SSE truncated-frame guard added; D-15 hard gate held)
+stopped_at: Phase 15 Plan 15-05 PAUSED at Task 3 (checkpoint:human-action gate=blocking) — Tasks 1+2 committed (4229f14 backlog todo for D-13 cache-hit-rate; d1318a7 15-VERIFICATION.md scaffold with 10 sections + 13 T-15 threats + 60 empty checkboxes + 8 Umami event names). Awaiting Jack's pre-deploy operational steps: (1) Umami Cloud website creation + UUID commit at src/layouts/BaseLayout.astro:47 replacing TODO_PHASE_15_UMAMI_ID, (2) CF Web Analytics dashboard toggle on portfolio Pages project, (3) screenshot capture for VERIFICATION evidence. Plan 15-05 NOT marked complete; progress counter unchanged (26/27); continuation agent finalizes after Jack's "approved/done" signal.
+last_updated: "2026-04-24T00:46:00Z"
+last_activity: 2026-04-24 -- Plan 15-05 Tasks 1+2 committed (4229f14 + d1318a7); paused at Task 3 checkpoint:human-action awaiting Jack's Umami UUID commit + CF Web Analytics toggle
 progress:
   total_phases: 5
   completed_phases: 3
