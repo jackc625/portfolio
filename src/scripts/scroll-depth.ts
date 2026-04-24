@@ -60,7 +60,13 @@ export function initScrollDepth(): void {
   }
 }
 
-if (typeof document !== "undefined") {
+// WR-01: bootstrap-level guard prevents document listener pile-up if this
+// module is re-evaluated across Astro view transitions. The internal
+// scrollDepthInitialized guard already prevents duplicate observer creation,
+// so this is purely a slow-GC hygiene fix for long sessions.
+let scrollDepthBootstrapped = false;
+if (typeof document !== "undefined" && !scrollDepthBootstrapped) {
+  scrollDepthBootstrapped = true;
   document.addEventListener("astro:page-load", initScrollDepth);
   if (document.readyState !== "loading") {
     initScrollDepth();
