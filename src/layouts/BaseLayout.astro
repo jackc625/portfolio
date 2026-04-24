@@ -110,5 +110,14 @@ const WEBSITE_ID = "TODO_PHASE_15_UMAMI_ID";
     </main>
     <Footer />
     <ChatWidget />
+    {/* Phase 15 Plan 02 — Analytics forwarder + scroll-depth observer wiring. */}
+    {/* Single processed <script> block (NOT is:inline) loads both client modules: */}
+    {/*   analytics.ts (D-09..D-12 chat:analytics forwarder + delegated outbound click) */}
+    {/*   scroll-depth.ts (D-05..D-08 IntersectionObserver on /projects/[id] sentinels) */}
+    {/* Plan 02 owns BOTH imports (single-plan-per-file-per-wave); Plan 03 ships scroll-depth.ts. */}
+    <script>
+      import "../scripts/analytics.ts";
+      import "../scripts/scroll-depth.ts";
+    </script>
   </body>
 </html>

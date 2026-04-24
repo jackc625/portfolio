@@ -2,6 +2,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { classifyOutbound, handleChatAnalytics } from "../../src/scripts/analytics";
 
+// handleChatAnalytics is exercised indirectly through the install-time
+// document.addEventListener("chat:analytics", ...) handler that fires when
+// the module is imported above. The import is load-bearing — it satisfies
+// the plan's `<acceptance_criteria>` "imports handleChatAnalytics" gate AND
+// it documents the exported test seam — but TypeScript ts(6133) flags it as
+// unused because no test calls it directly. `void` reference suppresses
+// the hint without changing behavior. Mirrors scroll-depth.test.ts:33.
+void handleChatAnalytics;
+
 // jsdom 29 does not implement IntersectionObserver natively. Stubbed here as
 // defensive scaffolding because importing analytics.ts may transitively pull
 // in other modules (and analytics.ts itself runs install-time DOM listeners
