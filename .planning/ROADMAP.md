@@ -113,7 +113,7 @@
 - [x] 15-02-PLAN.md — `src/scripts/analytics.ts` forwarder + delegated outbound listener + resume-download dedup + 15 client tests + BaseLayout body wires analytics.ts AND scroll-depth.ts (ANAL-03, ANAL-04, ANAL-05) (2026-04-24)
 - [x] 15-03-PLAN.md — Scroll-depth observer `src/scripts/scroll-depth.ts` + 4 sentinels in `/projects/[id].astro` + 8 observer tests (ANAL-05) (2026-04-23)
 - [x] 15-04-PLAN.md — chat.ts SSE truncated-frame parser (8-line additive diff at lines 195-202) + streamChat export + sse-truncation.test.ts (4 tests) + D-26 client-only re-run (ANAL-05, D-14, D-15) (2026-04-24)
-- [ ] 15-05-PLAN.md — 15-VERIFICATION.md scaffold (D-26 client-only + Umami dashboard checks + CF verification + cookie audit) + cache-hit-rate backlog todo + Umami UUID commit checkpoint (ANAL-01, ANAL-02, ANAL-05, ANAL-06)
+- [x] 15-05-PLAN.md — 15-VERIFICATION.md scaffold (D-26 client-only + Umami dashboard checks + CF verification + cookie audit) + cache-hit-rate backlog todo + Umami UUID commit (orchestrator-applied via human-action checkpoint) (ANAL-01, ANAL-05, ANAL-06; ANAL-02 pending /gsd-verify-work CF dashboard toggle confirmation) (2026-04-24)
 **UI hint**: yes
 
 ### Phase 16: Motion Layer
@@ -174,5 +174,5 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
-| 15. Analytics Instrumentation | v1.2 | 4/5 | In progress | - |
+| 15. Analytics Instrumentation | v1.2 | 5/5 | In progress (codebase complete; awaiting /gsd-verify-work + /gsd-secure-phase + verify_phase_goal) | - |
 | 16. Motion Layer | v1.2 | 0/TBD | Not started | - |
