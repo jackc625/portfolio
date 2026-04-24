@@ -867,11 +867,19 @@ function initChat(): void {
 // Listen to astro:page-load for (re)initialization
 // Idempotency guard in initChat() prevents duplicate handlers
 // when transition:persist preserves the DOM across navigations.
-document.addEventListener("astro:page-load", initChat);
+// WR-01: bootstrap-level guard prevents document listener pile-up if this
+// module is re-evaluated across Astro view transitions. The internal
+// chatInitialized guard already prevents duplicate handler binding, so this
+// is purely a slow-GC hygiene fix for long sessions.
+let chatBootstrapped = false;
+if (!chatBootstrapped) {
+  chatBootstrapped = true;
+  document.addEventListener("astro:page-load", initChat);
 
-// Also initialize on DOMContentLoaded as fallback
-if (document.readyState !== "loading") {
-  initChat();
-} else {
-  document.addEventListener("DOMContentLoaded", initChat);
+  // Also initialize on DOMContentLoaded as fallback
+  if (document.readyState !== "loading") {
+    initChat();
+  } else {
+    document.addEventListener("DOMContentLoaded", initChat);
+  }
 }
