@@ -606,3 +606,94 @@ summary:focus-visible {
  * load. Verified by tests/client/motion.test.ts "reduce bails — no observer,
  * no DOM mutation" + tests/client/reduced-motion.test.ts MOTN-01/02/07
  * gating assertions. */
+
+/* ============================================
+ * Phase 16 Motion Layer — Plan 05 (chat motion)
+ * MOTN-04 chat bubble pulse + MOTN-05 chat panel scale-in
+ * Per design-system/MOTION.md:
+ *   - MOTN-04 uses paired-reduce-override pattern (loop with state-signaling)
+ *   - MOTN-05 uses no-preference wrap (entrance animation)
+ *   - MOTN-06 typing-dot bounce already lives at lines 260-280;
+ *     this plan adds an optional reduce override for parity
+ * D-26 chat regression gate runs as Task 1 verification — all Phase 7
+ * invariants preserved (XSS, CORS, rate limit, abort timeout, focus trap,
+ * localStorage, SSE, markdown, clipboard).
+ * ============================================ */
+
+/* ----- MOTN-04 chat bubble pulse keyframe (D-14) ----- */
+/* rgba ring 0.4 alpha at 0% expanding to 16px ring 0 alpha at 50%, fading to
+ * 0 alpha 0px at 100%; transform scale 1 -> 1.02 -> 1 over the same loop.
+ * Accent token converted to rgba at this keyframe site only — --accent
+ * remains a pure #E63946 hex token (no rgba alias introduced). */
+@keyframes chat-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4);
+    transform: scale(1.0);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(230, 57, 70, 0);
+    transform: scale(1.02);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(230, 57, 70, 0);
+    transform: scale(1.0);
+  }
+}
+
+/* MOTN-04: pulse runs unconditionally; reduce override below neutralizes (D-24). */
+#chat-bubble {
+  animation: chat-pulse 2500ms ease-in-out infinite;
+}
+
+/* MOTN-04 / D-15: pause states. Hover + focus-visible are CSS-only signals;
+ * data-pulse-paused is set by chat.ts openPanel and removed by closePanel
+ * after focus restoration. The pause declaration below freezes the keyframe
+ * at its current position without resetting (resume picks up where it left off). */
+#chat-bubble:hover,
+#chat-bubble:focus-visible,
+#chat-bubble[data-pulse-paused] {
+  animation-play-state: paused;
+}
+
+/* MOTN-04 / D-24: paired reduce override neutralizes the pulse entirely.
+ * No fade, no ring, no scale — bubble renders at its resting visual state. */
+@media (prefers-reduced-motion: reduce) {
+  #chat-bubble {
+    animation: none;
+  }
+}
+
+/* MOTN-06 / researcher recommendation: paired reduce override on the existing
+ * typing-dot bounce (lines 260-280) for parity with the rest of the contract.
+ * The original block is byte-identical; this is an additive neutralizer. */
+@media (prefers-reduced-motion: reduce) {
+  .typing-dot {
+    animation: none;
+  }
+}
+
+/* ----- MOTN-05 chat panel scale-in ----- */
+/* Entrance animation — wrapped in no-preference per D-23. Under reduce, the
+ * .is-open class is still added by chat.ts but no animation runs; panel snaps
+ * to its resting state (scale 1, opacity 1) instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Resting state when .is-open NOT present — panel display: none controls
+   * visibility (Phase 7 invariant). The .is-open class triggers the entrance. */
+  #chat-panel {
+    transform-origin: bottom right;
+  }
+  #chat-panel.is-open {
+    animation: chat-panel-scale-in 180ms ease-out forwards;
+  }
+}
+
+@keyframes chat-panel-scale-in {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1.0);
+    opacity: 1;
+  }
+}
