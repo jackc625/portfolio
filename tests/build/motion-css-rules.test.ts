@@ -136,6 +136,20 @@ describe("Phase 16 motion CSS rules — typing-bounce byte-equivalence (MOTN-06 
   });
 });
 
+/**
+ * Heuristic limitation (WR-05 from Phase 16 code review):
+ * The `will-change` and `cubic-bezier(` stress guards below strip CSS block
+ * comments via the regex `/\/\*[\s\S]*?\*\//g` then count occurrences of the
+ * literal token. This is a regex heuristic, not a true CSS parser:
+ *   - It does NOT understand string content (e.g., a `content: "cubic-bezier("`
+ *     declaration would trigger a false positive).
+ *   - It does NOT handle nested or unbalanced /* delimiters.
+ *   - CSS has no `//` line comments today, so that case is not a concern.
+ * For the v1.2 motion lock the heuristic is sufficient: there are no
+ * `content:` strings in global.css that contain the literal banned tokens.
+ * If a future contributor adds CSS-in-JS or a `content:` string with one of
+ * these tokens, upgrade this check to a CSS parser (postcss / lightningcss).
+ */
 describe("Phase 16 motion CSS rules — Lighthouse stress guards (MOTN-10)", () => {
   it("`will-change` count is 0 (avoid sticky GPU-promotion drift)", () => {
     // Filter comments first to avoid false-positives from header prose discussing the rule
