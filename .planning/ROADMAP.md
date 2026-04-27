@@ -125,7 +125,14 @@
   2. A visitor with `prefers-reduced-motion: reduce` sees no entrance animations, no pulse, no stagger, no scale-in — every new motion is either gated by `@media (prefers-reduced-motion: no-preference)` or paired with an explicit `reduce` override
   3. Lighthouse CI on homepage + one project detail page holds Performance ≥99 / Accessibility ≥95 / Best Practices 100 / SEO 100 after the motion layer ships
   4. `design-system/MASTER.md` §5/§6 are amended with additive motion carve-outs (property whitelist, duration bands, easing defaults); §8 anti-pattern list is unchanged and no runtime dependency has been added to `package.json`
-**Plans**: TBD
+**Plans**: 7 plans
+- [ ] 16-01-PLAN.md — Wave 0 RED test stubs (8 test files spanning MOTN-01..MOTN-10)
+- [ ] 16-02-PLAN.md — observer factory + scroll-depth refactor (D-17, D-19)
+- [ ] 16-03-PLAN.md — design-system/MOTION.md authored + MASTER.md §6 stub + §8 reconciliation (MOTN-09)
+- [ ] 16-04-PLAN.md — motion.ts + global.css scroll-reveal/word-stagger/view-transition + BaseLayout import (MOTN-01, MOTN-02, MOTN-07, MOTN-08)
+- [ ] 16-05-PLAN.md — chat.ts D-15 ordering + global.css chat-pulse + chat-panel scale-in + typing-dot reduce parity (MOTN-04, MOTN-05, MOTN-06; D-26 gate)
+- [ ] 16-06-PLAN.md — WorkRow arrow upgrade (MOTN-03)
+- [ ] 16-07-PLAN.md — phase gate: Lighthouse CI + D-26 + final test sweep + close-out (MOTN-10)
 **UI hint**: yes
 
 ## Cross-Phase Constraints
@@ -175,4 +182,4 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
-| 16. Motion Layer | v1.2 | 0/TBD | Not started | - |
+| 16. Motion Layer | v1.2 | 0/7 | Not started | - |
