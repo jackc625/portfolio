@@ -4,6 +4,12 @@
 // detail pages only (D-05 scope). Observer construction is gated by
 // sentinel presence in the DOM — no-op on non-project routes.
 // See 15-CONTEXT.md D-05..D-08 and 15-RESEARCH.md §2.
+// Phase 16 D-19: refactored to consume the shared makeRevealObserver factory
+// (src/scripts/lib/observer.ts). Behavior is byte-equivalent — handleScrollEntry
+// preserves its own per-target unobserve call, oneShot is omitted
+// (defaults to false) so the factory does NOT auto-unobserve.
+
+import { makeRevealObserver } from "./lib/observer";
 
 declare global {
   interface Window {
@@ -38,25 +44,25 @@ let scrollDepthInitialized = false;
 
 export function initScrollDepth(): void {
   if (scrollDepthInitialized) return;
-  const sentinels = document.querySelectorAll<HTMLElement>(".scroll-sentinel");
-  if (sentinels.length === 0) return; // Not on a /projects/[id] route (D-05 scope gate)
-  scrollDepthInitialized = true;
-
+  // Phase 16 D-19: refactored to consume the shared makeRevealObserver factory.
+  // oneShot is omitted (defaults to false) — handleScrollEntry calls
+  // unobserve on its own entry.target, preserving Phase 15 D-08
+  // per-page-view dedup behavior byte-equivalent. tests/client/scroll-depth.test.ts
+  // 7 tests stay GREEN with zero source edits to that test file.
   // D-06: single IntersectionObserver watches all 4 sentinels.
   // D-07: threshold 0 + sentinel-top-enters-viewport semantics.
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        handleScrollEntry(entry, observer);
-      }
-    },
-    { threshold: 0, rootMargin: "0px" }
-  );
-
-  sentinels.forEach((el) => observer.observe(el));
+  const observer = makeRevealObserver({
+    selector: ".scroll-sentinel",
+    rootMargin: "0px",
+    threshold: 0,
+    onIntersect: handleScrollEntry,
+  });
+  if (!observer) return; // Not on a /projects/[id] route (D-05 scope gate)
+  scrollDepthInitialized = true;
 
   if (import.meta.env.DEV) {
-    console.log("[scroll-depth] observer attached to", sentinels.length, "sentinels");
+    const count = document.querySelectorAll(".scroll-sentinel").length;
+    console.log("[scroll-depth] observer attached to", count, "sentinels");
   }
 }
 
