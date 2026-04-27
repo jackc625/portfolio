@@ -448,12 +448,24 @@ async function animateMessageAppear(_el: HTMLElement): Promise<void> {
   // No-op: no entrance animation (chat motion restoration deferred to Phase 10 CHAT-02 per D-27)
 }
 
-async function startPulse(_bubble: HTMLElement): Promise<void> {
-  // No-op: no pulse (chat motion restoration deferred to Phase 10 CHAT-02 per D-27)
+async function startPulse(bubble: HTMLElement): Promise<void> {
+  // Phase 16 MOTN-04 / D-15: pure-CSS pulse on #chat-bubble. Removing
+  // data-pulse-paused re-engages the @keyframes chat-pulse loop. CSS handles
+  // :hover, :focus-visible, and (prefers-reduced-motion: reduce) gating; this
+  // attribute covers the panel-open case (D-15 paired pause/resume).
+  // Guard: only remove the attribute if it's set — keeps the initial init-time
+  // call a true no-op so test spies on removeAttribute don't record a phantom
+  // invocation before any open/close cycle has run.
+  if (bubble.hasAttribute("data-pulse-paused")) {
+    bubble.removeAttribute("data-pulse-paused");
+  }
 }
 
-function stopPulse(): void {
-  // No-op: there is no pulse to stop
+function stopPulse(bubble: HTMLElement): void {
+  // Phase 16 MOTN-04 / D-15: pause the CSS pulse loop while panel is open.
+  // CSS rule `#chat-bubble[data-pulse-paused] { animation-play-state: paused; }`
+  // freezes the keyframe at its current position without resetting.
+  bubble.setAttribute("data-pulse-paused", "");
 }
 
 async function startTypingDots(_container: HTMLElement): Promise<void> {
@@ -524,7 +536,10 @@ function initChat(): void {
 
   function openPanel(): void {
     panelOpen = true;
-    stopPulse();
+    // Phase 16 D-15: pause pulse + add .is-open class for MOTN-05 scale-in BEFORE
+    // focus-trap activation. Mirrors Phase 12 DEBT-02 inert-toggle ordering pattern.
+    stopPulse($bubble);
+    $panel.classList.add("is-open");
     trackChatEvent("chat_open");
     $bubble.setAttribute("aria-expanded", "true");
     $bubble.setAttribute("aria-label", "Close chat");
@@ -596,6 +611,9 @@ function initChat(): void {
     if (bubbleIcon) bubbleIcon.style.display = "block";
     if (bubbleCloseIcon) bubbleCloseIcon.style.display = "none";
     $panel.classList.remove("chat-panel-mobile");
+    // Phase 16 MOTN-05 / D-15: remove .is-open class — CSS reverts panel to
+    // resting state; transition fades it out via the no-preference rule.
+    $panel.classList.remove("is-open");
 
     // Clean up focus trap
     if (cleanupFocusTrap) {
@@ -605,6 +623,8 @@ function initChat(): void {
 
     animatePanelClose($panel).then(() => {
       $bubble.focus();
+      // Phase 16 D-15: resume pulse AFTER focus restoration. startPulse removes
+      // data-pulse-paused; CSS keyframe loop resumes from its current position.
       startPulse($bubble);
     });
   }
