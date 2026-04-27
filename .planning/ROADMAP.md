@@ -126,13 +126,29 @@
   3. Lighthouse CI on homepage + one project detail page holds Performance ≥99 / Accessibility ≥95 / Best Practices 100 / SEO 100 after the motion layer ships
   4. `design-system/MASTER.md` §5/§6 are amended with additive motion carve-outs (property whitelist, duration bands, easing defaults); §8 anti-pattern list is unchanged and no runtime dependency has been added to `package.json`
 **Plans**: 7 plans
+
+**Wave 0** *(RED test stubs land first; baseline for all subsequent waves)*
 - [ ] 16-01-PLAN.md — Wave 0 RED test stubs (8 test files spanning MOTN-01..MOTN-10)
+
+**Wave 1** *(blocked on Wave 0; 16-02 ‖ 16-03 run in parallel)*
 - [ ] 16-02-PLAN.md — observer factory + scroll-depth refactor (D-17, D-19)
 - [ ] 16-03-PLAN.md — design-system/MOTION.md authored + MASTER.md §6 stub + §8 reconciliation (MOTN-09)
+
+**Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 16-04-PLAN.md — motion.ts + global.css scroll-reveal/word-stagger/view-transition + BaseLayout import (MOTN-01, MOTN-02, MOTN-07, MOTN-08)
+
+**Wave 3** *(blocked on Wave 2; 16-05 ‖ 16-06 run in parallel)*
 - [ ] 16-05-PLAN.md — chat.ts D-15 ordering + global.css chat-pulse + chat-panel scale-in + typing-dot reduce parity (MOTN-04, MOTN-05, MOTN-06; D-26 gate)
 - [ ] 16-06-PLAN.md — WorkRow arrow upgrade (MOTN-03)
+
+**Wave 4** *(blocked on Wave 3; phase gate, contains human-verify checkpoint)*
 - [ ] 16-07-PLAN.md — phase gate: Lighthouse CI + D-26 + final test sweep + close-out (MOTN-10)
+
+**Cross-cutting constraints** *(appear in 2+ plans' `must_haves.truths`):*
+- D-26 chat regression gate (16-04, 16-05, 16-07) — Phase 7 battery runs on every chat-touching plan
+- Reduced-motion contract MOTN-08 (16-01, 16-04, 16-05, 16-06) — every new motion gated by `no-preference` or paired with `reduce` override; first test in every motion feature is the reduced-motion negative case
+- Lighthouse CI 99/95/100/100 + TBT≤150ms + CLS≤0.01 (16-07 enforces; 16-04/05 must not regress)
+- Zero new `package.json` runtime deps (16-07 verifies; all plans honor)
 **UI hint**: yes
 
 ## Cross-Phase Constraints

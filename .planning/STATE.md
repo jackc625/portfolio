@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 16 UI-SPEC approved — 16-UI-SPEC.md authored by gsd-ui-researcher and verified by gsd-ui-checker 6/6 PASS (no recommendations, all dimensions clean). Spec locks: property whitelist (transform/opacity/box-shadow), duration bands (120/180/200/250–350/600/2500ms), easing (ease-out entrances, ease-in-out loops), motion amplitudes 4/8/12/16px (multiples of 4), accent reservation list extended by chat-bubble-pulse rgba ring (rgba conversion at keyframe site only — `--accent` token unchanged), word-stagger restricted to `.h1-section` (`.display` excluded per D-08/D-12), reduced-motion paired-override pattern, zero new package.json deps, D-26 chat regression gate restated at MOTN-04/05/06 boundary. Researcher recommendations embedded: avoid `will-change` (transform/opacity GPU-composited natively), toggle `data-pulse-paused` before focus-trap activation in openPanel + after focus restoration in closePanel (mirrors Phase 12 DEBT-02 inert pattern), add `prefers-reduced-motion: reduce` extension to typing-dot bounce block at global.css:260–280 for parity. Committed 9be581d. Ready for /gsd-plan-phase 16.
+stopped_at: Phase 16 planned — 7 plans across 5 waves committed (79f8f06). gsd-plan-checker VERIFICATION PASSED (12/12 dimensions; 10/10 phase-specific additional checks; 4 cosmetic warnings, non-blocking). RESEARCH.md committed 9420b48; VALIDATION.md scaffold 9af9967; PATTERNS.md authored. Wave structure — W0:16-01 (RED stubs across 7 test files); W1:16-02 (observer factory + scroll-depth refactor, D-19 byte-equivalent) ‖ 16-03 (MOTION.md + MASTER.md §6 stub + §8 view-transition reconciliation); W2:16-04 (motion.ts + global.css reveal/word/view-transition + BaseLayout — D-26 fires); W3:16-05 (chat.ts D-15 + chat-pulse + scale-in + typing-dot reduce parity — D-26 fires) ‖ 16-06 (WorkRow arrow); W4:16-07 (Lighthouse + D-26 battery + close-out, 1 human-verify checkpoint). All 10 MOTN-XX requirements covered; D-26 cited in 16-04/05/07; Lighthouse 99/95/100/100/TBT≤150/CLS≤0.01 grep-verifiable in 16-07; zero-new-runtime-deps verified by 16-07; reduced-motion negative case is FIRST test in tests/client/motion.test.ts (Plan 16-01 acceptance criterion). Open questions resolved at plan time — chat.ts uses style.display only today (16-05 adds .is-open class), .prose-editorial + .about-body are the actual selectors (no wrapper class additions needed), motion.ts does NOT listen for matchMedia change events (cross-document reload re-reads). Ready for /gsd-execute-phase 16.
 last_updated: "2026-04-27T00:00:00Z"
-last_activity: 2026-04-27 -- Phase 16 UI-SPEC approved (6/6 dimensions PASS); ready for /gsd-plan-phase 16 (Motion Layer)
+last_activity: 2026-04-27 -- Phase 16 planned: 7 plans, 5 waves (commit 79f8f06); gsd-plan-checker VERIFICATION PASSED; ready for /gsd-execute-phase 16
 progress:
   total_phases: 5
   completed_phases: 4
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-04-15)
 
 ## Current Position
 
-Phase: 16 (motion-layer) — Not started. Goal: tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse gate holds.
-Plan: Not started
-Status: Ready to plan Phase 16 (Motion Layer). Phase 15 closed 2026-04-26 — analytics live in production, dashboards confirmed by Jack via UAT 8/8 (commit 8da5134). Validation audit clean (commit 3a33bb2). Security audit SECURED — 19/19 threats CLOSED (commit 1c4a094). 15-VERIFICATION.md status:passed. 262/262 tests GREEN at last full run. Goal of Phase 16: tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions) without breaking the Lighthouse gate Phase 15 just established as the baseline.
-Last activity: 2026-04-26 -- Phase 15 marked complete in ROADMAP/STATE/PROJECT after end-to-end production verification
+Phase: 16 (motion-layer) — Ready to execute. Goal: tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse gate holds.
+Plan: 7 plans in 5 waves (commit 79f8f06). gsd-plan-checker VERIFICATION PASSED 12/12 dimensions + 10/10 additional checks; 4 non-blocking cosmetic warnings.
+Status: Ready to execute Phase 16 (Motion Layer). Phase 15 closed 2026-04-26 — analytics live in production, dashboards confirmed by Jack via UAT 8/8 (commit 8da5134). Validation audit clean (commit 3a33bb2). Security audit SECURED — 19/19 threats CLOSED (commit 1c4a094). 15-VERIFICATION.md status:passed. 262/262 tests GREEN at last full run. Phase 16 plan set: W0:16-01 (RED stubs); W1:16-02 (observer factory + D-19 byte-equivalent scroll-depth refactor) ‖ 16-03 (MOTION.md + MASTER.md §6/§8); W2:16-04 (motion.ts + global.css + BaseLayout — D-26 fires); W3:16-05 (chat.ts D-15 + pulse + scale-in — D-26 fires) ‖ 16-06 (WorkRow arrow); W4:16-07 (Lighthouse + D-26 battery + close-out). All 10 MOTN-XX requirements mapped.
+Last activity: 2026-04-27 -- Phase 16 planned: 7 plans across 5 waves committed (79f8f06); gsd-plan-checker VERIFICATION PASSED
 Branch: main
 
 Progress: [██████████] 100% (27 / 27 plans complete in v1.2 phases finished; Phase 16 plan count TBD)
