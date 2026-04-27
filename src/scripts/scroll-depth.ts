@@ -66,10 +66,11 @@ export function initScrollDepth(): void {
   }
 }
 
-// WR-01: bootstrap-level guard prevents document listener pile-up if this
-// module is re-evaluated across Astro view transitions. The internal
-// scrollDepthInitialized guard already prevents duplicate observer creation,
-// so this is purely a slow-GC hygiene fix for long sessions.
+// Module-evaluation guard — protects against re-import during HMR / test
+// reset cycles (vi.resetModules() within a single jsdom session). Production
+// cross-document navigation reloads the module fresh (no <ClientRouter />),
+// so module-level state resets naturally on every navigation; this guard is
+// not a runtime hot path.
 let scrollDepthBootstrapped = false;
 if (typeof document !== "undefined" && !scrollDepthBootstrapped) {
   scrollDepthBootstrapped = true;

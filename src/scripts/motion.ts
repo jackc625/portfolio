@@ -126,12 +126,13 @@ export function initMotion(): void {
   }
 }
 
-// WR-01: bootstrap-level guard prevents document listener pile-up if this
-// module is re-evaluated across cross-document navigations. The internal
-// motionInitialized guard already prevents duplicate observer creation, so
-// this is purely a slow-GC hygiene fix for long sessions.
-// Why both listeners: <ClientRouter /> is prohibited (MASTER.md §8), so
-// astro:page-load does not fire on its own — DOMContentLoaded is the actual
+// Module-evaluation guard — protects against re-import during HMR / test
+// reset cycles (vi.resetModules() within a single jsdom session). Production
+// cross-document navigation reloads the module fresh, so the module-level
+// state (motionBootstrapped, motionInitialized) resets naturally on every
+// navigation; this guard is not a runtime hot path.
+// Why both listeners: <ClientRouter /> is prohibited (MASTER.md §8 / MOTION.md §9),
+// so astro:page-load does not fire on its own — DOMContentLoaded is the actual
 // init hook today. Both wired for forward-compat.
 let motionBootstrapped = false;
 if (typeof document !== "undefined" && !motionBootstrapped) {
