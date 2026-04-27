@@ -54,7 +54,7 @@
 
 - [x] **MOTN-01**: Page-enter fade via native cross-document `@view-transition` CSS at-rule (no ClientRouter, no JS router) — closed in 16-04
 - [x] **MOTN-02**: Scroll-reveal utility module `src/scripts/motion.ts` using IntersectionObserver — fade + ≤12px translateY, 250–350ms, one-shot per element — closed in 16-04
-- [ ] **MOTN-03**: WorkRow arrow slide-in on hover/focus (opacity 0→1 + 4px translateX, 180ms)
+- [x] **MOTN-03**: WorkRow arrow slide-in on hover/focus (opacity 0→1 + 4px translateX, 180ms) — closed in 16-06
 - [x] **MOTN-04**: Chat bubble idle pulse restored via CSS — paused on hover/focus/reduced-motion — closed in 16-05
 - [x] **MOTN-05**: Chat panel open scale-in (96%→100%, 180ms) — closed in 16-05
 - [x] **MOTN-06**: Typing-dot bounce during SSE streaming — already live at global.css:260-280; reduce-override parity added in 16-05
@@ -118,7 +118,7 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | ANAL-06 | Phase 15 | Complete (15-01) |
 | MOTN-01 | Phase 16 | Complete (16-04) |
 | MOTN-02 | Phase 16 | Complete (16-04) |
-| MOTN-03 | Phase 16 | Pending |
+| MOTN-03 | Phase 16 | Complete (16-06) |
 | MOTN-04 | Phase 16 | Complete (16-05) |
 | MOTN-05 | Phase 16 | Complete (16-05) |
 | MOTN-06 | Phase 16 | Complete (16-05 — reduce-override parity; typing-bounce keyframe was already live pre-Phase 16) |

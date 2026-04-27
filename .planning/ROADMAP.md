@@ -139,7 +139,7 @@
 
 **Wave 3** *(blocked on Wave 2; 16-05 ‖ 16-06 run in parallel)*
 - [x] 16-05-PLAN.md — chat.ts D-15 ordering + global.css chat-pulse + chat-panel scale-in + typing-dot reduce parity (MOTN-04, MOTN-05, MOTN-06, MOTN-08; D-26 gate held; 117/117 chat regression GREEN) (2026-04-27)
-- [ ] 16-06-PLAN.md — WorkRow arrow upgrade (MOTN-03)
+- [x] 16-06-PLAN.md — WorkRow arrow upgrade (MOTN-03) (2026-04-27)
 
 **Wave 4** *(blocked on Wave 3; phase gate, contains human-verify checkpoint)*
 - [ ] 16-07-PLAN.md — phase gate: Lighthouse CI + D-26 + final test sweep + close-out (MOTN-10)
@@ -198,4 +198,4 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
-| 16. Motion Layer | v1.2 | 5/7 | In progress | - |
+| 16. Motion Layer | v1.2 | 6/7 | In progress | - |
