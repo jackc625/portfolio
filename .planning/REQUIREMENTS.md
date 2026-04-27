@@ -60,7 +60,7 @@
 - [ ] **MOTN-06**: Typing-dot bounce during SSE streaming
 - [ ] **MOTN-07**: Section heading word-stagger on `.h1-section` only (never `.display`)
 - [ ] **MOTN-08**: All motion wrapped in `@media (prefers-reduced-motion: no-preference)` or paired with `reduce` override
-- [ ] **MOTN-09**: MASTER.md §5/§6 amended with additive motion carve-outs (property whitelist, duration bands, easing defaults)
+- [x] **MOTN-09**: MASTER.md §5/§6 amended with additive motion carve-outs (property whitelist, duration bands, easing defaults)
 - [ ] **MOTN-10**: Lighthouse gate passes — Performance ≥99 / A11y ≥95 / BP 100 / SEO 100 after motion layer lands
 
 ## Future Requirements (deferred to v1.3+)
@@ -124,7 +124,7 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | MOTN-06 | Phase 16 | Pending |
 | MOTN-07 | Phase 16 | Pending |
 | MOTN-08 | Phase 16 | Pending |
-| MOTN-09 | Phase 16 | Pending |
+| MOTN-09 | Phase 16 | Complete (16-03) |
 | MOTN-10 | Phase 16 | Pending |
 
 **Coverage:** 36 / 36 v1.2 requirements mapped. No orphans. No duplicates.

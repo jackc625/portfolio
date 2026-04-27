@@ -132,7 +132,7 @@
 
 **Wave 1** *(blocked on Wave 0; 16-02 ‖ 16-03 run in parallel)*
 - [x] 16-02-PLAN.md — observer factory + scroll-depth refactor (D-17, D-19) (2026-04-27)
-- [ ] 16-03-PLAN.md — design-system/MOTION.md authored + MASTER.md §6 stub + §8 reconciliation (MOTN-09)
+- [x] 16-03-PLAN.md — design-system/MOTION.md authored + MASTER.md §6 stub + §8 reconciliation (MOTN-09) (2026-04-27)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 16-04-PLAN.md — motion.ts + global.css scroll-reveal/word-stagger/view-transition + BaseLayout import (MOTN-01, MOTN-02, MOTN-07, MOTN-08)
