@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 15 COMPLETE — production deploy verified end-to-end. UAT 8/8 passed (commit 8da5134) confirming all 6 deferred human checks (Umami dashboard 8 events, CF beacon, CF Web Analytics enabled, zero analytics cookies, real UUID baked into prod build, Lighthouse) on jackcutrara.com. Lighthouse Perf 94 (home) / 98 (/projects/seatwatch) accepted by Jack — below ≥99 target but CLS ~0 confirms zero analytics layout cost; perf gap is upstream image/font, not analytics. §7 preview-subdomain silence deferred (no preview URL at UAT). Validation audit clean (commit 3a33bb2): nyquist_compliant + wave_0_complete + audit trail. Security audit (15-SECURITY.md, commit 1c4a094): 19/19 threats CLOSED, verdict SECURED. 15-VERIFICATION.md flipped status:human_needed → status:passed. Phase 15 marked [x] complete in ROADMAP. Ready for Phase 16 (Motion Layer).
+stopped_at: Phase 16 context captured — discussed 4 gray areas + 1 cross-cutting (MOTN-09 doc shape) and committed 16-CONTEXT.md / 16-DISCUSSION-LOG.md (commit 64d6297). Decisions locked: scroll-reveal auto on common roles (.h1-section/.work-row/project prose/About paragraphs) with rootMargin -10% bottom + threshold 0; word-stagger via JS span-wrap in motion.ts (60ms delay, fade + 8px translateY, 250ms ease-out); chat bubble pulse = box-shadow ring + 1.02 scale synced (pause on hover/focus/panel-open/reduced-motion); extract src/scripts/lib/observer.ts factory and refactor scroll-depth.ts to consume it (byte-equivalent); author new design-system/MOTION.md as v1.2 motion canonical doc and rewrite MASTER.md §6 to a stub pointer. User reframed MASTER.md as v1.1-only (non-binding for v1.2+ motion) — saved as feedback memory feedback_master_md_v11_only.md. Ready for /gsd-plan-phase 16.
 last_updated: "2026-04-26T00:00:00Z"
-last_activity: 2026-04-26 -- Phase 15 marked complete (UAT 8/8, security 19/19 closed, verification status:passed); ready to plan Phase 16 Motion Layer
+last_activity: 2026-04-26 -- Phase 16 CONTEXT.md committed; ready for /gsd-plan-phase 16 (Motion Layer)
 progress:
   total_phases: 5
   completed_phases: 4
