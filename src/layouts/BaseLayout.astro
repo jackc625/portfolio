@@ -110,14 +110,15 @@ const WEBSITE_ID = "32f8fdf4-1f21-4895-9e4c-938285c08240";
     </main>
     <Footer />
     <ChatWidget />
-    {/* Phase 15 Plan 02 — Analytics forwarder + scroll-depth observer wiring. */}
-    {/* Single processed <script> block (NOT is:inline) loads both client modules: */}
-    {/*   analytics.ts (D-09..D-12 chat:analytics forwarder + delegated outbound click) */}
-    {/*   scroll-depth.ts (D-05..D-08 IntersectionObserver on /projects/[id] sentinels) */}
-    {/* Plan 02 owns BOTH imports (single-plan-per-file-per-wave); Plan 03 ships scroll-depth.ts. */}
+    {/* Phase 15-16 — Analytics + scroll-depth + motion observer wiring. */}
+    {/* Single processed <script> block (NOT is:inline) loads three client modules: */}
+    {/*   analytics.ts (Phase 15: chat:analytics forwarder + delegated outbound click) */}
+    {/*   scroll-depth.ts (Phase 15: IntersectionObserver on /projects/[id] sentinels — refactored in Phase 16-02 to consume lib/observer.ts) */}
+    {/*   motion.ts (Phase 16-04: scroll-reveal + word-stagger; reduced-motion gated; consumes lib/observer.ts) */}
     <script>
       import "../scripts/analytics.ts";
       import "../scripts/scroll-depth.ts";
+      import "../scripts/motion.ts";
     </script>
   </body>
 </html>
