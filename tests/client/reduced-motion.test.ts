@@ -66,3 +66,41 @@ describe("prefers-reduced-motion — nav underline neutralization (QUAL-04)", ()
     expect(css).toMatch(pattern);
   });
 });
+
+describe("prefers-reduced-motion — Phase 16 motion gating (MOTN-02, MOTN-04, MOTN-05, MOTN-07, MOTN-01)", () => {
+  it("MOTN-02: `@keyframes reveal-rise` and `.reveal-on` rules live inside `no-preference` block", () => {
+    // Either the keyframe is inside no-preference or paired with no-preference activation rule
+    const pattern =
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*{[\s\S]*?\.reveal-on[\s\S]*?animation:\s*reveal-rise/;
+    expect(css).toMatch(pattern);
+  });
+
+  it("MOTN-07: `.word` rule (word-stagger) lives inside `no-preference` block", () => {
+    const pattern =
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*{[\s\S]*?\.word\s*{[\s\S]*?animation:\s*word-rise/;
+    expect(css).toMatch(pattern);
+  });
+
+  it("MOTN-04: chat bubble pulse paired with `prefers-reduced-motion: reduce` neutralizer", () => {
+    // Unconditional rule first; reduce override comes after with `animation: none`
+    expect(css).toMatch(/#chat-bubble[^{]*{[^}]*animation:\s*chat-pulse/);
+    const reducePattern =
+      /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*{[\s\S]*?#chat-bubble\s*{\s*animation:\s*none/;
+    expect(css).toMatch(reducePattern);
+  });
+
+  it("MOTN-05: chat panel scale-in rule lives inside `no-preference` block", () => {
+    const pattern =
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*{[\s\S]*?#chat-panel\.is-open/;
+    expect(css).toMatch(pattern);
+  });
+
+  it("MOTN-01: `::view-transition-old(root)` and `::view-transition-new(root)` rules live inside `no-preference` block", () => {
+    const oldPattern =
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*{[\s\S]*?::view-transition-old\(root\)/;
+    const newPattern =
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*{[\s\S]*?::view-transition-new\(root\)/;
+    expect(css).toMatch(oldPattern);
+    expect(css).toMatch(newPattern);
+  });
+});
