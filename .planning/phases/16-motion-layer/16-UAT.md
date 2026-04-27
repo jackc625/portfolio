@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 phase: 16-motion-layer
 source: [16-01-SUMMARY.md, 16-02-SUMMARY.md, 16-03-SUMMARY.md, 16-04-SUMMARY.md, 16-05-SUMMARY.md, 16-06-SUMMARY.md, 16-07-SUMMARY.md]
 started: 2026-04-27T21:45:00Z
@@ -14,21 +14,18 @@ updated: 2026-04-27T22:15:00Z
 
 ### 1. Page-enter View Transition Fade
 expected: Navigate between any two pages. Outgoing page fades out, incoming fades in via native View Transitions. No content jump or flash. (MOTN-01)
-result: issue
-reported: "Kind of. There's almost a sort of flicker in between"
-severity: major
+result: pass
+notes: "Initially issue (severity: major) - 'Kind of. There's almost a sort of flicker in between'. Resolved by fix commit 1a3e154 (CSS shared-rule fix removed simultaneous reveal-rise animations during view-transition). User re-verified PASS."
 
 ### 2. Scroll-reveal on Sections
 expected: Scroll down on home, about, or a project detail page. Section headings (.h1-section), work rows, and prose paragraphs fade and slide up <=12px when they enter the viewport. Each element animates once (one-shot per element). (MOTN-02)
-result: issue
-reported: "No. I don't notice any fading in or scroll reveal at all"
-severity: major
+result: pass
+notes: "Initially issue (severity: major) - 'No. I don't notice any fading in or scroll reveal at all'. Resolved by fix commit 1a3e154 (removed .reveal-init from shared animation rule so animation now fires only when IntersectionObserver adds .reveal-on). User re-verified PASS."
 
 ### 3. Word-stagger on Section Headings
 expected: When an .h1-section heading scrolls into view, individual words animate in with a slight stagger (each word fades + rises in sequence rather than all at once). (MOTN-07)
-result: issue
-reported: "No. No fade in"
-severity: major
+result: pass
+notes: "Initially issue (severity: major) - 'No. No fade in'. Resolved by fix commit 1a3e154 (gated .word animation behind .reveal-on .word + added .h1-section class to SectionHeader.astro section-label span so word-stagger now has matching DOM targets on home/about/contact). User re-verified PASS."
 
 ### 4. Homepage Hero (.display) Untouched
 expected: The homepage hero text (the large .display heading at the top of the page) does NOT word-stagger and does NOT scroll-reveal. It is rendered immediately on page load with no entrance animation. (D-08 / MOTN-07 exclusion)
@@ -73,15 +70,17 @@ result: pass
 ## Summary
 
 total: 13
-passed: 10
-issues: 3
+passed: 13
+issues: 0
 pending: 0
 skipped: 0
+issues_resolved: 3
+resolution_commit: 1a3e154
 
 ## Gaps
 
 - truth: "Page-enter view-transition fade is smooth with no content jump or flash"
-  status: failed
+  status: resolved
   reason: "User reported: Kind of. There's almost a sort of flicker in between"
   severity: major
   test: 1
@@ -93,7 +92,7 @@ skipped: 0
     - "Apply the .reveal-init self-triggering fix (gap 2) and re-test; if flicker persists, add view-transition-name on body or animation-fill-mode: backwards to the ::view-transition-* pseudo-elements."
 
 - truth: "Section headings, work rows, and prose paragraphs fade and slide up <=12px on scroll into viewport"
-  status: failed
+  status: resolved
   reason: "User reported: No. I don't notice any fading in or scroll reveal at all"
   severity: major
   test: 2
@@ -105,7 +104,7 @@ skipped: 0
     - "Remove `.reveal-init,` from the shared animation rule — keep `.reveal-init` only as the rest-state declaration (opacity:0 + translateY(12px)); apply the animation only to `.reveal-on`."
 
 - truth: ".h1-section words fade + rise in sequence (word-stagger) when heading scrolls into view"
-  status: failed
+  status: resolved
   reason: "User reported: No. No fade in"
   severity: major
   test: 3
