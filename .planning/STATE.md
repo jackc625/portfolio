@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 16 context captured — discussed 4 gray areas + 1 cross-cutting (MOTN-09 doc shape) and committed 16-CONTEXT.md / 16-DISCUSSION-LOG.md (commit 64d6297). Decisions locked: scroll-reveal auto on common roles (.h1-section/.work-row/project prose/About paragraphs) with rootMargin -10% bottom + threshold 0; word-stagger via JS span-wrap in motion.ts (60ms delay, fade + 8px translateY, 250ms ease-out); chat bubble pulse = box-shadow ring + 1.02 scale synced (pause on hover/focus/panel-open/reduced-motion); extract src/scripts/lib/observer.ts factory and refactor scroll-depth.ts to consume it (byte-equivalent); author new design-system/MOTION.md as v1.2 motion canonical doc and rewrite MASTER.md §6 to a stub pointer. User reframed MASTER.md as v1.1-only (non-binding for v1.2+ motion) — saved as feedback memory feedback_master_md_v11_only.md. Ready for /gsd-plan-phase 16.
-last_updated: "2026-04-26T00:00:00Z"
-last_activity: 2026-04-26 -- Phase 16 CONTEXT.md committed; ready for /gsd-plan-phase 16 (Motion Layer)
+stopped_at: Phase 16 UI-SPEC approved — 16-UI-SPEC.md authored by gsd-ui-researcher and verified by gsd-ui-checker 6/6 PASS (no recommendations, all dimensions clean). Spec locks: property whitelist (transform/opacity/box-shadow), duration bands (120/180/200/250–350/600/2500ms), easing (ease-out entrances, ease-in-out loops), motion amplitudes 4/8/12/16px (multiples of 4), accent reservation list extended by chat-bubble-pulse rgba ring (rgba conversion at keyframe site only — `--accent` token unchanged), word-stagger restricted to `.h1-section` (`.display` excluded per D-08/D-12), reduced-motion paired-override pattern, zero new package.json deps, D-26 chat regression gate restated at MOTN-04/05/06 boundary. Researcher recommendations embedded: avoid `will-change` (transform/opacity GPU-composited natively), toggle `data-pulse-paused` before focus-trap activation in openPanel + after focus restoration in closePanel (mirrors Phase 12 DEBT-02 inert pattern), add `prefers-reduced-motion: reduce` extension to typing-dot bounce block at global.css:260–280 for parity. Committed 9be581d. Ready for /gsd-plan-phase 16.
+last_updated: "2026-04-27T00:00:00Z"
+last_activity: 2026-04-27 -- Phase 16 UI-SPEC approved (6/6 dimensions PASS); ready for /gsd-plan-phase 16 (Motion Layer)
 progress:
   total_phases: 5
   completed_phases: 4
