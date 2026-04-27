@@ -522,3 +522,87 @@ summary:focus-visible {
     margin-top: 72px;
   }
 }
+
+/* ============================================
+ * Phase 16 Motion Layer — Plan 04
+ * Source of truth: design-system/MOTION.md (v1.2 motion canonical doc)
+ * Per MOTN-08: every entrance animation gated by prefers-reduced-motion: no-preference;
+ *              loops paired with explicit reduce override (Plan 05 owns chat-pulse).
+ * Per MOTN-10: NO will-change declarations (transform/opacity GPU-composited natively);
+ *              NO custom-curve easings (named easings only).
+ * ============================================ */
+
+/* ----- View-transition keyframes (MOTN-01 / D-20 / D-21) ----- */
+/* Native cross-document @view-transition. Astro 6 ships HTML pages; the browser
+ * runs the transition automatically on cross-document navigation when the
+ * navigation: auto descriptor is set. No <ClientRouter />, no JS router. */
+@view-transition {
+  navigation: auto;
+}
+
+@keyframes view-transition-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes view-transition-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ----- Scroll-reveal keyframe (MOTN-02 / D-06) ----- */
+@keyframes reveal-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----- Word-stagger keyframe (MOTN-07 / D-10) ----- */
+@keyframes word-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----- Entrance animations gated by no-preference (MOTN-01 / MOTN-02 / MOTN-07 / MOTN-08) ----- */
+@media (prefers-reduced-motion: no-preference) {
+  /* MOTN-01 page-enter fade — 200ms ease-out per UI-SPEC */
+  ::view-transition-old(root) {
+    animation: view-transition-fade-out 200ms ease-out forwards;
+  }
+  ::view-transition-new(root) {
+    animation: view-transition-fade-in 200ms ease-out forwards;
+  }
+
+  /* MOTN-02 scroll-reveal — motion.ts adds .reveal-on class on intersect.
+   * Note: .reveal-init is NOT applied by motion.ts; targets render in their
+   * resting state by default and the animation runs ONLY when .reveal-on is
+   * added. This avoids the FOUC where targets briefly show opacity 0 before
+   * JS runs. The 300ms ease-out keyframe fires once per target (one-shot via
+   * observer.unobserve). The .reveal-init class is reserved for future
+   * progressive-enhancement opt-in (out of scope for Plan 04). */
+  .reveal-init,
+  .reveal-on {
+    animation: reveal-rise 300ms ease-out forwards;
+  }
+
+  /* MOTN-07 .h1-section word-stagger — motion.ts wraps each word in
+   * <span class="word" style="--i: N">. animation-delay uses calc(var(--i) * 60ms)
+   * per D-09; total run for a 4-word heading is ~430ms (250ms + 3*60ms). */
+  .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: word-rise 250ms ease-out forwards;
+    animation-delay: calc(var(--i) * 60ms);
+  }
+}
+
+/* ----- Reduced-motion final state (MOTN-08 / D-25) -----
+ * No paired reduce override block needed for MOTN-01 / MOTN-02 / MOTN-07 because
+ * the rules above live INSIDE no-preference. Under reduce: motion.ts
+ * shouldReduceMotion() returns early before constructing the observer or
+ * wrapping words, so .reveal-on is never added and no <span class="word">
+ * children are created. View-transition pseudo-elements receive no animation
+ * declarations and gracefully degrade to the browser-default cross-document
+ * load. Verified by tests/client/motion.test.ts "reduce bails — no observer,
+ * no DOM mutation" + tests/client/reduced-motion.test.ts MOTN-01/02/07
+ * gating assertions. */
