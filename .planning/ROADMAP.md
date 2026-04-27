@@ -131,7 +131,7 @@
 - [x] 16-01-PLAN.md — Wave 0 RED test stubs (7 test files spanning MOTN-01..MOTN-10) (2026-04-27)
 
 **Wave 1** *(blocked on Wave 0; 16-02 ‖ 16-03 run in parallel)*
-- [ ] 16-02-PLAN.md — observer factory + scroll-depth refactor (D-17, D-19)
+- [x] 16-02-PLAN.md — observer factory + scroll-depth refactor (D-17, D-19) (2026-04-27)
 - [ ] 16-03-PLAN.md — design-system/MOTION.md authored + MASTER.md §6 stub + §8 reconciliation (MOTN-09)
 
 **Wave 2** *(blocked on Wave 1 completion)*

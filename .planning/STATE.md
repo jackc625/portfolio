@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 16 Plan 01 complete — Wave 0 RED test stubs landed across 7 test files (efc3677 build-tier + 61c72b6 client-tier + c67609b reduced-motion extension). Test count delta 262 → 330 (+68: 13 baseline-GREEN regression guards + 55 RED targets distributed across Plans 02-06). pnpm check 0/0/0 (80 files); pnpm test 275 GREEN / 55 RED. D-19 byte-equivalence canary established — tests/client/scroll-depth.test.ts + tests/client/analytics.test.ts byte-identical. Reduced-motion negative case is the FIRST test in tests/client/motion.test.ts per ROADMAP gate. Two Rule 1 type-error auto-fixes during Task 2 (@ts-expect-error pattern for missing-module imports + DOM-method spy cast); both folded into 61c72b6, no separate fix commits. observer-factory.test.ts intentionally suite-level fails (8 declared it() blocks all RED at module-load); 16-02 will switch it to per-test execution (8 GREEN target). Ready to execute 16-02 (Wave 1 — observer factory + scroll-depth byte-equivalent refactor) ‖ 16-03 (MOTION.md + MASTER.md §6/§8 reconciliation).
-last_updated: "2026-04-27T19:13:45Z"
-last_activity: 2026-04-27 -- Phase 16 Plan 01 complete: 7 RED test files committed across 3 atomic commits (efc3677, 61c72b6, c67609b); 275 GREEN / 55 RED / 330 total
+stopped_at: Phase 16 Plan 02 complete — observer factory + scroll-depth byte-equivalent refactor landed (commits d7ed781 feat factory + dc36742 refactor scroll-depth). src/scripts/lib/observer.ts (46 LOC NEW) exports makeRevealObserver({selector, rootMargin, threshold, onIntersect, oneShot?}); src/scripts/scroll-depth.ts +6 LOC delta (76 → 82). D-19 byte-equivalence canary HELD — git diff db876cf -- tests/client/scroll-depth.test.ts tests/client/analytics.test.ts returns 0 lines. observer-factory.test.ts flipped suite-level RED (8 it() blocks not collected) → 8 GREEN. Test count 275 GREEN / 55 RED / 330 total → 283 GREEN / 55 RED / 338 total (+8 GREEN: observer-factory tests now collecting). pnpm check 0/0/0 (81 files); pnpm build clean end-to-end. 1 Rule 1 inline self-correction during Task 2 (comment-text rewording to honor `grep -c 'observer.unobserve(entry.target)' returns 1` acceptance criterion); folded into dc36742, no separate fix commit. Wave 1 sibling 16-03 ready to execute (MOTION.md doc rewrite — no source coupling). Wave 2 16-04 ready (motion.ts will consume the factory's oneShot:true path for one-shot reveal targets).
+last_updated: "2026-04-27T19:31:09Z"
+last_activity: 2026-04-27 -- Phase 16 Plan 02 complete: 2 atomic commits (d7ed781 factory + dc36742 refactor); D-19 canary held (0-lines diff in test files); 283 GREEN / 55 RED / 338 total
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 34
-  completed_plans: 28
-  percent: 82
+  completed_plans: 29
+  percent: 85
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-15)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 16 — Motion Layer. Plan 16-01 complete 2026-04-27 (Wave 0 RED test stubs landed); next: 16-02 ‖ 16-03 (Wave 1).
+**Current focus:** Phase 16 — Motion Layer. Plan 16-02 complete 2026-04-27 (observer factory landed + scroll-depth byte-equivalent refactor; D-19 canary held); next: 16-03 (Wave 1 sibling — MOTION.md doc rewrite) ‖ 16-04 (Wave 2 — motion.ts consumes factory).
 
 ## Current Position
 
-Phase: 16 (motion-layer) — In progress. Wave 0 complete; Wave 1 ready (16-02 ‖ 16-03 parallel).
-Plan: 16-01 complete (commits efc3677, 61c72b6, c67609b). Test count: 275 GREEN / 55 RED / 330 total. 55 RED tests distributed across Plans 02-06; D-19 byte-equivalence canary established.
-Status: Phase 16 Plan 01 done. 7 RED test files committed: 3 build-tier (motion-css-rules + work-arrow-motion + motion-doc) + 3 client-tier (observer-factory + motion + chat-pulse-coordination) + 1 client-tier extension (reduced-motion). pnpm check 0/0/0 (80 files). 13 baseline-GREEN regression guards + 55 RED targets ready to flip GREEN as Plans 02-06 land. Reduced-motion negative case is FIRST test in tests/client/motion.test.ts per ROADMAP gate. Next: /gsd-execute-phase 16 (Wave 1 — 16-02 observer factory + scroll-depth byte-equivalent refactor ‖ 16-03 MOTION.md + MASTER.md §6/§8 reconciliation).
-Last activity: 2026-04-27 -- Phase 16 Plan 01 complete: 7 RED test files committed across 3 atomic task commits (~15min duration); 275 GREEN / 55 RED / 330 total
+Phase: 16 (motion-layer) — In progress. Wave 0 + Wave 1 (Plan 02 half) complete; 16-03 (Wave 1 sibling) + 16-04 (Wave 2) next.
+Plan: 16-02 complete (commits d7ed781 feat factory + dc36742 refactor scroll-depth). Test count: 283 GREEN / 55 RED / 338 total (+8 GREEN since 16-01: observer-factory tests now run individually). D-19 byte-equivalence canary HELD — 0-lines diff in tests/client/scroll-depth.test.ts + tests/client/analytics.test.ts since pre-plan SHA db876cf.
+Status: Phase 16 Plan 02 done. src/scripts/lib/observer.ts (46 LOC NEW) exports makeRevealObserver({selector, rootMargin, threshold, onIntersect, oneShot?}). src/scripts/scroll-depth.ts +6 LOC delta (76 → 82); inline new IntersectionObserver(...) extracted into factory; handleScrollEntry signature byte-identical; WR-01 bootstrap block preserved verbatim; scrollDepthInitialized guard preserved with original gate-ordering (set AFTER null gate). pnpm check 0/0/0 (81 files); pnpm build clean end-to-end (11 prerendered routes). 1 Rule 1 inline comment-text self-correction during Task 2; folded into dc36742, no separate fix commit. observer-factory.test.ts @ts-expect-error directive removed in d7ed781 (Plan 16-01 documented drift signal — flips to ts(2578) once module exists). Next: /gsd-execute-phase 16 (16-03 MOTION.md doc rewrite ‖ 16-04 motion.ts client script consuming oneShot:true factory path).
+Last activity: 2026-04-27 -- Phase 16 Plan 02 complete: 2 atomic task commits (~8min duration); D-19 canary held; 283 GREEN / 55 RED / 338 total
 Branch: main
 
-Progress: [████████░░] 82% (28 / 34 plans complete; Phase 16 Plan 01 closed Wave 0)
+Progress: [█████████░] 85% (29 / 34 plans complete; Phase 16 Plan 02 closed Wave 1 first half)
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [████████░░] 82% (28 / 34 plans complete; Phase 16
 | Plan | Duration | Tasks | Files | Commits |
 |------|----------|-------|-------|---------|
 | 16-01 | ~15min | 3 tasks (auto, no checkpoints; 2 inline Rule 1 type-error self-corrections during Task 2) | 7 test files (6 new + 1 modified-additive) | efc3677, 61c72b6, c67609b |
+| 16-02 | ~8min | 2 tasks (auto, no checkpoints; 1 inline Rule 1 comment-text self-correction during Task 2) | 3 files (1 new src + 1 modified src + 1 modified test) | d7ed781, dc36742 |
 
 *Full per-phase timing retained in milestones/v1.1-STATE.md archive.*
 
@@ -75,6 +76,18 @@ Progress: [████████░░] 82% (28 / 34 plans complete; Phase 16
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 16 decisions (Plan 02):**
+
+- [Phase 16-02]: Shared IntersectionObserver factory landed at `src/scripts/lib/observer.ts` (46 LOC NEW). Exports `RevealObserverOptions` type + `makeRevealObserver({selector, rootMargin, threshold, onIntersect, oneShot?})` returning `IntersectionObserver | null`. Empty-selector gate inside factory (returns null when `querySelectorAll` matches 0) absorbs the original `scroll-depth.ts:42` `if (sentinels.length === 0) return;` gate; caller checks `if (!observer) return;` to preserve identical no-op-on-non-project-routes behavior (D-05 scope gate). Pure factory: no bootstrap, no console, no analytics surface, no `addEventListener`. Filters non-intersecting entries inside the IO callback before invoking onIntersect (matches observer-factory.test.ts test 7).
+- [Phase 16-02]: oneShot defaults to false (D-19 critical) — scroll-depth.ts's handleScrollEntry calls `observer.unobserve(entry.target)` itself; making the factory auto-unobserve would be a redundant double-call (idempotent in scroll-depth's case but a behavioral surface change). Default-omitted preserves the analytics caller's authority over its own dedup semantics. oneShot=true reserved for motion.ts (Plan 04) one-shot reveal patterns; contract-tested via observer-factory.test.ts test "oneShot=true auto-unobserves the target after intersect".
+- [Phase 16-02]: D-19 byte-equivalence canary HELD — `git diff db876cf -- tests/client/scroll-depth.test.ts tests/client/analytics.test.ts | wc -l` returns 0 lines after both Task 1 + Task 2 commits. The 7 scroll-depth tests + 15 analytics tests stay GREEN with zero source edits to either test file. Phase 15 ANAL-05 / D-26 chat regression gate parity preserved at the analytics surface.
+- [Phase 16-02]: scroll-depth.ts +6 LOC delta (76 → 82) — well under `max_lines_delta: 30`. handleScrollEntry signature unchanged; WR-01 bootstrap block (lines 67-76) preserved verbatim; scrollDepthInitialized guard preserved with original gate-ordering (set AFTER null gate, matching the original `if (sentinels.length === 0) return; … scrollDepthInitialized = true;` order). Inline `new IntersectionObserver(...)` block + `sentinels.forEach(observe)` loop replaced with single `makeRevealObserver({…})` call. DEV `console.log` preserved via separate `document.querySelectorAll('.scroll-sentinel').length` read — factory does not expose targets list; functionally equivalent.
+- [Phase 16-02]: `onIntersect: handleScrollEntry` passed directly (no arrow wrapper) — minimal-diff path, signatures match exactly so direct passing typechecks clean. Plan §<action> note 3 listed both options (`(entry, obs) => handleScrollEntry(entry, obs)` wrapper vs direct passing); direct passing produces zero TS errors and the smallest diff.
+- [Phase 16-02]: @ts-expect-error directive removed from observer-factory.test.ts in d7ed781 (Task 1 commit), not Task 2. Plan 16-01 explicitly flagged this as drift signal for Plan 16-02 because the directive flips to a ts(2578) "unused @ts-expect-error" error once the imported module exists. Removal co-located with module creation in the Task 1 commit.
+- [Phase 16-02]: Rule 1 inline self-correction during Task 2 — comment-text rewording to honor `grep -c 'observer.unobserve(entry.target)' src/scripts/scroll-depth.ts returns 1` acceptance criterion. Initial draft had 3 grep matches: 1 executable call (line 40, intended) + 2 comment references (line 9 header + line 49 inline) using the literal `observer.unobserve(entry.target)` shape. Re-worded comments to "preserves its own per-target unobserve call" / "calls unobserve on its own entry.target" — semantics unchanged, executable call (line 40) untouched, behavior byte-identical. Pattern documented for future plans where grep-count acceptance criteria conflict with comment-driven self-documentation.
+- [Phase 16-02]: Test count delta — pre-plan baseline 275 GREEN / 55 RED / 330 total → post-plan 283 GREEN / 55 RED / 338 total. Net +8 GREEN: observer-factory.test.ts's 8 declared `it()` blocks transitioned from suite-level RED (Plan 16-01 abort at module-load due to missing `src/scripts/lib/observer` import) to all-running-and-passing. The 55 RED stubs from Plan 16-01 are preserved (Plans 03-06 will flip them GREEN as their implementations land). Total visible tests +8 (+8 GREEN, 0 new RED).
+- [Phase 16-02]: Zero new dependencies (runtime or dev). pnpm check 0/0/0 (81 files, +1 for observer.ts). pnpm build clean end-to-end (build:chat-context → wrangler types → astro check → astro build → pages-compat; 11 prerendered routes; 7.80s server build). MOTN-02 requirement closed in REQUIREMENTS.md (factory IS the kernel that MOTN-02 reveal cadence depends on; Plan 04 motion.ts will preserve the closure and add MOTN-07 / MOTN-08 closures).
 
 **Phase 16 decisions (Plan 01):**
 
