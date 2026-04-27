@@ -85,8 +85,10 @@ type MotionModule = {
   wrapWordsInPlace: (el: HTMLElement) => void;
 };
 async function importMotion(): Promise<MotionModule> {
-  // @ts-expect-error — module created in Plan 16-04
-  return (importMotion()) as MotionModule;
+  // Plan 16-04 landed src/scripts/motion.ts — the @ts-expect-error directive
+  // that flagged the missing module pre-Plan-04 has been removed (drift signal
+  // documented in Plan 16-01 SUMMARY).
+  return (await import("../../src/scripts/motion")) as MotionModule;
 }
 
 // FIRST DESCRIBE BLOCK = reduced-motion negative case (per ROADMAP gate)
