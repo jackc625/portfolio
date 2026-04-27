@@ -1,13 +1,16 @@
 ---
 phase: 16
 slug: motion-layer
-status: pending
+status: passed
 gate: phase-16-final
 created: 2026-04-27
+updated: 2026-04-27T21:15:00Z
 phase_start_sha: 721f844
 verifier: gsd-executor (16-07 Task 1 automated portion)
 human_verification_required: yes
-human_verification_completed: no
+human_verification_completed: yes
+human_uat_status: passed
+uat_signoff: "approved 2026-04-27 by user (Jack Cutrara) — all 13 UAT rows PASS via local browser verification (cross-document @view-transition fade, scroll-reveal, word-stagger, .display untouched, WorkRow arrow translateX, chat bubble pulse + pause-on-hover/focus + pause-on-panel-open, chat panel scale-in, typing-dot bounce, AND reduced-motion contract — entrances OFF + chat pulse OFF + typing-dot OFF)"
 d26_compliant: true
 lighthouse_compliant: accepted
 lighthouse_notes: "Localhost (http-server static preview) Performance 80 (home) / 81 (/projects/seatwatch) — below ≥99 target due to localhost simulated-throttled-4G LCP/FCP/SI inflation (Lighthouse simulates a real-device cold-cache load against a slow 4G network; localhost serving is dominated by font fetch RTT in this synthetic harness, not by actual server latency). Phase 16 motion-related metrics PASS: TBT = 0 ms (≤150 ms target — well clear, no motion JS blocking), CLS ≈ 0.0016 (≤0.01 target — no layout shift from scroll-reveal/word-stagger/view-transition entrances). Accessibility 95 / Best Practices 100 / SEO 100 all PASS verbatim. Phase 15 precedent (15-VERIFICATION.md frontmatter) accepted Performance 94 (home) / 98 (/projects/seatwatch) on production with similar LCP-dominated gap; the Phase 16 motion layer adds ZERO new runtime JS deps and ZERO new render-blocking surface, so the Phase 14 / 15 baseline carries forward. Production-on-Cloudflare-edge Lighthouse run is the canonical gate (Phase 15 §9 pattern); localhost Lighthouse here is the closest automatable proxy and confirms the motion-specific TBT/CLS sub-gates are well-clear."
@@ -151,23 +154,23 @@ CONTEXT.md / RESEARCH.md zero-new-deps preferred path honored phase-wide. The en
 
 | # | Behavior | Steps | Result |
 |---|----------|-------|--------|
-| 1 | Cross-document `@view-transition` fade (MOTN-01) | Default motion prefs in Chrome 126+; navigate `/` → `/projects` → `/about`; observe brief opacity fade | [pending] |
-| 2 | Scroll-reveal on home / about / project detail (MOTN-02) | Scroll down on `/about`; section header + paragraphs fade-up as they enter the lower 90% viewport | [pending] |
-| 3 | `.h1-section` word-stagger (MOTN-07) | Reload `/about`; section header words appear left-to-right with ~60ms stagger | [pending] |
-| 4 | `.display` UNTOUCHED on homepage (D-08 / MOTN-07 exclusion) | Reload `/`; the giant Jack Cutrara wordmark renders instantly with no fade, no stagger | [pending] |
-| 5 | WorkRow arrow slide-in (MOTN-03) | Hover or focus a row in the home page work list; the `→` arrow fades in AND translates 4px right | [pending] |
-| 6 | Chat bubble pulse — alive but quiet (MOTN-04) | Land on any page; observe 2.5s ring-expand pulse loop on the bubble bottom-right | [pending] |
-| 7 | Pulse pauses on hover/focus (D-15) | Hover the bubble → pulse stops; un-hover → pulse resumes | [pending] |
-| 8 | Pulse pauses while panel open (D-15) | Click the bubble to open the panel → pulse stops; close → pulse resumes after focus restoration | [pending] |
-| 9 | Chat panel scale-in (MOTN-05) | Click the bubble → panel scales 96% → 100% from bottom-right corner with opacity fade-in | [pending] |
-| 10 | Typing-dot bounce during SSE (MOTN-06) | Open chat, send a message; while bot is responding, observe 3-dot bounce | [pending] |
-| 11 | **Reduced-motion** — entrance animations off (MOTN-08) | DevTools → Rendering panel → emulate `prefers-reduced-motion: reduce`; reload `/about`; section reveals immediately, words don't stagger, panel doesn't scale, page-enter doesn't fade | [pending] |
-| 12 | **Reduced-motion** — chat bubble pulse off (MOTN-08 / D-24) | With reduce emulated, observe the chat bubble — pulse animation is OFF (no ring, no scale, no breathing) | [pending] |
-| 13 | **Reduced-motion** — typing-dot bounce off (MOTN-06 parity, optional) | With reduce emulated, send a message in chat; the typing-dot bounce is paused/off | [pending] |
+| 1 | Cross-document `@view-transition` fade (MOTN-01) | Default motion prefs in Chrome 126+; navigate `/` → `/projects` → `/about`; observe brief opacity fade | **PASS** [approved 2026-04-27 by user] |
+| 2 | Scroll-reveal on home / about / project detail (MOTN-02) | Scroll down on `/about`; section header + paragraphs fade-up as they enter the lower 90% viewport | **PASS** [approved 2026-04-27 by user] |
+| 3 | `.h1-section` word-stagger (MOTN-07) | Reload `/about`; section header words appear left-to-right with ~60ms stagger | **PASS** [approved 2026-04-27 by user] |
+| 4 | `.display` UNTOUCHED on homepage (D-08 / MOTN-07 exclusion) | Reload `/`; the giant Jack Cutrara wordmark renders instantly with no fade, no stagger | **PASS** [approved 2026-04-27 by user] |
+| 5 | WorkRow arrow slide-in (MOTN-03) | Hover or focus a row in the home page work list; the `→` arrow fades in AND translates 4px right | **PASS** [approved 2026-04-27 by user] |
+| 6 | Chat bubble pulse — alive but quiet (MOTN-04) | Land on any page; observe 2.5s ring-expand pulse loop on the bubble bottom-right | **PASS** [approved 2026-04-27 by user] |
+| 7 | Pulse pauses on hover/focus (D-15) | Hover the bubble → pulse stops; un-hover → pulse resumes | **PASS** [approved 2026-04-27 by user] |
+| 8 | Pulse pauses while panel open (D-15) | Click the bubble to open the panel → pulse stops; close → pulse resumes after focus restoration | **PASS** [approved 2026-04-27 by user] |
+| 9 | Chat panel scale-in (MOTN-05) | Click the bubble → panel scales 96% → 100% from bottom-right corner with opacity fade-in | **PASS** [approved 2026-04-27 by user] |
+| 10 | Typing-dot bounce during SSE (MOTN-06) | Open chat, send a message; while bot is responding, observe 3-dot bounce | **PASS** [approved 2026-04-27 by user] |
+| 11 | **Reduced-motion** — entrance animations off (MOTN-08) | DevTools → Rendering panel → emulate `prefers-reduced-motion: reduce`; reload `/about`; section reveals immediately, words don't stagger, panel doesn't scale, page-enter doesn't fade | **PASS** [approved 2026-04-27 by user] |
+| 12 | **Reduced-motion** — chat bubble pulse off (MOTN-08 / D-24) | With reduce emulated, observe the chat bubble — pulse animation is OFF (no ring, no scale, no breathing) | **PASS** [approved 2026-04-27 by user] |
+| 13 | **Reduced-motion** — typing-dot bounce off (MOTN-06 parity, optional) | With reduce emulated, send a message in chat; the typing-dot bounce is paused/off | **PASS** [approved 2026-04-27 by user] |
 
-**Browser to test:** Chrome 126+ or Safari 18.2+ on macOS / Windows / Linux. The cross-document `@view-transition` at-rule requires a recent browser version.
+**Browser tested:** Chrome (current stable) on Windows 11 — `@view-transition` cross-document fade verified default-motion + reduced-motion. All 13 rows verified locally via DevTools Rendering panel `prefers-reduced-motion: reduce` emulation toggle.
 
-**UAT signoff:** _Pending — Jack to verify locally via Task 2 checkpoint:human-verify._
+**UAT signoff:** **APPROVED 2026-04-27 by Jack Cutrara** — all 13 rows PASS. Manual UAT closed; Phase 16 visual cadence + reduced-motion contract signed off.
 
 ---
 
@@ -178,12 +181,15 @@ CONTEXT.md / RESEARCH.md zero-new-deps preferred path honored phase-wide. The en
 - [x] Full test suite GREEN (Section 3 — 338/338)
 - [x] D-15 server byte-identical (Section 4 — 0 lines diff vs phase start)
 - [x] Zero new runtime deps (Section 5 — 0 lines diff vs phase start)
-- [ ] Manual UAT 13 / 13 PASS (Section 6 — pending Task 2)
+- [x] Manual UAT 13 / 13 PASS (Section 6 — APPROVED 2026-04-27 by Jack Cutrara)
 
-When the manual UAT box is checked and the user signs off, set `status: passed` in this file's frontmatter and commit. Then update STATE.md / ROADMAP.md / REQUIREMENTS.md (Task 3).
+All 6 phase-gate boxes checked. Frontmatter `status: passed` set. Phase 16 Motion Layer verification record CLOSED.
+
+Next: Task 3 — propagate phase closure to STATE.md / ROADMAP.md / REQUIREMENTS.md.
 
 ---
 
 *Phase: 16-motion-layer*
 *Scaffold authored: 2026-04-27 (Plan 16-07 Task 1 — automated gates portion)*
-*Pending: Jack's manual UAT (Plan 16-07 Task 2 checkpoint:human-verify)*
+*UAT signoff: 2026-04-27 (Plan 16-07 Task 2 checkpoint:human-verify — APPROVED by Jack Cutrara, all 13 rows PASS)*
+*Status: passed — Phase 16 closed*
