@@ -55,11 +55,11 @@
 - [x] **MOTN-01**: Page-enter fade via native cross-document `@view-transition` CSS at-rule (no ClientRouter, no JS router) — closed in 16-04
 - [x] **MOTN-02**: Scroll-reveal utility module `src/scripts/motion.ts` using IntersectionObserver — fade + ≤12px translateY, 250–350ms, one-shot per element — closed in 16-04
 - [ ] **MOTN-03**: WorkRow arrow slide-in on hover/focus (opacity 0→1 + 4px translateX, 180ms)
-- [ ] **MOTN-04**: Chat bubble idle pulse restored via CSS — paused on hover/focus/reduced-motion
-- [ ] **MOTN-05**: Chat panel open scale-in (96%→100%, 180ms)
-- [ ] **MOTN-06**: Typing-dot bounce during SSE streaming
+- [x] **MOTN-04**: Chat bubble idle pulse restored via CSS — paused on hover/focus/reduced-motion — closed in 16-05
+- [x] **MOTN-05**: Chat panel open scale-in (96%→100%, 180ms) — closed in 16-05
+- [x] **MOTN-06**: Typing-dot bounce during SSE streaming — already live at global.css:260-280; reduce-override parity added in 16-05
 - [x] **MOTN-07**: Section heading word-stagger on `.h1-section` only (never `.display`) — closed in 16-04
-- [ ] **MOTN-08**: All motion wrapped in `@media (prefers-reduced-motion: no-preference)` or paired with `reduce` override — entrance side closed in 16-04 (MOTN-01/02/07); loop side (MOTN-04 chat-pulse reduce override) lands in Plan 05
+- [x] **MOTN-08**: All motion wrapped in `@media (prefers-reduced-motion: no-preference)` or paired with `reduce` override — entrance side closed in 16-04 (MOTN-01/02/07); loop side (MOTN-04 chat-pulse + MOTN-06 typing-dot reduce overrides) closed in 16-05
 - [x] **MOTN-09**: MASTER.md §5/§6 amended with additive motion carve-outs (property whitelist, duration bands, easing defaults)
 - [ ] **MOTN-10**: Lighthouse gate passes — Performance ≥99 / A11y ≥95 / BP 100 / SEO 100 after motion layer lands
 
@@ -119,11 +119,11 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | MOTN-01 | Phase 16 | Complete (16-04) |
 | MOTN-02 | Phase 16 | Complete (16-04) |
 | MOTN-03 | Phase 16 | Pending |
-| MOTN-04 | Phase 16 | Pending |
-| MOTN-05 | Phase 16 | Pending |
-| MOTN-06 | Phase 16 | Pending |
+| MOTN-04 | Phase 16 | Complete (16-05) |
+| MOTN-05 | Phase 16 | Complete (16-05) |
+| MOTN-06 | Phase 16 | Complete (16-05 — reduce-override parity; typing-bounce keyframe was already live pre-Phase 16) |
 | MOTN-07 | Phase 16 | Complete (16-04) |
-| MOTN-08 | Phase 16 | Partial (16-04 entrance side; 16-05 closes loop side) |
+| MOTN-08 | Phase 16 | Complete (16-04 entrance side; 16-05 loop side) |
 | MOTN-09 | Phase 16 | Complete (16-03) |
 | MOTN-10 | Phase 16 | Pending |
 
