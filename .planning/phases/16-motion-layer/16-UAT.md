@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 16-motion-layer
 source: [16-01-SUMMARY.md, 16-02-SUMMARY.md, 16-03-SUMMARY.md, 16-04-SUMMARY.md, 16-05-SUMMARY.md, 16-06-SUMMARY.md, 16-07-SUMMARY.md]
 started: 2026-04-27T21:45:00Z
@@ -85,21 +85,38 @@ skipped: 0
   reason: "User reported: Kind of. There's almost a sort of flicker in between"
   severity: major
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "Likely a downstream symptom of the .reveal-init self-triggering bug. While view-transition cross-fade runs (200ms), the new page's above-the-fold .reveal-init elements simultaneously run reveal-rise 300ms (forwards), creating overlapping fade animations that composite as a flicker."
+  artifacts:
+    - path: "src/styles/global.css"
+      issue: "Lines 568-573 view-transition pseudo-elements + lines 589-592 shared .reveal-init/.reveal-on animation rule cause overlapping fades during navigation."
+  missing:
+    - "Apply the .reveal-init self-triggering fix (gap 2) and re-test; if flicker persists, add view-transition-name on body or animation-fill-mode: backwards to the ::view-transition-* pseudo-elements."
 
 - truth: "Section headings, work rows, and prose paragraphs fade and slide up <=12px on scroll into viewport"
   status: failed
   reason: "User reported: No. I don't notice any fading in or scroll reveal at all"
   severity: major
   test: 2
-  artifacts: []
-  missing: []
+  root_cause: "src/styles/global.css:589-592 declares the reveal-rise animation on the SHARED .reveal-init, .reveal-on rule. motion.ts adds .reveal-init to all reveal targets at init time (lines 111-117); the moment that class lands, the 300ms forwards animation runs immediately at page load, fading every reveal target from opacity 0 to 1 before the user has a chance to scroll. By the time IntersectionObserver adds .reveal-on, the animation has already completed and animation property is identical so no restart fires. End state: all targets stuck at opacity 1, no visible reveal-on-scroll anywhere on the site. Confirmed by user diagnostic: page=/, .reveal-init=0, .reveal-on=0, .work-row=3, .about-body p=2, reduce=false, console showed [motion] observer attached so initMotion ran."
+  artifacts:
+    - path: "src/styles/global.css"
+      issue: "Lines 589-590: shared selector `.reveal-init, .reveal-on { animation: reveal-rise 300ms ease-out forwards; }` causes init-time self-trigger."
+  missing:
+    - "Remove `.reveal-init,` from the shared animation rule — keep `.reveal-init` only as the rest-state declaration (opacity:0 + translateY(12px)); apply the animation only to `.reveal-on`."
 
 - truth: ".h1-section words fade + rise in sequence (word-stagger) when heading scrolls into view"
   status: failed
   reason: "User reported: No. No fade in"
   severity: major
   test: 3
-  artifacts: []
-  missing: []
+  root_cause: "Two compounding bugs: (a) src/styles/global.css:597-603 declares the word-rise animation directly on `.word`, so spans animate the moment wrapWordsInPlace creates them at init time (same self-trigger pattern as .reveal-init); (b) more fundamentally: src/scripts/motion.ts:13 comment claims SectionHeader.astro outputs <h2 class='h1-section'>, but src/components/primitives/SectionHeader.astro:24-28 actually outputs <div class='section-header'><span class='label-mono section-label'> — the .h1-section class never appears on home/about/contact. It only exists on src/pages/projects/[id].astro:41 (project detail title). User's diagnostic confirmed .h1_section count = 0 on the home page. So word-stagger has nothing to attach to anywhere except project detail pages."
+  artifacts:
+    - path: "src/styles/global.css"
+      issue: "Lines 597-603: `.word` self-triggers word-rise animation at span creation time."
+    - path: "src/scripts/motion.ts"
+      issue: "Line 13 comment lies: claims SectionHeader outputs .h1-section. Line 18 REVEAL_SELECTOR includes .h1-section but no SectionHeader instance ever emits it."
+    - path: "src/components/primitives/SectionHeader.astro"
+      issue: "Lines 24-28: outputs .section-header / .section-label, not .h1-section. Either add .h1-section to the section-label span or widen REVEAL_SELECTOR to match what's actually emitted."
+  missing:
+    - "Gate .word animation behind the parent's .reveal-on class: `.reveal-on .word { animation: ... }` instead of `.word { animation: ... }`."
+    - "Decide spec intent: add `h1-section` to SectionHeader.astro's `<span class=\"label-mono section-label\">` OR widen motion.ts REVEAL_SELECTOR to include `.section-label`. SectionHeader is the most natural target for word-stagger (it's the section header pattern across the site)."

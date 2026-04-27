@@ -586,18 +586,21 @@ summary:focus-visible {
     opacity: 0;
     transform: translateY(12px);
   }
-  .reveal-init,
   .reveal-on {
     animation: reveal-rise 300ms ease-out forwards;
   }
 
   /* MOTN-07 .h1-section word-stagger — motion.ts wraps each word in
    * <span class="word" style="--i: N">. animation-delay uses calc(var(--i) * 60ms)
-   * per D-09; total run for a 4-word heading is ~430ms (250ms + 3*60ms). */
+   * per D-09; total run for a 4-word heading is ~430ms (250ms + 3*60ms).
+   * Animation gated on parent .reveal-on so words wait for IntersectionObserver
+   * intersection rather than firing at span-creation time. */
   .word {
     display: inline-block;
     opacity: 0;
     transform: translateY(8px);
+  }
+  .reveal-on .word {
     animation: word-rise 250ms ease-out forwards;
     animation-delay: calc(var(--i) * 60ms);
   }

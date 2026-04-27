@@ -10,7 +10,8 @@ import { makeRevealObserver } from "./lib/observer";
 export {};
 
 // Selector list per D-04 — `.display` deliberately excluded (D-08 homepage hero untouched).
-// .h1-section: SectionHeader.astro outputs <h2 class="h1-section">.
+// .h1-section: SectionHeader.astro section-label span carries .h1-section;
+// project detail page titles also carry .h1-section (src/pages/projects/[id].astro:41).
 // .work-row: home page work list rows (verified at src/components/primitives/WorkRow.astro).
 // .prose-editorial p: project detail prose blocks (src/pages/projects/[id].astro:69).
 // .about-body p: About page paragraphs (src/pages/about.astro:12).

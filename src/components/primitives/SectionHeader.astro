@@ -22,7 +22,7 @@ const { number, title, count, id } = Astro.props;
 ---
 
 <div class="section-header">
-  <span id={id} class="label-mono section-label">§ {number} — {title}</span>
+  <span id={id} class="label-mono section-label h1-section">§ {number} — {title}</span>
   {count && <span class="meta-mono tabular section-count">{count}</span>}
 </div>
 <div class="section-rule"></div>
