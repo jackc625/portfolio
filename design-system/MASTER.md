@@ -659,38 +659,11 @@ Phase 9 **rebuilds** `MobileMenu.astro` as a full-screen overlay primitive rathe
 
 ---
 
-## 6. Motion (the pragmatic motion line)
+## 6. Motion (superseded by v1.2)
 
-The editorial system is **mostly motionless**. The mockup is a deliberately quiet, monk-mode visual contract. But Phase 8's user explicitly chose a **pragmatic motion line** rather than mockup.html's strict zero-motion posture (D-13). This section documents that line so Phase 9 does **not** second-guess and strip out the surviving Tailwind state transitions thinking they are leftover v1.0 noise.
+> **v1.1 motion lock superseded by v1.2.** See [`design-system/MOTION.md`](MOTION.md) for the v1.2 motion canonical doc — property whitelist, duration bands, easing defaults, per-animation specs, and the reduced-motion contract.
 
-### 6.1 Dead — removed in Phase 8, never reintroduced
-
-- **Status indicators (typing dots, loading spinners) may use looped CSS @keyframes when actively signaling state — these are functional indicators, not entrance animations.**
-- **GSAP** — `gsap` is uninstalled from `package.json`. No `import gsap from "gsap"` anywhere. No GSAP plugins (ScrollTrigger, SplitText, etc.). The `npm uninstall gsap` step is permanent.
-- **Scroll-trigger animations** — every scroll-driven reveal, parallax effect, pin-to-viewport animation is gone. No `[data-animate]` opacity stub. No IntersectionObserver wiring for fade-in.
-- **Canvas hero** — `CanvasHero.astro` is deleted. No `<canvas>`, no simplex noise, no requestAnimationFrame loop, no WebGL.
-- **View transitions** — `<ClientRouter />` is removed from `BaseLayout.astro`. No `::view-transition-*` `@keyframes`. No `astro:before-preparation` listener. No cross-page morph animations. Every page navigation is a full reload.
-- **`[data-animate]` machinery** — the entire opacity-stub system is gone from `global.css`.
-- **`.theme-transitioning` rules** — the dark-mode flicker-prevention CSS is gone (because dark mode is gone).
-- **Chat bubble GSAP motion** — `chat.ts` GSAP call sites are no-op'd: `animatePanelOpen`, `animatePanelClose`, `animateMessageAppear`, `startPulse`, `startTypingDots` (D-27). The chat panel opens/closes instantly. The bubble does not pulse. The typing dots do not bounce. **Chat motion is a known visible regression scoped to Phase 10 (CHAT-02 restyle) for restoration via CSS `@keyframes` if desired.**
-
-### 6.2 Allowed to survive — functional hover/focus state only
-
-- **Tailwind `transition-colors` utility classes** — used on nav links, contact links, anywhere a hover state changes color
-- **`.nav-link-hover` underline animation** — the existing `global.css` rule that animates the underline of hovered nav links is kept
-- **Footer icon hover `hover:-translate-y-0.5`** — if Footer ever gains social-icon links, the existing 0.5-unit translate on hover is allowed
-- **`.chat-copy-btn` opacity transition** — the chat widget's "copy code block" button fades in/out on hover; this CSS opacity transition is kept
-- **All CSS `transition` declarations on state changes** (`:hover`, `:focus`, `:active`) — kept on a case-by-case basis. Phase 9 should not blanket-strip them.
-- **`work-arrow` opacity 120ms ease transition** — the WorkRow hover arrow reveal is part of the spec (§5.5), not a survivor — it is **required**.
-- **Active nav-link accent underline** — not a transition, but a static text-decoration. Required.
-
-### 6.3 `prefers-reduced-motion`
-
-`prefers-reduced-motion: reduce` is **respected** trivially: most motion is already gone, and the surviving transitions are all sub-200ms color/opacity/translate state changes that pose no vestibular risk. The `@media (prefers-reduced-motion: reduce) { /* stub */ }` block in `global.css` may be retained as a no-op stub or deleted at Claude's discretion (08-CONTEXT.md Claude's discretion list).
-
-### 6.4 Why this matters
-
-If Phase 9 reads the mockup.html `@media (prefers-reduced-motion: reduce)` comment ("No animations in this mockup — stub retained intentionally") and concludes "the system is motionless, I should delete `transition-colors` from every nav link," it will produce a worse site. Hover state without a 120ms color transition feels broken on desktop. The pragmatic motion line is the explicit answer to that temptation: **state transitions stay; orchestrated motion goes.**
+The §6.1 anti-pattern stance (no GSAP, no `<ClientRouter />`, no canvas hero, no scroll-trigger animations) survives in §8 below except where MOTION.md explicitly carves out an exception (cross-document `@view-transition` in MOTN-01 supersedes the previous blanket ban on `::view-transition-*` keyframes — restricted to root-level fade only; no morph, no named-element).
 
 ---
 
@@ -744,7 +717,7 @@ These are things Phase 9, 10, and 11 must **not reintroduce**. Each entry lists 
 - **No fluid sizing variables** — `clamp()` lives inside the role classes (`.display`, `.h1-section`, `.lead`) only. There is no `--font-size-display: clamp(...)` token. Phase 9 primitives apply role classes, not inline `clamp()`.
 - **No `.theme-transitioning` class anywhere** — the v1.0 flicker-prevention CSS is gone. Phase 10 must not re-add it under any name.
 - **No semantic color aliases** — there is no `--color-primary`, `--color-on-bg`, `--color-warning`, `--color-success`. The six tokens are it.
-- **No view transition `::view-transition-*` keyframes** — they were removed with `<ClientRouter />`. Do not re-add CSS for view transitions in any form.
+- **No view transition `::view-transition-*` keyframes except as authorized by MOTION.md** — Phase 8 removed the v1.0 keyframes alongside `<ClientRouter />`. v1.2's MOTN-01 reauthorizes a single use site: cross-document `@view-transition { navigation: auto; }` with `::view-transition-old(root)` and `::view-transition-new(root)` opacity-only fades. No morph, no named-element, no project↔project keyframes — the v1.3 named-element morph is a Future Requirement.
 - **No new color additions without amending this file** — if Phase 9, 10, or 11 wants a 7th color, it must amend §2 first via a tracked commit. Silent additions are forbidden.
 
 ---
@@ -814,6 +787,7 @@ Every other surface in the system uses `border-radius: 0` (work rows, chat panel
 
 ## 11. Changelog
 
+- **v1.2 / Phase 16 (2026-04-27):** §6 replaced with stub pointer to `design-system/MOTION.md` (the v1.2 motion canonical doc). §8 `::view-transition-*` keyframe ban amended to permit MOTION.md authorization (MOTN-01 cross-document fade). All other §8 anti-patterns survive intact (GSAP, `<ClientRouter />`, canvas hero, etc.). Non-motion sections (§2 colors, §3 typography, §4 layout, §5 primitives, §7 accent, §9 chat token map, §10 chat bubble exception) remain the v1.1 design lock.
 - 2026-04-15 — Phase 12 amendment: §2.4 Accepted token exceptions added (`--ink-faint` contrast + print `#666`)
 - 2026-04-13 — Phase 10 head-of-phase amendment: §6.1 typing-dot carve-out, §5.2/§5.8 X drop from social rows, §10 chat bubble exception
 - 2026-04-07 — v1.1 initial lock (Phase 8)
