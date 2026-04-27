@@ -1,18 +1,20 @@
 ---
 phase: 15
 slug: analytics-instrumentation
-status: human_needed
-verified: 2026-04-23T00:00:00Z
-score: 4/4 must-haves verified (codebase surface) — pre-deploy operational items + production dashboard checks pending Jack
+status: passed
+verified: 2026-04-26T00:00:00Z
+score: 4/4 must-haves verified (codebase + production); 6/6 human checks confirmed by Jack via UAT 2026-04-26
 verifier: claude (gsd-verifier)
 codebase_status: passed
-human_verification_required: yes
-overrides_applied: 0
-d26_compliant: null
-lighthouse_compliant: null
+human_verification_required: no
+human_verification_completed: 2026-04-26
+overrides_applied: 1
+d26_compliant: true
+lighthouse_compliant: accepted
+lighthouse_notes: "Perf 94 (home) / 98 (/projects/seatwatch) — below ≥99 target; CLS ~0 confirms zero analytics layout cost; LCP gap upstream image/font work, not analytics-related; accepted by Jack at UAT"
 created: 2026-04-23
 gaps: []
-deferred: []
+deferred: ["§7 preview subdomain silence — no preview URL at UAT; deferred to next branch deploy"]
 ---
 
 # Phase 15 — Verification

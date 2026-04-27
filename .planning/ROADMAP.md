@@ -38,7 +38,7 @@
 - [x] **Phase 12: Tech Debt Sweep** — Close all v1.1 audit items; zero build warnings; stable base for every subsequent phase (completed 2026-04-15)
 - [x] **Phase 13: Content Pass + Projects/ Sync** — Real case studies on all 6 projects; About/home/resume copy verified; `Projects/` → MDX sync tooling (completed 2026-04-19)
 - [x] **Phase 14: Chat Knowledge Upgrade** — Build-time context generation, Anthropic prompt caching, tuned persona, prompt-injection hardening (completed 2026-04-23)
-- [ ] **Phase 15: Analytics Instrumentation** — Umami + CF Web Analytics in production; recruiter-engagement events visible in dashboard
+- [x] **Phase 15: Analytics Instrumentation** — Umami + CF Web Analytics in production; recruiter-engagement events visible in dashboard (completed 2026-04-26)
 - [ ] **Phase 16: Motion Layer** — Tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse gate holds
 
 ## Phase Details
@@ -174,5 +174,5 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 12. Tech Debt Sweep | v1.2 | 6/6 | Complete   | 2026-04-15 |
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
-| 15. Analytics Instrumentation | v1.2 | 5/5 | In progress (codebase complete; awaiting /gsd-verify-work + /gsd-secure-phase + verify_phase_goal) | - |
+| 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 0/TBD | Not started | - |

@@ -44,7 +44,7 @@
 ### Analytics (ANAL)
 
 - [x] **ANAL-01**: Umami Cloud (free tier) integrated via `<script>` in BaseLayout, env-gated to production hostname only (real UUID `32f8fdf4-1f21-4895-9e4c-938285c08240` committed at BaseLayout.astro:47 in 15-05 commit 84549f9; placeholder fully replaced; verified in dist/)
-- [ ] **ANAL-02**: Cloudflare Web Analytics enabled as secondary for Core Web Vitals
+- [x] **ANAL-02**: Cloudflare Web Analytics enabled as secondary for Core Web Vitals (CF beacon present on production verified at UAT 2026-04-26; dashboard confirmed enabled by Jack)
 - [x] **ANAL-03**: `src/scripts/analytics.ts` forwards existing `chat:analytics` CustomEvent (content-free per Phase 7 D-36) to Umami
 - [x] **ANAL-04**: Delegated outbound-link tracking — clicks on `a[href^="http"]`, `mailto:`, and `.pdf` emit Umami events
 - [x] **ANAL-05**: Recruiter-engagement events instrumented: resume download, chat widget open, outbound social link clicks, project-page scroll depth (chat_truncated 5th action wired in 15-04; full surface verified end-to-end in 15-05)
@@ -111,7 +111,7 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | CHAT-08 | Phase 14 | Complete (14-05) |
 | CHAT-09 | Phase 14 | Complete (14-06) |
 | ANAL-01 | Phase 15 | Complete (15-01 tag scaffold + 15-05 real UUID committed via human-action checkpoint, commit 84549f9) |
-| ANAL-02 | Phase 15 | Pending (CF Web Analytics dashboard toggle is a Jack pre-deploy operational task; captured in 15-VERIFICATION.md §1 + §5.3; /gsd-verify-work confirms post-deploy) |
+| ANAL-02 | Phase 15 | Complete (CF Web Analytics dashboard enabled by Jack; CF beacon presence on production confirmed at UAT 2026-04-26 §5.1) |
 | ANAL-03 | Phase 15 | Complete (15-02) |
 | ANAL-04 | Phase 15 | Complete (15-02) |
 | ANAL-05 | Phase 15 | Complete (15-03 scroll-depth + 15-02 outbound/resume/chat:analytics + 15-04 chat_truncated 5th action; 15-05 verifies end-to-end against production Umami dashboard) |

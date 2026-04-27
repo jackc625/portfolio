@@ -58,9 +58,14 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - ✓ WCAG AA contrast verified -- v1.1
 - ✓ Full keyboard accessibility with visible focus rings -- v1.1
 
+- ✓ Zero v1.1 audit items outstanding — all tech debt closed -- v1.2 (Phase 12)
+- ✓ Real case studies on all 6 projects + Projects/ → MDX sync -- v1.2 (Phase 13)
+- ✓ Chat knowledge upgrade — build-time context, prompt caching, persona tuning, prompt-injection hardening -- v1.2 (Phase 14)
+- ✓ Privacy-respecting analytics — Umami Cloud + Cloudflare Web Analytics live in production with cookie-free recruiter-engagement events (resume download, chat open, outbound clicks, scroll depth, chat_truncated) — ANAL-01..06 -- v1.2 (Phase 15)
+
 ### Active
 
-(Requirements for v1.2 will be defined in REQUIREMENTS.md once roadmap is built.)
+(Phase 16 — Motion Layer — is the final v1.2 phase; requirements tracked in REQUIREMENTS.md under MOTN-*.)
 
 ## Current Milestone: v1.2 Polish
 
@@ -144,4 +149,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-15 — milestone v1.2 Polish initialized. Next: define REQUIREMENTS.md and ROADMAP.md.*
+*Last updated: 2026-04-26 — Phase 15 Analytics Instrumentation closed. v1.2 progress: 4 of 5 phases complete (12, 13, 14, 15); Phase 16 Motion Layer is the final phase before milestone close.*
