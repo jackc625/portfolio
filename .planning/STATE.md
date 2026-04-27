@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish
 status: in_progress
-stopped_at: Phase 16 planned — 7 plans across 5 waves committed (79f8f06). gsd-plan-checker VERIFICATION PASSED (12/12 dimensions; 10/10 phase-specific additional checks; 4 cosmetic warnings, non-blocking). RESEARCH.md committed 9420b48; VALIDATION.md scaffold 9af9967; PATTERNS.md authored. Wave structure — W0:16-01 (RED stubs across 7 test files); W1:16-02 (observer factory + scroll-depth refactor, D-19 byte-equivalent) ‖ 16-03 (MOTION.md + MASTER.md §6 stub + §8 view-transition reconciliation); W2:16-04 (motion.ts + global.css reveal/word/view-transition + BaseLayout — D-26 fires); W3:16-05 (chat.ts D-15 + chat-pulse + scale-in + typing-dot reduce parity — D-26 fires) ‖ 16-06 (WorkRow arrow); W4:16-07 (Lighthouse + D-26 battery + close-out, 1 human-verify checkpoint). All 10 MOTN-XX requirements covered; D-26 cited in 16-04/05/07; Lighthouse 99/95/100/100/TBT≤150/CLS≤0.01 grep-verifiable in 16-07; zero-new-runtime-deps verified by 16-07; reduced-motion negative case is FIRST test in tests/client/motion.test.ts (Plan 16-01 acceptance criterion). Open questions resolved at plan time — chat.ts uses style.display only today (16-05 adds .is-open class), .prose-editorial + .about-body are the actual selectors (no wrapper class additions needed), motion.ts does NOT listen for matchMedia change events (cross-document reload re-reads). Ready for /gsd-execute-phase 16.
-last_updated: "2026-04-27T00:00:00Z"
-last_activity: 2026-04-27 -- Phase 16 planned: 7 plans, 5 waves (commit 79f8f06); gsd-plan-checker VERIFICATION PASSED; ready for /gsd-execute-phase 16
+stopped_at: Phase 16 Plan 01 complete — Wave 0 RED test stubs landed across 7 test files (efc3677 build-tier + 61c72b6 client-tier + c67609b reduced-motion extension). Test count delta 262 → 330 (+68: 13 baseline-GREEN regression guards + 55 RED targets distributed across Plans 02-06). pnpm check 0/0/0 (80 files); pnpm test 275 GREEN / 55 RED. D-19 byte-equivalence canary established — tests/client/scroll-depth.test.ts + tests/client/analytics.test.ts byte-identical. Reduced-motion negative case is the FIRST test in tests/client/motion.test.ts per ROADMAP gate. Two Rule 1 type-error auto-fixes during Task 2 (@ts-expect-error pattern for missing-module imports + DOM-method spy cast); both folded into 61c72b6, no separate fix commits. observer-factory.test.ts intentionally suite-level fails (8 declared it() blocks all RED at module-load); 16-02 will switch it to per-test execution (8 GREEN target). Ready to execute 16-02 (Wave 1 — observer factory + scroll-depth byte-equivalent refactor) ‖ 16-03 (MOTION.md + MASTER.md §6/§8 reconciliation).
+last_updated: "2026-04-27T19:13:45Z"
+last_activity: 2026-04-27 -- Phase 16 Plan 01 complete: 7 RED test files committed across 3 atomic commits (efc3677, 61c72b6, c67609b); 275 GREEN / 55 RED / 330 total
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 27
-  completed_plans: 27
-  percent: 100
+  total_plans: 34
+  completed_plans: 28
+  percent: 82
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-15)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 16 — Motion Layer. Phase 15 closed 2026-04-26 (analytics live in production, dashboards confirmed). Ready for /gsd-discuss-phase 16 or /gsd-plan-phase 16.
+**Current focus:** Phase 16 — Motion Layer. Plan 16-01 complete 2026-04-27 (Wave 0 RED test stubs landed); next: 16-02 ‖ 16-03 (Wave 1).
 
 ## Current Position
 
-Phase: 16 (motion-layer) — Ready to execute. Goal: tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse gate holds.
-Plan: 7 plans in 5 waves (commit 79f8f06). gsd-plan-checker VERIFICATION PASSED 12/12 dimensions + 10/10 additional checks; 4 non-blocking cosmetic warnings.
-Status: Ready to execute Phase 16 (Motion Layer). Phase 15 closed 2026-04-26 — analytics live in production, dashboards confirmed by Jack via UAT 8/8 (commit 8da5134). Validation audit clean (commit 3a33bb2). Security audit SECURED — 19/19 threats CLOSED (commit 1c4a094). 15-VERIFICATION.md status:passed. 262/262 tests GREEN at last full run. Phase 16 plan set: W0:16-01 (RED stubs); W1:16-02 (observer factory + D-19 byte-equivalent scroll-depth refactor) ‖ 16-03 (MOTION.md + MASTER.md §6/§8); W2:16-04 (motion.ts + global.css + BaseLayout — D-26 fires); W3:16-05 (chat.ts D-15 + pulse + scale-in — D-26 fires) ‖ 16-06 (WorkRow arrow); W4:16-07 (Lighthouse + D-26 battery + close-out). All 10 MOTN-XX requirements mapped.
-Last activity: 2026-04-27 -- Phase 16 planned: 7 plans across 5 waves committed (79f8f06); gsd-plan-checker VERIFICATION PASSED
+Phase: 16 (motion-layer) — In progress. Wave 0 complete; Wave 1 ready (16-02 ‖ 16-03 parallel).
+Plan: 16-01 complete (commits efc3677, 61c72b6, c67609b). Test count: 275 GREEN / 55 RED / 330 total. 55 RED tests distributed across Plans 02-06; D-19 byte-equivalence canary established.
+Status: Phase 16 Plan 01 done. 7 RED test files committed: 3 build-tier (motion-css-rules + work-arrow-motion + motion-doc) + 3 client-tier (observer-factory + motion + chat-pulse-coordination) + 1 client-tier extension (reduced-motion). pnpm check 0/0/0 (80 files). 13 baseline-GREEN regression guards + 55 RED targets ready to flip GREEN as Plans 02-06 land. Reduced-motion negative case is FIRST test in tests/client/motion.test.ts per ROADMAP gate. Next: /gsd-execute-phase 16 (Wave 1 — 16-02 observer factory + scroll-depth byte-equivalent refactor ‖ 16-03 MOTION.md + MASTER.md §6/§8 reconciliation).
+Last activity: 2026-04-27 -- Phase 16 Plan 01 complete: 7 RED test files committed across 3 atomic task commits (~15min duration); 275 GREEN / 55 RED / 330 total
 Branch: main
 
-Progress: [██████████] 100% (27 / 27 plans complete in v1.2 phases finished; Phase 16 plan count TBD)
+Progress: [████████░░] 82% (28 / 34 plans complete; Phase 16 Plan 01 closed Wave 0)
 
 ## Performance Metrics
 
@@ -62,6 +62,12 @@ Progress: [██████████] 100% (27 / 27 plans complete in v1.2 
 | 15-04 | 5min | 2 tasks (TDD: RED + GREEN) | 2 files (1 new test + 1 modified client script; D-15 server byte-identical) | b43b558, a10f840 |
 | 15-05 | 15min (incl. human-action checkpoint pause) | 3 tasks (2 autonomous doc-authoring + 1 checkpoint:human-action gate=blocking; orchestrator-applied UUID swap; continuation agent close-out) | 3 files (2 new docs: 15-VERIFICATION.md scaffold + cache-hit-rate backlog todo; 1 modified layout: BaseLayout.astro:47 single-line UUID swap; D-15 server byte-identical phase-wide) | 4229f14, d1318a7, 73973c5, 84549f9 |
 
+**Phase 16 per-plan metrics:**
+
+| Plan | Duration | Tasks | Files | Commits |
+|------|----------|-------|-------|---------|
+| 16-01 | ~15min | 3 tasks (auto, no checkpoints; 2 inline Rule 1 type-error self-corrections during Task 2) | 7 test files (6 new + 1 modified-additive) | efc3677, 61c72b6, c67609b |
+
 *Full per-phase timing retained in milestones/v1.1-STATE.md archive.*
 
 ## Accumulated Context
@@ -69,6 +75,17 @@ Progress: [██████████] 100% (27 / 27 plans complete in v1.2 
 ### Decisions
 
 All decisions logged in PROJECT.md Key Decisions table.
+
+**Phase 16 decisions (Plan 01):**
+
+- [Phase 16-01]: Wave 0 RED stub baseline established — 7 test files committed across 3 atomic task commits (efc3677, 61c72b6, c67609b). Test count delta 262 GREEN → 275 GREEN + 55 RED + 0 visible (observer-factory suite-level abort) = 330 visible total (+68 net new). 13 baseline-GREEN regression guards: motion-css-rules typing-bounce keyframe + .typing-dot animation + will-change=0 + cubic-bezier=0 (4); work-arrow-motion opacity:0 + color:var(--accent) + title-underline rules (3); motion-doc MASTER.md §8 GSAP ban + ClientRouter ban (2); chat-pulse-coordination 4 GREEN (2 display-toggle Phase 7 invariants + 2 short-circuit assertions). 55 RED targets distributed across Plans 02-06.
+- [Phase 16-01]: @ts-expect-error pattern for missing-module imports — original draft had 14 ts(2307) "Cannot find module" errors that would have failed `pnpm check` 0/0/0 acceptance criterion. Fix: observer-factory.test.ts uses static `import { makeRevealObserver } from "../../src/scripts/lib/observer"` with `// @ts-expect-error` directive directly above (single comment); motion.test.ts extracts dynamic import into a typed `importMotion()` helper carrying ONE `@ts-expect-error` directive, replacing 12 inline call sites with `await importMotion()`. Tradeoff: motion.test.ts gets 12 individual RED tests (per-test failure visibility); observer-factory.test.ts has 8 declared it() blocks all share suite-level import-time fail (acceptable per plan §<done>). Documented as a reusable pattern for future Wave 0 RED stubs that import not-yet-written modules.
+- [Phase 16-01]: DOM-method spy cast — vi.spyOn parameterizes mockImplementation with the spied method's signature; lib.dom.d.ts has Element.setAttribute / removeAttribute typed `(name) => Element` (overload signature with shadowed return type) which conflicts with the natural `(name, value) => void` body. Fix: cast the implementation arg as `((name, value) => { ... }) as unknown as typeof bubble.setAttribute`. Two occurrences in chat-pulse-coordination.test.ts. Behavior unchanged; pattern documented for future spy-on-DOM-method work.
+- [Phase 16-01]: D-19 byte-equivalence canary — verified `git diff HEAD~3 -- tests/client/scroll-depth.test.ts tests/client/analytics.test.ts | wc -l` returns 0 lines. Locks the canary against Plan 16-02's scroll-depth.ts byte-equivalent refactor (observer factory adoption); any drift in those test files during 16-02 fires CI loudly because the assertion text was authored against the pre-refactor behavior.
+- [Phase 16-01]: Reduced-motion negative case is the FIRST describe block in tests/client/motion.test.ts (per ROADMAP "Reduced-Motion Contract" gate). 2 it() blocks: (1) "reduce bails — no observer constructed, no DOM mutation" (2) "reduce reads matchMedia('(prefers-reduced-motion: reduce)') (call shape lock)". The second test pins the matchMedia query string at the exact spelling Plan 16-04's motion.ts must emit. Verified via `grep -m1 'describe(' tests/client/motion.test.ts` → "motion.ts — prefers-reduced-motion: reduce (MOTN-08 / D-23, D-25)".
+- [Phase 16-01]: observer-factory.test.ts visible RED count vs plan-text — plan acceptance criterion says `grep -c 'it("'` returns ≥7 (8 declared); plan §<done> says "all tests RED — module doesn't exist; import throws". vitest reports the file as "Test Files: 1 failed | Tests: no tests" because the suite import throws at module-load and 0 individual tests are collected. Plan-text mismatch documented per Phase 14-05 / 15-01..04 precedent. Net delta on Plan 16-02 landing: pass count rises by 8 (suite-level fail clears + per-test execution proceeds), not 8 RED→GREEN transitions.
+- [Phase 16-01]: Test count delta vs plan-text — plan §<objective> predicted ~262 GREEN + ~30+ RED ≈ 292 total. Actual: 330 total (262 + 13 new GREEN + 55 new RED). The plan estimate of "~30 RED" undercounted because it assumed observer-factory's 8 declared it() blocks would be individually counted (vitest aborts at suite level instead — 0 visible). Net new visible tests: +68 (not +30). Plan-text mismatch accepted per the same Phase 14-05 / 15-01..04 precedent.
+- [Phase 16-01]: Zero source code changes (zero edits to src/, design-system/, public/, package.json, package-lock/pnpm-lock). Pure test-tier additions. ROADMAP.md plan-progress row updated (16-01 marked complete with date 2026-04-27); REQUIREMENTS.md untouched (no MOTN-XX requirement closes at this plan; MOTN-01..MOTN-10 stay Pending until Plans 02-06 land their implementations).
 
 **Phase 15 decisions (Plan 01):**
 
@@ -320,6 +337,6 @@ None tracked at roadmap creation. Capture via `/gsd-add-todo` during execution.
 
 ## Session Continuity
 
-Last session: 2026-04-24T01:01:51Z
-Stopped at: Phase 15 plans 1-5 codebase scope COMPLETE on main. Plan 15-05 finalized via continuation agent: 15-05-SUMMARY.md authored at .planning/phases/15-analytics-instrumentation/15-05-SUMMARY.md; 15-VERIFICATION.md scaffold + cache-hit-rate backlog todo created (Tasks 1+2 commits 4229f14 + d1318a7); STATE pause note (73973c5); Umami UUID `32f8fdf4-1f21-4895-9e4c-938285c08240` committed at src/layouts/BaseLayout.astro:47 by orchestrator (commit 84549f9, single-line diff, placeholder fully replaced, dist/ verified). REQUIREMENTS.md ANAL-01 + ANAL-05 + ANAL-06 confirmed complete (ANAL-02 stays Pending until /gsd-verify-work confirms CF Web Analytics dashboard toggle post-deploy). ROADMAP.md Phase 15 plan 15-05 row checked; phase progress 5/5; phase NOT yet marked complete (orchestrator's verifier + security gate + verify_phase_goal flow runs next). STATE.md progress 26/27 → 27/27 (96% → 100%). Cloudflare Web Analytics dashboard toggle remains as Jack's pre-deploy operational task (captured in 15-VERIFICATION.md §1 + §5.3 as a non-codebase follow-up; Claude cannot perform CF dashboard clicks). 262/262 tests GREEN; 0/0/0 check; D-15 server byte-identical phase-wide (`git diff 7ebdefe 84549f9 -- src/pages/api/chat.ts | wc -l` = 0). Next: orchestrator runs `/gsd-verify-work 15` → `/gsd-secure-phase 15` → `verify_phase_goal` to flip Phase 15 status to Complete in ROADMAP.md.
-Resume file: .planning/phases/15-analytics-instrumentation/15-05-SUMMARY.md
+Last session: 2026-04-27T19:13:45Z
+Stopped at: Phase 16 Plan 01 complete on main. Wave 0 RED test stubs landed across 7 test files in 3 atomic task commits (efc3677 build-tier 22+6+15 it() = 43 assertions; 61c72b6 client-tier 8+12+8 it() = 28 assertions; c67609b reduced-motion +5 it() append). Test count delta 262 → 330 (+68: 13 baseline-GREEN regression guards + 55 RED targets distributed across Plans 02-06). pnpm check 0/0/0 (80 files); pnpm test 275 GREEN / 55 RED. D-19 byte-equivalence canary established (tests/client/scroll-depth.test.ts + tests/client/analytics.test.ts byte-identical — `git diff HEAD~3 ... | wc -l` = 0). Reduced-motion negative case is the FIRST describe block in tests/client/motion.test.ts per ROADMAP "Reduced-Motion Contract" gate. Two Rule 1 type-error auto-fixes in Task 2 folded into commit 61c72b6 (no separate fix commits): (1) `@ts-expect-error` pattern + `importMotion()` typed helper for missing-module imports → preserves runtime RED while satisfying `pnpm check` 0/0/0 acceptance criterion; (2) `vi.spyOn().mockImplementation(... as unknown as typeof bubble.setAttribute)` cast for DOM-method spies → satisfies lib.dom.d.ts return-type signature. observer-factory.test.ts intentionally suite-level fails (8 declared it() blocks; vitest reports "Tests: no tests" because import throws at module-load) — Plan 16-02 will switch it to per-test execution (8 GREEN target). 16-01-SUMMARY.md authored at .planning/phases/16-motion-layer/16-01-SUMMARY.md (self-check PASSED). ROADMAP.md 16-01 row marked complete (date 2026-04-27). REQUIREMENTS.md untouched (no MOTN closes; all 10 stay Pending until Plans 02-06 implementations land). STATE.md progress 27/27 → 28/34 (100% → 82%). Next: /gsd-execute-phase 16 (Wave 1 — 16-02 observer factory + scroll-depth byte-equivalent refactor ‖ 16-03 MOTION.md authoring + MASTER.md §6/§8 reconciliation).
+Resume file: .planning/phases/16-motion-layer/16-01-SUMMARY.md

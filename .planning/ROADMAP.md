@@ -128,7 +128,7 @@
 **Plans**: 7 plans
 
 **Wave 0** *(RED test stubs land first; baseline for all subsequent waves)*
-- [ ] 16-01-PLAN.md — Wave 0 RED test stubs (8 test files spanning MOTN-01..MOTN-10)
+- [x] 16-01-PLAN.md — Wave 0 RED test stubs (7 test files spanning MOTN-01..MOTN-10) (2026-04-27)
 
 **Wave 1** *(blocked on Wave 0; 16-02 ‖ 16-03 run in parallel)*
 - [ ] 16-02-PLAN.md — observer factory + scroll-depth refactor (D-17, D-19)
