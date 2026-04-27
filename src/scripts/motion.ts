@@ -32,10 +32,20 @@ export function shouldReduceMotion(): boolean {
  * Wraps each whitespace-separated word in textContent with a
  * <span class="word" style="--i: N">word</span> element. Idempotent — guarded
  * by `data-stagger-split="true"` attribute (D-13). Uses textContent only (XSS safe).
+ *
+ * WR-04 (Phase 16 review): bails when the heading already contains element
+ * children (<em>, <strong>, <a>, <br>, etc.). textContent-only word splitting
+ * would destructively flatten that markup; this preserves authored inline
+ * markup at the cost of skipping the per-word stagger for marked-up headings.
+ * The reveal animation still fires via .reveal-on. See MOTION.md §5 MOTN-07.
+ *
  * Exported for unit testing.
  */
 export function wrapWordsInPlace(el: HTMLElement): void {
   if (el.dataset.staggerSplit === "true") return;
+  // WR-04: skip if heading contains inline markup; flattening via textContent
+  // would discard <em>, <strong>, <a>, etc. The reveal-on animation still runs.
+  if (el.children.length > 0) return;
   const text = (el.textContent ?? "").trim();
   if (!text) return;
   const words = text.split(/\s+/);

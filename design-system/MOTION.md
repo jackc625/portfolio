@@ -83,6 +83,8 @@ Each row below is the locked specification for one animation. Every value origin
 
 **`.display` exclusion (MOTN-07):** the homepage `.display` wordmark is excluded from word-stagger AND scroll-reveal. The hero remains untouched, satisfying Phase 16 success criterion #1.
 
+**Inline-markup fallback (MOTN-07):** `wrapWordsInPlace` skips any `.h1-section` heading that already contains element children (`<em>`, `<strong>`, `<a>`, `<br>`, etc.). Word-stagger uses `textContent`-only splitting (the XSS-safe contract verified by `tests/client/motion.test.ts:190-200`), which would destructively flatten authored inline markup. When the fallback fires, the heading still receives the standard `.reveal-on` reveal animation; only the per-word stagger is skipped. Authors writing prose-heavy headings (e.g., emphasis spans) get their markup preserved; the visual difference is a single reveal vs a per-word reveal.
+
 ---
 
 ## 6. Reduced-Motion Contract (MOTN-08)
