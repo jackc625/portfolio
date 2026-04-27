@@ -680,15 +680,19 @@ summary:focus-visible {
 }
 
 /* ----- MOTN-05 chat panel scale-in ----- */
+/* WR-06 (Phase 16 review): transform-origin is positional configuration of
+ * the element, not part of the animation. Living outside no-preference keeps
+ * the origin consistent for reduce and no-preference users alike (relevant
+ * if any future code applies a transform to #chat-panel outside the scale-in
+ * animation). */
+#chat-panel {
+  transform-origin: bottom right;
+}
+
 /* Entrance animation — wrapped in no-preference per D-23. Under reduce, the
  * .is-open class is still added by chat.ts but no animation runs; panel snaps
  * to its resting state (scale 1, opacity 1) instantly. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Resting state when .is-open NOT present — panel display: none controls
-   * visibility (Phase 7 invariant). The .is-open class triggers the entrance. */
-  #chat-panel {
-    transform-origin: bottom right;
-  }
   #chat-panel.is-open {
     animation: chat-panel-scale-in 180ms ease-out forwards;
   }
