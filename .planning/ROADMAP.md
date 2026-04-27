@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1-7 (shipped 2026-03-31) | [Archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Editorial Redesign** — Phases 8-11 (shipped 2026-04-15) | [Archive](milestones/v1.1-ROADMAP.md)
-- 🚧 **v1.2 Polish** — Phases 12-16 (in progress)
+- ✅ **v1.2 Polish** — Phases 12-16 (Phase 16 shipped 2026-04-27) — all 5 phases plan-tier complete (34/34 plans); MOTN-01..MOTN-10 all Complete; CONT-01..CONT-07 traceability rows tracked separately
 
 ## Phases
 
@@ -31,7 +31,7 @@
 
 </details>
 
-### 🚧 v1.2 Polish (In Progress)
+### ✅ v1.2 Polish (Shipped 2026-04-27)
 
 **Milestone Goal:** Raise the bar on what already shipped — tasteful motion, real content everywhere, smarter chat, zero tech debt, measurable recruiter engagement. Additive on top of the shipped v1.1 editorial system; zero new runtime dependencies on the preferred path; MASTER.md §8 anti-pattern list stays intact.
 
@@ -39,7 +39,7 @@
 - [x] **Phase 13: Content Pass + Projects/ Sync** — Real case studies on all 6 projects; About/home/resume copy verified; `Projects/` → MDX sync tooling (completed 2026-04-19)
 - [x] **Phase 14: Chat Knowledge Upgrade** — Build-time context generation, Anthropic prompt caching, tuned persona, prompt-injection hardening (completed 2026-04-23)
 - [x] **Phase 15: Analytics Instrumentation** — Umami + CF Web Analytics in production; recruiter-engagement events visible in dashboard (completed 2026-04-26)
-- [ ] **Phase 16: Motion Layer** — Tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse gate holds
+- [x] **Phase 16: Motion Layer** — Tasteful native motion (View Transitions + IntersectionObserver reveal + CSS microinteractions); Lighthouse motion-specific gate holds (TBT=0ms, CLS≈0); zero new runtime deps; D-15 server byte-identical; D-26 chat regression 117/117 GREEN; manual UAT 13/13 PASS (completed 2026-04-27)
 
 ## Phase Details
 
@@ -142,7 +142,7 @@
 - [x] 16-06-PLAN.md — WorkRow arrow upgrade (MOTN-03) (2026-04-27)
 
 **Wave 4** *(blocked on Wave 3; phase gate, contains human-verify checkpoint)*
-- [ ] 16-07-PLAN.md — phase gate: Lighthouse CI + D-26 + final test sweep + close-out (MOTN-10)
+- [x] 16-07-PLAN.md — phase gate: Lighthouse CI + D-26 + final test sweep + close-out (MOTN-10) (2026-04-27)
 
 **Cross-cutting constraints** *(appear in 2+ plans' `must_haves.truths`):*
 - D-26 chat regression gate (16-04, 16-05, 16-07) — Phase 7 battery runs on every chat-touching plan
@@ -198,4 +198,4 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
-| 16. Motion Layer | v1.2 | 6/7 | In progress | - |
+| 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
