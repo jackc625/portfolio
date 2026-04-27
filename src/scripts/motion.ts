@@ -92,9 +92,18 @@ export function initMotion(): void {
   // render at the keyframe `from` state (opacity 0, translateY(12px)) from
   // the first paint. Without this, targets render at opacity 1 then snap to
   // the keyframe `from` state when .reveal-on is added — visible flicker.
+  // CR-02 fix: pre-wrap .h1-section words at init time (excluding .display)
+  // so the heading already renders as <span class="word"> children at
+  // opacity 0 from the first paint. Without this, the heading paints as
+  // plain text at opacity 1, then the IntersectionObserver clears its
+  // textContent and rebuilds with opacity-0 spans — visible "blank gap"
+  // flash. Pre-wrapping makes the resting state match the rendered DOM.
   const revealTargets = document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR);
   revealTargets.forEach((el) => {
     el.classList.add("reveal-init");
+    if (el.matches(".h1-section") && !el.matches(".display")) {
+      wrapWordsInPlace(el);
+    }
   });
 
   const observer = makeRevealObserver({
