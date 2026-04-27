@@ -482,17 +482,16 @@ function initChat(): void {
   if (!panel) return; // Widget not in DOM yet
 
   // Idempotency: if already initialized AND the same DOM elements exist,
-  // skip re-initialization. The transition:persist keeps our state alive.
+  // skip re-initialization. WR-02 (Phase 16 review): the previous re-attach
+  // branch (re-bind focus trap if panel.style.display !== "none") was
+  // correct under Phase 7's <ClientRouter /> regime where transition:persist
+  // preserved the panel DOM across navigations. Phase 8 removed
+  // <ClientRouter />; every navigation is now a full document reload, so
+  // this branch was unreachable on production paths and used the wrong
+  // open-state signal (panel.style.display vs the closure-local panelOpen
+  // and the canonical .is-open class). Deleted; the bootstrap-level
+  // chatBootstrapped guard already prevents document listener pile-up.
   if (chatInitialized && panel.dataset.chatBound === "true") {
-    // Panel already initialized — but if panel is open after navigation,
-    // re-attach focus trap (it was cleaned up on astro:before-preparation)
-    if (panel.style.display !== "none") {
-      const closeFn = () => {
-        const bubble = document.getElementById("chat-bubble") as HTMLButtonElement | null;
-        if (bubble) bubble.click(); // Trigger close via existing handler
-      };
-      cleanupFocusTrap = setupFocusTrap(panel, closeFn);
-    }
     return;
   }
 
