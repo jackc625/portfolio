@@ -7,8 +7,10 @@
  *   - 1fr:  body column (title in .h2-project, stack in uppercase mono)
  *   - auto: meta column (year + hover-reveal accent arrow)
  *
- * Hover: title gets accent underline, arrow transitions opacity 0 → 1 over 120ms.
- * Arrow is opacity-only — NO translate-x (editorial grammar per §5.5).
+ * Hover/focus: title gets accent underline; arrow fades in (120ms) and slides 4px right
+ * (180ms ease-out). Phase 16 MOTN-03 upgrade — replaces v1.1's opacity-only fade per the
+ * v1.2 motion canonical doc (design-system/MOTION.md). Reduced-motion neutralizes the slide
+ * AND the fade; the accent title underline remains as the affordance under reduce.
  *
  * Per D-02: primitive lives in src/components/primitives/
  * Per D-03: no Tailwind utilities inside primitive markup
@@ -81,7 +83,8 @@ const { number, title, stack, year, href } = Astro.props;
   .work-arrow {
     color: var(--accent);
     opacity: 0;
-    transition: opacity 120ms ease;
+    transform: translateX(0);
+    transition: opacity 120ms ease, transform 180ms ease-out;
   }
 
   .work-row:hover .work-title,
@@ -95,10 +98,28 @@ const { number, title, stack, year, href } = Astro.props;
   .work-row:hover .work-arrow,
   .work-row:focus-visible .work-arrow {
     opacity: 1;
+    transform: translateX(4px);
   }
 
   .work-row:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
+  }
+
+  /* Phase 16 MOTN-03 / D-23 / D-24: paired reduce override.
+     With reduce, the arrow stays opacity 0 (hidden); the accent title underline
+     above (color-only state change, sub-200ms — MASTER.md §6.2) still appears
+     as the affordance. */
+  @media (prefers-reduced-motion: reduce) {
+    .work-arrow {
+      transition: none;
+      transform: translateX(0);
+      opacity: 0;
+    }
+    .work-row:hover .work-arrow,
+    .work-row:focus-visible .work-arrow {
+      transform: translateX(0);
+      opacity: 0;
+    }
   }
 </style>
