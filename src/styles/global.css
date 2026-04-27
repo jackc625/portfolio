@@ -572,13 +572,20 @@ summary:focus-visible {
     animation: view-transition-fade-in 200ms ease-out forwards;
   }
 
-  /* MOTN-02 scroll-reveal — motion.ts adds .reveal-on class on intersect.
-   * Note: .reveal-init is NOT applied by motion.ts; targets render in their
-   * resting state by default and the animation runs ONLY when .reveal-on is
-   * added. This avoids the FOUC where targets briefly show opacity 0 before
-   * JS runs. The 300ms ease-out keyframe fires once per target (one-shot via
-   * observer.unobserve). The .reveal-init class is reserved for future
-   * progressive-enhancement opt-in (out of scope for Plan 04). */
+  /* MOTN-02 scroll-reveal — motion.ts applies .reveal-init to all reveal
+   * targets at init time (AFTER the reduce-bail check per MOTN-08), so under
+   * no-preference the targets render at the keyframe `from` state from the
+   * first paint. Under reduce, .reveal-init is never applied (motion.ts
+   * returns early) and this rule is gated by no-preference, so reduce users
+   * see elements at the browser default (opacity 1, transform none). The
+   * IntersectionObserver then adds .reveal-on, which matches the same
+   * animation declaration and runs the 300ms ease-out keyframe once
+   * (one-shot via observer.unobserve). Resting state of .reveal-init
+   * matches the keyframe `from` state — no flicker on first reveal. */
+  .reveal-init {
+    opacity: 0;
+    transform: translateY(12px);
+  }
   .reveal-init,
   .reveal-on {
     animation: reveal-rise 300ms ease-out forwards;

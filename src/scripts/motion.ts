@@ -79,11 +79,24 @@ let motionInitialized = false;
 
 export function initMotion(): void {
   if (motionInitialized) return;
-  // D-25: reduce bails early — no observer, no DOM mutation. The CSS
-  // @media (prefers-reduced-motion: no-preference) gate around .reveal-init /
-  // .reveal-on / .word rules ensures elements render at their resting state
-  // (opacity: 1, transform: none) under reduce.
+  // D-25 / MOTN-08: reduce bails early — no observer, no DOM mutation, no
+  // .reveal-init class application, no word pre-wrap. This early-return MUST
+  // remain the first DOM-touching gate. The CSS rules for .reveal-init /
+  // .reveal-on / .word all live inside @media (prefers-reduced-motion:
+  // no-preference), so even if .reveal-init were applied under reduce it
+  // would be inert — but skipping the DOM mutation under reduce is the
+  // contractual behavior asserted by tests/client/motion.test.ts.
   if (shouldReduceMotion()) return;
+
+  // CR-01 fix: apply .reveal-init to all reveal targets at init time so they
+  // render at the keyframe `from` state (opacity 0, translateY(12px)) from
+  // the first paint. Without this, targets render at opacity 1 then snap to
+  // the keyframe `from` state when .reveal-on is added — visible flicker.
+  const revealTargets = document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR);
+  revealTargets.forEach((el) => {
+    el.classList.add("reveal-init");
+  });
+
   const observer = makeRevealObserver({
     selector: REVEAL_SELECTOR,
     // D-05: -10% bottom rootMargin — reveals as user "arrives" at section,
