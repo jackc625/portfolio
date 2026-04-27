@@ -1,11 +1,5 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from "vitest";
-// @ts-expect-error — module is authored by Plan 16-02 (Wave 1). RED stub: import
-// resolves to a missing module today; vitest reports import-time failure as a
-// suite-level error which is the intentional Wave 0 RED signal. The
-// `@ts-expect-error` directive flips to an error if the module ever lands and
-// the TS error disappears — drift signal for the executor of 16-02 to remove
-// this comment in the same diff that creates src/scripts/lib/observer.ts.
 import { makeRevealObserver } from "../../src/scripts/lib/observer";
 
 /**
