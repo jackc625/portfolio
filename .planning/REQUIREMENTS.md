@@ -52,14 +52,14 @@
 
 ### Motion (MOTN)
 
-- [ ] **MOTN-01**: Page-enter fade via native cross-document `@view-transition` CSS at-rule (no ClientRouter, no JS router)
-- [ ] **MOTN-02**: Scroll-reveal utility module `src/scripts/motion.ts` using IntersectionObserver — fade + ≤12px translateY, 250–350ms, one-shot per element
+- [x] **MOTN-01**: Page-enter fade via native cross-document `@view-transition` CSS at-rule (no ClientRouter, no JS router) — closed in 16-04
+- [x] **MOTN-02**: Scroll-reveal utility module `src/scripts/motion.ts` using IntersectionObserver — fade + ≤12px translateY, 250–350ms, one-shot per element — closed in 16-04
 - [ ] **MOTN-03**: WorkRow arrow slide-in on hover/focus (opacity 0→1 + 4px translateX, 180ms)
 - [ ] **MOTN-04**: Chat bubble idle pulse restored via CSS — paused on hover/focus/reduced-motion
 - [ ] **MOTN-05**: Chat panel open scale-in (96%→100%, 180ms)
 - [ ] **MOTN-06**: Typing-dot bounce during SSE streaming
-- [ ] **MOTN-07**: Section heading word-stagger on `.h1-section` only (never `.display`)
-- [ ] **MOTN-08**: All motion wrapped in `@media (prefers-reduced-motion: no-preference)` or paired with `reduce` override
+- [x] **MOTN-07**: Section heading word-stagger on `.h1-section` only (never `.display`) — closed in 16-04
+- [ ] **MOTN-08**: All motion wrapped in `@media (prefers-reduced-motion: no-preference)` or paired with `reduce` override — entrance side closed in 16-04 (MOTN-01/02/07); loop side (MOTN-04 chat-pulse reduce override) lands in Plan 05
 - [x] **MOTN-09**: MASTER.md §5/§6 amended with additive motion carve-outs (property whitelist, duration bands, easing defaults)
 - [ ] **MOTN-10**: Lighthouse gate passes — Performance ≥99 / A11y ≥95 / BP 100 / SEO 100 after motion layer lands
 
@@ -116,14 +116,14 @@ Every v1.2 requirement maps to exactly one phase. 36 of 36 requirements mapped.
 | ANAL-04 | Phase 15 | Complete (15-02) |
 | ANAL-05 | Phase 15 | Complete (15-03 scroll-depth + 15-02 outbound/resume/chat:analytics + 15-04 chat_truncated 5th action; 15-05 verifies end-to-end against production Umami dashboard) |
 | ANAL-06 | Phase 15 | Complete (15-01) |
-| MOTN-01 | Phase 16 | Pending |
-| MOTN-02 | Phase 16 | Pending |
+| MOTN-01 | Phase 16 | Complete (16-04) |
+| MOTN-02 | Phase 16 | Complete (16-04) |
 | MOTN-03 | Phase 16 | Pending |
 | MOTN-04 | Phase 16 | Pending |
 | MOTN-05 | Phase 16 | Pending |
 | MOTN-06 | Phase 16 | Pending |
-| MOTN-07 | Phase 16 | Pending |
-| MOTN-08 | Phase 16 | Pending |
+| MOTN-07 | Phase 16 | Complete (16-04) |
+| MOTN-08 | Phase 16 | Partial (16-04 entrance side; 16-05 closes loop side) |
 | MOTN-09 | Phase 16 | Complete (16-03) |
 | MOTN-10 | Phase 16 | Pending |
 

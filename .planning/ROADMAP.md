@@ -135,7 +135,7 @@
 - [x] 16-03-PLAN.md — design-system/MOTION.md authored + MASTER.md §6 stub + §8 reconciliation (MOTN-09) (2026-04-27)
 
 **Wave 2** *(blocked on Wave 1 completion)*
-- [ ] 16-04-PLAN.md — motion.ts + global.css scroll-reveal/word-stagger/view-transition + BaseLayout import (MOTN-01, MOTN-02, MOTN-07, MOTN-08)
+- [x] 16-04-PLAN.md — motion.ts + global.css scroll-reveal/word-stagger/view-transition + BaseLayout import (MOTN-01, MOTN-02, MOTN-07, MOTN-08 partial) (2026-04-27)
 
 **Wave 3** *(blocked on Wave 2; 16-05 ‖ 16-06 run in parallel)*
 - [ ] 16-05-PLAN.md — chat.ts D-15 ordering + global.css chat-pulse + chat-panel scale-in + typing-dot reduce parity (MOTN-04, MOTN-05, MOTN-06; D-26 gate)
@@ -198,4 +198,4 @@ Phases execute in numeric order: 12 → 13 → 14 → 15 → 16
 | 13. Content Pass + Projects/ Sync | v1.2 | 7/9 | In progress | - |
 | 14. Chat Knowledge Upgrade | v1.2 | 6/6 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
-| 16. Motion Layer | v1.2 | 0/7 | Not started | - |
+| 16. Motion Layer | v1.2 | 4/7 | In progress | - |
