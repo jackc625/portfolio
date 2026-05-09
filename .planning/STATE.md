@@ -4,7 +4,7 @@ milestone: v1.3
 milestone_name: Chat Visibility
 status: planning
 last_updated: "2026-05-09T00:00:00Z"
-last_activity: 2026-05-09 -- v1.3 roadmap created via gsd-roadmap-phase. 4 phases (17-20), 31 requirements mapped, zero orphans. Awaiting Phase 17 plan.
+last_activity: 2026-05-09 -- Phase 17 context captured via gsd-discuss-phase (4 areas: cutover, DNS warming, ordering, dev workflow). 15 implementation decisions locked + 9 deferred ideas + 2 todos folded. Ready for /gsd-plan-phase 17.
 progress:
   total_phases: 4
   completed_phases: 0
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (not yet planned)
+Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (context captured)
 Plan: —
-Status: Roadmap locked; awaiting `/gsd-plan-phase 17`
-Last activity: 2026-05-09 — v1.3 roadmap created (4 phases, 17-20)
+Status: Context locked at `.planning/phases/17-foundations-migration-dns-debt-sweep/17-CONTEXT.md`; awaiting `/gsd-plan-phase 17`
+Last activity: 2026-05-09 — Phase 17 discuss-phase complete (15 decisions, 9 deferred, 2 todos folded)
 
 ## Roadmap Snapshot
 
