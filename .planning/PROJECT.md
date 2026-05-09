@@ -70,25 +70,26 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ### Active
 
-(No active requirements — v1.2 Polish closed 2026-04-27. Next milestone TBD via `/gsd-new-milestone`.)
+(v1.3 Chat Visibility requirements defined in `.planning/REQUIREMENTS.md` once roadmap approved.)
 
-## Next Milestone Goals
+## Current Milestone: v1.3 Chat Visibility
 
-v1.3 scope is open. Candidates carried from v1.2 Future / Out-of-Scope (re-evaluate at next milestone planning):
+**Goal:** Capture every visitor conversation with the chatbot and surface them to Jack's inbox so he can see what real recruiters are asking — while closing all outstanding chat-related tech debt.
 
-- Signature hero moment / hero animation (deferred from v1.2)
-- Project → project view-transition-name morph (cross-document named-element morphs)
-- Keyword routing for chat knowledge (only if steady-state Anthropic spend exceeds ~$5/mo)
-- RAG / vector DB for chat (revisit past ~150k token corpus size)
-- Function-calling chat tools (`getProject`, `listProjects`) — previously dropped: tripled SSE streaming complexity for marginal signal
+**Target features:**
 
-Pre-existing pending todos to triage:
+- Conversation persistence in Cloudflare KV (transcripts keyed by sessionId; metadata: referrer, UA, country, started_at, last_activity_at)
+- Per-session email delivery via Resend (one email per conversation, triggered by inactivity)
+- Cloudflare Cron Trigger — hourly scan; 2-hour inactivity threshold; worst-case email latency ~3 hr after last message
+- Silent logging posture — no in-UI disclosure; data never leaves Cloudflare → Gmail
+- Chat tech debt sweep (all 5 carry-forwards): CHAT_RATE_LIMITER binding, cache-hit-rate observability, `build:chat-context:check` CI, WR-01 listener dedup, `#chat-panel` JS-coupled display contract
 
-- `2026-04-15-change-mobile-menu-breakpoint-from-380px-to-768px.md` (UX revision)
-- `2026-04-15-design-and-ship-og-default-image.md` (content)
-- `2026-04-23-configure-chat-rate-limiter-binding.md` (Cloudflare binding never set on Production/Preview; pre-existing Phase 7 carry-forward)
-- `2026-04-23-chat-cache-hit-rate-observability.md` (Phase 14 deferred)
-- `build:chat-context:check` CI enforcement (Phase 14 cross-phase concern; recommend parallel job in `.github/workflows/sync-check.yml`)
+**Key context:**
+
+- KV chosen over D1 because no aggregation/search needed (Jack reads every transcript in entirety)
+- Resend chosen as a justified new runtime dep — the v1.2 "zero new runtime deps preferred" rule is non-binding when justified
+- D-26 chat regression battery (117/117) and Phase 7 architecture invariants remain milestone-level cross-phase gates
+- Email content-security: transcripts contain user-typed text → must HTML-escape body, no markdown rendering of user input, no auto-link
 
 ### Out of Scope
 
@@ -171,4 +172,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-28 after v1.2 milestone close.*
+*Last updated: 2026-05-09 — v1.3 Chat Visibility milestone started.*
