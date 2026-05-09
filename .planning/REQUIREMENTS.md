@@ -110,8 +110,45 @@ Explicit exclusions — design decisions made at milestone planning:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| _(filled by roadmapper)_ | | |
+| FOUND-01 | Phase 17 | Pending |
+| FOUND-02 | Phase 17 | Pending |
+| FOUND-03 | Phase 17 | Pending |
+| FOUND-04 | Phase 17 | Pending |
+| DNS-01 | Phase 17 | Pending |
+| DNS-02 | Phase 17 | Pending |
+| DEBT-01 | Phase 17 | Pending |
+| DEBT-02 | Phase 17 | Pending |
+| DEBT-03 | Phase 17 | Pending |
+| DEBT-04 | Phase 17 | Pending |
+| DEBT-05 | Phase 17 | Pending |
+| KV-01 | Phase 18 | Pending |
+| KV-02 | Phase 18 | Pending |
+| KV-03 | Phase 18 | Pending |
+| KV-04 | Phase 18 | Pending |
+| IDENT-01 | Phase 18 | Pending |
+| IDENT-02 | Phase 18 | Pending |
+| META-01 | Phase 18 | Pending |
+| META-02 | Phase 18 | Pending |
+| CRON-01 | Phase 19 | Pending |
+| CRON-02 | Phase 19 | Pending |
+| CRON-03 | Phase 19 | Pending |
+| CRON-04 | Phase 19 | Pending |
+| MAIL-01 | Phase 20 | Pending |
+| MAIL-02 | Phase 20 | Pending |
+| MAIL-03 | Phase 20 | Pending |
+| MAIL-04 | Phase 20 | Pending |
+| MAIL-05 | Phase 20 | Pending |
+| TEST-01 | Phases 17, 18 (cross-phase gate) | Pending |
+| TEST-02 | Phase 17 | Pending |
+| TEST-03 | Phases 17, 18 (cross-phase gate) | Pending |
+
+**Coverage:** 31 / 31 requirements mapped (28 v1.3 requirements + 3 cross-phase TEST gates). Zero orphans.
+
+**Cross-phase gate notes:**
+- **TEST-01** (D-26 chat regression battery) applies to Phases 17 and 18 — both touch `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts` / `validation.ts`. Phases 19 and 20 touch new modules (`chat-delivery.ts`, `email/resend.ts`) and the `worker.ts` `scheduled` handler only — no chat-surface mutations — so the D-26 gate is informational rather than blocking there. Plan-phase may re-run it as a smoke check.
+- **TEST-02** (D-15 server byte-identical at `/api/chat`) is Phase 17 specific per the milestone spec. Phase 18 will introduce `ctx.waitUntil(appendTurn(...))` calls in `api/chat.ts`, which is an explicit, plan-time-authored D-15 amendment — not a regression. Phases 19 and 20 do not touch `api/chat.ts`.
+- **TEST-03** (Anthropic prompt cache integrity — sessionId never in `system` / `messages[0]`) applies to Phase 17 (when DEBT-02 wires the cache-token observability) and Phase 18 (when IDENT-01/02 introduce the sessionId — the highest-risk moment for accidental Anthropic-payload leakage and when META-02 records the cache token counts per turn).
 
 ---
 
-*Last updated: 2026-05-09 — initial scoping at `/gsd-new-milestone`*
+*Last updated: 2026-05-09 — roadmap traceability filled by gsd-roadmap-phase agent*
