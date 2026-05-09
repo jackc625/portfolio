@@ -2,6 +2,8 @@
 created: 2026-04-23T17:55:00.000Z
 title: Configure CHAT_RATE_LIMITER Cloudflare binding (Production + Preview)
 area: security / infra
+resolves_phase: 17
+resolves_requirement: DEBT-01
 files:
   - src/pages/api/chat.ts:31-45
   - wrangler.jsonc

@@ -5,6 +5,8 @@ priority: low
 context: phase-14-deferred + phase-15-deferred → v1.3+
 effort: medium (1-2 plans — server SDK hook + client SSE frame + Umami event + D-26 full-surface regression)
 tags: [chat, observability, anthropic, prompt-caching, v1.3]
+resolves_phase: 17
+resolves_requirement: DEBT-02
 ---
 
 # Chat cache-hit-rate observability
