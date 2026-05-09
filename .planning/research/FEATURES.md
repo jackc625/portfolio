@@ -1,398 +1,446 @@
-# Feature Research — v1.2 Polish Milestone
+# Feature Research — v1.3 Chat Visibility
 
-**Domain:** Personal portfolio site — polish pass on shipped Astro 6 editorial build
-**Researched:** 2026-04-15
-**Confidence:** HIGH (motion + case study structure + analytics); MEDIUM (chat knowledge approaches — implementation-dependent); HIGH (anti-features — MASTER.md already forbids most of them)
+**Domain:** Conversation logging + per-session inactivity-triggered email delivery for a personal portfolio chat widget
+**Researched:** 2026-05-09
+**Confidence:** HIGH (Cloudflare KV / Cron / Resend mechanics — official docs); HIGH (chat-transcript email patterns — multiple vendor sources agree); MEDIUM (sessionId edge cases — synthesized from web platform docs + audit of current `chat.ts`)
 
 ---
 
 ## Scope Reminder
 
-v1.2 is a *polish* milestone on top of a locked editorial design system. The six-hex palette, Geist typography, seven primitive library, restrained-motion stance, and Phase 7 chat architecture are **already shipped**. This research covers only the five new capability areas being layered on top:
+v1.3 is a **subsequent milestone** layered on the shipped v1.2 chat widget. The widget already has: SSE streaming, Claude Haiku, prompt caching, localStorage persistence (50-msg cap, 24h TTL), rate limiting, full Phase 7 security posture. What is **net-new** in v1.3:
 
-1. Tasteful motion layer (page enter/transition, scroll-reveal, primitive microinteractions — **no hero signature moment**)
-2. Content pass (4 placeholder MDX files → real case studies, About audit, copy audit, `Projects/` docs)
-3. Chat widget knowledge upgrade
-4. 7 v1.1 tech debt items (enumerated in `v1.1-MILESTONE-AUDIT.md` — not researched here)
-5. Analytics instrumentation for recruiter engagement
+1. **Persistence** — write each turn to Cloudflare KV (no current server-side write path)
+2. **Identity** — generate + propagate a `sessionId` (no current concept of session identity beyond per-request)
+3. **Delivery** — Resend integration sending one email per ended session
+4. **Scheduling** — Cloudflare Cron Trigger scanning KV hourly for inactive sessions
+5. **Posture** — silent (no UI disclosure), Jack-as-only-reader, no aggregation/admin UI
+6. **Tech-debt sweep** — 5 carry-forwards from Phase 7/14/16 (rate-limiter binding, cache-hit observability, `build:chat-context:check` CI, WR-01 listener dedup, `#chat-panel` display contract)
 
-Features the site already has (home, about, projects index, case studies, contact, chat widget, JSON-LD, sitemap, OG, Lighthouse 100/95/100/100) are **not re-researched**.
-
----
-
-## 1. Motion Layer — Feature Landscape
-
-### 1.1 Table Stakes (a polished 2026 portfolio is expected to have these)
-
-Missing any of these and the site feels static/unfinished to a design-literate recruiter. All of these are compatible with MASTER.md §6's "pragmatic motion line" and do not require amending the design system.
-
-| Feature | Why Expected | Complexity | Duration / Easing | Reduced-Motion Behavior |
-|---------|--------------|------------|-------------------|-------------------------|
-| **Page enter fade** | Hard DOM swap on every navigation feels jarring. Astro 6 View Transitions give near-free polish via the browser's native API. | LOW — two directives (`transition:animate="fade"` on `<main>`, opt-in `<ClientRouter />`). Must reconcile with MASTER §6.1 "no ClientRouter" — amendment required or use CSS-only crossfade. | 200–300ms, `ease-out` | Native API auto-disables under `prefers-reduced-motion: reduce` — instant swap |
-| **Scroll-reveal (fade + 8–16px translateY)** | Sections feel inert without progressive reveal. Used across Linear, Vercel, Brian Lovin, Rauno Freiberg. | LOW — IntersectionObserver + `[data-reveal]` CSS class, ~30 lines vanilla TS. No library. | **250–350ms**, `cubic-bezier(0.22, 1, 0.36, 1)` ("ease-out-quint"). Translate amount **12px max**. | `@media (prefers-reduced-motion: reduce)` → elements start at final state (opacity 1, no translate). `once: true` so re-entry doesn't re-trigger. |
-| **Hover/focus state transitions** (already on site) | Link color, underline, arrow reveal — instant swap feels broken per MASTER §6.4. | LOW — already spec'd in MASTER §6.2. | **120ms**, `ease` (matches existing WorkRow arrow) | Unaffected — sub-200ms color/opacity is safe per MASTER §6.3. |
-| **Focus-visible ring animation** | Accessibility affordance; instant outline snap is fine but a 100ms outline-offset grow is more refined. | LOW — CSS `:focus-visible` + `transition: outline-offset 100ms ease`. | 100ms, `ease` | No change needed — motion is functional state signal. |
-| **Copy-to-clipboard confirmation** | Chat code-block copy button already exists — the "copied!" state swap should fade, not flicker. | LOW — CSS opacity transition, 150ms. | 150ms, `ease` | Already a state transition; compliant. |
-
-### 1.2 Differentiators (tasteful primitive microinteractions that set this site apart)
-
-These are small, compound effects that a 2026 recruiter would notice but can't name. Restrained, editorial, compatible with the six-hex palette. Each one is a **feature unit**; the roadmap can ship them independently.
-
-| Feature | Value Proposition | Complexity | Duration / Easing | Notes |
-|---------|-------------------|------------|-------------------|-------|
-| **WorkRow hover — arrow slide-in** | Existing spec is opacity 0→1 over 120ms. Adding a **4px `translateX(-4px)` → `translateX(0)`** on the arrow turns a fade into directional motion at zero cost. | LOW — modify WorkRow.astro scoped style. | 180ms, `cubic-bezier(0.22, 1, 0.36, 1)` | MASTER §5.5 spec amendment — additive, not conflicting. |
-| **WorkRow hover — title letter-spacing tighten** | Title goes from `-0.01em` to `-0.015em` on row hover. Invisible at a glance, feels tactile. Rauno Freiberg-style "invisible detail." | LOW — scoped style, `transition: letter-spacing 200ms ease`. | 200ms, `ease` | Risk: subpixel shifts may cause janky reflow on some browsers. Test in Safari. |
-| **Section enter — word/line stagger on headings** | `.h1-section` titles split to spans, each staggered 40ms. Feels editorial. Used by Vercel, Linear. | MEDIUM — split on space in template (not runtime JS), IntersectionObserver triggers CSS `@keyframes` with `animation-delay`. Avoid SplitText library. | 400ms per word, 40ms stagger, `cubic-bezier(0.22, 1, 0.36, 1)` | Apply ONLY to `.h1-section` — never `.display` (MASTER §3.1 locks the hero wordmark to a single static glyph). |
-| **Scroll-reveal stagger for work list** | Work rows reveal in sequence (50–80ms stagger between rows) when WORK section enters viewport. | LOW — IntersectionObserver on `.work-list`, toggle parent class, use CSS `nth-child` animation-delay. | 300ms per row, 60ms stagger, `ease-out-quint` | One-shot per scroll-session. |
-| **Chat bubble idle pulse (restored)** | MASTER §6.1 killed the GSAP pulse but explicitly left the door open ("restoration via CSS `@keyframes` if desired"). A 2.5s breathing pulse tells users chat is available without a label. | LOW — CSS `@keyframes` on `.chat-bubble`, 2.5s `ease-in-out` infinite, 1.0 → 1.04 scale. | 2500ms loop, `ease-in-out` | Pause on `prefers-reduced-motion` (media query wrapper). Pause on hover/focus (to avoid competing with functional state). |
-| **Chat typing-dot bounce (restored)** | Already explicitly carved out in MASTER §6.1 ("looped CSS @keyframes when actively signaling state"). | LOW — CSS `@keyframes`, three dots with `animation-delay: 0s, 0.15s, 0.3s`. | 900ms loop, `ease-in-out` | Active only while `data-streaming` attr present on chat container. |
-| **Chat panel open scale-in** | Panel currently appears instantly per MASTER §6.1 D-27 no-op. A 180ms scale-from-96%-and-fade-in feels app-native. | LOW — CSS transition on `.chat-panel[data-open]`. | 180ms, `cubic-bezier(0.22, 1, 0.36, 1)` | Paired with 120ms fade-out on close. |
-| **Chat message stream "settle" fade** | Each streamed message fades in on append (very short, 120ms). Differentiates SSE streaming from raw DOM insert. | LOW — CSS `@keyframes` applied to `.chat-message` as it mounts. | 120ms, `ease-out` | Do not delay/stagger — messages arrive one at a time already. |
-| **MobileMenu overlay fade-in** | MASTER §5.8 explicitly kills the entrance animation. Reconsider: a **200ms backdrop opacity fade** (no link stagger, no translation) is restrained enough to respect §5.8's intent while not feeling like a broken display-toggle. | LOW — CSS transition on overlay backdrop only. Links still instant. | 200ms, `ease` on backdrop only | **Requires MASTER §5.8 amendment.** Proposal to add: "backdrop opacity transition allowed; link reveal remains instant." |
-| **View transitions between project case studies** | When navigating project → project, the `h2-project` title could morph via `view-transition-name`. Feels premium. | MEDIUM — requires `<ClientRouter />` re-enablement AND `view-transition-name: project-{slug}` on both the WorkRow title and the case study heading. | Browser-native, ~400ms default | **Conflicts with MASTER §6.1 "no ClientRouter"** and §8 "no `::view-transition-*` keyframes." Requires explicit amendment. Consider deferring past v1.2 unless roadmap accepts the revision. |
-
-### 1.3 Anti-Features (explicitly NOT building — many already forbidden by MASTER.md)
-
-Every entry below is either already banned by MASTER.md (cited) or a 2026 portfolio cliché that would contradict the editorial brief.
-
-| Anti-Feature | Why Requested | Why Problematic | MASTER.md Status |
-|--------------|---------------|-----------------|------------------|
-| **Custom animated cursor / cursor trails** | Looks "designer-y" on agency sites. | Breaks accessibility (hides OS cursor affordances). Fails on touch. Reads as aesthetic-over-function — opposite of the editorial brief. | Not explicitly listed, but violates §6.4's "state transitions stay; orchestrated motion goes" and §7.1's signal-only accent rule. Add to anti-patterns. |
-| **Magnetic buttons** (cursor-pull hover) | Trendy 2023–2025 micro-interaction. | Requires mouse-tracking JS, adds bundle weight, breaks the "signal, not decoration" accent rule. Zero value for recruiters evaluating engineering skill. | Add to anti-patterns. |
-| **Background particles / noise canvas / WebGL hero** | Unique first impression. | v1.0 had one; v1.1 **deleted** it (MASTER §6.1: "CanvasHero.astro is deleted. No `<canvas>`... No WebGL"). | Explicitly forbidden — MASTER §8. |
-| **Lenis smooth scroll / custom scroll hijack** | Makes pages "feel nicer." | Overrides platform scroll physics, incompatible with Astro page loads, kills Find-in-Page precision, fights `prefers-reduced-motion`. Known compatibility issues with Astro (stack research flags it). | Implicitly forbidden — `package.json` research notes it as "do not use." |
-| **Parallax on hero or images** | Depth, visual interest. | Vestibular-motion trigger. Breaks on mobile. Reads as dated (peaked 2018). | Add to anti-patterns. |
-| **Scroll-driven video scrub / long pin-to-viewport sequences** | Apple product-page aesthetic. | Massive asset weight, destroys LCP, incompatible with static SSG, requires GSAP ScrollTrigger (removed v1.1). | Forbidden — MASTER §6.1 "scroll-trigger animations are gone." |
-| **Custom loading screen / splash** | "Premium" feel. | Static site LCP is under 2s already. A loading screen is literally slower than no loading screen. | Explicitly out-of-scope — PROJECT.md "Out of Scope" list. |
-| **Orchestrated stagger on every section** | Feels "animated." | Turns every scroll into a performance. By the second section the recruiter is impatient, not impressed. | Use stagger **sparingly** — only on heading reveals and the one-time work-list entrance. |
-| **Signature hero moment / hero animation** | Portfolios often have a "big first impression." | PROJECT.md milestone scope explicitly excludes this. The display wordmark is meant to be still. | Out of scope — v1.2 roadmap brief. |
-| **Page transitions longer than 400ms** | "Cinematic." | Creates perceived slowness. 200–300ms is the app-feel threshold. | Enforce in spec. |
-| **Animating `width` / `height` / `top` / `left`** | Easy to write. | Triggers layout reflow, jank on low-end devices. | Enforce: only `opacity`, `transform` (`translate`, `scale`), `color`. |
-| **Animated emoji / Lottie files** | Cheap visual pop. | Off-brand for an editorial monochrome system; adds runtime JSON + lottie-web. | Implicit via §7 ("if a user can't click it, it can't be accent"). |
-| **"Neon-glow" / box-shadow-on-hover cards** | Gaming / AI-startup aesthetic. | MASTER §8 forbids cards and `box-shadow` for work listings. | Explicitly forbidden — MASTER §8. |
-
-### 1.4 Motion — Global Rules
-
-These apply to *every* motion feature shipped in v1.2. They belong in an amendment to MASTER §6 rather than scattered across primitive specs.
-
-- **Property whitelist:** `opacity`, `transform` (`translate`, `scale`), `color`, `background-color`, `text-decoration-color`, `outline-offset`, `letter-spacing` (with Safari subpixel caveat). Nothing else.
-- **Duration bands:**
-  - **State transitions** (hover/focus/active): 100–180ms
-  - **Entrance animations** (scroll-reveal, page enter): 200–400ms
-  - **Looped signals** (pulse, typing dots): 900–2500ms
-  - **Nothing over 500ms for one-shot animation.**
-- **Default easing:** `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out-quint) for entrance, `ease` for state changes, `ease-in-out` for loops.
-- **Stagger default:** 40–80ms between siblings; never more than 6 staggered children in one sequence.
-- **Reduced-motion contract:** Every new animation block is wrapped in `@media (prefers-reduced-motion: no-preference) { ... }` OR paired with a `@media (prefers-reduced-motion: reduce) { animation: none; transition: none; }` override. Functional color/underline transitions under 200ms are exempt (MASTER §6.3 precedent).
-- **Reveal state default:** `[data-reveal]` elements start at final state (opacity 1, translate 0) — the JS ADDS the "hidden" class, IntersectionObserver removes it. This guarantees no-JS fallback renders correctly.
-- **One-shot per session:** Scroll-reveal animations never re-trigger. IntersectionObserver unobserves after first intersection.
+Features already shipped (markdown rendering, DOMPurify, focus trap, CORS, 5/60s rate-limit code path, 30s timeout, localStorage chat history, truncation observability, Umami events) are **not re-researched** — they are referenced as inputs/constraints.
 
 ---
 
-## 2. Chat Knowledge Approaches — Feature Landscape
+## Anchor Constraint (Re-state Before Anything Else)
 
-The chat widget today uses a single `portfolio-context.json` fed into the Haiku system prompt. v1.2 goal: smarter answers to project-specific recruiter questions ("tell me about the X project," "what tech did he use for Y"). Below are the four viable approaches, with user-facing differences.
-
-### 2.1 Comparison Matrix
-
-| Approach | How It Works | Observable User Difference | Token Cost Per Query | Implementation Complexity | Best For |
-|----------|-------------|----------------------------|----------------------|---------------------------|----------|
-| **A. Context stuffing (current, improved)** | Concatenate all 6 project MDX frontmatter + abbreviated bodies + resume JSON into system prompt. Feed every query. | Fast, consistent answers. Occasionally misses nuance deep in a long case study. Quality of the curated `portfolio-context.json` is the ceiling. | ~4–8K input tokens per query (Haiku cached: ~$0.0004/query after first) | LOW — already built; just improve the context file | Portfolios with ≤10 projects and short bios. **This is Jack's case.** |
-| **B. Per-project context (keyword routing)** | Simple keyword match on user query → select which project's MDX to include in system prompt. Default: list all project titles only; on match, inject full project content. | Faster first-token latency (smaller system prompt). Occasional misfire when query is ambiguous ("what's his best project?"). | ~1–3K input tokens per query (60–80% reduction vs A) | MEDIUM — requires routing layer in Worker | Portfolios where project content volume exceeds ~15K tokens total. |
-| **C. Function-calling (tools)** | Expose `getProject(slug)`, `listProjects()`, `getResume()` as Anthropic tools. Model decides when to call. | Most *visible* polish — recruiter sees "let me look that up" behavior when asked about specific projects. Occasional extra round-trip adds 400–800ms to first answer. Risk: model hallucinates tool args. | Base query ~2K + tool invocations (each tool call = another message round-trip) | MEDIUM-HIGH — tool definitions, handlers in Worker, multi-turn orchestration | Portfolios wanting to *demonstrate* function-calling as a skill. Double-duty: the feature itself is a portfolio exhibit. |
-| **D. RAG with vector embeddings** | Embed project MDX chunks to vector store (Cloudflare Vectorize, Pinecone, pgvector). On query, retrieve top-K chunks, inject into system prompt. | Best answer quality on deep, specific questions. Slowest first-token (100–300ms embed + retrieve overhead). Overkill for 6 projects. | ~1–2K input tokens per query + ~1K embedding cost | HIGH — embedding pipeline, vector DB, retrieval logic, reindex on content change | Portfolios with blog content, papers, or >50 retrievable documents. **Not worth it for 6 projects.** |
-
-### 2.2 Recommendation
-
-**Ship B (per-project keyword routing) as the v1.2 target, with A as the "everything always" fallback.**
-
-Reasoning:
-- The site has **exactly 6 projects + resume + bio** — small enough that full context stuffing (A) already fits in Haiku's 200K window with room to spare, even with full MDX bodies.
-- Keyword routing (B) cuts steady-state cost ~70% without new infrastructure. Falls back to A gracefully when routing is uncertain.
-- RAG (D) is engineering theater at this scale — the infrastructure doesn't earn its keep. Recruiters also see through it: building a RAG pipeline for 6 documents reads as "added complexity to look impressive."
-- Function-calling (C) is seductive because it demonstrates a named skill, but the extra round-trip latency and hallucination risk cost more than the signal earns. **Revisit C post-v1.2** if Jack wants an explicit "AI tooling" project to add to the portfolio.
-
-**Differentiator option to consider:** write a single `Projects/<slug>/README.md` per project (source-of-truth doc that seeds the MDX) and feed those — not the MDX — into the context. Keeps public case studies crisp while giving chat deeper material. This is already implied by the v1.2 scope ("update Projects/ folder docs as source-of-truth").
-
-### 2.3 System Prompt / Persona Tuning (companion work)
-
-Not a knowledge question, but in-scope for v1.2. Expected behaviors:
-
-| Feature | What Good Looks Like |
-|---------|----------------------|
-| **Persona consistency** | Chat answers in third person about Jack ("Jack built this using..."), never first person. Never claims to *be* Jack. |
-| **Scope bounds** | Declines to answer off-topic questions (politics, coding tasks, jokes) with a short redirect ("I only answer questions about Jack's work — what would you like to know?"). |
-| **Recruiter-friendly defaults** | When asked "what's he looking for?", chat surfaces the one-line status from the homepage + links to resume/contact. |
-| **Transparency** | When it doesn't know, it says so — never invents projects, companies, or technologies. |
-| **Conversation cap respect** | Preserve v1.1 rate limit (5/60s), 50-msg localStorage cap, 24h TTL. No regression. |
+**Jack reads every email in entirety. There is no aggregation, no search, no admin UI, no dashboard, no "recruiter intent detection," no NLP summarization.** This eliminates an entire class of features that would be table stakes in a SaaS chat-transcript product. Treat this as a hard ceiling on scope creep — every feature below was evaluated against "does Jack reading 10–50 emails/week need this?"
 
 ---
 
-## 3. Case Study Content Template
+## Categories
 
-### 3.1 Strong Junior-Engineer Case Study Sections
+Features are organized into five non-overlapping categories. Cross-references in the Dependencies section.
 
-Based on how Toptal, Semplice, UX Planet, and hiring-manager blog posts describe strong engineer case studies, and adjusted for editorial brevity (MASTER.md §3: `.body` max-width 68ch, avoid long prose walls). Target: **600–900 words per project**, readable in under 4 minutes.
+| # | Category | What It Covers |
+|---|----------|----------------|
+| A | **Persistence** | Writing, reading, expiring transcripts in KV |
+| B | **Identity & Lifecycle** | sessionId generation, propagation, "session ended" detection |
+| C | **Metadata Capture** | What we record alongside the message stream (referrer, UA, country, timestamps) |
+| D | **Delivery** | Resend email — envelope, body, formatting, idempotency, retries |
+| E | **Scheduling & Reliability** | Cron Trigger, idempotency on the worker side, failure modes |
+| F | **Tech Debt Sweep** | Five carry-forwards bundled into v1.3 |
 
-### 3.2 Concrete Template (copy-paste-ready for each project MDX)
-
-```mdx
----
-title: "Project Name"
-slug: "project-slug"
-year: 2026
-stack: ["Tool", "Tool", "Tool"]
-role: "solo" | "team of N" | "contributor"
-status: "shipped" | "archived" | "ongoing"
-repo: "https://github.com/..."
-live: "https://..."       # omit if none
-summary: "One-sentence what-and-why — shows in work list and OG cards."
 ---
 
-## Problem
+## A. Persistence (Cloudflare KV)
 
-One or two short paragraphs. What was broken / missing / interesting? Who felt the pain? Why did solving it matter? No jargon a non-engineer recruiter can't parse. End with the question the project answers.
+### Table Stakes
 
-## Approach
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| KV namespace bound to Worker | Required to read/write at all | S | Bind in `wrangler.toml`, e.g. `CHAT_TRANSCRIPTS`. Local dev uses `--local` flag for KV simulation. |
+| Per-turn append on assistant completion | Must capture both sides of conversation in arrival order | M | Server already terminates SSE — append `{role:'user', text, ts}` and `{role:'bot', text, ts}` after the stream completes successfully. Append on error too (with `error: true` flag) so partial conversations are not lost. |
+| sessionId-keyed write | One transcript per visit, not one per message | S | Key shape `transcript:{sessionId}` recommended. Prefix enables `list({prefix:'transcript:'})` for the cron sweep. |
+| `expirationTtl` on every write | Prevent KV bloat from abandoned sessions and post-email cleanup | S | Cloudflare KV minimum is 60s. Recommended: write with TTL = 7 days. After successful email delivery, **rewrite key with shorter TTL** (e.g. 24h) rather than `delete()` — keeps a brief audit window and avoids race with in-flight Cron retries. |
+| `last_activity_at` updated every turn | Required for the 2-hour inactivity rule | S | Update inline with the append; store as ISO 8601 string for human-readable debugging. |
+| Bounded transcript size | Single user can otherwise exhaust KV value limit (25 MiB) and Resend body limits | M | Cap at e.g. 100 turns or 50KB serialized. On overflow, write a `truncated_at` marker and stop appending content (still update `last_activity_at`). Email body documents truncation. |
 
-How Jack thought about it before coding. What assumptions he made. What he chose NOT to do. One paragraph — this is where engineering maturity shows. Name tradeoffs explicitly ("I considered X but picked Y because Z").
+### Differentiators
 
-## Architecture
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Schema versioning (`schema_version: 1`) | Future-proofs reads if format changes | S | Pattern matches existing `chat-history` localStorage versioning (chat.ts:62). Trivial cost, high optionality. |
+| KV `metadata` field for hot fields | List-only sweep can read `last_activity_at` without `get()` per key (KV docs explicitly recommend this) | S | Store `{last_activity_at, started_at, sent: false}` in metadata. Cron loop reads only `list({prefix})` — no per-key fetch unless ready to email. Order-of-magnitude fewer KV reads. |
+| Compact storage shape | Smaller writes = lower cost + faster reads | S | Store messages as `[{r:'u', t:'...', a:1715250000}, ...]` (single-letter keys). Cosmetic but free. |
 
-2–4 bullets or a short prose block. The one-screen mental model. Include a single code fence only if it's the clearest way to show something structural (file tree, data flow, one critical function). No tutorial-style walkthroughs.
+### Anti-Features
 
-## Key Tradeoffs
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Use D1 (SQL) instead of KV | "Real database" feels more correct | No aggregation/search needed; D1 is overkill, adds migrations, adds a binding | KV is the right primitive for this access pattern |
+| Per-message KV writes (one key per turn) | Granular | KV `list()` cost balloons; reconstruction requires sort | Single key per session, replace-on-write |
+| Write to KV from the browser | "Skip the server roundtrip" | Cannot enforce auth, content security, or PII redaction; exposes binding | Server-side append in `/api/chat` after stream completes |
+| Server-side encryption-at-rest with custom key | Sounds responsible | KV is already encrypted at rest; adds key-management burden with no threat model justification | Trust Cloudflare's at-rest encryption; document the choice |
 
-Bulleted list, 2–4 items. Each bullet: **Decision → Reason → Cost**. Example:
-- **Cloudflare Workers over AWS Lambda** — zero cold start at edge, free tier covers expected load. Cost: stuck with Workers-compatible libs (no native Node APIs).
-- **localStorage over IndexedDB for chat history** — 50-message cap + 24h TTL fits in 5MB quota. Cost: no cross-device sync.
+---
 
-## Outcome
+## B. Identity & Lifecycle (sessionId)
 
-What actually shipped. Concrete metrics if available (bundle size, Lighthouse, perf numbers, user count, deployment cadence). If no metrics, describe observable behavior ("site now handles X scenario that it couldn't before"). One paragraph max.
+### Table Stakes
 
-## What I Learned
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| Client-generated `sessionId` | No current concept exists in `chat.ts`; must be added | S | Use `crypto.randomUUID()` (HTTPS-secure-context only — site is already HTTPS). RFC-4122 v4. Generate **once on first message send**, not on widget mount, to avoid empty-session keys. |
+| Persist `sessionId` in localStorage alongside existing `chat-history` | Survive page navigations within the same browser session | S | Extend existing `ChatStorage` interface. Bump `STORAGE_VERSION` from 1 → 2 (existing version-check logic at `chat.ts:91` will auto-clear stale entries). |
+| Send `sessionId` in `/api/chat` request body | Server needs it to key KV writes | S | Add to existing JSON request body. Add to `validateRequest()` schema (`src/lib/validation.ts`). UUIDv4 regex check is sufficient — reject malformed strings as 400. |
+| sessionId reuse across turns | Single conversation = single transcript | S | Falls out of "persist in localStorage" |
+| New sessionId on TTL expiry / clear | Don't graft yesterday's session onto today's new conversation | S | Existing 24h localStorage TTL logic (`chat.ts:96`) already handles this. When `loadChatHistory()` returns `null`, sessionId is also regenerated on next send. |
 
-The honest reflection. What Jack would do differently next time. A specific technique, pattern, or mental model he kept. This section signals self-awareness — the thing that separates junior engineers who'll grow from those who won't. One paragraph.
+### Differentiators
 
-## Links
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| `crypto.getRandomValues()` fallback | `crypto.randomUUID()` requires modern browser + secure context (Chrome 92+) | S | Site is HTTPS-only and analytics already gates on modern browsers; fallback is defensive but cheap. Generate v4 manually from 16 random bytes. |
+| Server-side sessionId validation (UUID v4 regex) | Rejects malformed/fabricated IDs before they hit KV | S | One-line zod refinement. Prevents key-injection (e.g. `transcript:foo/../bar`). |
 
-- [Repo](https://github.com/...)
-- [Live](https://...) — omit if none
-- [Commit that shipped it](https://github.com/.../commit/...) — optional, very nice when it fits
+### Anti-Features
+
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Server-issued sessionId via cookie | "More secure" | Adds Set-Cookie surface, breaks the cookie-free analytics promise (Phase 15 commitment), creates GDPR considerations | Client-generated UUIDv4 in localStorage — no cookie, same uniqueness guarantee |
+| Session continuation across devices | "Power-user" | No login surface; no value for Jack's read-only use case; would require server-side identity | Per-device session is correct |
+| Multi-tab single-session merge | "Avoid duplicate emails for one person" | Unsolvable cleanly without a shared SharedWorker / BroadcastChannel; tabs in same browser **already** share localStorage so this is largely free; cross-browser-window-same-person is rare and benign | Accept that two browsers = two sessions = two emails. Document in PITFALLS. |
+| Detect "session ended" via beacon/visibilitychange | Avoid 2-hour delay | Unreliable — Safari often skips `unload`, `pagehide` fires on tab-discard; would create false positives | 2-hour inactivity threshold is the simple, correct primitive |
+
+### Edge Cases (sessionId handling)
+
+| Scenario | Behavior | Rationale |
+|----------|----------|-----------|
+| Two tabs open simultaneously, same browser | Single sessionId via shared localStorage; both tabs append to same transcript | localStorage is shared per-origin per-browser. `storage` event can sync UI but messages routing to one transcript is correct. |
+| User opens widget, types nothing, closes tab | No KV write happens | sessionId only generated on first send → no orphan transcripts |
+| User refreshes page mid-conversation | Same sessionId loaded from localStorage; conversation continues in same KV record | Falls out of localStorage persistence |
+| User clears localStorage between turns | Next message generates new sessionId; original transcript orphaned, eventually expires via 7d TTL | Tolerable; cron sweep can email partial transcript at 2h-of-no-activity threshold |
+| User abandons mid-stream (closes tab while bot streaming) | Server still completes stream and writes both turns IF `ctx.waitUntil()` keeps the worker alive past the disconnect; OR last user turn captured but no bot reply | Use `ctx.waitUntil()` to attempt completion. If bot reply truncates, write what was generated with `truncated:true` flag. |
+| sessionId collision (UUIDv4) | Astronomically unlikely (~1 in 2^122) | Documented; not engineered against |
+| Malformed sessionId in request | Server rejects 400 before any KV interaction | UUIDv4 regex in validation layer |
+| User sends 1000 messages in one session | Capped at e.g. 100 turns or 50KB; later turns metadata-only | KV value limit is 25 MiB but Resend has its own body limit; cap conservatively |
+
+---
+
+## C. Metadata Capture
+
+### Table Stakes
+
+| Field | Source | Why Captured | Complexity |
+|-------|--------|--------------|------------|
+| `started_at` | Set on first KV write | Email subject context ("conversation started 2h ago") | S |
+| `last_activity_at` | Updated each turn | Required for 2h inactivity gate | S |
+| `referrer` | `request.headers.get('Referer')` on first turn | Did they come from LinkedIn / GitHub / direct? Highest-signal recruiter context. | S |
+| `user_agent` | `request.headers.get('User-Agent')` on first turn | Mobile vs desktop, browser — useful but secondary | S |
+| `country` | `request.cf?.country` (Cloudflare-injected) | Cheap geographic context; helpful for filtering noise | S |
+| `message_count` | `messages.length` | Email subject summary | S |
+| `truncated` | Boolean from existing Phase 14 truncation observability | Surfaces hit max_tokens vs natural completion | S |
+
+### Differentiators
+
+| Field | Value Proposition | Complexity |
+|-------|-------------------|------------|
+| `cf.city` / `cf.region` | Finer geo than country alone, free from Cloudflare | S |
+| `cf.colo` (Cloudflare datacenter) | Latency debugging when an email is suspiciously slow | S |
+| `cache_read_input_tokens` / `cache_creation_input_tokens` per turn | Hits the v1.2 Phase 14 cache-hit observability tech debt at the same time | M |
+| `entry_path` | Did they land on `/projects/foo` and chat there, or `/`? | S |
+
+### Anti-Features
+
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Capture full IP address | "Useful for fraud" | PII; cookie-free analytics commitment broken; not actionable for read-only use case | Cloudflare-derived country/region is sufficient |
+| Fingerprinting (canvas, fonts, etc.) | "Identify repeat visitors" | Privacy hostile; complex; no value | Don't |
+| Captured analytics events from Umami | "Cross-reference with chat" | Umami is opaque-by-design (no per-user attribution); requires cookies/IDs to join | Keep them parallel; reference Umami dashboard separately |
+| Capturing chat-context cache key | "Detect when knowledge base changed mid-session" | Already covered by `cache_read_input_tokens=0` indicator | Don't double-record |
+
+### Edge Cases (metadata)
+
+| Scenario | Behavior |
+|----------|----------|
+| Referrer header absent (privacy mode, direct nav) | Store `null`; email shows "(direct / unknown)" |
+| User-Agent spoofed | Stored as-is; not validated |
+| `cf` object missing in local dev | Default to `country: 'XX'`, `city: null` — wrap reads in optional chain |
+| First-turn metadata vs subsequent-turn drift | Lock first-turn values; ignore drift (e.g. user switching networks) |
+
+---
+
+## D. Delivery (Resend)
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| Resend account + verified sending domain | Required to send from anything other than `onboarding@resend.dev` | S | Use `transcripts@jackcutrara.com` or similar. Add SPF/DKIM/DMARC DNS records. Verify in Resend dashboard. |
+| `RESEND_API_KEY` as Worker secret | Cannot be in source | S | `wrangler secret put RESEND_API_KEY`. Both production and preview environments. |
+| Resend SDK call from Worker | `@anthropic-ai/sdk` precedent shows SDK works in Workers runtime; Resend SDK same shape | S | `import { Resend } from 'resend'` in cron handler. |
+| HTML-escape user-typed message text in body | XSS / HTML injection — emails rendered in Gmail web client | S | Use a simple escape function (Resend has no built-in escape). User text → `&` `<` `>` `"` `'` escaped. **Critical** — emails are sent from a domain Jack controls; injection here = phishing-as-Jack. |
+| No markdown rendering of user input | Same threat — Markdown can construct links and HTML | S | User turns: pre-formatted plain text inside `<pre>` tag. Bot turns: ALSO escaped (already DOMPurify-clean for the widget, but the email is a fresh untrusted-rendering surface). |
+| Idempotency key per session | Re-running cron must not double-email | S | Use `Idempotency-Key` header = `sessionId`. Resend retains keys for 24h. After 24h, our `sent:true` KV metadata is the durable guard. |
+| `sent: true` flag in KV metadata after success | Prevents resend on subsequent cron tick | S | Update KV with metadata flag + extend TTL down to e.g. 24h post-send. |
+| Plain-text alternative (`text` field) | Email clients render text part if HTML blocked; better deliverability | S | Resend accepts both `html` and `text`. Generate text version via simple newline-joined formatting. |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Subject-line summary | At-a-glance triage in Jack's inbox | S | Format: `Chat (<msgcount> turns) from <country> via <referrer-host> — <first-user-message-truncated-30-chars>` |
+| Reply-to set to a no-reply | Jack hits reply by accident → contained | S | `reply_to: 'noreply@jackcutrara.com'` |
+| Conversation rendered as alternating speech blocks | Easier reading than raw JSON dump | S | `<div>` per turn with role label, monospace timestamp, escaped content in `<pre style="white-space:pre-wrap">` |
+| Metadata block at top (referrer, country, started_at, msg_count) | Triage without scrolling | S | Definition list `<dl>` or table |
+| Inline link to `/api/transcripts/<sessionId>` | "Open this in browser" — but **only if** authenticated; otherwise omit | M | Probably skip — adds an auth surface for marginal UX gain. **Anti-feature candidate.** |
+| Truncation badge in subject when `truncated=true` | Signal that bot hit max_tokens for at least one turn | S | E.g. `Chat (5 turns ⚠ truncated) from US — How do I…` |
+
+### Anti-Features
+
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Send the email immediately on `last user turn` | Faster | "Last turn" is ambiguous — there's no end-of-conversation signal; users alt-tab and come back; would generate 3-4 emails per real conversation | 2-hour inactivity gate (already locked) |
+| Use Workers' built-in `Email` binding | "Native Cloudflare integration" | Email Workers send TO routed addresses, not OUTBOUND; not a sending API | Use Resend (locked) or AWS SES; Resend is locked |
+| Webhooks from Resend back to Worker for delivery confirmation | "Audit trail" | Adds an inbound endpoint, signature verification, no actionable purpose for read-only use case | Trust Resend's API response; failure goes to KV `last_send_error` |
+| Render bot markdown as HTML in email | "Looks nicer" | The widget already sanitizes via DOMPurify with a strict allowlist — re-doing this in a different rendering context (email) is duplicate trust boundary work; small risk of escape bypass; minimal value over `<pre>` | Plain `<pre>` blocks for both roles. Optionally, restrict bot-side to a subset of markdown rendered with marked + DOMPurify if value is justified; default = plain. |
+| Conditional emailing ("only email if 3+ turns") | Reduce noise | Suppresses signal; one-turn questions (e.g. "is Jack open to remote?") may be the most valuable | Email every conversation that completes ≥1 turn |
+| AI summary at top of email | "Save reading time" | Latency, cost, hallucination risk; user said they read every email in entirety | Don't |
+| In-app admin panel / dashboard | "View all transcripts" | Out of scope — Jack reads emails | Don't |
+| Search across transcripts | "Find that one conversation about React" | Out of scope — Gmail search is the search | Don't |
+
+### Edge Cases (delivery)
+
+| Scenario | Behavior |
+|----------|----------|
+| Resend API returns 5xx | Retry once with exponential backoff inside cron tick. Don't set `sent:true`. Next hour's cron retries. |
+| Resend API returns 409 (idempotency key collision with different payload) | Likely a transcript-grew-since-last-attempt edge case → log to KV `last_send_error`, mark `sent:true` (assume prior send went through), don't double-email |
+| Resend rate limit hit (10 req/sec by default) | Cron processes batches sequentially with small delay; or use `p-limit` style throttle. For a portfolio this is unlikely to fire. |
+| RESEND_API_KEY missing/invalid | Log error, do NOT mark sent, keep retrying on subsequent cron ticks. Surface via Cloudflare logs. |
+| Empty transcript (sessionId in KV but no messages) | Skip; don't email. Should be impossible given "sessionId only generated on first send" rule. |
+| Email exceeds Resend body size limit (~10MB) | Capped via 100-turn / 50KB transcript cap upstream — won't hit |
+| User's content contains an email-injection payload (e.g. `\nBcc: …`) | Strip CR/LF from anything used in headers (subject, reply-to). User text only ever in body, not headers, so low risk. |
+| Bot reply contained tool-use / structured output | N/A — current chat returns plain text only. If this changes, treat as user-controlled and escape. |
+
+---
+
+## E. Scheduling & Reliability (Cron Trigger)
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| Cron Trigger registered in `wrangler.toml` | Required to fire scheduled handler | S | `crons = ["0 * * * *"]` (top of every hour). |
+| `scheduled` handler in Worker | Entry point for cron | S | Astro 6 supports custom handlers via `_worker.js` adapter or via the platform's astro adapter; verify Astro Cloudflare adapter exposes `scheduled` (may need a small workaround — flag in PITFALLS). |
+| KV `list({prefix:'transcript:'})` with cursor pagination | Iterate all candidate sessions | S | Cloudflare docs confirm cursor-based pagination; loop until `list_complete: true`. |
+| Inactivity check via metadata | `now - last_activity_at >= 2h` AND `sent !== true` | S | Read metadata via list (no per-key get) — major perf win documented by Cloudflare |
+| `ctx.waitUntil()` to extend post-response work | Allow async sends to complete | S | Standard Workers pattern |
+| Per-session try/catch | One bad send must not abort the whole batch | S | Wrap each send; on error, write `last_send_error` to KV metadata and continue |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| Cap batch size per cron tick | Bound CPU time on free/paid Workers (CPU time is the binding constraint, not wall time) | S | E.g. process at most 50 sessions per tick. Realistic load is ≤5/day for a portfolio. |
+| Send-attempt counter with cap | Avoid infinite retry on a poison-pill payload | S | After N=5 failed sends, mark `dead:true`, surface in next-cron log, stop retrying |
+| Structured logs (JSON) for failures | Cloudflare Logs / observability | S | `console.log(JSON.stringify({event:'email_send_failure', sessionId, error}))` |
+| Self-heartbeat | "Did the cron run last hour?" — emits a no-op log every tick | S | Minimal; Cloudflare dashboard shows cron history natively, so this is optional |
+
+### Anti-Features
+
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Sub-hourly cron (`*/15 * * * *`) | Faster delivery | Worst-case latency is already 3h (1h cron interval + 2h inactivity); 15-min ticks add cost/noise without business value for this volume | Hourly is correct |
+| Durable Objects for stronger consistency | "Eventually consistent KV is scary" | KV's eventual consistency window (60s) is irrelevant against a 2-hour threshold + hourly cron; DO adds complexity, cost, and a new failure mode | Accept KV eventual consistency, document in PITFALLS |
+| Queue-based fanout to a separate "send" Worker | "Decouple cron from sending" | Adds a Queue binding, a second Worker, and inter-Worker semantics for ≤5 sends/day | One Worker, sequential sends, idempotent retry |
+| Track every cron run in KV | "Audit trail" | Cloudflare Dashboard already shows cron execution history | Don't duplicate |
+
+### Edge Cases (scheduling)
+
+| Scenario | Behavior |
+|----------|----------|
+| Cron tick overruns CPU budget | Worker terminates; unsent sessions picked up next tick (idempotent) |
+| Two cron ticks somehow overlap | Idempotency key on Resend deduplicates; KV `sent:true` flag prevents re-attempt |
+| KV write delay propagation (eventual consistency) | A `sent:true` write from prior tick may not be visible at all edges within 60s — but cron runs in **one** location per tick, so it sees its own writes immediately; cross-region staleness is moot |
+| Cloudflare incident skips a cron tick | Next successful tick catches up — sessions stay in KV per their TTL |
+| Session with `last_activity_at` exactly at 2h boundary | Off-by-one handled via `>=` in inequality |
+| Session that **never** ends (continuous activity) | Never emailed (correct); falls off via 7-day max TTL eventually |
+| TTL expiry races with cron pickup | If transcript expires before cron, no email sent. Mitigation: write with **TTL ≥ inactivity_threshold + cron_interval + safety margin** = at least 4h, recommend 7 days |
+
+---
+
+## F. Tech Debt Sweep (Five Carry-Forwards)
+
+These are pre-existing items with full v1.2 audit context. Bundling into v1.3 because each touches files (`chat.ts`, `api/chat.ts`, `wrangler.toml`, CI) that v1.3 will modify anyway. Not feature work in the user-facing sense — operational maturity.
+
+### Table Stakes
+
+| Item | Status | Complexity | Notes |
+|------|--------|------------|-------|
+| **DEBT-CHAT-RL-01** — Configure `CHAT_RATE_LIMITER` binding on Production + Preview | Code path exists; binding never bound | S | Add to `wrangler.toml`. Test fires in production. Existing defensive skip-when-absent guard (`api/chat.ts:49-52`) becomes dead code path — still keep for local dev. |
+| **DEBT-CHAT-CACHE-01** — Cache-hit-rate observability | Anthropic returns `cache_read_input_tokens` / `cache_creation_input_tokens` per `message_delta`; we don't surface them | M | Easiest landing: emit a structured log line per request; optionally include in v1.3 transcript metadata (Category C differentiator). Bonus: surfaces in same email Jack already reads. |
+| **DEBT-CHAT-CTX-CI-01** — `build:chat-context:check` in CI | `package.json` script exists; no CI invocation | S | Add a step to GitHub Actions `ci.yml`. Fails PR if local context is stale relative to MDX content. Build-time deploy regenerates so production never stale, but PR-time fail-fast is the gap. |
+| **DEBT-WR-01** — `astro:page-load` listener dedup | Three listeners (`analytics.ts`, `scroll-depth.ts`, `chat.ts`) register without removeEventListener; long sessions accumulate | S | Add `{once:false}` removal pattern, or guard via module-level `bound` boolean. Existing `*Initialized` guards prevent double-execution but listener leak still grows. Touches three files. |
+| **DEBT-CHAT-DISPLAY-01** — `#chat-panel` JS-coupled display contract | `animatePanelOpen` flips `style.display='flex'` directly; `.is-open` class only animates | S | Move display state to CSS via `[data-state="open"]` attribute. JS toggles attribute, CSS controls `display`. Decouples motion from visibility. |
+
+### Differentiators
+
+None — these are pure debt. The "differentiator" is not carrying them into v1.4.
+
+### Anti-Features
+
+| Feature | Why Requested | Why Problematic | Alternative |
+|---------|---------------|-----------------|-------------|
+| Refactoring chat into a framework (React island, etc.) while we're touching it | "Since we're in here anyway" | Phase 7 vanilla architecture is a deliberate constraint; reintroducing a framework violates "zero new runtime deps preferred" | Stay vanilla |
+| Adding tests for every edge case enumerated above | "Comprehensive" | TDD applies to v1.3 net-new code per project convention. Existing carry-forward fixes get focused tests for the fix, not exhaustive coverage of the whole module | Targeted regression tests per debt item |
+
+---
+
+## Feature Dependencies
+
 ```
+[A. Persistence] ─────── prerequisite for ──> [D. Delivery]
+       ▲                                            ▲
+       │                                            │
+[B. Identity (sessionId)] ───── keys ──────────────┘
+       ▲
+       │
+[C. Metadata Capture] ──── enriches ──> [D. Delivery] (subject + body)
+                                              ▲
+                                              │
+[E. Scheduling (Cron)] ───── triggers ────────┘
+       │
+       └─── reads ──> [A. Persistence]
+       └─── reads ──> [B. Identity]
+       └─── reads ──> [C. Metadata]
 
-### 3.3 Section-Level Expectations
-
-| Section | Words | Complexity | What a Recruiter Gets from It |
-|---------|-------|------------|-------------------------------|
-| Frontmatter | N/A | LOW | Scannable signal for 30-second scans (year, stack, role). |
-| Problem | 80–150 | LOW — write once | "Does he understand why software gets built?" |
-| Approach | 100–200 | MEDIUM — requires reflection | "Can he think before he types?" |
-| Architecture | 100–200 + optional code | MEDIUM | "Does he have a mental model of systems?" |
-| Key Tradeoffs | 100–200 (bulleted) | HIGH — this is the hardest section to write well | "Has he made real engineering decisions under constraint?" **This section is the single strongest junior-vs-senior signal.** |
-| Outcome | 50–100 | LOW if metrics exist; HIGH if inventing signals | "Did the thing he built actually do the thing?" |
-| What I Learned | 80–150 | HIGH — requires honesty | "Is he self-aware? Will he grow on the job?" |
-| Links | N/A | LOW | Trust: recruiter can verify. |
-
-### 3.4 Anti-Patterns in Case Study Writing
-
-- **"Tutorial voice"** — walking through every step of the build. Recruiters don't need a how-to; they need the decisions.
-- **Tech logos / skill icons** — forbidden by MASTER §8 ("no skill icons... no SVG illustrations"). Use the `stack` frontmatter array.
-- **Marketing language** ("leveraged a cutting-edge stack to deliver seamless UX") — reads as insincere. Plain English only.
-- **No tradeoffs section** — suggests junior engineer who didn't face any decisions, which is a lie.
-- **No learnings section** — suggests the project taught him nothing, which is either true (bad project) or false (hidden humility, also bad).
-- **Placeholder metrics** ("10x faster," "significantly better") without numbers. Either give a number or describe qualitatively.
-- **Screenshots without context** — every image needs an alt that explains what it's showing and why it matters.
-
----
-
-## 4. Analytics — Recruiter Engagement Signals
-
-### 4.1 Platform Decision
-
-**Plausible** is the best fit. Rationale:
-- Privacy-friendly (no cookie banner needed, GDPR-safe) — a portfolio shouldn't have a cookie banner; it looks unprofessional.
-- Native scroll-depth tracking in 2026 (no plugin required).
-- Custom events via CSS class names or a small JS helper.
-- <1KB script — doesn't regress the Lighthouse 100 performance score.
-- Cloudflare Analytics is also zero-cost and bundled with Pages hosting, but its event model is weaker. Umami is a good alternative if Jack wants to self-host; functionally equivalent for events.
-
-### 4.2 Events to Instrument (Ranked by Recruiter-Signal Value)
-
-| Event | Type | Why It Matters | Implementation |
-|-------|------|----------------|----------------|
-| **Page view** (default) | Pageview | Baseline — which pages get visited, traffic source, device. | Automatic. |
-| **Scroll depth per page** (default) | Built-in | How deep recruiters read on each page. Case study scroll depth is the clearest "engaged" signal short of chat. | Automatic — Plausible 2026 ships this natively. |
-| **Time on page** (default) | Metric | Bounce rate + time on page + scroll depth together = engagement quality. | Automatic. |
-| **Resume PDF download** | Custom event `Resume Download` | **The single strongest buying signal.** Recruiter who downloads the PDF is actively evaluating. | `onclick` event on `<a href="resume.pdf" download>` → `plausible('Resume Download')`. |
-| **External link click — GitHub** | Custom event `Outbound: GitHub` (with `{ project: slug }` prop) | Shows which projects drove curiosity to verify on GitHub. | Click handler on `a[href*="github.com"]`. |
-| **External link click — LinkedIn** | Custom event `Outbound: LinkedIn` | Recruiters who LinkedIn-click are moving toward contact. | Click handler. |
-| **External link click — Email** (`mailto:`) | Custom event `Outbound: Email` | The conversion event — closest proxy to "they want to talk." | Click handler on `a[href^="mailto:"]`. |
-| **Chat widget opened** | Custom event `Chat Open` | Interest in interactive engagement. Indicates recruiter wants more than the static copy. | Event fired from `chat.ts` when panel mounts. |
-| **Chat message sent** (with `{ message_index: N }` prop) | Custom event `Chat Message` | How many turns. 3+ turns = strong engagement. Do NOT capture message content (privacy + PII). | Event fired per send. |
-| **Project case study view** (with `{ project: slug }` prop) | Custom event `Project View` | Which projects drive the most interest. Informs which to feature higher on the index. | Fired from per-project layout `<script>`. |
-| **Project live-link click** | Custom event `Outbound: Live` (with `{ project: slug }`) | Recruiter opened the live demo — high-intent. | Click handler. |
-| **Project repo click** | Custom event `Outbound: Repo` (with `{ project: slug }`) | Same as above for GitHub repo links inside case studies. | Click handler. |
-| **404 hits** | Custom event `404` | Hygiene — catches broken deep links. | Fired from 404 page. |
-
-### 4.3 Events to Explicitly NOT Instrument
-
-| Non-Event | Why Not |
-|-----------|---------|
-| Mouse movement / heatmaps | Over-instrumentation for a static portfolio. Adds weight. Invasive. Not GDPR-light. |
-| Session replay | Same as above, plus privacy problem. |
-| Individual chat message content | PII risk, no analytics value. |
-| Form field focus events | No forms exist on the site (by design — PROJECT.md out-of-scope). |
-| A/B test variants | No budget/volume to A/B a portfolio. |
-| UTM tracking beyond default | Standard Plausible handles `utm_source`/`utm_medium`/`utm_campaign`. No custom taxonomy needed. |
-
-### 4.4 Implementation Complexity
-
-Whole analytics instrumentation is **LOW complexity** — two work units:
-1. Add Plausible script tag to `BaseLayout.astro` head (+ `data-domain="jackcutrara.com"`).
-2. Add a tiny `src/scripts/analytics.ts` (~30 lines) exposing `track(eventName, props?)` and wire it into:
-   - Chat widget (`chat.ts`) for `Chat Open` and `Chat Message`
-   - Resume download link (single `onclick`)
-   - Global delegated click listener on `document` for `a[href^="http"]`, `a[href^="mailto"]`, `a[href$=".pdf"]` (handles every external link uniformly)
-   - Per-project layout for `Project View`
-
-The delegated click listener is the key — instrument once, cover every future link automatically.
-
----
-
-## 5. Feature Dependencies
-
-```
-[Motion global rules amendment to MASTER §6]
-    └──enables──> [All motion features below]
-
-[Scroll-reveal IntersectionObserver primitive]
-    └──enables──> [Section heading word-stagger]
-    └──enables──> [Work list row stagger]
-
-[Astro View Transitions re-enable]  (requires MASTER amendment)
-    └──enables──> [Page enter fade]
-    └──enables──> [Project → project morph (optional)]
-    └──conflicts-with──> [Phase 7 chat persistence model] — must retest localStorage survives astro:after-swap
-
-[Real project MDX content]
-    └──enables──> [Chat knowledge upgrade] — chat context quality is gated on content quality
-    └──enables──> [Case study scroll-depth metric] — no point measuring engagement on placeholder content
-
-[Projects/ folder docs source-of-truth]
-    └──feeds──> [Project MDX case studies]
-    └──feeds──> [Chat context] — whichever knowledge approach is chosen
-
-[portfolio-context.json improvements]
-    └──blocks──> [Chat persona tuning] — can't tune persona without accurate facts
-    └──blocks──> [Chat knowledge approach selection] — approach depends on final content volume
-
-[Plausible script install]
-    └──enables──> [All custom events]
-    └──enables──> [Baseline metrics before other v1.2 work ships] — instrument FIRST to measure impact
+[F. Tech Debt Sweep] ──── parallel ──── (no dependency on A-E; can land any phase)
+   └─ except DEBT-CHAT-CACHE-01 which can ride [C. Metadata Capture] for lower marginal cost
 ```
 
 ### Dependency Notes
 
-- **Analytics first:** Plausible should ship *before* content pass and motion layer so Jack has before/after data on engagement impact.
-- **Content before chat:** Chat knowledge upgrades depend on real MDX content — do not tune system prompt against placeholder content.
-- **Motion amendment before motion features:** Writing the MASTER §6 amendment (property whitelist, duration bands, reveal primitive spec) once is cheaper than re-arguing the rules per primitive.
-- **View Transitions conflict:** Re-enabling `<ClientRouter />` (required for native Astro page-fade) conflicts with MASTER §6.1. Decision needed in roadmap: either (a) amend §6.1 to carve out View Transitions, (b) use a CSS-only crossfade that doesn't need ClientRouter, or (c) skip page-enter motion in v1.2.
+- **D requires A:** Resend cannot send what was never persisted. Persistence must ship before delivery.
+- **A requires B:** KV writes need a key; key is `transcript:{sessionId}`. sessionId machinery must ship first or alongside.
+- **E requires A, B, C:** Cron reads KV, filters by `last_activity_at` (C), keys by sessionId (B).
+- **C enriches D:** Email is much more useful with metadata; metadata is not strictly required for delivery to work.
+- **DEBT-CHAT-CACHE-01 enhances C:** Both work the cache-hit observability surface; landing them together avoids redundant pass over `api/chat.ts`.
+- **F is parallel:** None of the debt items block the v1.3 feature path. They CAN ship in any order; bundling is convenience, not requirement.
 
 ---
 
-## 6. v1.2 Feature Prioritization Matrix
+## MVP Definition
 
-| Feature | Recruiter Value | Implementation Cost | Priority |
-|---------|----------------|---------------------|----------|
-| Real project MDX content (4 files) | HIGH — placeholder content is the single biggest credibility leak | MEDIUM — writing is the work; no code | **P1** |
-| Plausible instrumentation | MEDIUM — invisible to recruiters; high value to Jack for iteration | LOW | **P1** |
-| Scroll-reveal (sections + work list) | MEDIUM-HIGH — site feels alive, remains editorial | LOW | **P1** |
-| Hover microinteractions (WorkRow arrow slide) | MEDIUM — polish signal | LOW | **P1** |
-| Chat persona + system prompt tuning | HIGH — one great chat answer beats a pretty animation | LOW (just prompt work) | **P1** |
-| Chat knowledge approach (keyword routing) | MEDIUM | MEDIUM | **P2** |
-| Page enter fade via View Transitions | MEDIUM | MEDIUM — MASTER amendment needed | **P2** |
-| Chat pulse / typing dots (restored) | LOW-MEDIUM — chat is already a differentiator; motion adds polish | LOW | **P2** |
-| Heading word-stagger | LOW-MEDIUM — nice-to-have | MEDIUM | **P2** |
-| Project → project view transition morph | LOW — impressive but niche, most users don't navigate project→project | HIGH — conflicts with MASTER | **P3** |
-| About page narrative audit | MEDIUM — already decent per v1.1 audit | LOW | **P2** |
-| Homepage/resume copy audit | LOW-MEDIUM — current copy is current | LOW | **P2** |
-| 7 tech debt items | LOW individually, MEDIUM cumulatively (hygiene + future-proofing) | LOW-MEDIUM | **P2** |
+### Launch With (v1.3 ship)
 
-**Priority key:** P1 = must ship for v1.2. P2 = should ship. P3 = defer.
+Minimum to deliver "Jack sees what visitors are asking":
+
+- [x] B1 — sessionId generated client-side, persisted in localStorage, sent in request
+- [x] B2 — sessionId validated server-side
+- [x] A1 — KV namespace bound, write per turn, sessionId-keyed
+- [x] A2 — `last_activity_at` updated each turn, TTL ≥ 7 days, schema versioned
+- [x] A3 — Bounded transcript size (100 turns / 50KB)
+- [x] C1 — `started_at`, `last_activity_at`, `referrer`, `user_agent`, `country`, `message_count`, `truncated` captured
+- [x] D1 — Resend domain verified, API key bound, SDK integrated
+- [x] D2 — HTML escape on every user-typed and bot-emitted segment
+- [x] D3 — Idempotency-Key = sessionId on Resend send
+- [x] D4 — `sent:true` flag in KV metadata after success; TTL trimmed post-send
+- [x] D5 — Subject line: `Chat (N turns) from <country> via <referrer-host> — <first-msg-30c>`
+- [x] D6 — Plain-text + HTML body parts; alternating turn blocks; metadata header
+- [x] E1 — `crons = ["0 * * * *"]` registered
+- [x] E2 — Scheduled handler iterates KV via `list()` cursor pagination, reads metadata to filter, sends via Resend
+- [x] E3 — Per-session try/catch; structured-log on failure; send-attempt counter cap
+- [x] F1–F5 — All five tech debt items closed
+
+### Add After Validation (v1.4+)
+
+- [ ] **C-diff** — Cloudflare `cf.region` / `cf.colo` if Jack reports country alone is insufficient
+- [ ] **D-diff** — Cache-hit-rate metadata in email body (only if F2's separate observability surface proves insufficient)
+- [ ] **E-diff** — Self-heartbeat / health check (only if a missed cron is observed; dashboard already shows runs)
+
+### Future Consideration (deferred, may never ship)
+
+- [ ] Aggregation / search / dashboard — **explicitly out of scope** per the anchor constraint
+- [ ] Sub-hourly cron — only if email latency complaints emerge
+- [ ] Cross-device session continuity — requires login surface, not aligned with portfolio identity
+- [ ] AI summary in email — user reads everything, summary is anti-value
+- [ ] Webhook from Resend for delivery audit — no actionable need
+- [ ] Multi-recipient distribution — single user (Jack) is the only consumer
 
 ---
 
-## 7. Dependencies on Existing v1.1 Surface
+## Feature Prioritization Matrix
 
-Features in v1.2 will *touch* the following v1.1 surfaces. The roadmap must budget amendment or integration work against each.
+| Feature | User Value | Implementation Cost | Priority |
+|---------|------------|---------------------|----------|
+| KV writes per turn (A) | HIGH | LOW | P1 |
+| sessionId machinery (B) | HIGH | LOW | P1 |
+| Resend integration + escape (D) | HIGH | MEDIUM | P1 |
+| Cron Trigger + sweep (E) | HIGH | MEDIUM | P1 |
+| Core metadata: referrer, country, timestamps, msg_count (C) | HIGH | LOW | P1 |
+| Idempotency key + `sent:true` flag | HIGH | LOW | P1 |
+| Schema versioning + bounded transcript (A) | MEDIUM | LOW | P1 |
+| DEBT-CHAT-RL-01 (rate-limiter binding) | MEDIUM | LOW | P1 |
+| DEBT-CHAT-CTX-CI-01 (CI check) | MEDIUM | LOW | P1 |
+| DEBT-WR-01 (listener dedup) | LOW | LOW | P2 |
+| DEBT-CHAT-DISPLAY-01 (#chat-panel decouple) | LOW | LOW | P2 |
+| DEBT-CHAT-CACHE-01 (cache observability) | MEDIUM | MEDIUM | P2 |
+| Cache-hit metadata in email (C-diff) | LOW | LOW | P3 |
+| Send-attempt counter cap (E) | LOW | LOW | P3 |
 
-| v1.1 Surface | v1.2 Work That Touches It | Amendment Needed? |
-|--------------|---------------------------|-------------------|
-| `MASTER.md §6` (Motion) | Motion layer — scroll reveal, page enter, pulse restore | **YES** — add §6.5 "v1.2 motion extensions" with property whitelist, duration bands, reveal primitive spec. The existing §6.1 dead-list has to stay; add carve-outs explicitly. |
-| `MASTER.md §5.5` (WorkRow) | Arrow slide-in, optional letter-spacing tighten | **YES** — additive amendment to §5.5 motion line ("opacity + 4px translateX"). |
-| `MASTER.md §5.8` (MobileMenu) | Backdrop fade-in | **YES** — §5.8 currently says "overlay opens instantly via display toggle only." Amendment: allow backdrop opacity transition; keep links instant. |
-| `MASTER.md §6.1 D-27` (Chat motion no-ops) | Chat pulse / typing / panel scale-in restored | **PARTIAL** — §6.1 already carves out "looped CSS @keyframes when actively signaling state" and notes "restoration via CSS @keyframes if desired." Formalize as a Phase 10 follow-through item in §6 changelog. |
-| `MASTER.md §8` (Anti-patterns) | View transitions re-enable | **YES** — §8 forbids `<ClientRouter />` and `::view-transition-*` keyframes. Remove those bullets OR scope them to "v1.1-era removals, reinstatable with justification." |
-| `src/scripts/chat.ts` | Chat knowledge approach, persona tuning, analytics events | **NO** — additive. Preserve Phase 7 architecture (SSE, focus trap, DOMPurify, rate limit). |
-| `src/content/projects/*.mdx` | Content pass | **NO** — content work only; Zod schema unchanged unless case study template proposes new frontmatter fields. |
-| `src/pages/api/chat.ts` | Chat knowledge (routing logic) | **NO** — additive. |
-| `BaseLayout.astro` | Plausible script, optional `<ClientRouter />` | **PARTIAL** — script injection is trivial; ClientRouter decision gated on §8 amendment. |
-| `v1.1-MILESTONE-AUDIT.md` 7 tech debt items | Individual fixes | **NO** — documented as v1.1 known issues. |
+**Priority key:**
+- P1: Required for v1.3 ship
+- P2: In-milestone if budget permits, otherwise carry-forward to v1.4
+- P3: Defer
 
 ---
 
-## 8. Out of Scope for v1.2
+## Privacy & Security Quick Reference
 
-Restating for clarity — these are NOT v1.2 features. Revisit post-v1.2.
-
-- **Signature hero moment / hero animation** — PROJECT.md milestone scope excludes it.
-- **Dark mode** — permanently dead (MASTER §8).
-- **Blog / writing section** — PROJECT.md out-of-scope.
-- **CMS / contact form** — PROJECT.md out-of-scope.
-- **Function-calling chat tools (C)** — defer; not worth the complexity at current content volume.
-- **RAG pipeline (D)** — defer; doesn't earn its keep for 6 projects.
-- **Three.js / WebGL / Canvas anything** — permanently dead.
-- **Custom cursor / mouse effects** — add to anti-patterns list during MASTER §6 amendment.
-- **Skills graphics / progress bars / GitHub contribution graph** — forbidden by MASTER §8 and PROJECT.md.
+| Concern | Treatment |
+|---------|-----------|
+| User-typed PII (email, phone if visitor pastes them) | Stored in KV (encrypted at rest by Cloudflare); transmitted to Gmail (TLS in transit); retained 7 days, post-send trimmed to 24h |
+| Email body XSS / HTML injection | HTML-escape EVERY user-controlled string (user turns, bot turns, referrer, UA) before HTML interpolation. Escape function: `&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`, `'` → `&#39;` |
+| Email header injection (CR/LF in subject) | Strip `\r\n` from subject components (referrer-host, first-message-30c snippet) |
+| GDPR / data subject rights | Single-actor (Jack) read-only consumption + 7d transient retention + cookie-free posture is below the threshold for most practical concerns. No data sale, no profiling, no automated decision-making. Document the data flow in CLAUDE.md/PROJECT.md. |
+| In-UI disclosure | None (silent logging is locked). Risk: if a user notices network tab and asks. Mitigation: no analytics surface, no tracking pixel, only the existing chat API call enriched with a sessionId field. |
+| Resend domain SPF/DKIM/DMARC | Required for deliverability; required to prevent spoofing of `transcripts@jackcutrara.com` |
+| API-key exposure | `RESEND_API_KEY` and `ANTHROPIC_API_KEY` as Worker secrets, never logged, never returned in responses |
+| sessionId disclosure | Sent in request body; not sensitive (random UUID, no identity binding); fine to log |
 
 ---
 
 ## Sources
 
-### Motion
-- [10 Websites with Great Animation in 2026 — School of Motion](https://www.schoolofmotion.com/blog/10-websites-with-great-animation-in-2026) — HIGH (confirms "restrained sophistication" as the 2026 aesthetic)
-- [Scroll-Triggered Animation best practices — Motion docs](https://motion.dev/docs/react-scroll-animations) — HIGH (duration/easing references; confirms transform+opacity-only rule)
-- [Astro View Transitions docs](https://docs.astro.build/en/guides/view-transitions/) — HIGH (fade/slide/none built-in, prefers-reduced-motion auto-disable)
-- [IntersectionObserver fade-in patterns — dev.to aggregation](https://dev.to/ljcdev/introduction-to-scroll-animations-with-intersection-observer-d05) — MEDIUM (pattern validation; 250–300ms duration sweet spot)
-- [Rauno Freiberg — Killer Portfolio feature](https://www.killerportfolio.com/by/rauno-freiberg) — MEDIUM (reference for "invisible details" microinteraction philosophy)
-- [Brian Lovin — brianlovin.com](https://brianlovin.com/) — MEDIUM (reference for editorial polish in product-design portfolio)
-- [Invisible Details of Interaction Design — Rauno Freiberg](https://every.to/p/invisible-details-of-interaction-design) — HIGH (canonical essay on microinteraction restraint)
-- [Lenis smooth-scroll — known issues with Astro](https://github.com/darkroomengineering/lenis) — MEDIUM (confirms Astro compatibility concerns)
+### Cloudflare KV (HIGH confidence — official docs)
+- [Workers KV: Write key-value pairs](https://developers.cloudflare.com/kv/api/write-key-value-pairs/) — `expirationTtl` semantics, 60s minimum
+- [Workers KV: List keys](https://developers.cloudflare.com/kv/api/list-keys/) — cursor pagination, metadata field for hot-data optimization
+- [Workers KV: How KV works](https://developers.cloudflare.com/kv/concepts/how-kv-works/) — eventual consistency, ~60s propagation
+- [Workers KV: FAQ](https://developers.cloudflare.com/kv/reference/faq/) — suitability for sessions with caveats
+- [Workers Storage Options](https://developers.cloudflare.com/workers/platform/storage-options/) — KV vs D1 vs Durable Objects decision matrix
 
-### Chat Knowledge
-- [RAG vs Context Stuffing — MarkTechPost](https://www.marktechpost.com/2026/02/24/rag-vs-context-stuffing-why-selective-retrieval-is-more-efficient-and-reliable-than-dumping-all-data-into-the-prompt/) — HIGH (benchmark: RAG 278 vs stuffing 775 tokens, 1250x cost efficiency at scale)
-- [Building Ask — RAG portfolio chatbot — Cameron Rye](https://rye.dev/blog/building-ask-rag-portfolio-chatbot/) — MEDIUM (real-world portfolio RAG case study)
-- [Shane Drumm — 10,000 → 600 token chatbot optimization](https://shanedrumm.com/my-first-agent-the-shane-chatbot/) — HIGH (concrete optimization: keyword routing saved 94% tokens)
-- [Function Calling with LLMs — Prompting Guide](https://www.promptingguide.ai/applications/function_calling) — HIGH (function-calling semantics; system prompt reinforcement pattern)
-- [RAG vs Function Calling — Stream](https://getstream.io/blog/rag-function-calling/) — MEDIUM (comparison framing)
-- [Claude Haiku 4.5 Pricing](https://pricepertoken.com/pricing-page/model/anthropic-claude-haiku-4.5) — HIGH ($1/M input, $5/M output; 90% discount on cached input)
+### Cloudflare Cron Triggers (HIGH confidence — official docs)
+- [Cron Triggers](https://developers.cloudflare.com/workers/configuration/cron-triggers/) — registration, scheduled handler entry point
+- [Workers Limits](https://developers.cloudflare.com/workers/platform/limits/) — CPU vs wall time, 5-min paid CPU cap
+- [Scheduled Handler](https://developers.cloudflare.com/workers/runtime-apis/handlers/scheduled/) — `ctx.waitUntil()` pattern
 
-### Case Study Structure
-- [UX Case Study Structure — uxfol.io](https://blog.uxfol.io/ux-case-study-structure/) — HIGH (recruiter-logic structure)
-- [All About Process: Dissecting Case Study Portfolios — Toptal](https://www.toptal.com/designers/ui/case-study-portfolio) — HIGH (problem/approach/outcome pattern validation)
-- [How to Write a Case Study for Design Portfolio — Format](https://www.format.com/magazine/resources/design/how-to-write-design-case-study) — MEDIUM (800–1500 words guideline)
-- [UX Portfolio Case Study Template — UX Planet / Calvin](https://uxplanet.org/ux-portfolio-case-study-template-plus-examples-from-successful-hires-86d5b0faa2d6) — MEDIUM
+### Resend (HIGH confidence — official docs)
+- [Resend: Idempotency Keys changelog](https://resend.com/changelog/idempotency-keys) — 256 char max, 24h retention, 409 on payload mismatch
+- [Resend: Send Email API](https://resend.com/docs/api-reference/emails/send-email) — request shape, html/text dual parts
+- [Resend: Engineering Idempotency Keys](https://resend.com/blog/engineering-idempotency-keys) — duplicate-prevention mechanics
 
-### Analytics
-- [Plausible Custom Events docs](https://plausible.io/docs/custom-event-goals) — HIGH
-- [Plausible Scroll Depth Tracking docs](https://plausible.io/docs/scroll-depth) — HIGH (native in 2026, no plugin needed)
-- [Plausible Custom Properties docs](https://plausible.io/docs/custom-props/introduction) — HIGH (required for per-project props)
-- [plausible-tracker npm](https://github.com/plausible/plausible-tracker) — HIGH (tracker helper library)
-- [Tracking Scroll Depth for Engagement — BugFactory](https://bugfactory.io/articles/tracking-scroll-depth-to-measure-visitor-engagement/) — MEDIUM
+### Web Platform (HIGH confidence — MDN / specs)
+- [Crypto.randomUUID()](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID) — secure context requirement, RFC 4122 v4
+- [Can I use: randomUUID](https://caniuse.com/mdn-api_crypto_randomuuid) — browser support matrix
+
+### Email Security (HIGH confidence — security advisories + OWASP)
+- [Papra HTML Injection in Transactional Emails](https://github.com/papra-hq/papra/security/advisories/GHSA-6f8x-2rc9-vgh4) — concrete CVE pattern: unescaped user display name → phishing-as-domain
+- [TrustedSec: Crafting Emails with HTML Injection](https://trustedsec.com/blog/crafting-emails-with-html-injection) — attack patterns for transactional email
+- [OWASP: XSS](https://owasp.org/www-community/attacks/xss/) — escape strategy fundamentals
+- [OpenStack: Escape user input to prevent XSS](https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html) — escape character set
+
+### Chat Transcript Patterns (MEDIUM confidence — vendor docs, multiple agreeing sources)
+- [Provide Support: Live Chat Transcripts](https://www.providesupport.com/live-chat-transcripts) — auto-delivery on chat end, 5-min post-survey delay
+- [Provide Support: How to Manage Chat Transcripts](https://www.providesupport.com/how-to/manage-chat-transcripts) — multi-level delivery (company/dept/operator) — informs anti-feature for our single-recipient case
+- [WhosOn: Chat Transcript Etiquette](https://www.whoson.com/live-chat-best-practice/a-quick-note-re-live-chat-transcript-etiquette/) — when to share, what to redact
+- [Tidio: Chat Transcript Best Practices](https://www.tidio.com/blog/chat-transcript/) — typical body structure
+- [Microsoft Dynamics: Download and Email Chat Transcripts](https://learn.microsoft.com/en-us/dynamics365/customer-service/administer/download-email-chat-transcripts) — enterprise pattern reference
+
+### Internal Inputs (HIGH confidence — direct file read)
+- `.planning/PROJECT.md` lines 75–105 — milestone scope, locks, anchor constraints
+- `src/scripts/chat.ts` lines 1–110 — current localStorage persistence schema, version-bumping pattern, no current sessionId
+- `src/pages/api/chat.ts` lines 1–100 — current API shape, validation pipeline, rate-limit defensive skip, environment binding pattern
 
 ---
-
-*Feature research for: personal portfolio v1.2 polish milestone*
-*Researched: 2026-04-15*
+*Feature research for: chat conversation logging + per-session inactivity-triggered email delivery on a personal portfolio*
+*Researched: 2026-05-09*

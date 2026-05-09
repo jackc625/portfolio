@@ -1,141 +1,229 @@
-# Project Research Summary — v1.2 Polish
+# v1.3 Chat Visibility — Research Summary
 
-**Project:** Jack Cutrara — Portfolio Website (jackcutrara.com)
-**Domain:** Polish milestone (v1.2) on a shipped Astro 6 editorial portfolio
-**Researched:** 2026-04-15
+**Synthesized:** 2026-05-09
+**Sources:** STACK.md, FEATURES.md, ARCHITECTURE.md, PITFALLS.md
 **Confidence:** HIGH
 
-## Executive Summary
+---
 
-v1.2 Polish is an additive milestone on top of the shipped v1.1 editorial system (Astro 6 / Tailwind v4 / Geist / Cloudflare Pages+Workers / Lighthouse 100/95/100/100). Research covers five capability areas layered onto a locked design contract: tasteful motion, full content pass on 4 placeholder project MDX files, smarter chat knowledge, seven v1.1 tech debt items, and analytics instrumentation.
+## Headline Finding — Pages → Workers Migration is the #1 Architectural Decision
 
-The strongest signal across all four research files is **restraint reinforced by native platform capability**. v1.1 deliberately removed GSAP and `<ClientRouter />` and replaced `transition:persist` with localStorage chat persistence. Every researcher independently converged: **do not reintroduce either**. 2026 browser baseline (`@starting-style`, cross-document `@view-transition`, `animation-timeline: view()`, `inert`) covers every v1.2 motion need — zero new npm dependencies, no break to the Phase 7 chat lifecycle contract, no subtractive amendment to MASTER.md's anti-pattern list.
+**Cloudflare Pages does NOT support Cron Triggers — only Cloudflare Workers does.**
 
-Chat knowledge converges on the same thesis at the AI layer: corpus is ~10–20k tokens (7–10% of Haiku 4.5's 200k window), so **context-stuffing + Anthropic prompt caching beats RAG on every axis** (accuracy, latency, cost, complexity, freshness).
+The site today deploys as Cloudflare Pages (`jackcutrara.com` static assets + `/api/chat` as a Pages Function). v1.3's locked spec ("Cloudflare Cron Trigger — hourly scan; 2-hour inactivity threshold") is therefore impossible on the current deploy target. This is foundational and must be resolved before any feature code is written.
 
-The biggest risk is **cross-phase collision with Phase 7 chat**. `src/scripts/chat.ts` + `src/pages/api/chat.ts` encode ~15 load-bearing decisions (marked `async:false`, exact-origin CORS, DOMPurify strict whitelist, 30s AbortController, 5/60s rate limit, focus-trap re-query on every Tab, dual idempotency guards). v1.2 must treat the Phase 7 regression battery as a milestone-level gate because 3 of 5 capability areas touch those files.
+The Stack and Architecture researchers both implicitly converged on path **(a)** below — they each describe a custom Worker entrypoint (`src/worker.ts` re-exporting Astro's `handle` for fetch + adding `scheduled`) wired via a `wrangler.jsonc` `main` switch and an `[assets]` binding. That is Workers Static Assets, not Pages.
 
-## Key Findings
+| # | Option | Pros | Cons | Recommendation |
+|---|--------|------|------|----------------|
+| **(a)** | **Migrate Pages → Workers Static Assets** (single Worker owns static assets, `/api/chat`, and cron) | Cloudflare's documented forward path; full Pages parity plus cron + Durable Objects; matches both Stack + Architecture research; single deploy target; same Worker reaches the same KV namespace | Largest blast radius — touches `astro.config.mjs` adapter, `wrangler.jsonc`, CI/CD, custom domain reconfiguration, env-binding rewiring | **RECOMMENDED — Phase 17** |
+| (b) | Keep Pages, add a separate sweeper Worker (sharing KV via binding) | Smallest blast radius to chat endpoint; Pages deploy untouched; chat regression risk minimized | Two deploy targets, two `wrangler.jsonc` files, two CI flows; doesn't address Astro's deprecation trajectory | Acceptable fallback if (a) introduces unacceptable D-26 regression risk |
+| (c) | External scheduler (GitHub Actions cron / uptime-monitor poke) hitting an authenticated endpoint | Zero Cloudflare-platform changes | Operationally fragile; non-Cloudflare moving piece; new auth surface | Not recommended |
 
-### Recommended Stack — Zero New Dependencies (Preferred Path)
+**Implications of (a) — must be addressed in Phase 17:**
 
-- **Native CSS (`@starting-style` + cross-document `@view-transition`)** — page-enter fades + view transitions. Baseline 2026. Unsupported browsers get instant navigation (correct degradation).
-- **IntersectionObserver + CSS class toggle** — scroll-reveal. ~20 LOC utility, one-shot-per-element.
-- **Context stuffing + Anthropic prompt caching** (`cache_control: { type: "ephemeral" }`) — cache-read is 0.1× base input price. Haiku 4.5's 4096-token cache minimum easily cleared.
-- **Build-time codegen** (`scripts/build-chat-context.mjs`) — merges project MDX + About + Resume into `portfolio-context.json`, regenerated every build.
-- **Plausible Cloud ($9/mo) primary + Cloudflare Web Analytics (free) secondary** — cookie-free, no consent banner. Umami Cloud free tier is budget fallback.
+- `wrangler.jsonc` `main` switches from `@astrojs/cloudflare/entrypoints/server` → `./src/worker.ts`
+- New `src/worker.ts` (~30 LOC) re-exports `handle()` for fetch + adds `scheduled()`
+- `wrangler.jsonc` gains `[assets] binding="ASSETS" directory="./dist/client"`, `kv_namespaces`, `triggers.crons`, dev preview namespaces
+- CI/CD: `wrangler pages deploy` → `wrangler deploy`; preview URLs move from `*.pages.dev` to Workers preview URLs
+- DNS / custom domain: `jackcutrara.com` route reattaches to the Worker (1-click in dashboard)
+- D-26 chat regression battery (117/117) and D-15 server byte-identical must hold across the migration
 
-Optional additions — `motion` v12.38.x (~5 kB) if a single microinteraction needs spring physics, `gray-matter` if a Projects/ → MDX sync script is built — are fallbacks, not defaults.
+---
 
-### Expected Features
+## Recommended Stack Additions
 
-**Must have (table stakes):**
-- Page enter fade (native cross-document View Transitions, 200–300ms `ease-out`, auto-disables under reduced-motion)
-- Scroll-reveal on below-fold sections (fade + ≤12px translateY, 250–350ms, one-shot)
-- Real content on all 6 project MDX files (4 currently placeholder — biggest credibility leak)
-- Analytics instrumentation (invisible to recruiters, critical for Jack's iteration)
-- Chat persona + system prompt tuning on real content
+| Addition | Version / Source | Purpose | Why |
+|----------|------------------|---------|-----|
+| **Resend** (REST via `fetch`, NOT npm SDK) | Direct POST to `https://api.resend.com/emails` | Transactional email — one email per ended chat session | Officially documented for Workers. **REST over SDK** to avoid Node deps in Workers + zero new runtime deps. Idempotency-Key header for safe cron retries. Free tier covers v1.3. |
+| **Cloudflare Workers KV** | Platform-native | Transcript persistence keyed by sessionId | Right scale fit. KV `metadata` (1024 bytes) lets `list()` filter without per-key `get()`. 1 write/sec/key cap mitigated by writing only at stream-close, not per-token. |
+| **Cloudflare Cron Triggers** | Platform-native — `triggers.crons: ["0 * * * *"]` | Hourly inactivity scan | Free tier covers 5k/day vs our 24/day. Requires Workers (not Pages). |
+| **Wrangler secrets** | `RESEND_API_KEY`, `CHAT_RECIPIENT_EMAIL`, `CHAT_SENDER_EMAIL` | Email config | Same pattern as existing `ANTHROPIC_API_KEY`. |
+| **Resend domain DNS** | DNS records on chosen sender domain | SPF + DKIM + DMARC for deliverability | Required to avoid Gmail spam-foldering. DMARC at `p=none` minimum. Cloudflare Domain Connect auto-configures Resend records. |
+| **Custom Worker entrypoint** | New `src/worker.ts` (~30 LOC) | Wraps Astro's `handle()` for fetch + adds `scheduled()` | Required because `@astrojs/cloudflare/entrypoints/server` only exports `fetch`. |
 
-**Should have (differentiators):**
-- WorkRow arrow slide-in (opacity 0→1 + 4px translateX, 180ms)
-- Chat bubble idle pulse (restored via CSS, paused on hover/focus/reduced-motion)
-- Chat panel open scale-in (180ms, 96%→100%)
-- Typing-dot bounce during SSE streaming (carved out OK per MASTER §6.1)
-- Section heading word-stagger on `.h1-section` only (never `.display`)
+**Rejected:** Cloudflare Email Sending (public beta only since 2026-04-16, Workers Paid required), MailChannels (free Workers tier ended 2024-08-31), D1/R2/Durable Objects/Queues (KV is right shape — no aggregation/search), `react-email`/`nodemailer`/`node-cron` (wrong runtime/scope).
 
-**Explicitly deferred (v1.3+):**
-- Signature hero moment — user-excluded
-- Project → project view-transition-name morph — high MASTER amendment cost
-- RAG / vector DB — revisit past ~150k token corpus
-- Function-calling chat tools — triples SSE streaming complexity for marginal signal
-- Blog / CMS / contact form — PROJECT.md out-of-scope
+---
 
-### Architecture Approach
+## Feature Categories — Table Stakes / Differentiators / Anti-Features
 
-~300 LOC of net new code: two build scripts, two client scripts, mods to 6 Astro components, additions to `global.css`, `BaseLayout.astro` updates.
+**Anchor:** Jack reads every email in entirety. No aggregation, no search, no admin UI, no dashboard. Every feature evaluated against "does Jack reading 10–50 emails/week need this?"
 
-1. **Motion layer** — `src/scripts/motion.ts` (IntersectionObserver, mirrors chat.ts init-guard + `astro:page-load` pattern) + CSS in `global.css` + per-primitive scoped `<style>` microinteractions.
-2. **Chat knowledge layer** — `scripts/build-chat-context.mjs`; split `portfolio-context.static.json` (human-authored) from generated `portfolio-context.json`; `<project-deep-dive>` block in system prompt; `cache_control: ephemeral` on knowledge block; `max_tokens` 512→768.
-3. **Analytics bridge** — `src/scripts/analytics.ts` listens to existing `chat:analytics` CustomEvent (content-free per Phase 7 D-36) and forwards to `window.plausible()`; delegated click listener for outbound links + mailto + PDF.
-4. **Content pipeline** — `Projects/*.md` is source of truth; `scripts/sync-projects.mjs` translates body only into `src/content/projects/*.mdx`; frontmatter stays human-authored; `astro check` enforces Zod schema.
-5. **Tech debt sweep** — scoped fixes: MobileMenu (`inert`), chat.ts (copy button normalization), global.css (#666 → `var(--ink-muted)`), BaseLayout OG URL verify.
+| Category | Table Stakes | Differentiators | Anti-Features |
+|----------|--------------|-----------------|---------------|
+| **A. Persistence (KV)** | KV namespace bound; per-turn append on stream close; sessionId-keyed; `expirationTtl` on every write; `last_activity_at` updated each turn; bounded transcript size | Schema versioning (`v: 1`); KV `metadata` for hot fields; compact storage shape | D1/SQL; per-message KV writes; client-side KV writes; encryption-at-rest |
+| **B. Identity (sessionId)** | `crypto.randomUUID()` client-side; persist in localStorage (bump `STORAGE_VERSION` 1→2); send in `/api/chat` body; UUIDv4 server-side validation; new sessionId on TTL expiry | `crypto.getRandomValues()` fallback; server-side regex validation | Server-issued cookie sessionId; cross-device continuation; multi-tab merge |
+| **C. Metadata Capture** | `started_at`, `last_activity_at`, `referrer`, `user_agent`, `country` (`request.cf.country`), `message_count`, `truncated` | `cf.region`, `cf.colo`, cache-hit token counts (closes DEBT-CHAT-CACHE-01) | Full IP capture; canvas/font fingerprinting; cross-reference with Umami |
+| **D. Delivery (Resend)** | Verified sending domain; `RESEND_API_KEY`; **HTML-escape every dynamic segment**; **no markdown rendering of user input**; idempotency key per session; `delivered:` keyspace marker; plain-text only | Subject summary (`[Portfolio chat] N turns from <country> via <referrer-host>`); `Reply-To: jackcutrara@gmail.com`; metadata header block; truncation badge | Send-immediately on last turn; Workers Email binding (inbound only); render bot markdown as HTML; conditional emailing; AI summary; admin panel |
+| **E. Scheduling (Cron)** | `crons = ["0 * * * *"]`; `scheduled` handler; `list({prefix:'live:'})` cursor pagination; metadata-based inactivity check; `ctx.waitUntil()`; per-session try/catch | Per-tick batch cap (50); send-attempt counter cap; structured JSON logs | Sub-hourly cron; Durable Objects; Queue-based fanout |
+| **F. Tech Debt Sweep** | All 5: CHAT_RATE_LIMITER binding, cache-hit observability, `build:chat-context:check` CI, WR-01 listener dedup, `#chat-panel` display contract decoupling | None — pure debt | Refactoring chat into a framework |
 
-### Critical Pitfalls
+---
 
-1. **Phase 7 chat regression** — ~15 load-bearing invariants can break silently. Every phase touching BaseLayout / global.css / chat.ts / api/chat.ts runs the Phase 7 regression battery before merging.
-2. **Motion regresses Lighthouse 100** — any new runtime dep, 30+ observer targets, or stuck `will-change` drops Performance to 92–98. Mitigation: zero new deps, CSS-only, Lighthouse CI gate (Performance ≥99, TBT ≤150ms, CLS ≤0.01).
-3. **View Transitions + chat persistence collision** — re-adding `<ClientRouter />` breaks localStorage chat persistence. Mitigation: cross-document `@view-transition` CSS at-rule; works with full page reloads.
-4. **RAG over-engineering for 6 documents** — indefensible for ~15–30 chunks. Mitigation: first task of chat phase is corpus token count; <50k → context-stuffing + caching, reject RAG.
-5. **System prompt / PII leakage** — richer knowledge = more surface for injection. Mitigation: content allowlist (no resume PDF contents), refusal instructions, MDX injection-pattern stripping at index time, prompt-injection test battery.
+## Architecture Summary
 
-## Cross-Cutting Synthesis
+**Target architecture (post-Phase-17 Workers Static Assets migration):**
 
-### Tensions & Resolutions
+```
+                Cloudflare Workers (single deployment)
+                      jackcutrara.com
+┌──────────────────────────────────────────────────────────────┐
+│  src/worker.ts  ◄── NEW custom entrypoint                    │
+│    fetch(req, env, ctx)     → handle(req, env, ctx) [Astro]  │
+│    scheduled(controller, env, ctx)                           │
+│       → ctx.waitUntil(deliverDue(env))                       │
+└──────┬───────────────────────────────────┬───────────────────┘
+       │ /api/chat (SSE — unchanged)       │ Cron: 0 * * * *
+       ▼                                   ▼
+[api/chat.ts]                       [chat-delivery.ts]
+  ├── existing: CORS, body, RL,       ├── list live:* candidates
+  │   validate, sanitize, SSE         ├── filter inactivity ≥ 2h
+  ├── NEW: resolveSessionId           ├── for each:
+  ├── NEW: ctx.waitUntil(             │     PUT delivered:{sid} (24h TTL)
+  │   appendTurn(user))               │     POST Resend + Idempotency-Key
+  ├── stream Anthropic SSE            │     DELETE live:{sid}
+  └── NEW: ctx.waitUntil(             └── log summary
+      appendTurn(assistant))
+                                            │
+                                            ▼
+                env.CHAT_KV (NEW kv_namespaces binding)
+                ────────────────────────────────────────
+                live:{sid}      → transcript JSON  (30d TTL)
+                delivered:{sid} → idempotency cursor (24h TTL,
+                                  matches Resend window)
+```
 
-| Tension | Resolution |
-|---------|------------|
-| Chat knowledge: keyword routing vs context-stuffing vs RAG | Ship **build-time codegen + `cache_control: ephemeral`**. Keyword routing is a v1.3 optimization if $/mo steady-state exceeds $5. |
-| Content pass tooling: script vs manual | **Build `scripts/sync-projects.mjs`** — auditable via git diff, prevents the drift that created 4-of-6 placeholder state. Idempotent, manual-trigger. |
-| Analytics tool choice | **Plausible primary + CF Web Analytics secondary.** Umami Cloud fallback only if $9/mo is a hard blocker. |
-| Motion scope: ClientRouter vs CSS-only | **Cross-document `@view-transition` CSS at-rule only.** Works with full-page navigation, no JS router, preserves chat persistence. |
+**KV data shape — single key per session, two-keyspace partition:**
 
-### Consensus (non-negotiable across all 4 researchers)
+- **Keys:** `live:{sid}` (cron-candidate, 30-day TTL); `delivered:{sid}` (idempotency marker, 24h TTL aligned with Resend window)
+- **Value (JSON):** `{ v: 1, sid, started_at, last_activity_at, msg_count, meta: { referrer, user_agent, country, asn }, messages: [{ role, content, ts }] }` — content stored RAW; HTML-escape happens at email-render time
+- **KV `metadata`:** `{ last_activity_at, msg_count }` — `list()` returns it inline, eliminating O(n) `get()` round-trips on cron path
+- **Caps:** 30 messages / 120 KiB worst case (well under 25 MiB ceiling); 512 chars on `referrer`/`user_agent` to prevent log poisoning
 
-- Do NOT reintroduce GSAP
-- Do NOT reintroduce `<ClientRouter />`
-- Do NOT build RAG for v1.2
-- Motion is CSS-first with JS only for IntersectionObserver reveal
-- `prefers-reduced-motion` is the first check in every motion feature
-- Content pass unblocks chat — real MDX content feeds chat knowledge; sequencing matters
-- Phase 7 invariants are load-bearing — documented with D-# tags in STATE.md
+**Send-once strategy — defense in depth:**
 
-### Milestone-Level Constraints (apply to every phase)
+| Layer | Mechanism | Purpose |
+|-------|-----------|---------|
+| 1. Two-keyspace partition | Cron promotes `live:{sid}` → `delivered:{sid}` BEFORE calling Resend; deletes `live:{sid}` AFTER success. Crash-safe at every step. | Application-level idempotency; survives cron-double-fire and worker-restart-mid-loop |
+| 2. Resend `Idempotency-Key` | `transcript/{sid}` header on every Resend POST. 24h window. | Authoritative cross-system dedupe; covers race between layer-1 PUT and Resend POST |
 
-- **D-26 Chat Regression Gate** — any phase touching BaseLayout / global.css / chat.ts / api/chat.ts runs the Phase 7 regression battery (XSS, CORS, rate limit, timeout, prompt injection, focus trap, persistence, streaming, markdown, clipboard).
-- **Lighthouse gate** — every phase ends with Lighthouse CI on homepage + one project detail page; Performance ≥99 / A11y ≥95 / BP 100 / SEO 100.
-- **Zero new runtime dependencies (preferred path)** — additions justified in writing at phase-plan time.
-- **No subtractive MASTER.md amendments** — motion additions are additive carve-outs in §5/§6; §8 anti-pattern list stays.
-- **Reduced-motion contract** — every new animation wrapped in `@media (prefers-reduced-motion: no-preference)` or paired with `reduce` override.
+**Why not a `delivered: bool` flag inside the value:** KV does not support compare-and-swap; read-modify-write is racy; writes-per-key capped at 1/sec. Two-keyspace approach is strictly better.
 
-## Implications for Roadmap
+**Where KV writes happen:**
+- User turn: `ctx.waitUntil(appendTurn(user))` AFTER validation, BEFORE stream open (durability anchor)
+- Assistant turn: `ctx.waitUntil(appendTurn(assistant))` AFTER `controller.close()` (accumulator strategy)
+- **Never per-token** — KV's 1-write/sec/key cap would 429 the transcript
+- `ctx.waitUntil` is mandatory — runs after response sent, never blocks SSE; without it the runtime can terminate before `kv.put()` resolves
 
-All 4 researchers converged on the same 5-phase structure and ordering:
+---
 
-### Phase 12 — Tech Debt Sweep (FIRST)
-**Why first:** Every subsequent phase touches debt files. Doing debt after motion means re-testing motion after debt fixes.
-**Delivers:** All 7 v1.1 audit items closed or documented accepted; zero `pnpm build` warnings.
+## Top Pitfalls — Critical Defenses
 
-### Phase 13 — Content Pass + Projects/ Sync
-**Why second:** Chat (Phase 14) reads this content. Chat first embeds placeholder prose in cached system prompt.
-**Delivers:** 4 placeholder MDX → real case studies; About audit; homepage + resume copy verified; `scripts/sync-projects.mjs`; `docs/CONTENT-SCHEMA.md` + `docs/VOICE-GUIDE.md`.
+| # | Pitfall | Prevention | Verify |
+|---|---------|------------|--------|
+| **0** | **Cloudflare Pages does NOT support Cron Triggers** | Phase 17: migrate to Workers Static Assets | Set cron temporarily to `* * * * *`; confirm Past Events shows ≥1 invocation within 90s |
+| **1** | KV write inside SSE stream blocks/aborts on stream close | `ctx.waitUntil()` for both writes; never `await` inline; best-effort try/catch | D-26 timing test: `[DONE]` enqueued BEFORE any KV `put` resolves |
+| **2** | KV is eventually consistent (~60s) | 2h threshold >> 60s consistency window (already correct); two-keyspace pattern; never have cron mutate transcripts | MockKV-with-delay unit test |
+| **3** | HTML-render of user-typed content lets visitor inject HTML/links into Jack's inbox | **Send `text/plain` only for v1.3** (Resend `text` field; no `html` field); `escapeHtml` not DOMPurify; no auto-linkification; strip Unicode bidi overrides | Adversarial-payload unit suite; Gmail renders as literal text |
+| **4** | Cron + KV — "send once" impossible without sentinel | Two-keyspace partition + Resend `Idempotency-Key`. PUT delivered BEFORE Resend; DELETE live AFTER success. | Run sweeper twice → exactly one Resend call (`idempotency_replay: true` on second) |
+| **5** | D-26 chat regression battery 117/117 must not regress | Treat D-26 as cross-phase gate; Wave-0 RED stubs every phase touching chat surface; **no new SSE frame types** (D-15 amendment); diff-check at every phase end | Run full battery at end of every phase |
+| **6** | Anthropic prompt cache invalidated by sessionId leaking into cached system block | sessionId stays on HTTP envelope, NEVER in Anthropic message payload; wire `cache_read_input_tokens` observability (closes DEBT-CHAT-CACHE-01) | Snapshot test: sessionId NOT inside `system`/`messages[0]`; live test: 3x same payload within 5min → response 2,3 show `cache_read_input_tokens > 0` |
+| **7** | Gmail spam classification on brand-new From-domain | Phase 17 pre-roadmap: SPF + DKIM + MX + DMARC (`p=none`) before code; warm domain (5–10 manual sends + "Not Spam"); enroll Postmaster Tools; predictable subject prefix | `dig TXT _dmarc.<domain>` returns record; first 5 test sends land in Inbox |
+| **8** | Resend SDK pulls Node deps in Workers | Use REST via `fetch()` not npm SDK | No new npm dep added |
+| **9** | Missing `expirationTtl` → unbounded KV namespace growth | `expirationTtl` set on every `put()` from start | Code review checklist |
+| **10** | Resend `email.delivered` webhook = SMTP-accepted (possibly to spam), NOT inbox-delivered | Optional `/api/resend-webhook` with Svix HMAC verification | Not required for v1.3 ship |
 
-### Phase 14 — Chat Knowledge Upgrade
-**Why third:** Depends on Phase 13 real content.
-**Delivers:** `scripts/build-chat-context.mjs` in build chain; JSON split; `cache_control: ephemeral`; `max_tokens` 512→768; persona + scope-bound refusal; prompt-injection test battery; content allowlist.
+---
 
-### Phase 15 — Analytics Instrumentation
-**Why fourth:** Ships before motion to measure motion's engagement impact. Can parallelize with 13/14. Content before analytics so baseline measures real site.
-**Delivers:** Plausible + CF Web Analytics in BaseLayout; `analytics.ts` forwarding `chat:analytics`; delegated outbound-link listener; env-gate on exact hostname; no cookie banner.
+## Suggested Phase Ordering
 
-### Phase 16 — Motion Layer (LAST)
-**Why last:** MASTER §6 — motion layers ON TOP of a stable system. Motion on placeholder content reads broken.
-**Delivers:** `motion.ts` IntersectionObserver; `global.css` motion layer; per-primitive microinteractions; reduced-motion safety net.
+**Continuing from v1.2's last phase (16) → starting at Phase 17.**
 
-## Open Questions for Jack (resolve before requirements)
+### Phase 17 — Foundations: Migration + DNS + Debt Sweep
 
-1. **Analytics budget:** Plausible Cloud ($9/mo primary) or Umami Cloud (free fallback)?
-2. **Tech debt #7 (`--ink-faint` contrast):** Accept as documented trade-off or darken to `#71717A`? Route through frontend-design skill.
-3. **Projects/ → MDX sync tooling:** Build `scripts/sync-projects.mjs` now or manual-only for this milestone?
-4. **Chat persona voice:** Confirm third-person default ("Jack built this...") with first-person past tense only in quotes.
-5. **Scope cap philosophy:** Is shipping 80% of Phase 16 Motion acceptable if Lighthouse gate breaks? ("ship 80% polished > ship 100% fragile"?)
+**Rationale:** Every other phase assumes a working schedule mechanism (Critical-0), a deliverability-warmed sending domain (Critical-7), and a non-fragile chat foundation. Starting here de-risks all subsequent work.
+
+**Delivers:**
+- Migration Pages → Workers Static Assets (`wrangler.jsonc` rewrite, `src/worker.ts` with no-op `scheduled` handler, deploy command change in CI/CD, custom domain reconfiguration)
+- KV namespace creation (`CHAT_KV`) for prod + preview; binding wired
+- Resend account + verified sending domain — DNS records (SPF, DKIM, MX, DMARC `p=none`) live BEFORE any email-sending code
+- Secrets: `RESEND_API_KEY`, `CHAT_RECIPIENT_EMAIL`, `CHAT_SENDER_EMAIL`
+- All 5 carry-forward debt items closed: DEBT-CHAT-RL-01, DEBT-CHAT-CACHE-01, DEBT-CHAT-CTX-CI-01, DEBT-WR-01, DEBT-CHAT-DISPLAY-01
+- D-26 117/117 GREEN at phase close; D-15 server byte-identical at `/api/chat`
+
+### Phase 18 — Persistence + Identity: KV Write Path + sessionId
+
+**Rationale:** Persistence enables delivery. Identity ships with persistence because both touch the same insertion points in `chat.ts`/`api/chat.ts`/`validation.ts`. Highest-D-26-risk phase — needs Wave-0 RED stubs.
+
+**Delivers:**
+- `src/lib/sessions.ts`: `resolveSessionId(request, headers)` — cookie-based, `crypto.randomUUID()` mint on absent
+- `src/lib/chat-transcripts.ts`: pure module — `appendTurn()`, key naming (`live:{sid}`), schema versioning, `expirationTtl: 30d`
+- `ctx.waitUntil(appendTurn(...))` calls in `api/chat.ts`: user turn before stream open, assistant turn after `controller.close()`
+- Optional `X-Chat-Session` header fallback if cookie path proves brittle in UAT
+- `validation.ts` extended for sessionId (UUIDv4 regex)
+- Metadata capture written to KV `metadata` field
+
+### Phase 19 — Cron Sweep: Scheduling + Idempotency
+
+**Rationale:** Once persistence ships, the cron path can read live transcripts without sending email yet (DRY_RUN). Isolates schedule + filter + idempotency from email-render risk surface.
+
+**Delivers:**
+- `src/lib/chat-delivery.ts`: `deliverDue(env)` — list `prefix:"live:"`, filter `metadata.last_activity_at`, two-keyspace partition, per-session try/catch, batch cap
+- `wrangler.jsonc` `triggers.crons: ["0 * * * *"]`; `src/worker.ts` `scheduled` handler wired
+- DRY_RUN env flag — full loop runs but logs payload instead of POSTing
+- Pagination loop on `list_complete`; hard-cap at 50 pages safety valve
+
+### Phase 20 — Email Render + Resend Integration
+
+**Rationale:** Highest content-security risk surface (Critical-3). Isolated to its own phase so adversarial-payload suite is exhaustive.
+
+**Delivers:**
+- `src/lib/email/resend.ts`: thin `fetch()` wrapper (NOT SDK); `Authorization: Bearer`, `Idempotency-Key: transcript/{sid}`, retry-with-same-key on 5xx
+- Email template — **plaintext only**. Sender chrome opens with provenance; `>>> visitor:` / `<<< bot:` markers; server-controlled subject; `Reply-To: jackcutrara@gmail.com`
+- HTML-escape on every dynamic field even in plaintext (defense in depth)
+- Strip CR/LF from headers; strip Unicode bidi overrides (`U+202A..U+202E`, `U+2066..U+2069`)
+- Adversarial-payload unit suite
+- DRY_RUN flipped off at end
+
+### Phase 21 (optional) — Observability + Hardening
+
+**Rationale:** Post-launch operability. Only-if-budget-permits.
+
+**Delivers:**
+- `/api/resend-webhook` with Svix HMAC signature verification
+- Per-IP session rate limit (prevent transcript spam from single visitor)
+- Cloudflare Workers Analytics Engine integration
+- Postmaster Tools 7-day spam-rate < 0.1% acceptance criterion
+
+---
+
+## Open Questions for the Requirements Writer
+
+1. **Pages → Workers migration approach** — confirm option (a) Workers Static Assets
+2. **Sending domain** — `transcripts@jackcutrara.com` (apex), `chat@jackcutrara.com` (apex), `transcripts@mail.jackcutrara.com` (subdomain)? Subdomain isolates sending reputation.
+3. **HTML vs plaintext email body** — research strongly recommends plaintext only for v1.3
+4. **`/api/resend-webhook` in v1.3 or v1.4?** — Phase 21 optional vs deferred entirely
+5. **`live:` TTL** — 30d recommended; 7d alternative
+6. **Worst-case latency communication** — confirm 2h 59min worst-case email delivery acceptable
+7. **Bot turn rendering** — plaintext recommended for v1.3
+8. **DEBT-CHAT-CACHE-01 surface** — structured logs only, or both logs + email metadata?
+9. **`X-Chat-Session` header fallback** — cookie-only initially or include header from day one
+10. **Workers Paid plan** — Free tier covers v1.3's traffic; CHAT_RATE_LIMITER (DEBT-CHAT-RL-01) requires Paid to actually bind. Decide: configure Paid for v1.3 (closes rate-limit gap properly) or keep Free and document defensive-skip code path as v1.3-acceptable.
+
+---
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All additions verified against official docs; 2026 browser baseline confirmed; zero-dep path validated. |
-| Features | HIGH / MEDIUM | HIGH for motion/analytics/case studies. MEDIUM for chat knowledge (choice depends on final corpus size). |
-| Architecture | HIGH | Integration surface fully mapped by reading src/ + v1.1-MILESTONE-AUDIT.md + MASTER.md. |
-| Pitfalls | HIGH | Grounded in STATE.md D-# decisions, v1.1 audit, MASTER anti-pattern list. |
+| Stack | HIGH | Resend version verified npm; CF Email beta status verified Cloudflare changelog 2026-04-16; KV limits via Context7; custom-entrypoint pattern via Astro issue #13838 |
+| Features | HIGH | Cloudflare/Resend mechanics from official docs; chat-transcript email patterns corroborated by multiple vendors |
+| Architecture | HIGH | Existing surface fully mapped; two-keyspace partition is direct consequence of KV's documented constraints (no CAS, 1 write/sec/key) |
+| Pitfalls | HIGH for platform mechanics; MEDIUM for Gmail spam-classification thresholds at low send volumes |
 
-**Overall confidence:** HIGH
+**Gaps to address in plan-time research:**
+- Astro 6 `dist/_worker.js/index.js` build path stability when Wrangler `main` is overridden — Phase 17 spike
+- `locals.runtime.ctx` vs `locals.cfContext` binding name in `@astrojs/cloudflare` 13.1.x — Phase 18 plan
+- Cookie behavior on Workers preview URLs (post-migration re-verify)
+- Gmail spam threshold at <30 emails/day (operational, not engineering — Phase 17 acceptance criteria)
