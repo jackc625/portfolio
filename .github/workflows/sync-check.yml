@@ -5,7 +5,11 @@ on:
     paths:
       - "Projects/**"
       - "src/content/projects/**"
+      - "src/data/about.ts"
+      - "src/data/portfolio-context.static.json"
+      - "src/data/portfolio-context.json"
       - "scripts/sync-projects.mjs"
+      - "scripts/build-chat-context.mjs"
   push:
     branches:
       - main
@@ -32,3 +36,6 @@ jobs:
 
       - name: Verify Projects/ <-> MDX sync is clean
         run: pnpm sync:check
+
+      - name: Verify portfolio-context.json is in sync with sources
+        run: pnpm build:chat-context:check
