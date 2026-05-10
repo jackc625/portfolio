@@ -54,9 +54,9 @@
 
 ### Tech Debt Sweep (DEBT-)
 
-- [ ] **DEBT-01** — `CHAT_RATE_LIMITER` Wrangler binding documented for Workers Paid plan upgrade path. Code-level: defensive-skip code path retained as v1.3-acceptable on Workers Free tier (per locked decision). PROJECT.md "Known issues / tech debt" entry rewritten to reflect "documented + Free-tier acceptable" rather than "carry-forward gap."
+- [x] **DEBT-01** — `CHAT_RATE_LIMITER` Wrangler binding documented for Workers Paid plan upgrade path. Code-level: defensive-skip code path retained as v1.3-acceptable on Workers Free tier (per locked decision). PROJECT.md "Known issues / tech debt" entry rewritten to reflect "documented + Free-tier acceptable" rather than "carry-forward gap." *Plan 17-04 (2026-05-10): commit `65c2749` rewrote PROJECT.md Known issues block — heading retitled "Known issues / tech debt:" (dropped "carried into v1.3" qualifier); CHAT_RATE_LIMITER bullet reframed to "documented + Free-tier acceptable per v1.3 milestone-shape lock 2026-05-09" with Workers Paid v1.4+ upgrade path; 4 Phase-17-closed DEBT bullets removed (cache-hit obs, build:chat-context:check CI, WR-01 dedup, #chat-panel JS-coupled display); Target features bullet at PROJECT.md:85 updated in lockstep (Rule 1 deviation). STATE.md Open Blockers CHAT_RATE_LIMITER bullet marked CLOSED with same framing. RETROSPECTIVE.md audited — zero CHAT_RATE_LIMITER hits, no edit needed. tests/build/project-md-debt-01.test.ts (6 source-text assertions) GREEN.*
 - [ ] **DEBT-02** — Cache-hit-rate observability wired. Log seams in `src/lib/chat-cache.ts` / `src/lib/content-snapshot.ts` / `src/scripts/chat.ts` emit structured logs containing `cache_read_input_tokens` / `cache_creation_input_tokens` from the Anthropic response. Metadata also surfaces in transcript email per META-02.
-- [ ] **DEBT-03** — `build:chat-context:check` enforced in CI via parallel job in `.github/workflows/sync-check.yml`. PRs fail-fast on local drift between `Projects/*.md` and `portfolio-context.json`.
+- [x] **DEBT-03** — `build:chat-context:check` enforced in CI via parallel job in `.github/workflows/sync-check.yml`. PRs fail-fast on local drift between `Projects/*.md` and `portfolio-context.json`. *Plan 17-04 (2026-05-10): commit `e46aa2d` added "Verify portfolio-context.json is in sync with sources" step running `pnpm build:chat-context:check` after the existing `pnpm sync:check` step. Single-job two-step pattern per RESEARCH §"DEBT-03 CI Job Shape" — saves ~30s cold-run cost vs separate parallel job by reusing checkout + pnpm install. PR `paths:` triggers expanded from 3 entries to 7: added `src/data/about.ts`, `src/data/portfolio-context.static.json`, `src/data/portfolio-context.json` (the generated artifact itself — catches drift in either direction), `scripts/build-chat-context.mjs`. Local `pnpm build:chat-context:check` exits 0 on clean tree. End-to-end CI gate verification (induce drift → PR fails) deferred to a future PR (manually verifiable; not Phase 17 scope to test the test).*
 - [x] **DEBT-04** — WR-01 bootstrap listener dedup applied at `src/scripts/analytics.ts:140-147`, `src/scripts/scroll-depth.ts:63-70`, `src/scripts/chat.ts:870-877`. `astro:page-load` listeners registered once with idempotent guard; long sessions can no longer accumulate listeners. *Plan 17-03 (2026-05-10): commit `0ad77b3` replaced module-level `*Bootstrapped` flags with remove-then-add at document level in all three files; `typeof document !== "undefined"` guard added to chat.ts for HMR/test parity; new `tests/client/listener-dedup.test.ts` (9 tests) asserts source-level pattern + behavioral remove+add at runtime. D-26 chat-surface battery GREEN.*
 - [x] **DEBT-05** — `#chat-panel` JS-coupled display contract decoupled. `.is-open` class controls BOTH display AND animation; `animatePanelOpen` no longer flips `style.display='flex'` directly. CSS-only display state machine. *Plan 17-03 (2026-05-10): commit `1c148c9` hoisted `display: none` to the base `#chat-panel` rule and added `#chat-panel.is-open { display: flex; }` in global.css (outside the no-preference media query so it applies under reduce too); `animatePanelOpen` / `animatePanelClose` rewritten as no-op async stubs (`_panel: HTMLElement` unused-param marker); new `tests/client/chat-panel-display.test.ts` (3 tests, jsdom getComputedStyle cascade verification) + `tests/build/no-imperative-display-flip.test.ts` (4 tests, source-text anti-regression). design-system/MASTER.md visual contract preserved end-to-end.*
 
@@ -116,9 +116,9 @@ Explicit exclusions — design decisions made at milestone planning:
 | FOUND-04 | Phase 17 | Implemented (Plan 17-02 SUMMARY) |
 | DNS-01 | Phase 17 | Pending |
 | DNS-02 | Phase 17 | Pending |
-| DEBT-01 | Phase 17 | Pending |
+| DEBT-01 | Phase 17 | Implemented (Plan 17-04 SUMMARY) |
 | DEBT-02 | Phase 17 | Pending |
-| DEBT-03 | Phase 17 | Pending |
+| DEBT-03 | Phase 17 | Implemented (Plan 17-04 SUMMARY) |
 | DEBT-04 | Phase 17 | Implemented (Plan 17-03 SUMMARY) |
 | DEBT-05 | Phase 17 | Implemented (Plan 17-03 SUMMARY) |
 | KV-01 | Phase 18 | Pending |
@@ -138,7 +138,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | MAIL-03 | Phase 20 | Pending |
 | MAIL-04 | Phase 20 | Pending |
 | MAIL-05 | Phase 20 | Pending |
-| TEST-01 | Phases 17, 18 (cross-phase gate) | Holding (Plan 17-03 SUMMARY: D-26 chat-surface battery 145/145 GREEN at every checkpoint through DEBT-04 + DEBT-05 closure; +16 additive tests integrated cleanly; cross-phase gate remains open for Plans 17-04, 17-05 + Phase 18) |
+| TEST-01 | Phases 17, 18 (cross-phase gate) | Holding (Plan 17-04 SUMMARY: D-26 chat-surface battery structurally unchanged from Plan 17-03 close — Plan 17-04 touched NO chat-surface files so cadence informational rather than blocking; +6 additive build-time tests on PROJECT.md framing integrated cleanly; cross-phase gate remains open for Plan 17-05 + Phase 18) |
 | TEST-02 | Phase 17 | Implemented (Plan 17-02 SUMMARY: D-15 byte-identical verified on production jackcutrara.com + www.jackcutrara.com post-flip against Plan 17-01 fixture) |
 | TEST-03 | Phases 17, 18 (cross-phase gate) | Pending |
 
@@ -151,4 +151,4 @@ Explicit exclusions — design decisions made at milestone planning:
 
 ---
 
-*Last updated: 2026-05-10 — Plan 17-03 close-out: DEBT-04 + DEBT-05 marked implemented (commits `0ad77b3` + `1c148c9`); TEST-01 still holding (D-26 chat-surface battery 145/145 GREEN through DEBT-04/05 closure); cross-phase gate remains open for Plans 17-04, 17-05 + Phase 18.*
+*Last updated: 2026-05-10 — Plan 17-04 close-out: DEBT-01 + DEBT-03 marked implemented (commits `65c2749` + `e46aa2d`); TEST-01 still holding (D-26 chat-surface battery structurally unchanged — Plan 17-04 touched NO chat-surface files); cross-phase gate remains open for Plan 17-05 + Phase 18.*

@@ -77,7 +77,7 @@ Plans:
 - [x] 17-03-PLAN.md — Chat-surface tech debt: DEBT-04 idempotent astro:page-load listeners + DEBT-05 CSS-only #chat-panel state machine — *COMPLETE 2026-05-10; commits `0ad77b3` (DEBT-04 across analytics/scroll-depth/chat with listener-dedup test) + `1c148c9` (DEBT-05 global.css + chat.ts no-op animatePanel stubs + chat-panel-display test + no-imperative-display-flip test); D-26 145/145 GREEN; full suite 369/370 (1 pre-existing); +16 tests; see [17-03-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-03-SUMMARY.md)*
 
 **Wave 3** *(blocked on Wave 2)*
-- [ ] 17-04-PLAN.md — Docs/CI tech debt: DEBT-01 PROJECT.md reframe + DEBT-03 build:chat-context:check in sync-check.yml
+- [x] 17-04-PLAN.md — Docs/CI tech debt: DEBT-01 PROJECT.md reframe + DEBT-03 build:chat-context:check in sync-check.yml — *COMPLETE 2026-05-10; commits `65c2749` (DEBT-01 PROJECT.md Known issues entry reframed to "documented + Free-tier acceptable" per v1.3 milestone-shape lock + STATE.md audit + new tests/build/project-md-debt-01.test.ts 6/6 GREEN) + `e46aa2d` (DEBT-03 sync-check.yml step + 7-path trigger surface); plan touched NO chat surface — D-26 cadence informational; full suite 375 PASS / 1 FAIL (pre-existing roadmap-amendment carry-forward); +6 additive tests; see [17-04-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-04-SUMMARY.md)*
 
 **Wave 4** *(blocked on Waves 2 + 3)*
 - [ ] 17-05-PLAN.md — Observability: DEBT-02 chat.cache_metrics log seams (server + client) + TEST-03 Anthropic payload-shape forward-defense
@@ -152,7 +152,7 @@ Phases execute in numeric order within each milestone.
 | 14. Chat Knowledge Upgrade | v1.2 | 7/7 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
-| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 3/6 | In progress | - |
+| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 4/6 | In progress | - |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 0/0 | Not started | - |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |

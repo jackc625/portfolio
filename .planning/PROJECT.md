@@ -82,7 +82,7 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - Per-session email delivery via Resend (one email per conversation, triggered by inactivity)
 - Cloudflare Cron Trigger — hourly scan; 2-hour inactivity threshold; worst-case email latency ~3 hr after last message
 - Silent logging posture — no in-UI disclosure; data never leaves Cloudflare → Gmail
-- Chat tech debt sweep (all 5 carry-forwards): CHAT_RATE_LIMITER binding (documented + Free-tier acceptable; Workers Paid v1.4+ upgrade path), cache-hit-rate observability, `build:chat-context:check` CI, WR-01 listener dedup, `#chat-panel` JS-coupled display contract
+- Chat tech debt sweep (all 5 carry-forwards closed in Phase 17): CHAT_RATE_LIMITER binding documented + Free-tier acceptable (Workers Paid v1.4+ upgrade path), cache-hit observability, build-time chat-context drift check in CI, idempotent astro:page-load listener registration, and CSS-only chat panel display state machine
 
 **Key context:**
 
