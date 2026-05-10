@@ -1,11 +1,22 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "jack-cutrara-portfolio",
-  "main": "@astrojs/cloudflare/entrypoints/server",
+  "main": "./src/worker.ts",
   "compatibility_date": "2026-04-04",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist/client"
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "CHAT_KV",
+      "id": "eaa30fef259e4a6b9505b41bbf3f8f01",
+      "preview_id": "115f3c1b0f8a4a1da9fee78c48dcb749"
+    }
+  ],
+  "triggers": {
+    "crons": []
+  },
+  "preview_urls": true
 }
