@@ -63,7 +63,7 @@
 ### Cross-Phase Gates (TEST-)
 
 - [ ] **TEST-01** — D-26 chat regression battery (117/117 GREEN) MUST hold at the end of every phase that touches `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts` / `validation.ts`. Milestone-level cross-phase gate.
-- [ ] **TEST-02** — D-15 server byte-identical at `/api/chat` after Phase 17 migration. No new SSE frame types unless explicitly authored as a D-15 amendment in plan-time.
+- [~] **TEST-02** — D-15 server byte-identical at `/api/chat` after Phase 17 migration. No new SSE frame types unless explicitly authored as a D-15 amendment in plan-time. *Plan 17-01 (2026-05-10): fixture + 3-test snapshot battery committed (commits `d6c2f0e` + `a4d5db6`); pre-migration ground truth locked. Gate completes when Plan 17-02 cutover holds against the fixture.*
 - [ ] **TEST-03** — Anthropic prompt cache integrity verified — sessionId NEVER inside `system` block or `messages[0]` payload (snapshot test). Live verification: 3x identical payload within 5min → response 2,3 show `cache_read_input_tokens > 0`.
 
 ---
@@ -139,7 +139,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | MAIL-04 | Phase 20 | Pending |
 | MAIL-05 | Phase 20 | Pending |
 | TEST-01 | Phases 17, 18 (cross-phase gate) | Pending |
-| TEST-02 | Phase 17 | Pending |
+| TEST-02 | Phase 17 | Verifiable (Plan 17-01: fixture + snapshot test committed) |
 | TEST-03 | Phases 17, 18 (cross-phase gate) | Pending |
 
 **Coverage:** 31 / 31 requirements mapped (28 v1.3 requirements + 3 cross-phase TEST gates). Zero orphans.

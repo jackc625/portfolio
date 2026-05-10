@@ -68,7 +68,7 @@
 Plans:
 
 **Wave 0** *(no dependencies — Day 1 gate)*
-- [ ] 17-01-PLAN.md — Capture D-15 SSE byte-identical snapshot fixture against live Pages BEFORE any migration code (TEST-02 / Day 1 gate)
+- [x] 17-01-PLAN.md — Capture D-15 SSE byte-identical snapshot fixture against live Pages BEFORE any migration code (TEST-02 / Day 1 gate) — *COMPLETE 2026-05-10; commits `d6c2f0e` (fixture) + `a4d5db6` (test); see [17-01-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-01-SUMMARY.md)*
 
 **Wave 1** *(blocked on Wave 0)*
 - [ ] 17-02-PLAN.md — Migrate Pages → Workers Static Assets: src/worker.ts, wrangler.jsonc rewrite, pages-compat.mjs delete, custom domain reattach (FOUND-01..04, TEST-01, TEST-02)

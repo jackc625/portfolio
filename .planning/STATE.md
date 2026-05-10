@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
-status: ready_to_execute
-last_updated: "2026-05-10T00:00:00Z"
-last_activity: 2026-05-10 -- Phase 17 planned via /gsd-plan-phase 17. 6 plans authored across 6 sequential waves (D-09 ordering preserved). Plan checker verification passed (1 blocker + 6 warnings → all 7 fixed in 1 revision iteration). Ready for /gsd-execute-phase 17.
+status: executing
+last_updated: "2026-05-10T21:08:53Z"
+last_activity: 2026-05-10 -- Plan 17-01 executed (D-15 SSE byte-identical snapshot fixture + 3-test vitest battery committed BEFORE any migration code per D-04/D-11). Day-1 gate held. Commits d6c2f0e (fixture) + a4d5db6 (test). Plan 17-02 (Wave 1 -- Pages → Workers migration) unblocked.
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 17
 ---
 
 # Project State
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (planned, 0/6)
-Plan: 17-01 (Wave 0, ready to execute)
-Status: 6 plans authored at `.planning/phases/17-foundations-migration-dns-debt-sweep/17-{01..06}-PLAN.md`; RESEARCH.md, PATTERNS.md, VALIDATION.md committed; plan-checker verification passed; awaiting `/gsd-execute-phase 17`
-Last activity: 2026-05-10 — Phase 17 plan-phase complete (6 plans, 6 waves, sequential D-09 ordering, all 14 reqs covered, all 15 CONTEXT decisions referenced, threat models in all plans)
+Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (executing, 1/6)
+Plan: 17-02 (Wave 1, ready to execute)
+Status: Plan 17-01 COMPLETE — D-15 SSE byte-identical fixture (`tests/fixtures/sse-snapshot-frames.bin`, 38 bytes, SHA256 `fbf69266…2460d`) + headers fixture + 3-test vitest battery (`tests/api/sse-snapshot.test.ts`) committed to main BEFORE any migration code. Plan 17-02 (Pages → Workers Static Assets cutover) is the next plan; the snapshot test will be the D-15 verification gate after each Plan 17-02 commit.
+Last activity: 2026-05-10T21:08:53Z — Plan 17-01 executed in ~6 min. 2 atomic commits (`d6c2f0e` fixture, `a4d5db6` test). D-26 chat-surface battery 276/276 GREEN post-execution. TEST-02 now verifiable.
 
 ## Roadmap Snapshot
 
@@ -60,6 +60,12 @@ v1.3 phase-shape decisions (locked at `/gsd-roadmap-phase` 2026-05-09):
 - **Phase 17 absorbs all 5 DEBT items** alongside the migration — they touch the same files (`chat.ts`, `api/chat.ts`, `BaseLayout.astro`, `global.css`), so coupling them with the migration minimizes the number of times we open the chat regression risk surface
 - **Phase 21 (Observability + Hardening)** explicitly DEFERRED to v1.4+ — webhook + per-IP rate limiting + Analytics Engine all out of scope for this milestone
 - **Pages → Workers Static Assets** chosen over "separate sweeper Worker" fallback (Option a vs Option b in research SUMMARY.md) — single deploy target; matches Cloudflare's documented forward path; Astro is now Cloudflare-owned
+
+Plan 17-01 execution decisions (2026-05-10):
+
+- **Day-1 D-04/D-11 ordering enforced at commit level**, not just plan level. Fixture committed as a standalone commit (`d6c2f0e`) BEFORE the test commit (`a4d5db6`). Fixture exists in git history independently of the test that consumes it.
+- **Mock `cloudflare:workers` virtual module at the test seam**, not by refactoring `src/pages/api/chat.ts`. First time this seam is exercised in vitest; pattern documented in `.planning/phases/17-foundations-migration-dns-debt-sweep/17-01-SUMMARY.md` for reuse.
+- **Canonical SSE bytes are 38, not 36** — plan arithmetic miscount corrected. `data: {"text":"Hello"}\n\n` is 24 bytes; `data: [DONE]\n\n` is 14 bytes. Fixture matches server output byte-for-byte; test asserts byte-equality against fixture file (no hardcoded length). Logged as Rule 1 deviation in SUMMARY.
 
 ### Open Blockers (carried into v1.3)
 
@@ -105,7 +111,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-10T00:00:00Z
-Stopped at: Phase 17 planned. 6 plans + RESEARCH.md + PATTERNS.md + VALIDATION.md committed. Plan-checker verification PASSED (iteration 2 of 3 max — all blocker + warning fixes from iteration 1 applied correctly).
-Resume file: .planning/phases/17-foundations-migration-dns-debt-sweep/17-01-PLAN.md (Wave 0 entry point)
-Next command: `/gsd-execute-phase 17`
+Last session: 2026-05-10T21:08:53Z
+Stopped at: Plan 17-01 COMPLETE (Wave 0 D-15 fixture + snapshot test committed). 2 atomic task commits + final metadata commit. D-26 chat-surface battery 276/276 GREEN. Pre-existing unrelated failure in `tests/content/roadmap-amendment.test.ts` logged to `.planning/phases/17-foundations-migration-dns-debt-sweep/deferred-items.md` (reproduces at HEAD~1, not caused by this work).
+Resume file: .planning/phases/17-foundations-migration-dns-debt-sweep/17-02-PLAN.md (Wave 1 -- Pages → Workers Static Assets migration)
+Next command: Continue Phase 17 via `/gsd-execute-phase 17` (executor will pick up at Plan 17-02)
