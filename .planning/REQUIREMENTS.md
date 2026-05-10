@@ -10,10 +10,10 @@
 
 ### Foundations — Pages → Workers Migration (FOUND-)
 
-- [ ] **FOUND-01** — Site deploys as a single Cloudflare Worker via Workers Static Assets (`wrangler deploy`), serving static HTML, `/api/chat`, and a `scheduled` cron handler from one binding. Pages deployment retired.
-- [ ] **FOUND-02** — Custom worker entrypoint at `src/worker.ts` re-exports Astro's `handle()` for fetch + adds `scheduled()` that delegates to the cron sweep module. `wrangler.jsonc` `main` switches from `@astrojs/cloudflare/entrypoints/server` → `./src/worker.ts`.
-- [ ] **FOUND-03** — Production custom domain `jackcutrara.com` reattached to Worker; preview URLs migrate from `*.pages.dev` to `*.workers.dev`; CI/CD deploy command updated to `wrangler deploy`; rollback path documented.
-- [ ] **FOUND-04** — `wrangler.jsonc` declares `[assets] binding="ASSETS" directory="./dist/client"`, `kv_namespaces`, `triggers.crons`, dev/preview namespace IDs. Astro `output` mode and per-route `prerender` settings verified to NOT bundle MDX content collections into the Worker bundle.
+- [x] **FOUND-01** — Site deploys as a single Cloudflare Worker via Workers Static Assets (`wrangler deploy`), serving static HTML, `/api/chat`, and a `scheduled` cron handler from one binding. Pages deployment retired. *Plan 17-02 (2026-05-10): single Worker `jack-cutrara-portfolio` deployed; production live at https://jackcutrara.com; Pages retirement pending 24h warm window per D-02.*
+- [x] **FOUND-02** — Custom worker entrypoint at `src/worker.ts` re-exports Astro's `handle()` for fetch + adds `scheduled()` that delegates to the cron sweep module. `wrangler.jsonc` `main` switches from `@astrojs/cloudflare/entrypoints/server` → `./src/worker.ts`. *Plan 17-02 (2026-05-10): src/worker.ts exports `{ fetch, scheduled }` satisfying `ExportedHandler<Env>`; scheduled() stub uses ctx.waitUntil with Phase 19 deliverDue forward-compat comment; 5 build-time assertions in tests/build/worker-entrypoint.test.ts GREEN.*
+- [~] **FOUND-03** — Production custom domain `jackcutrara.com` reattached to Worker; preview URLs migrate from `*.pages.dev` to `*.workers.dev`; CI/CD deploy command updated to `wrangler deploy`; rollback path documented. *Plan 17-02 (2026-05-10): jackcutrara.com + www.jackcutrara.com attached to new Worker; preview URLs migrated to `.jackcutrara.workers.dev`; Workers Builds Git connection live (replaces Pages auto-deploy per D-03); D-15 byte-identical verified on BOTH hostnames. Pages retirement sub-goal: pending — 24h warm window in progress per D-02 (started ~2026-05-10 22:00 UTC).*
+- [x] **FOUND-04** — `wrangler.jsonc` declares `[assets] binding="ASSETS" directory="./dist/client"`, `kv_namespaces`, `triggers.crons`, dev/preview namespace IDs. Astro `output` mode and per-route `prerender` settings verified to NOT bundle MDX content collections into the Worker bundle. *Plan 17-02 (2026-05-10): all 5 keys present in wrangler.jsonc (5/5 wrangler-shape build-test GREEN); CHAT_KV prod id `eaa30fef259e4a6b9505b41bbf3f8f01` + preview id `115f3c1b0f8a4a1da9fee78c48dcb749`; tests/build/no-mdx-in-worker-bundle.test.ts 2/2 GREEN proves MDX content collections compile to dist/client HTML and do NOT leak into Worker SSR bundle.*
 
 ### Domain & Deliverability (DNS-)
 
@@ -110,10 +110,10 @@ Explicit exclusions — design decisions made at milestone planning:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 17 | Pending |
-| FOUND-02 | Phase 17 | Pending |
-| FOUND-03 | Phase 17 | Pending |
-| FOUND-04 | Phase 17 | Pending |
+| FOUND-01 | Phase 17 | Implemented (Plan 17-02 SUMMARY) |
+| FOUND-02 | Phase 17 | Implemented (Plan 17-02 SUMMARY) |
+| FOUND-03 | Phase 17 | Partial (Plan 17-02 SUMMARY: custom domain reattach + CI/CD + rollback path done; Pages retirement pending 24h warm window) |
+| FOUND-04 | Phase 17 | Implemented (Plan 17-02 SUMMARY) |
 | DNS-01 | Phase 17 | Pending |
 | DNS-02 | Phase 17 | Pending |
 | DEBT-01 | Phase 17 | Pending |
@@ -138,8 +138,8 @@ Explicit exclusions — design decisions made at milestone planning:
 | MAIL-03 | Phase 20 | Pending |
 | MAIL-04 | Phase 20 | Pending |
 | MAIL-05 | Phase 20 | Pending |
-| TEST-01 | Phases 17, 18 (cross-phase gate) | Pending |
-| TEST-02 | Phase 17 | Verifiable (Plan 17-01: fixture + snapshot test committed) |
+| TEST-01 | Phases 17, 18 (cross-phase gate) | Holding (Plan 17-02 SUMMARY: D-26 117/117 GREEN at every checkpoint through migration cutover; cross-phase gate remains open for remaining Phase 17 plans + Phase 18) |
+| TEST-02 | Phase 17 | Implemented (Plan 17-02 SUMMARY: D-15 byte-identical verified on production jackcutrara.com + www.jackcutrara.com post-flip against Plan 17-01 fixture) |
 | TEST-03 | Phases 17, 18 (cross-phase gate) | Pending |
 
 **Coverage:** 31 / 31 requirements mapped (28 v1.3 requirements + 3 cross-phase TEST gates). Zero orphans.
@@ -151,4 +151,4 @@ Explicit exclusions — design decisions made at milestone planning:
 
 ---
 
-*Last updated: 2026-05-09 — roadmap traceability filled by gsd-roadmap-phase agent*
+*Last updated: 2026-05-10 — Plan 17-02 close-out: FOUND-01/02/04 + TEST-02 marked implemented; FOUND-03 partial (Pages retirement pending 24h warm window); TEST-01 holding through Phase 17.*
