@@ -82,7 +82,7 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - Per-session email delivery via Resend (one email per conversation, triggered by inactivity)
 - Cloudflare Cron Trigger — hourly scan; 2-hour inactivity threshold; worst-case email latency ~3 hr after last message
 - Silent logging posture — no in-UI disclosure; data never leaves Cloudflare → Gmail
-- Chat tech debt sweep (all 5 carry-forwards): CHAT_RATE_LIMITER binding, cache-hit-rate observability, `build:chat-context:check` CI, WR-01 listener dedup, `#chat-panel` JS-coupled display contract
+- Chat tech debt sweep (all 5 carry-forwards): CHAT_RATE_LIMITER binding (documented + Free-tier acceptable; Workers Paid v1.4+ upgrade path), cache-hit-rate observability, `build:chat-context:check` CI, WR-01 listener dedup, `#chat-panel` JS-coupled display contract
 
 **Key context:**
 
@@ -112,14 +112,10 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 **v1.0 MVP (2026-03-22 → 2026-04-04):** 6 phases + Phase 7 chatbot, 27 plans + 5 plans, 43 tasks. Initial Astro 6 + Tailwind v4 + TypeScript foundation deployed to Cloudflare Pages.
 
-**Known issues / tech debt carried into v1.3:**
+**Known issues / tech debt:**
 
-- `CHAT_RATE_LIMITER` Cloudflare binding never configured on Production or Preview (pre-existing Phase 7 carry-forward; rate-limiter code path defensively skips when binding absent — code path byte-identical from Phase 7)
-- Chat cache-hit-rate observability not yet wired (Phase 14 deferred)
-- `build:chat-context:check` not enforced in CI (deploy auto-regenerates so production never stale, but PRs cannot fail-fast on local drift)
+- `CHAT_RATE_LIMITER` Cloudflare binding documented + Free-tier acceptable (per v1.3 milestone-shape lock 2026-05-09). Code path defensively skips when binding absent — byte-identical from Phase 7. Workers Paid plan upgrade is v1.4+ trigger; reconsider if Anthropic spend or chat volume crosses thresholds that justify $60/yr.
 - Lighthouse Performance ≥99 on localhost not held (Phase 16 home 80 / project 81); accepted per Phase 15 §9 production-on-Cloudflare-edge canonical-gate precedent. Motion-specific TBT=0 / CLS≈0 PASS comfortably.
-- WR-01 bootstrap listener registers without dedup (`analytics.ts:140-147`, `scroll-depth.ts:63-70`, `chat.ts:870-877`) — long sessions could accumulate `astro:page-load` listeners; no observable double-count due to `*Initialized` guards
-- `#chat-panel` display contract is JS-coupled (`animatePanelOpen` flips `style.display='flex'` directly; `.is-open` only animates) — fragile but no current break
 
 ## Key Decisions
 
