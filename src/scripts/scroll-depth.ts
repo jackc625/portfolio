@@ -66,18 +66,22 @@ export function initScrollDepth(): void {
   }
 }
 
-// Module-evaluation guard — protects against re-import during HMR / test
-// reset cycles (vi.resetModules() within a single jsdom session). Production
-// cross-document navigation reloads the module fresh (no <ClientRouter />),
-// so module-level state resets naturally on every navigation; this guard is
-// not a runtime hot path.
-let scrollDepthBootstrapped = false;
-if (typeof document !== "undefined" && !scrollDepthBootstrapped) {
-  scrollDepthBootstrapped = true;
+// Bootstrap — DEBT-04 (Phase 17): idempotent remove-then-add at document
+// level. The browser's internal (target, type, handler) registry dedups by
+// reference equality, so removeEventListener with the canonical handler
+// reference before addEventListener is idempotent across module re-evaluation
+// scenarios (HMR, vi.resetModules() in a single jsdom session, view-transition
+// edge cases). Production cross-document navigation reloads the module fresh
+// (no <ClientRouter />), so module-level state resets naturally on every
+// navigation; this is a slow-GC hygiene fix for long sessions + a dedup
+// invariant for HMR / test scenarios.
+if (typeof document !== "undefined") {
+  document.removeEventListener("astro:page-load", initScrollDepth);
   document.addEventListener("astro:page-load", initScrollDepth);
   if (document.readyState !== "loading") {
     initScrollDepth();
   } else {
+    document.removeEventListener("DOMContentLoaded", initScrollDepth);
     document.addEventListener("DOMContentLoaded", initScrollDepth);
   }
 }

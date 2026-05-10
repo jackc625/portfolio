@@ -489,8 +489,8 @@ function initChat(): void {
   // <ClientRouter />; every navigation is now a full document reload, so
   // this branch was unreachable on production paths and used the wrong
   // open-state signal (panel.style.display vs the closure-local panelOpen
-  // and the canonical .is-open class). Deleted; the bootstrap-level
-  // chatBootstrapped guard already prevents document listener pile-up.
+  // and the canonical .is-open class). Deleted; DEBT-04 (Phase 17) idempotent
+  // remove-then-add at document level prevents listener pile-up.
   if (chatInitialized && panel.dataset.chatBound === "true") {
     return;
   }
@@ -883,22 +883,26 @@ function initChat(): void {
 // Lifecycle: Astro View Transitions (D-07)
 // ============================================
 
-// Listen to astro:page-load for (re)initialization
-// Idempotency guard in initChat() prevents duplicate handlers
-// when transition:persist preserves the DOM across navigations.
-// WR-01: bootstrap-level guard prevents document listener pile-up if this
-// module is re-evaluated across Astro view transitions. The internal
-// chatInitialized guard already prevents duplicate handler binding, so this
-// is purely a slow-GC hygiene fix for long sessions.
-let chatBootstrapped = false;
-if (!chatBootstrapped) {
-  chatBootstrapped = true;
+// Listen to astro:page-load for (re)initialization.
+// Idempotency guard in initChat() prevents duplicate handler binding when
+// transition:persist preserves the DOM across navigations.
+// WR-01 / DEBT-04 (Phase 17): idempotent remove-then-add at document level.
+// The browser's internal (target, type, handler) registry dedups by reference
+// equality; removeEventListener is a no-op when the handler isn't registered,
+// idempotent when it is. Module-scoped `initChat` provides a stable reference
+// across re-imports. Mitigates module re-evaluation under HMR + view-
+// transition lifecycle edge cases. Adds the `typeof document` guard for HMR /
+// test parity with analytics.ts and scroll-depth.ts (the previous version of
+// this block omitted it).
+if (typeof document !== "undefined") {
+  document.removeEventListener("astro:page-load", initChat);
   document.addEventListener("astro:page-load", initChat);
 
   // Also initialize on DOMContentLoaded as fallback
   if (document.readyState !== "loading") {
     initChat();
   } else {
+    document.removeEventListener("DOMContentLoaded", initChat);
     document.addEventListener("DOMContentLoaded", initChat);
   }
 }

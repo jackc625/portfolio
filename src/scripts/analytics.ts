@@ -137,17 +137,21 @@ function initAnalytics(): void {
 
 // Bootstrap (matches 15-PATTERNS.md Shared Pattern — Bootstrap on
 // astro:page-load + DOMContentLoaded; mirrors scroll-depth.ts and chat.ts).
-// WR-01: bootstrap-level guard prevents document listener pile-up if this
-// module is re-evaluated across Astro view transitions. The internal
-// analyticsInitialized guard already prevents duplicate observable behavior,
-// so this is purely a slow-GC hygiene fix for long sessions.
-let analyticsBootstrapped = false;
-if (typeof document !== "undefined" && !analyticsBootstrapped) {
-  analyticsBootstrapped = true;
+// WR-01 / DEBT-04 (Phase 17): idempotent remove-then-add at document level.
+// The browser's internal (target, type, handler) registry dedups by reference
+// equality; removeEventListener is a no-op when the handler isn't registered,
+// idempotent when it is. Module-scoped `initAnalytics` provides a stable
+// reference across re-imports. Mitigates module re-evaluation under HMR +
+// view-transition lifecycle edge cases without relying on a module-level flag
+// (which resets when the module is re-evaluated fresh — vi.resetModules,
+// astro:before-preparation hot paths).
+if (typeof document !== "undefined") {
+  document.removeEventListener("astro:page-load", initAnalytics);
   document.addEventListener("astro:page-load", initAnalytics);
   if (document.readyState !== "loading") {
     initAnalytics();
   } else {
+    document.removeEventListener("DOMContentLoaded", initAnalytics);
     document.addEventListener("DOMContentLoaded", initAnalytics);
   }
 }
