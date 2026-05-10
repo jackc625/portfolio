@@ -122,6 +122,19 @@ export const POST: APIRoute = async ({ request }) => {
               truncated = true;
               console.warn("chat.truncated", { stop_reason: "max_tokens" });
             }
+          } else if (event.type === "message_start") {
+            // DEBT-02 (Phase 17 / Plan 17-05): Anthropic prompt-cache observability.
+            // Structured JSON log — Cloudflare Workers Logs + wrangler tail parse
+            // the second arg as JSON for query/filter. Flat primitive fields only
+            // (per RESEARCH §"Pattern 5"). NO SSE frame enqueue — D-15 byte-identical
+            // anchor forbids it; the SSE stream is consumer contract, not telemetry.
+            const usage = event.message.usage;
+            console.log("chat.cache_metrics", {
+              cache_read_input_tokens: usage.cache_read_input_tokens ?? 0,
+              cache_creation_input_tokens: usage.cache_creation_input_tokens ?? 0,
+              input_tokens: usage.input_tokens,
+              output_tokens: usage.output_tokens,
+            });
           }
         }
 
