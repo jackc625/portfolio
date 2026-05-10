@@ -682,14 +682,27 @@ summary:focus-visible {
   }
 }
 
-/* ----- MOTN-05 chat panel scale-in ----- */
-/* WR-06 (Phase 16 review): transform-origin is positional configuration of
+/* ----- MOTN-05 chat panel scale-in + DEBT-05 display contract ----- */
+/* DEBT-05 (Phase 17): Display contract lives in CSS — outside the
+ * no-preference media query so it applies to reduced-motion users too
+ * (the animation is gated; the visibility is not). The .is-open class
+ * controls both display AND animation, so chat.ts's animatePanelOpen and
+ * animatePanelClose are no-op stubs. The JS-coupled `panel.style.display =
+ * "flex" / "none"` flip is gone — chat.ts toggles only `.is-open` via
+ * showPanel / hidePanel; the cascade does the rest.
+ *
+ * WR-06 (Phase 16 review): transform-origin is positional configuration of
  * the element, not part of the animation. Living outside no-preference keeps
  * the origin consistent for reduce and no-preference users alike (relevant
  * if any future code applies a transform to #chat-panel outside the scale-in
  * animation). */
 #chat-panel {
+  display: none;
   transform-origin: bottom right;
+}
+
+#chat-panel.is-open {
+  display: flex;
 }
 
 /* Entrance animation — wrapped in no-preference per D-23. Under reduce, the

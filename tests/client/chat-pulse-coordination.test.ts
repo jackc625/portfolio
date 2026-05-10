@@ -177,16 +177,27 @@ describe("chat.ts — MOTN-05 .is-open class on #chat-panel", () => {
   });
 });
 
-describe("chat.ts — D-26 regression-adjacent (#chat-panel display toggle preserved)", () => {
-  it("openPanel still toggles #chat-panel.style.display = 'flex' (Phase 7 invariant)", async () => {
+describe("chat.ts — DEBT-05 (#chat-panel visibility invariant via CSS state machine)", () => {
+  // Phase 17 DEBT-05 (2026-05-10): display contract migrated from imperative
+  // JS (panel.style.display = "flex" / "none") to CSS-only state machine
+  // (#chat-panel { display: none } base + #chat-panel.is-open { display:
+  // flex } in global.css). The .is-open class toggle is the canonical signal;
+  // the Phase 7 visibility invariant is preserved end-to-end (panel hidden
+  // by default, visible while open), but the mechanism is the class toggle,
+  // not the inline style. chat.ts's animatePanelOpen / animatePanelClose are
+  // no-op stubs post-DEBT-05.
+  it("openPanel adds .is-open AND does NOT write inline style.display = 'flex' (DEBT-05)", async () => {
     const { bubble, panel } = buildChatDOM();
     await bootChat();
     bubble.click();
     await Promise.resolve();
-    expect(panel.style.display).toBe("flex");
+    expect(panel.classList.contains("is-open")).toBe(true);
+    // chat.ts no longer writes inline display style — global.css owns it
+    // via #chat-panel.is-open { display: flex }.
+    expect(panel.style.display).not.toBe("flex");
   });
 
-  it("closePanel still toggles #chat-panel.style.display = 'none' (Phase 7 invariant)", async () => {
+  it("closePanel removes .is-open class (DEBT-05 — visibility reverts via base rule in global.css)", async () => {
     const { bubble, panel } = buildChatDOM();
     await bootChat();
     bubble.click(); // open
@@ -194,6 +205,9 @@ describe("chat.ts — D-26 regression-adjacent (#chat-panel display toggle prese
     bubble.click(); // close
     await Promise.resolve();
     await Promise.resolve();
-    expect(panel.style.display).toBe("none");
+    expect(panel.classList.contains("is-open")).toBe(false);
+    // chat.ts no longer writes inline display:none — base rule
+    // #chat-panel { display: none } in global.css restores hidden state.
+    expect(panel.style.display).not.toBe("flex");
   });
 });

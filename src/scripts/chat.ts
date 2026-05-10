@@ -433,15 +433,22 @@ function setupFocusTrap(panel: HTMLElement, onEscape: () => void): () => void {
 
 // ============================================
 // Animation Helpers (Phase 8: GSAP removed — no-op stubs)
-// Chat motion restoration deferred to Phase 10 CHAT-02 per D-27.
+// Phase 17 DEBT-05: display contract decoupled from JS — `.is-open` class in
+// global.css now controls BOTH display (#chat-panel { display: none } base
+// + #chat-panel.is-open { display: flex }) AND the scale-in animation.
+// animatePanelOpen and animatePanelClose are retained as no-op async stubs
+// so showPanel / hidePanel call sites that await them for keyframe-
+// completion timing do not change shape. Chat motion restoration deferred
+// to Phase 10 CHAT-02 per D-27 (historical anchor).
 // ============================================
 
-async function animatePanelOpen(panel: HTMLElement): Promise<void> {
-  panel.style.display = "flex";
+async function animatePanelOpen(_panel: HTMLElement): Promise<void> {
+  // CSS controls display via .is-open class (DEBT-05 closure).
+  // No-op retained so call-site await semantics do not change.
 }
 
-async function animatePanelClose(panel: HTMLElement): Promise<void> {
-  panel.style.display = "none";
+async function animatePanelClose(_panel: HTMLElement): Promise<void> {
+  // Same — display contract lives in global.css.
 }
 
 async function animateMessageAppear(_el: HTMLElement): Promise<void> {
