@@ -76,25 +76,29 @@ describe("CORS Origin Whitelist (S9)", () => {
     expect(isAllowedOrigin("http://jackcutrara.com")).toBe(false);
   });
 
-  it("allows https://<branch>.portfolio-5wl.pages.dev (CF Pages preview)", () => {
+  it("allows https://<branch>.jackcutrara.workers.dev (CF Workers preview)", () => {
     expect(
-      isAllowedOrigin("https://phase-14-preview.portfolio-5wl.pages.dev")
+      isAllowedOrigin("https://phase-17-preview.jackcutrara.workers.dev")
     ).toBe(true);
   });
 
-  it("rejects https://portfolio-5wl.pages.dev (apex, no subdomain)", () => {
-    expect(isAllowedOrigin("https://portfolio-5wl.pages.dev")).toBe(false);
+  it("rejects https://jackcutrara.workers.dev (apex, no subdomain)", () => {
+    expect(isAllowedOrigin("https://jackcutrara.workers.dev")).toBe(false);
   });
 
-  it("rejects http://phase-14-preview.portfolio-5wl.pages.dev (wrong protocol)", () => {
+  it("rejects http://phase-17-preview.jackcutrara.workers.dev (wrong protocol)", () => {
     expect(
-      isAllowedOrigin("http://phase-14-preview.portfolio-5wl.pages.dev")
+      isAllowedOrigin("http://phase-17-preview.jackcutrara.workers.dev")
     ).toBe(false);
   });
 
-  it("rejects https://evil.portfolio-5wl.pages.dev.attacker.com (suffix-confusion attack)", () => {
+  it("rejects https://evil.jackcutrara.workers.dev.attacker.com (suffix-confusion attack)", () => {
     expect(
-      isAllowedOrigin("https://evil.portfolio-5wl.pages.dev.attacker.com")
+      isAllowedOrigin("https://evil.jackcutrara.workers.dev.attacker.com")
     ).toBe(false);
+  });
+
+  it("rejects https://attacker.workers.dev (foreign account-subdomain attack)", () => {
+    expect(isAllowedOrigin("https://attacker.workers.dev")).toBe(false);
   });
 });
