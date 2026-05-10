@@ -147,6 +147,17 @@ export async function streamChat(
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
 
+  // DEBT-02 (Phase 17 / Plan 17-05): Client-side observability seam.
+  // The client cannot read cache_read_input_tokens / cache_creation_input_tokens
+  // from the SSE stream — D-15 anchor forbids the server from enqueueing those
+  // fields. So this seam logs total-stream elapsed_ms as a cache-hit PROXY
+  // (cache hits → faster TTFB / total stream time). The server's
+  // `chat.cache_metrics` log in Workers Logs remains the canonical token source.
+  // DEV-only — Vite/Astro tree-shakes the `if (import.meta.env.DEV)` block in
+  // production builds, so the closure-captured t0 + log line emit zero bytes
+  // in dist output. Verified via post-build dist grep (no chat.response_metrics_client).
+  const t0 = performance.now();
+
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -213,6 +224,23 @@ export async function streamChat(
       onError("timeout");
     } else {
       onError("api_error");
+    }
+  } finally {
+    // DEBT-02 (Phase 17 / Plan 17-05): DEV-only response-metrics log line.
+    // Mirrors the canonical server-side `chat.cache_metrics` event name with
+    // a distinct client-tier name (`chat.response_metrics_client`) so grep
+    // against Workers Logs vs DevTools console stays unambiguous. Flat
+    // primitives only. Vite tree-shakes the entire block under prod builds.
+    if (import.meta.env.DEV) {
+      const elapsedMs = Math.round(performance.now() - t0);
+      console.log("chat.response_metrics_client", {
+        elapsed_ms: elapsedMs,
+        // Client cannot read cache_read_input_tokens (D-15 anchor — server
+        // does not send cache metrics in SSE frames). DEBT-02 server seam
+        // (api/chat.ts emits chat.cache_metrics in Workers Logs) is the
+        // canonical token source. This client log surfaces total-stream
+        // duration as a cache-hit proxy.
+      });
     }
   }
 }

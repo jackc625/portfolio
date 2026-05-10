@@ -106,7 +106,7 @@ describe("DEBT-02: chat.cache_metrics structured log seam", () => {
     await drain(response);
 
     const cacheMetricsCall = logSpy.mock.calls.find(
-      (c) => c[0] === "chat.cache_metrics"
+      (c: unknown[]) => c[0] === "chat.cache_metrics"
     );
     expect(cacheMetricsCall).toBeDefined();
     expect(cacheMetricsCall![1]).toEqual({
@@ -130,7 +130,7 @@ describe("DEBT-02: chat.cache_metrics structured log seam", () => {
     await drain(response);
 
     const cacheMetricsCall = logSpy.mock.calls.find(
-      (c) => c[0] === "chat.cache_metrics"
+      (c: unknown[]) => c[0] === "chat.cache_metrics"
     );
     expect(cacheMetricsCall).toBeDefined();
     const arg = cacheMetricsCall![1] as Record<string, number>;
