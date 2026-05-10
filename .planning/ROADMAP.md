@@ -74,7 +74,7 @@ Plans:
 - [x] 17-02-PLAN.md — Migrate Pages → Workers Static Assets: src/worker.ts, wrangler.jsonc rewrite, pages-compat.mjs delete, custom domain reattach (FOUND-01..04, TEST-01, TEST-02) — *COMPLETE 2026-05-10; commits `54cc8e7` (worker.ts + build tests) + `e056619` (wrangler.jsonc + pages-compat delete + no-mdx-bundle test) + `792dd76` (WORKERS_PREVIEW_SUFFIX rename); production live at https://jackcutrara.com on jack-cutrara-portfolio Worker; Pages retirement pending 24h warm window per D-02; see [17-02-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-02-SUMMARY.md)*
 
 **Wave 2** *(blocked on Wave 1)*
-- [ ] 17-03-PLAN.md — Chat-surface tech debt: DEBT-04 idempotent astro:page-load listeners + DEBT-05 CSS-only #chat-panel state machine
+- [x] 17-03-PLAN.md — Chat-surface tech debt: DEBT-04 idempotent astro:page-load listeners + DEBT-05 CSS-only #chat-panel state machine — *COMPLETE 2026-05-10; commits `0ad77b3` (DEBT-04 across analytics/scroll-depth/chat with listener-dedup test) + `1c148c9` (DEBT-05 global.css + chat.ts no-op animatePanel stubs + chat-panel-display test + no-imperative-display-flip test); D-26 145/145 GREEN; full suite 369/370 (1 pre-existing); +16 tests; see [17-03-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-03-SUMMARY.md)*
 
 **Wave 3** *(blocked on Wave 2)*
 - [ ] 17-04-PLAN.md — Docs/CI tech debt: DEBT-01 PROJECT.md reframe + DEBT-03 build:chat-context:check in sync-check.yml
@@ -152,7 +152,7 @@ Phases execute in numeric order within each milestone.
 | 14. Chat Knowledge Upgrade | v1.2 | 7/7 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
-| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 2/6 | In progress | - |
+| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 3/6 | In progress | - |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 0/0 | Not started | - |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |

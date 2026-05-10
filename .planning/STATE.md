@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
 status: executing
-last_updated: "2026-05-10T22:10:21Z"
-last_activity: 2026-05-10 -- Plan 17-02 executed (Pages → Workers Static Assets migration COMPLETE). 3 task commits (54cc8e7 worker.ts+tests, e056619 wrangler.jsonc rewrite + pages-compat deletion, 792dd76 WORKERS_PREVIEW_SUFFIX rename). Production cutover live at https://jackcutrara.com on new Worker; D-15 byte-identical verified on jackcutrara.com + www.jackcutrara.com; D-26 117/117 GREEN; parking-page CNAME pitfall caught and resolved inline. Pages retirement PENDING 24h warm window. Plan 17-03 (Wave 2 -- DEBT-04 + DEBT-05) unblocked.
+last_updated: "2026-05-10T22:35:00Z"
+last_activity: 2026-05-10 -- Plan 17-03 executed (DEBT-04 idempotent astro:page-load listener registration + DEBT-05 CSS-only #chat-panel display state machine, both closed under the new Worker). 2 task commits (0ad77b3 DEBT-04 across analytics/scroll-depth/chat, 1c148c9 DEBT-05 global.css + chat.ts no-op animatePanel stubs). D-26 117/117+ GREEN at every commit; full suite 354 → 370 tests (+16 additive: 9 listener-dedup + 3 chat-panel-display + 4 no-imperative-display-flip). 1 Rule-1 deviation (chat-pulse-coordination.test.ts rewrite — Phase 7 assertions contradicted DEBT-05 closure). Plan 17-04 (Wave 3 -- DEBT-01 PROJECT.md reframe + DEBT-03 build:chat-context:check CI job) unblocked.
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 6
-  completed_plans: 2
-  percent: 33
+  completed_plans: 3
+  percent: 50
 ---
 
 # Project State
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (executing, 2/6)
-Plan: 17-03 (Wave 2, ready to execute — DEBT-04 idempotent astro:page-load listeners + DEBT-05 CSS-only #chat-panel state machine)
-Status: Plan 17-02 COMPLETE — Pages → Workers Static Assets migration shipped. Production live at https://jackcutrara.com (jack-cutrara-portfolio Worker, account subdomain `jackcutrara`). CHAT_KV provisioned (prod `eaa30fef259e4a6b9505b41bbf3f8f01`, preview `115f3c1b0f8a4a1da9fee78c48dcb749`). 3 secrets re-added (ANTHROPIC_API_KEY, CHAT_RECIPIENT_EMAIL, CHAT_SENDER_EMAIL); RESEND_API_KEY deferred to Plan 17-06. Workers Builds Git connection live. D-15 byte-identical verified on jackcutrara.com + www.jackcutrara.com post-flip. D-26 117/117 GREEN. Pages retirement pending 24h warm window per D-02. Plan 17-03 picks up against the live Worker.
-Last activity: 2026-05-10T22:10:21Z — Plan 17-02 executed in ~33min implementation + ~2h manual checkpoints. 3 atomic commits (54cc8e7, e056619, 792dd76) + 2 PASSED human-action checkpoints. FOUND-01..04 + TEST-01 + TEST-02 marked implemented (FOUND-03 Pages-retired sub-goal pending warm window).
+Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (executing, 3/6)
+Plan: 17-04 (Wave 3, ready to execute — DEBT-01 PROJECT.md "Known issues" reframe + DEBT-03 build:chat-context:check parallel job in .github/workflows/sync-check.yml)
+Status: Plan 17-03 COMPLETE — DEBT-04 + DEBT-05 chat-surface tech debt closed under the new Worker. analytics.ts / scroll-depth.ts / chat.ts all use idempotent astro:page-load registration (remove-then-add at document level replaces module-level *Bootstrapped flags). #chat-panel display contract is CSS-only via `.is-open` class in global.css; animatePanelOpen / animatePanelClose are no-op async stubs preserving await semantics. D-26 chat-surface battery 145/145 GREEN; full suite 369/370 (1 pre-existing roadmap-amendment failure carried forward from 17-01). Plan 17-04 (docs/CI debt — DEBT-01 + DEBT-03) is next; does NOT touch the chat surface so D-26 cadence is informational rather than blocking there.
+Last activity: 2026-05-10T22:35:00Z — Plan 17-03 executed in ~7min implementation (clean TDD, no checkpoints). 2 atomic commits (0ad77b3 DEBT-04, 1c148c9 DEBT-05). Test count delta 354 → 370 (+16 additive: 9 listener-dedup + 3 chat-panel-display + 4 no-imperative-display-flip). 1 Rule-1 deviation auto-fixed (chat-pulse-coordination.test.ts Phase 7 "display toggle preserved" suite rewritten to assert .is-open class toggle, not inline style.display — the previous assertions contradicted DEBT-05 closure and would have failed the TEST-01 D-26 GREEN gate). DEBT-04 + DEBT-05 marked implemented in REQUIREMENTS.md.
 
 ## Roadmap Snapshot
 
@@ -79,15 +79,23 @@ Plan 17-02 execution decisions (2026-05-10) — Pages → Workers Static Assets 
 - **Sharpened security.test.ts beyond plan minimum.** Added explicit `https://attacker.workers.dev REJECTED` test (Rule 2 - Missing Critical) guarding the foreign-account-subdomain attack vector (T-17-02). Logic unchanged (rename only per D-14); test surface now stronger than pre-migration.
 - **Plan 17-06 DNS triage open: pre-existing Resend records on send.jackcutrara.com.** When auditing DNS pre-flip, observed existing records on the `send.` subdomain (MX `send.`, TXT `_dmarc`, TXT `resend._domainkey`, TXT `send "v=spf1 include:amazon..."`) — pre-existing Resend SES setup. But Plan 17-06 D-06 spec'd `mail.jackcutrara.com` as the canonical sending subdomain. **Mismatch flagged for triage at Plan 17-06 execution time** (re-use existing `send.*` records vs add fresh `mail.*` records). Out of scope for Plan 17-02.
 
+Plan 17-03 execution decisions (2026-05-10) — DEBT-04 + DEBT-05 chat-surface tech debt closure:
+
+- **Idempotent astro:page-load listener pattern adopted across the chat surface.** Three modules (`src/scripts/analytics.ts`, `src/scripts/scroll-depth.ts`, `src/scripts/chat.ts`) now use remove-then-add at the document level instead of module-level `*Bootstrapped` flags. Browser's internal (target, type, handler) registry dedups by reference equality, so `removeEventListener` BEFORE `addEventListener` is a safe identity operation that converges to "this handler reference is in the registry exactly once." `typeof document !== "undefined"` guard added to chat.ts for HMR/test parity with the other two files. **Future chat-surface modules that register an astro:page-load listener MUST follow this pattern** — the listener-dedup test extends trivially via the `CHAT_SURFACE_MODULES` constant + it.each. This is the canonical idiom per RESEARCH §"Pattern 3 — Don't Hand-Roll".
+- **CSS-only chat-panel display state machine adopted (DEBT-05).** `src/styles/global.css` now declares `display: none` on the base `#chat-panel` rule and `display: flex` on `#chat-panel.is-open` — both outside the `@media (prefers-reduced-motion: no-preference)` block, so the display contract applies equally to reduce-motion users. The keyframe `chat-panel-scale-in` rule is unchanged. `animatePanelOpen` / `animatePanelClose` in chat.ts are no-op async stubs (`async function animatePanel*(_panel: HTMLElement): Promise<void> { /* no-op */ }`) — call sites that `await` them for keyframe-completion timing do not change shape. **Future view-toggle UI in this codebase (mobile menu, modal overlay, etc.) should follow the same shape**: base-rule display:none + `.is-open` display:flex, animation gated under the no-preference media query. The Phase 7 chat panel was the last imperative-display holdout in the codebase.
+- **Source-text anti-regression test pattern adopted.** `tests/build/no-imperative-display-flip.test.ts` greps `src/scripts/chat.ts` for forbidden imperative patterns (`panel.style.display = "flex"` / `"none"`). Cheap to write; catches regressions that would pass behavioral tests but reintroduce the imperative path. Already used at `tests/api/chat.test.ts:259-289` for prompt-cache integrity; now also for DEBT-05.
+- **chat-pulse-coordination.test.ts assertion rewrite was unavoidable (Rule 1 deviation).** The Phase 7 "display toggle preserved" suite (2 tests) asserted `panel.style.display === "flex"` / `"none"` — the exact behavior DEBT-05 removes. Leaving the assertions untouched would have failed the TEST-01 D-26 GREEN gate. Rewrote the assertions to the new contract (`.is-open` class toggle + `panel.style.display !== "flex"`). **Future plan-authoring pattern: any plan that removes an imperative behavior must audit existing tests that assert the imperative behavior and list them in `files_modified` at plan-time.** The 17-03 plan frontmatter under-counted the test files by 1.
+- **Plan-spec'd `vi.resetModules() + re-import N` behavioral test approach has a fundamental vitest-jsdom constraint that surfaced cleanly during Task 1.** Each re-evaluation creates a new handler reference; the new evaluation's `removeEventListener` does not remove the prior evaluation's registration because the references differ. Strengthened the test surface beyond the plan minimum with source-level pattern assertions (Rule 2 deviation) — the canonical anti-regression invariant is the source-text pattern, not the runtime behavioral consequence. Production behavior is unchanged because Astro re-runs astro:page-load WITHOUT re-evaluating the module (stable handler reference from the original evaluation).
+
 ### Open Blockers (carried into v1.3)
 
 The following items move into v1.3 scope as the chat tech debt sweep (all close in Phase 17):
 
-- `CHAT_RATE_LIMITER` Cloudflare binding never configured on Production or Preview (pre-existing Phase 7 carry-forward; rate-limiter code path defensively skips when binding absent — code path byte-identical from Phase 7). Tracked at `.planning/todos/pending/2026-04-23-configure-chat-rate-limiter-binding.md`. Closure path: documented + Free-tier acceptable per locked decision (DEBT-01).
-- Chat cache-hit-rate observability not yet wired (Phase 14 deferred). Tracked at `.planning/todos/pending/2026-04-23-chat-cache-hit-rate-observability.md`. Closure path: structured log seams in chat-cache + content-snapshot + chat client (DEBT-02).
-- `build:chat-context:check` not enforced in CI — deploy auto-regenerates so production never stale, but PRs cannot fail-fast on local drift. Closure path: parallel job in `.github/workflows/sync-check.yml` (DEBT-03).
-- `#chat-panel` JS-coupled display contract — `animatePanelOpen` flips `style.display='flex'` directly while `.is-open` only animates. Closure path: CSS-only state machine, `.is-open` controls both display and animation (DEBT-05).
-- WR-01 bootstrap listener registers without dedup (`analytics.ts:140-147`, `scroll-depth.ts:63-70`, `chat.ts:870-877`) — no observable double-count due to `*Initialized` guards, but long sessions could accumulate listeners. Closure path: idempotent `astro:page-load` guard (DEBT-04).
+- `CHAT_RATE_LIMITER` Cloudflare binding never configured on Production or Preview (pre-existing Phase 7 carry-forward; rate-limiter code path defensively skips when binding absent — code path byte-identical from Phase 7). Tracked at `.planning/todos/pending/2026-04-23-configure-chat-rate-limiter-binding.md`. Closure path: documented + Free-tier acceptable per locked decision (DEBT-01) — scheduled for Plan 17-04.
+- Chat cache-hit-rate observability not yet wired (Phase 14 deferred). Tracked at `.planning/todos/pending/2026-04-23-chat-cache-hit-rate-observability.md`. Closure path: structured log seams in chat-cache + content-snapshot + chat client (DEBT-02) — scheduled for Plan 17-05.
+- `build:chat-context:check` not enforced in CI — deploy auto-regenerates so production never stale, but PRs cannot fail-fast on local drift. Closure path: parallel job in `.github/workflows/sync-check.yml` (DEBT-03) — scheduled for Plan 17-04.
+- ~~`#chat-panel` JS-coupled display contract — `animatePanelOpen` flips `style.display='flex'` directly while `.is-open` only animates.~~ **CLOSED 2026-05-10 in Plan 17-03 (commit `1c148c9`)** — DEBT-05 closed. `.is-open` class in global.css now controls both display (display:none base → display:flex on .is-open) AND the existing keyframe scale-in animation. animatePanelOpen / animatePanelClose are no-op async stubs preserving await semantics.
+- ~~WR-01 bootstrap listener registers without dedup (`analytics.ts:140-147`, `scroll-depth.ts:63-70`, `chat.ts:870-877`) — no observable double-count due to `*Initialized` guards, but long sessions could accumulate listeners.~~ **CLOSED 2026-05-10 in Plan 17-03 (commit `0ad77b3`)** — DEBT-04 closed. All three modules use remove-then-add at document level; browser API contract makes the registration idempotent regardless of module re-evaluation.
 
 Carry-forwards NOT in v1.3 scope (out-of-scope for this milestone):
 
@@ -123,7 +131,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-10T22:10:21Z
-Stopped at: Plan 17-02 COMPLETE (Wave 1 -- Pages → Workers Static Assets migration shipped). 3 atomic task commits (54cc8e7 worker.ts + build tests, e056619 wrangler.jsonc rewrite + pages-compat deletion + no-mdx-bundle test, 792dd76 WORKERS_PREVIEW_SUFFIX rename + sharpened security tests) + 2 PASSED human-action checkpoints (KV provisioning, secret re-adds, first deploy + WB Git connection + Access audit, Custom Domain reattach with inline parking-page CNAME fix). Production live at https://jackcutrara.com. D-15 byte-identical + D-26 117/117 GREEN. Pages retirement pending 24h warm window.
-Resume file: .planning/phases/17-foundations-migration-dns-debt-sweep/17-03-PLAN.md (Wave 2 -- DEBT-04 idempotent astro:page-load listeners + DEBT-05 CSS-only #chat-panel state machine)
-Next command: Continue Phase 17 via `/gsd-execute-phase 17` (executor will pick up at Plan 17-03)
+Last session: 2026-05-10T22:35:00Z
+Stopped at: Plan 17-03 COMPLETE (Wave 2 -- DEBT-04 idempotent astro:page-load listener registration + DEBT-05 CSS-only #chat-panel display state machine, both closed under the new Worker). 2 atomic task commits (0ad77b3 DEBT-04 across analytics/scroll-depth/chat with new listener-dedup test, 1c148c9 DEBT-05 global.css + chat.ts no-op animatePanel stubs + 2 new tests + chat-pulse-coordination assertion rewrite). D-26 chat-surface battery 145/145 GREEN; full vitest suite 369/370 (1 pre-existing roadmap-amendment failure carried forward from 17-01). Test count delta 354 → 370 (+16 additive).
+Resume file: .planning/phases/17-foundations-migration-dns-debt-sweep/17-04-PLAN.md (Wave 3 -- DEBT-01 PROJECT.md "Known issues" reframe + DEBT-03 build:chat-context:check parallel job in .github/workflows/sync-check.yml)
+Next command: Continue Phase 17 via `/gsd-execute-phase 17` (executor will pick up at Plan 17-04 — docs/CI debt; does NOT touch chat surface)
