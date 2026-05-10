@@ -80,7 +80,7 @@ Plans:
 - [x] 17-04-PLAN.md — Docs/CI tech debt: DEBT-01 PROJECT.md reframe + DEBT-03 build:chat-context:check in sync-check.yml — *COMPLETE 2026-05-10; commits `65c2749` (DEBT-01 PROJECT.md Known issues entry reframed to "documented + Free-tier acceptable" per v1.3 milestone-shape lock + STATE.md audit + new tests/build/project-md-debt-01.test.ts 6/6 GREEN) + `e46aa2d` (DEBT-03 sync-check.yml step + 7-path trigger surface); plan touched NO chat surface — D-26 cadence informational; full suite 375 PASS / 1 FAIL (pre-existing roadmap-amendment carry-forward); +6 additive tests; see [17-04-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-04-SUMMARY.md)*
 
 **Wave 4** *(blocked on Waves 2 + 3)*
-- [ ] 17-05-PLAN.md — Observability: DEBT-02 chat.cache_metrics log seams (server + client) + TEST-03 Anthropic payload-shape forward-defense
+- [x] 17-05-PLAN.md — Observability: DEBT-02 chat.cache_metrics log seams (server + client) + TEST-03 Anthropic payload-shape forward-defense — *COMPLETE 2026-05-10; commits `7c3827e` (DEBT-02 server seam — `else if (event.type === "message_start")` branch in api/chat.ts emits structured `chat.cache_metrics` log with 4 flat-primitive token fields; new tests/api/cache-hit-logs.test.ts 3/3 GREEN; D-15 SSE-snapshot anchor preserved — no controller.enqueue() touched) + `e54f09d` (DEBT-02 client seam — `chat.response_metrics_client` DEV-only log in chat.ts streamChat() finally-block emits `elapsed_ms` as cache-hit proxy; Vite tree-shakes under `import.meta.env.DEV`; Rule 3 auto-fix: typecheck-annotate find() callbacks in cache-hit-logs.test.ts; pre-existing listener-dedup.test.ts implicit-any errors documented as out-of-scope in deferred-items.md) + `19471fe` (TEST-03 forward-defense — new tests/api/anthropic-payload-shape.test.ts asserts no `sessionId` literal + no UUIDv4 in system block or messages[0] + system block byte-identical across calls; 5/5 GREEN on Phase 17 source; locks state forward for Phase 18 IDENT-02); D-26 chat-surface regression battery 383 PASS / 1 FAIL pre-existing GREEN at every commit per D-10 cadence; +8 additive tests; planner reconciled chat-cache.ts / content-snapshot.ts absences — seams inlined per CLAUDE.md "Don't add abstractions beyond what the task requires"; see [17-05-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-05-SUMMARY.md)*
 
 **Wave 5** *(blocked on Waves 1 + 4 — runs LAST against all-GREEN surface)*
 - [ ] 17-06-PLAN.md — DNS-01 Resend domain records (SPF/DKIM/MX/DMARC) + DNS-02 warmup sends (5–10x) + Postmaster Tools enrollment
@@ -152,7 +152,7 @@ Phases execute in numeric order within each milestone.
 | 14. Chat Knowledge Upgrade | v1.2 | 7/7 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
-| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 4/6 | In progress | - |
+| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 5/6 | In progress | - |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 0/0 | Not started | - |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |
