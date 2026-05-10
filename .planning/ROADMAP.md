@@ -63,7 +63,33 @@
   3. The D-26 chat regression battery is 117/117 GREEN at phase close; the `#chat-panel` display state machine is CSS-only (`.is-open` controls both display and animation, `style.display='flex'` removed from `animatePanelOpen`); `astro:page-load` listeners in `analytics.ts`, `scroll-depth.ts`, and `chat.ts` register exactly once across navigations (idempotent guard verified).
   4. PRs fail-fast on local drift between `Projects/*.md` and `portfolio-context.json` via the `build:chat-context:check` job in `.github/workflows/sync-check.yml`; structured cache-hit logs (`cache_read_input_tokens` / `cache_creation_input_tokens`) emit from chat-cache + content-snapshot + chat client seams; PROJECT.md "Known issues" entry for `CHAT_RATE_LIMITER` rewritten as "documented + Free-tier acceptable."
   5. Anthropic prompt-cache integrity verified: `system` block and `messages[0]` payload do NOT contain any session identifier (snapshot test); 3x identical-payload live test within 5min returns `cache_read_input_tokens > 0` on responses 2 and 3.
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+
+**Wave 0** *(no dependencies — Day 1 gate)*
+- [ ] 17-01-PLAN.md — Capture D-15 SSE byte-identical snapshot fixture against live Pages BEFORE any migration code (TEST-02 / Day 1 gate)
+
+**Wave 1** *(blocked on Wave 0)*
+- [ ] 17-02-PLAN.md — Migrate Pages → Workers Static Assets: src/worker.ts, wrangler.jsonc rewrite, pages-compat.mjs delete, custom domain reattach (FOUND-01..04, TEST-01, TEST-02)
+
+**Wave 2** *(blocked on Wave 1)*
+- [ ] 17-03-PLAN.md — Chat-surface tech debt: DEBT-04 idempotent astro:page-load listeners + DEBT-05 CSS-only #chat-panel state machine
+
+**Wave 3** *(blocked on Wave 2)*
+- [ ] 17-04-PLAN.md — Docs/CI tech debt: DEBT-01 PROJECT.md reframe + DEBT-03 build:chat-context:check in sync-check.yml
+
+**Wave 4** *(blocked on Waves 2 + 3)*
+- [ ] 17-05-PLAN.md — Observability: DEBT-02 chat.cache_metrics log seams (server + client) + TEST-03 Anthropic payload-shape forward-defense
+
+**Wave 5** *(blocked on Waves 1 + 4 — runs LAST against all-GREEN surface)*
+- [ ] 17-06-PLAN.md — DNS-01 Resend domain records (SPF/DKIM/MX/DMARC) + DNS-02 warmup sends (5–10x) + Postmaster Tools enrollment
+
+**Cross-cutting constraints** *(must hold across all chat-surface plans):*
+- D-26 chat regression battery 117/117 GREEN — gates 17-01, 17-02, 17-03, 17-05 (every chat-surface plan; cadence per CONTEXT.md D-10: every commit + phase end)
+- D-15 SSE byte-identical at `/api/chat` — fixture captured by 17-01, validated through 17-02 cutover, preserved by 17-05 DEBT-02 edit
+- TEST-03 Anthropic prompt-cache integrity — `system` block and `messages[0]` payload contain NO session identifier (snapshot test in 17-05)
+- D-09 locked execution order — wave dependencies enforce step 1 → 7 sequential progression
 
 ### Phase 18: Persistence + Identity — KV Write Path + sessionId
 
@@ -126,7 +152,7 @@ Phases execute in numeric order within each milestone.
 | 14. Chat Knowledge Upgrade | v1.2 | 7/7 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
-| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 0/0 | Not started | - |
+| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 0/6 | Not started | - |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 0/0 | Not started | - |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |

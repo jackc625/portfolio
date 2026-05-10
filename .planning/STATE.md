@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
-status: planning
-last_updated: "2026-05-09T00:00:00Z"
-last_activity: 2026-05-09 -- Phase 17 context captured via gsd-discuss-phase (4 areas: cutover, DNS warming, ordering, dev workflow). 15 implementation decisions locked + 9 deferred ideas + 2 todos folded. Ready for /gsd-plan-phase 17.
+status: ready_to_execute
+last_updated: "2026-05-10T00:00:00Z"
+last_activity: 2026-05-10 -- Phase 17 planned via /gsd-plan-phase 17. 6 plans authored across 6 sequential waves (D-09 ordering preserved). Plan checker verification passed (1 blocker + 6 warnings → all 7 fixed in 1 revision iteration). Ready for /gsd-execute-phase 17.
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
+  total_plans: 6
   completed_plans: 0
   percent: 0
 ---
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (context captured)
-Plan: —
-Status: Context locked at `.planning/phases/17-foundations-migration-dns-debt-sweep/17-CONTEXT.md`; awaiting `/gsd-plan-phase 17`
-Last activity: 2026-05-09 — Phase 17 discuss-phase complete (15 decisions, 9 deferred, 2 todos folded)
+Phase: Phase 17 — Foundations: Migration + DNS + Debt Sweep (planned, 0/6)
+Plan: 17-01 (Wave 0, ready to execute)
+Status: 6 plans authored at `.planning/phases/17-foundations-migration-dns-debt-sweep/17-{01..06}-PLAN.md`; RESEARCH.md, PATTERNS.md, VALIDATION.md committed; plan-checker verification passed; awaiting `/gsd-execute-phase 17`
+Last activity: 2026-05-10 — Phase 17 plan-phase complete (6 plans, 6 waves, sequential D-09 ordering, all 14 reqs covered, all 15 CONTEXT decisions referenced, threat models in all plans)
 
 ## Roadmap Snapshot
 
@@ -105,7 +105,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-09T00:00:00Z
-Stopped at: v1.3 roadmap locked; 4 phases (17-20) defined; REQUIREMENTS.md traceability filled (31/31); STATE.md frontmatter updated. Phase 17 ready to plan.
-Resume file: .planning/ROADMAP.md (Phase 17 details)
-Next command: `/gsd-plan-phase 17`
+Last session: 2026-05-10T00:00:00Z
+Stopped at: Phase 17 planned. 6 plans + RESEARCH.md + PATTERNS.md + VALIDATION.md committed. Plan-checker verification PASSED (iteration 2 of 3 max — all blocker + warning fixes from iteration 1 applied correctly).
+Resume file: .planning/phases/17-foundations-migration-dns-debt-sweep/17-01-PLAN.md (Wave 0 entry point)
+Next command: `/gsd-execute-phase 17`

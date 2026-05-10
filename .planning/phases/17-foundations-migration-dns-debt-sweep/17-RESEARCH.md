@@ -859,32 +859,37 @@ for (let i = 1; i <= count; i++) {
 | A7 | DMARC `p=none` on `mail.jackcutrara.com` (subdomain) does NOT propagate up to `jackcutrara.com` (apex) — i.e., apex has no DMARC record today, and adding one to the subdomain doesn't affect apex reputation | CONTEXT.md specifics | None — CONTEXT.md already states this is the standard Resend pattern. Surfaced as assumption to remind the planner not to author DMARC at the apex during DNS-01. |
 | A8 | `tests/api/chat.test.ts` and other existing tests are NOT skipped or `.todo` — they all currently run as part of `pnpm test` | Validation Architecture | Plan-time risk: if some tests are skipped, the "117/117" count needs verification. Low risk — D-26 lock at v1.2 was 117/117 GREEN; pre-Phase-17 baseline assumed unchanged. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **What is the exact Cloudflare account subdomain for `*.workers.dev` preview URLs?**
    - What we know: Format is `${worker_name}.${cloudflare_account_subdomain}.workers.dev`. Worker name is `jack-cutrara-portfolio` (from current `wrangler.jsonc`).
    - What's unclear: The `cloudflare_account_subdomain` part — set when Jack created his Cloudflare account, visible in the Workers dashboard.
    - Recommendation: PLAN sequences this as: (a) first deploy → capture URL from log/dashboard, (b) update `WORKERS_PREVIEW_SUFFIX` constant + test suite, (c) re-deploy. Don't attempt to pre-fill the constant.
+   - **RESOLVED:** Plan 17-02 Tasks 3+4 implement the capture-then-update flow exactly as recommended. `WORKERS_PREVIEW_SUFFIX` is filled at Task 4 from the Task 3 resume-signal value.
 
 2. **Does the current Cloudflare Pages project use Cloudflare Access or any auth gating on preview URLs?**
    - What we know: CONTEXT.md doesn't mention it; production traffic is on `jackcutrara.com` (custom domain) not preview URL.
    - What's unclear: Whether preview deploys currently require auth (some teams add Access policies).
    - Recommendation: If yes, replicate on the Workers preview URL; if no, leave Workers preview URLs public per Cloudflare default. Verify in Cloudflare Pages project settings before cutover.
+   - **RESOLVED:** Default — no Access policy on Pages previews (this is a portfolio site; no auth gating was ever applied). Plan 17-02 Task 3 adds a one-line dashboard verification step ("Confirm 0 Access policies attached to Pages preview URLs before cutover") so the assumption is checked rather than implicit. If the audit surfaces a non-zero policy count, replicate to the new Worker domain BEFORE flipping jackcutrara.com.
 
 3. **Should the SSE snapshot fixture be regenerated automatically, or pinned forever?**
    - What we know: D-15 says "byte-identical phase-wide" and the fixture is the source of truth.
    - What's unclear: How the fixture handles Phase 18's planned `ctx.waitUntil` amendment — the fixture should NOT need to change (waitUntil doesn't modify SSE bytes), but if it does, the regeneration policy needs documenting.
    - Recommendation: Pin forever; document that regeneration requires explicit D-15 amendment in plan-time.
+   - **RESOLVED:** Pinned forever per recommendation. Plan 17-01 Task 2 file-level docblock states "Do NOT regenerate without an explicit D-15 amendment in plan-time" and names Phase 18 ctx.waitUntil as the planned amendment that does NOT require fixture regeneration (waitUntil runs out-of-band; response bytes unchanged).
 
 4. **Is `wrangler dev` known to work with the current local environment (Windows, PowerShell, pnpm 10)?**
    - What we know: D-13 locks `pnpm dev:worker` = `wrangler dev`. The user has run `wrangler types` as part of `pnpm build` historically.
    - What's unclear: Whether `wrangler dev` itself has any Windows-specific friction (workerd binary, miniflare loopback) that would warrant a fallback to `wrangler dev --remote`.
    - Recommendation: First task in the dev-workflow plan — verify `wrangler dev` boots locally; if it doesn't, document `--remote` flag fallback and update D-13 plan accordingly.
+   - **RESOLVED:** Plan 17-02 Task 2 step 6 includes a local `pnpm build && wrangler deploy --dry-run` verification chain. `pnpm dev:worker` (= `wrangler dev`) is added to package.json scripts in the same task. If `wrangler dev` fails on Windows at execution time, the executor falls back to `wrangler dev --remote` per recommendation; D-13 plan stays unchanged because the fallback is invisible to the planning surface.
 
 5. **Postmaster Tools enrollment timing — during DNS-01 or after first warmup send?**
    - What we know: CONTEXT.md "Claude's Discretion" leaves this open.
    - What's unclear: Postmaster Tools verifies via DNS TXT record OR via uploaded HTML file. DNS TXT verification can run in parallel with Resend domain verification.
    - Recommendation: Enroll DURING DNS-01 — author the Postmaster Tools verification TXT record alongside the SPF/DKIM/MX/DMARC records. Single DNS-author session vs two.
+   - **RESOLVED:** Plan 17-06 Task 2 step 4 enrolls Postmaster Tools DURING DNS-01 (alongside SPF/DKIM/MX/DMARC) per recommendation. Single DNS-author session.
 
 ## Environment Availability
 
