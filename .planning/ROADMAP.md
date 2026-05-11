@@ -116,7 +116,27 @@ Plans:
   3. The chat client mints a sessionId via `crypto.randomUUID()` on first chat open, persists it in localStorage with `STORAGE_VERSION` bumped 1→2 (existing auto-clear path triggers), and includes it in every `/api/chat` request body; the server rejects non-UUIDv4 sessionIds at validation time.
   4. Anthropic prompt-cache integrity preserved: snapshot test confirms sessionId is absent from both the `system` block and `messages[0]` payload; live 3x identical-payload test within 5min still shows `cache_read_input_tokens > 0` on responses 2 and 3 (sessionId lives on the HTTP envelope only).
   5. Each transcript metadata block records `started_at`, `last_activity_at`, `referrer`, `user_agent`, `country` (`request.cf.country`), `region`, `colo`, `message_count`, `truncated`, plus `cache_read_input_tokens` / `cache_creation_input_tokens` per assistant turn — and the D-26 chat regression battery is 117/117 GREEN at phase close.
-**Plans**: TBD
+**Plans**: 8 plans across 4 waves (KV-05 added to REQUIREMENTS.md per Plan 18-01 / D-12)
+
+Plans:
+
+**Wave 0** *(no dependencies — Day 1 gate)*
+- [ ] 18-01-bootstrap-spike-and-requirements-PLAN.md — REQUIREMENTS.md KV-05 amendment + IDENT-02 D-04 amendment (v1.3-B6 changelog) + SPIKE-ctx-access-path.md resolving Pitfall 8 Astro APIRoute locals.runtime.ctx binding path
+
+**Wave 1** *(depends on Wave 0 — parallel branches by file ownership)*
+- [ ] 18-02-chat-transcripts-module-PLAN.md — NEW pure module src/lib/chat-transcripts.ts (KV-02..05 + META-01) with 16-test mock-KV suite tests/api/chat-transcripts.test.ts (TDD RED -> GREEN)
+- [ ] 18-03-validation-schema-sessionid-PLAN.md — src/lib/validation.ts RequestSchema sessionId: z.uuidv4().optional() (IDENT-02 + D-04) + 7-test tests/api/chat-session-id.test.ts (TDD)
+- [ ] 18-04-anthropic-payload-forward-defense-PLAN.md — tests/api/anthropic-payload-shape.test.ts +3 D-16 assertions (TEST-03 hardening) — byte-equality across sessionId-bearing vs no-sessionId calls + source-text guard for buildChatRequestArgs signature
+
+**Wave 2** *(depends on Waves 0+1 — parallel by file ownership)*
+- [ ] 18-05-api-chat-waituntil-wiring-PLAN.md — src/pages/api/chat.ts wire two ctx.waitUntil(appendTurn(...).catch(...)) calls at D-10 + D-11 anchors + captureRequestMeta helper + accumulator wiring (KV-01..05 + IDENT-02 + META-01 + META-02 + TEST-01 + TEST-03)
+- [ ] 18-06-client-sessionid-mint-PLAN.md — src/scripts/chat.ts STORAGE_VERSION 1->2 + ChatStorage sessionId + ensureSessionId on bubble click + streamChat body emission (IDENT-01 + D-01 + D-04 silent fail) + 8-test tests/client/chat-sessionid-mint.test.ts (TDD)
+
+**Wave 3** *(depends on Wave 2)*
+- [ ] 18-07-forward-defense-and-meta02-PLAN.md — NEW tests/build/append-turn-call-site.test.ts source-text forward-defense for D-10/D-11/D-09 anchors + tests/api/cache-hit-logs.test.ts +META-02 source-of-truth-once + sse-snapshot D-15 re-verify
+
+**Wave 4** *(depends on Wave 3 — operational verification)*
+- [ ] 18-08-uat-and-test03-live-PLAN.md — Author 18-UAT.md (8 numbered manual steps) + operator runs against preview + production (D-14 3x identical POST verifies cache_read_input_tokens > 0 on responses 2 + 3; D-15 cache-miss-blocks-close; ROADMAP success criteria 1-5 verified live)
 
 ### Phase 19: Cron Sweep — Scheduling + Idempotency (DRY_RUN)
 
