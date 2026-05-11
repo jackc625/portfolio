@@ -907,16 +907,17 @@ function initChat(): void {
           saveChatHistory(chatLog);
         }
 
-        // Update copy button to use final content
-        const copyBtn = botEl?.querySelector(".chat-copy-btn");
-        if (copyBtn) {
-          copyBtn.replaceWith(copyBtn.cloneNode(true));
-          const newCopyBtn = botEl?.querySelector(".chat-copy-btn") as HTMLElement;
-          if (newCopyBtn) {
-            newCopyBtn.addEventListener("click", () => {
-              copyToClipboard(botContent, newCopyBtn);
-            });
-          }
+        // WR-02 (Phase 17 review): use the shared createCopyButton helper
+        // so the live-stream path keeps the canonical COPY/COPIED label
+        // transition. Previously the rewire was cloneNode(true) + bare
+        // addEventListener — cloneNode does NOT clone event listeners, and
+        // the re-attached handler only called copyToClipboard, silently
+        // dropping the COPIED label swap that replay-path messages still
+        // showed. This restores UX parity across both paths and respects
+        // DEBT-04 (single shared helper).
+        const oldCopyBtn = botEl?.querySelector(".chat-copy-btn");
+        if (oldCopyBtn) {
+          oldCopyBtn.replaceWith(createCopyButton(() => botContent));
         }
 
         // Nudge after ~15 messages (D-29)
