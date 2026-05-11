@@ -1,14 +1,15 @@
 ---
-status: diagnosed
+status: complete
 phase: 17-foundations-migration-dns-debt-sweep
 source: [17-01-SUMMARY.md, 17-02-SUMMARY.md, 17-03-SUMMARY.md, 17-04-SUMMARY.md, 17-05-SUMMARY.md, 17-06-SUMMARY.md]
 started: 2026-05-10T00:00:00Z
-updated: 2026-05-10T00:00:00Z
+updated: 2026-05-11T00:00:00Z
+retest: 2026-05-11 — all 4 fixed gaps (UAT-GAP-01..04, Plans 17-07/08/09/10) re-tested and PASS on pnpm dev. Production deploy unblocked from a code-correctness standpoint; HUMAN-UAT.md still tracks dashboard/DNS/post-deploy items.
 ---
 
 ## Current Test
 
-[testing complete]
+[testing complete — all 10 tests pass after re-test]
 
 ## Tests
 
@@ -17,27 +18,22 @@ expected: Open a fresh incognito window. Visit https://jackcutrara.com/. Page lo
 result: pass
 
 ### 2. Apex domain (jackcutrara.com) browses correctly
-expected: On https://jackcutrara.com, navigate around the site (home → projects → about → back). Each page loads, navigation links work, no broken images, no SSL errors. Content matches what was on the old Pages deploy byte-equivalent.
-result: issue
-reported: "Got this error message in the console: Uncaught (in promise) AbortError: Transition was skipped"
-severity: major
+expected: |
+  RE-TEST: On `pnpm dev` localhost:4321, open DevTools Console. Navigate rapidly home → projects → about → home (click links faster than transitions complete). NO `AbortError: Transition was skipped` appears. (Fix: Plan 17-10 pageswap handler in BaseLayout.)
+result: pass
+prior_result: issue (2026-05-10) — "Uncaught (in promise) AbortError: Transition was skipped" on apex nav. Fix commit: 8fe670c.
+retest_pass: 2026-05-11 — UAT-GAP-04 fix verified on pnpm dev.
 
 ### 3. www subdomain (www.jackcutrara.com) loads correctly
 expected: Visit https://www.jackcutrara.com/. Page loads with HTTPS (no 525 SSL handshake error — the parking-page CNAME issue from Plan 17-02 Task 5 is fixed). Content matches the apex.
 result: pass
 
 ### 4. Chat widget streams response on production
-expected: On https://jackcutrara.com, click the chat bubble (bottom-right). Type "Hi" and submit. A response streams in token-by-token (not all at once, not blank). Stream completes cleanly. This verifies D-15 SSE byte-identical surface through the new Worker.
-result: issue
-reported: |
-  We have a new bug. Never noticed before. The chatbot assumes the user is "Jack".
-  Transcript:
-    user: hi
-    bot:  Hey Jack. What would you like to know?
-    user: who am i
-    bot:  You're Jack Cutrara, a software engineer based in Virginia... [continues describing the visitor AS Jack]
-  (Streaming itself worked — the regression is voice/identity in the system prompt.)
-severity: blocker
+expected: |
+  RE-TEST UAT-GAP-01 (voice-split): On `pnpm dev` localhost:4321, click chat bubble. Send `hi`. Bot greets the VISITOR (e.g., "Hi! How can I help you learn about Jack?") — NOT "Hey Jack". Then send `who am i`. Bot says it does NOT know who you are / asks you to introduce yourself — does NOT identify the visitor AS Jack. (Fix: Plan 17-07 third-person about-chat sources + leak guard.)
+result: pass
+prior_result: issue (2026-05-10) — "chatbot assumes user is Jack". Fix commits: 537a0e6, 05bf93d, 2aa627d.
+retest_pass: 2026-05-11 — UAT-GAP-01 fix verified on pnpm dev.
 
 ### 5. Chat panel scale-in animation (DEBT-05 CSS state machine)
 expected: Click the chat bubble. The panel appears with a brief scale-in animation from the bottom-right corner (~180ms, transform-origin bottom-right). Panel is fully visible after the animation completes.
@@ -52,17 +48,18 @@ expected: In DevTools (Rendering tab), set "Emulate CSS prefers-reduced-motion: 
 result: pass
 
 ### 8. DEV-only client metrics log fires (DEBT-02 client seam, manual dev verification)
-expected: Run `pnpm dev`. Open http://localhost:4321/, open DevTools Console, click chat bubble, send a message. After the response completes, the Console shows ONE `chat.response_metrics_client` log line with shape `{ elapsed_ms: <integer> }`. (Production is tree-shaken; this verifies the dev seam.)
-result: issue
-reported: "It's failing by the way, the chatbot sidebar isnt even popping up"
-severity: major
-note: Could not get to the cache_metrics log assertion because the chat panel itself does not open on `pnpm dev` localhost (production-side panel-open works — Test 5 + Test 6 passed against jackcutrara.com). Dev-only regression in chat panel mount/open path.
+expected: |
+  RE-TEST UAT-GAP-02 (panel-open on dev): On `pnpm dev` localhost:4321, click chat bubble. Panel OPENS (scale-in animation, fully visible). Send a message. After the response completes, DevTools Console shows ONE `chat.response_metrics_client` log line with shape `{ elapsed_ms: <integer> }`. (Fix: Plan 17-08 removed inline display:none from #chat-panel; CSS state machine now wins.)
+result: pass
+prior_result: issue (2026-05-10) — "chatbot sidebar isnt even popping up" on pnpm dev. Fix commits: 7f529a0, ce0d2af, 7af2841.
+retest_pass: 2026-05-11 — UAT-GAP-02 fix verified on pnpm dev; panel opens and metrics log fires.
 
 ### 9. COPY button label transitions on bot messages (WR-02 fix)
-expected: In the chat panel on production, after a bot response renders, hover over the bot message — a COPY button appears. Click it. The label briefly changes to "COPIED" (or similar), then returns to "COPY". The button is fully wired (not a dead-clone).
-result: issue
-reported: "No, it never changes to \"COPIED\""
-severity: major
+expected: |
+  RE-TEST UAT-GAP-03: On `pnpm dev` localhost:4321, send a chat message, wait for bot response. Hover over the bot message — COPY button appears. Click it. The button STAYS visible and the label briefly changes to "COPIED" (or similar) for ~1.5s, then returns to "COPY". (Fix: Plan 17-09 .copy-success CSS rule pins button visible during feedback + aligned timeout windows.)
+result: pass
+prior_result: issue (2026-05-10) — "it never changes to COPIED". Fix commits: dcf597b, b35ad94.
+retest_pass: 2026-05-11 — UAT-GAP-03 fix verified on pnpm dev; COPIED label visible.
 
 ### 10. Long chat stream does not time out prematurely (WR-01 fix)
 expected: Send a chat message that takes a long time to fully stream (e.g., "Tell me everything about Jack's portfolio in detail — projects, skills, background, the chat widget, all of it"). The stream continues for >30s without aborting; the response completes naturally without a "timeout" / abort error in the UI.
@@ -71,11 +68,13 @@ result: pass
 ## Summary
 
 total: 10
-passed: 6
-issues: 4
+passed: 10
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
+
+retest_note: All 4 prior issues (tests 2, 4, 8, 9) re-tested 2026-05-11 against `pnpm dev` localhost:4321 and PASS. Fix commits: Plan 17-07 (UAT-GAP-01), 17-08 (UAT-GAP-02), 17-09 (UAT-GAP-03), 17-10 (UAT-GAP-04). Original Gaps section below preserved as diagnostic history.
 
 ## Gaps
 
