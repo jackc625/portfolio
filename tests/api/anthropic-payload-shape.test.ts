@@ -18,8 +18,11 @@
  * by editing the test.
  */
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { buildChatRequestArgs } from "../../src/prompts/chat-request-shape";
 import type { PortfolioContext } from "../../src/prompts/portfolio-context-types";
+import { validateRequest } from "../../src/lib/validation";
 import portfolioContext from "../../src/data/portfolio-context.json";
 
 // Canonical UUIDv4 pattern. Phase 18 IDENT-02 will mint per-session UUIDs;
@@ -65,5 +68,68 @@ describe("TEST-03: Anthropic payload shape — no per-session fields in cacheabl
     const sys1 = JSON.stringify(args1.system);
     const sys2 = JSON.stringify(args2.system);
     expect(sys1).toBe(sys2);
+  });
+});
+
+describe("D-16: sessionId-on-envelope path (Plan 18-04 extension — TEST-03 hardening)", () => {
+  // Plan 18-03 extended RequestSchema with sessionId: z.uuidv4().optional().
+  // The cacheable Anthropic surface (system + messages[0]) MUST stay byte-identical
+  // regardless of whether sessionId appears on the HTTP envelope (D-16 + RESEARCH § Pitfall 3).
+  //
+  // The existing 5 tests above assert ABSENCE (no literal "sessionId", no UUIDv4 pattern,
+  // system byte-equal across calls with different messages). The 3 tests below ADD
+  // forward-defense for the regression class those tests miss: a template-string
+  // concatenation that smuggles sessionId into the system block (e.g., `session ${sid}`).
+  // Pattern-grep against UUIDv4 regex catches some leaks but misses synthetic IDs.
+  // Byte-equality across sessionId-bearing vs no-sessionId calls catches BOTH cases.
+
+  const VALID_SID = "8b0f7f1c-1234-4567-8901-abcdef012345";
+  const FIXED_MESSAGES = [{ role: "user" as const, content: "Hi" }];
+
+  it("(a) buildChatRequestArgs produces byte-identical system + messages[0] regardless of sessionId on envelope", () => {
+    // Simulate api/chat.ts code path: validate two bodies — one with sessionId, one without.
+    const withSid = validateRequest({ sessionId: VALID_SID, messages: FIXED_MESSAGES });
+    const withoutSid = validateRequest({ messages: FIXED_MESSAGES });
+
+    expect(withSid.success).toBe(true);
+    expect(withoutSid.success).toBe(true);
+
+    if (!withSid.success || !withoutSid.success) return; // narrow TS
+
+    // Both bodies surface the same messages[] to buildChatRequestArgs.
+    // sessionId NEVER threads in — and this test forward-defends that promise.
+    const ctx = portfolioContext as unknown as PortfolioContext;
+    const argsWithSid = buildChatRequestArgs(ctx, withSid.data.messages);
+    const argsWithoutSid = buildChatRequestArgs(ctx, withoutSid.data.messages);
+
+    expect(JSON.stringify(argsWithSid.system)).toBe(JSON.stringify(argsWithoutSid.system));
+    expect(JSON.stringify(argsWithSid.messages[0])).toBe(JSON.stringify(argsWithoutSid.messages[0]));
+  });
+
+  it("(b) buildChatRequestArgs source-text contains zero sessionId references (no template-string leak)", () => {
+    // RESEARCH § Pitfall 3: a template-string concatenation `${sid}` would slip past
+    // the literal/UUIDv4-pattern greps in the legacy 5 tests. Source-text forward-defense
+    // asserts chat-request-shape.ts has no legitimate reason to mention sessionId at all.
+    const src = readFileSync(join(process.cwd(), "src/prompts/chat-request-shape.ts"), "utf8");
+    expect(src).toMatch(/export\s+function\s+buildChatRequestArgs\s*\(/);
+    const sigMatch = src.match(/buildChatRequestArgs\s*\(([^)]*)\)/);
+    expect(sigMatch).not.toBeNull();
+    expect(sigMatch![1]).not.toContain("sessionId");
+    expect(src).not.toMatch(/sessionId/);
+  });
+
+  it("(c) validateRequest accepts a request body carrying sessionId on the HTTP envelope", () => {
+    // Closes the loop with Plan 18-03 RequestSchema extension. If the schema later
+    // strips .optional() or changes to z.uuid()/z.string().uuid(), this test catches it
+    // at the cache-integrity test file (an additional surface beyond Plan 18-03's
+    // dedicated tests/api/chat-session-id.test.ts).
+    const result = validateRequest({
+      sessionId: VALID_SID,
+      messages: FIXED_MESSAGES,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.sessionId).toBe(VALID_SID);
+    }
   });
 });
