@@ -31,7 +31,7 @@
 ### Identity — sessionId (IDENT-)
 
 - [ ] **IDENT-01** — Client mints sessionId via `crypto.randomUUID()` on first chat open. Persisted in localStorage with `STORAGE_VERSION` bumped 1→2 (leverages existing auto-clear path). Sent in `/api/chat` request body.
-- [ ] **IDENT-02** — Server validates sessionId as UUIDv4 in `src/lib/validation.ts` (`z.uuidv4().optional()` per Zod v4 — version-specific match for IDENT-02's "UUIDv4 regex" wording). **Missing-tolerance branch (D-04 amendment):** absent sessionId is acceptable — server skips `ctx.waitUntil(appendTurn(...))` calls entirely and still serves the Anthropic SSE stream (chat UX preserved per D-26). Present-but-malformed sessionId → 400 invalid_request (original IDENT-02 contract). **sessionId is NEVER threaded into the Anthropic message payload** — preserves prompt cache hit rate. Lives on the HTTP envelope only. *Amended 2026-05-11 (v1.3-B6 / Plan 18-01) per CONTEXT.md D-04.*
+- [x] **IDENT-02** — Server validates sessionId as UUIDv4 in `src/lib/validation.ts` (`z.uuidv4().optional()` per Zod v4 — version-specific match for IDENT-02's "UUIDv4 regex" wording). **Missing-tolerance branch (D-04 amendment):** absent sessionId is acceptable — server skips `ctx.waitUntil(appendTurn(...))` calls entirely and still serves the Anthropic SSE stream (chat UX preserved per D-26). Present-but-malformed sessionId → 400 invalid_request (original IDENT-02 contract). **sessionId is NEVER threaded into the Anthropic message payload** — preserves prompt cache hit rate. Lives on the HTTP envelope only. *Amended 2026-05-11 (v1.3-B6 / Plan 18-01) per CONTEXT.md D-04.*
 
 ### Metadata Capture (META-)
 
@@ -141,7 +141,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | KV-04 | Phase 18 | Complete |
 | KV-05 | Phase 18 | Complete |
 | IDENT-01 | Phase 18 | Pending |
-| IDENT-02 | Phase 18 | Pending |
+| IDENT-02 | Phase 18 | Complete |
 | META-01 | Phase 18 | Complete |
 | META-02 | Phase 18 | Pending |
 | CRON-01 | Phase 19 | Pending |
