@@ -27,6 +27,18 @@ export default {
     // Phase 19 will replace with: ctx.waitUntil(deliverDue(_env, _controller.scheduledTime));
     // Stub kept here so wrangler.jsonc triggers.crons declaration is wireable
     // in Phase 19 with a single ./worker.ts edit (no entrypoint change needed).
+    //
+    // WR-05 (Phase 17 review): emit a structured warn line so an accidental
+    // cron wiring (a contributor adds triggers.crons in wrangler.jsonc before
+    // Phase 19's deliverDue lands) is visible in Workers Logs. Without this
+    // breadcrumb the stub would fire on schedule with zero operational
+    // visibility. The wrangler-shape test accepts a non-empty triggers.crons
+    // array, so the guardrail is the log line, not the test.
+    console.warn("worker.scheduled.stub", {
+      note: "Phase 19 will replace with deliverDue(env, controller.scheduledTime)",
+      scheduledTime: _controller.scheduledTime,
+      cron: _controller.cron,
+    });
     ctx.waitUntil(Promise.resolve());
   },
 } satisfies ExportedHandler<Env>;
