@@ -29,7 +29,20 @@ const PURIFY_CONFIG: Config = {
   RETURN_TRUSTED_TYPE: false,
 };
 
-// DOMPurify hook: add target="_blank" and rel="noopener noreferrer" to all links
+// DOMPurify hook: add target="_blank" and rel="noopener noreferrer" to all links.
+// WR-08 (Phase 17 review): DOMPurify's hook registry is process-global —
+// `addHook` appends to a shared list. Under HMR or vi.resetModules() this
+// module re-evaluates and registers a duplicate identical hook on every
+// reload, so each sanitize() call would run the hook twice (correct output
+// but wasted work) and the side effect outlives the chat module's scope (any
+// other code anywhere that ever calls DOMPurify.sanitize would get
+// target/rel applied to ALL anchors — surprising at a distance). Mirror
+// the DEBT-04 remove-then-add idempotency pattern: removeAllHooks for
+// "afterSanitizeAttributes" clears any previously-registered hook for this
+// entry point so re-evaluation always lands at exactly one registered
+// hook. DOMPurify v3 exposes `removeHooks(entryPoint)` which clears the
+// array; safe no-op when no hook is registered (sets to []).
+DOMPurify.removeHooks("afterSanitizeAttributes");
 DOMPurify.addHook("afterSanitizeAttributes", (node) => {
   if (node.tagName === "A") {
     node.setAttribute("target", "_blank");
