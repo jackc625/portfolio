@@ -26,11 +26,12 @@
 - [ ] **KV-02** — `src/lib/chat-transcripts.ts` provides a pure `appendTurn(kv, sessionId, role, content, meta)` API. Key naming `live:{sessionId}`. Schema versioned (`v: 1`). `expirationTtl: 30 * 24 * 3600` (30 days) on every `put()`.
 - [ ] **KV-03** — KV `metadata` field carries `{ last_activity_at, msg_count }` so cron `list({prefix:'live:'})` filters without per-key `get()`. Eliminates O(n) round-trips on cron path.
 - [ ] **KV-04** — Transcript values bounded: hard message-count cap (30 turns), `referrer` / `user_agent` truncated to 512 chars to prevent log poisoning. Worst-case value size well under KV's 25 MiB ceiling.
+- [ ] **KV-05** — Per-sessionId write quota: `appendTurn` call count tracked in KV `metadata` as `{ window_started_at, window_count }` (inline, NOT a sibling key — cheaper, more cohesive). Hard cap of 100 writes per sessionId per rolling 1-hour window. On overflow, server emits `console.warn("chat.transcript.quota_exceeded", { sessionId, count_in_window })` and continues serving the SSE stream silently (same UX posture as D-09 silent-fail). Race policy: last-writer-wins per D-13 — lossy concurrent-write counter is acceptable at v1.3 scale. Distinct from the locked-deferred per-IP rate limit (v1.4+); KV-05 protects against scripted resubmits within an authenticated session.
 
 ### Identity — sessionId (IDENT-)
 
 - [ ] **IDENT-01** — Client mints sessionId via `crypto.randomUUID()` on first chat open. Persisted in localStorage with `STORAGE_VERSION` bumped 1→2 (leverages existing auto-clear path). Sent in `/api/chat` request body.
-- [ ] **IDENT-02** — Server validates sessionId as UUIDv4 regex in `src/lib/validation.ts`. Rejects malformed. **sessionId is NEVER threaded into the Anthropic message payload** — preserves prompt cache hit rate. Lives on the HTTP envelope only.
+- [ ] **IDENT-02** — Server validates sessionId as UUIDv4 in `src/lib/validation.ts` (`z.uuidv4().optional()` per Zod v4 — version-specific match for IDENT-02's "UUIDv4 regex" wording). **Missing-tolerance branch (D-04 amendment):** absent sessionId is acceptable — server skips `ctx.waitUntil(appendTurn(...))` calls entirely and still serves the Anthropic SSE stream (chat UX preserved per D-26). Present-but-malformed sessionId → 400 invalid_request (original IDENT-02 contract). **sessionId is NEVER threaded into the Anthropic message payload** — preserves prompt cache hit rate. Lives on the HTTP envelope only. *Amended 2026-05-11 (v1.3-B6 / Plan 18-01) per CONTEXT.md D-04.*
 
 ### Metadata Capture (META-)
 
@@ -138,6 +139,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | KV-02 | Phase 18 | Pending |
 | KV-03 | Phase 18 | Pending |
 | KV-04 | Phase 18 | Pending |
+| KV-05 | Phase 18 | Pending |
 | IDENT-01 | Phase 18 | Pending |
 | IDENT-02 | Phase 18 | Pending |
 | META-01 | Phase 18 | Pending |
@@ -155,7 +157,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | TEST-02 | Phase 17 | Implemented (Plan 17-02 SUMMARY: D-15 byte-identical verified on production jackcutrara.com + www.jackcutrara.com post-flip against Plan 17-01 fixture) |
 | TEST-03 | Phases 17, 18 (cross-phase gate) | Implemented forward-defense (Plan 17-05 SUMMARY: snapshot test GREEN on Phase 17 source; locks current clean state for Phase 18 IDENT-02) |
 
-**Coverage:** 35 / 35 requirements mapped (28 v1.3 baseline requirements + 4 UAT-GAP gap-closure requirements + 3 cross-phase TEST gates). Zero orphans.
+**Coverage:** 36 / 36 requirements mapped (29 v1.3 baseline requirements + 4 UAT-GAP gap-closure requirements + 3 cross-phase TEST gates). Zero orphans.
 
 **Cross-phase gate notes:**
 - **TEST-01** (D-26 chat regression battery) applies to Phases 17 and 18 — both touch `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts` / `validation.ts`. Phases 19 and 20 touch new modules (`chat-delivery.ts`, `email/resend.ts`) and the `worker.ts` `scheduled` handler only — no chat-surface mutations — so the D-26 gate is informational rather than blocking there. Plan-phase may re-run it as a smoke check.
@@ -165,6 +167,8 @@ Explicit exclusions — design decisions made at milestone planning:
 ---
 
 *Last updated: 2026-05-11 — Plan 17-08 close-out: UAT-GAP-02 (#chat-panel inline display:none removal) implemented + Phase 17 gap closure COMPLETE (4 commits: ce0d2af Task 1 fixture rewrite + 7f529a0 Task 2 ChatWidget.astro display:none removal + no-inline-display-on-chat-panel.test.ts NEW + listener-dedup typecheck cleanup + 7af2841 Task 2-ALPHA Rule 3 deviation WR-04 ALLOW_LOOPBACK three-signal disjunction + validation-loopback-source.test.ts NEW regression-lock + metadata commit Task 3 17-08-SUMMARY.md + DEPLOY-GATE.md operator-signed gate=CONFIRMED). pnpm test = 419 PASS / 0 FAIL / 2 SKIP (was 413/0/2 at end of Plan 17-10; +6 net new tests). pnpm exec astro check = 0/0/0 (FIRST TIME the typecheck passes cleanly on main since Plan 17-03 commit 0ad77b3 — 4-plan-deep listener-dedup carry-forward debt absorbed). pnpm build = clean. D-26 chat-surface regression battery 30/30 GREEN. D-15 SSE byte-identical anchor PRESERVED. DEBT-05 architecture now structurally enforced at BOTH specificity tiers (JS imperative writes since Plan 17-03 + inline component-template declarations since Plan 17-08). WR-04 invariant now under regression-lock via tests/build/validation-loopback-source.test.ts. Phase 17 gap closure COMPLETE — all four UAT gap-closure plans CLOSED (17-07 Wave 7 + 17-09 Wave 8 + 17-10 Wave 9 + 17-08 Wave 10); 10/10 plans complete; 100%. Local main 38 commits ahead of origin/main at HEAD 7af2841 (39 after metadata commit). DEPLOY-GATE.md operator-cleared next `git push origin main` — user controls actual push (executor MUST NOT push). After deploy: Pages retirement (FOUND-03 sub-task) unblocks via 24h warm window per D-02. Plan 17-09 + 17-10 close-outs below for context.
+
+v1.3-B6 (2026-05-11) — Plan 18-01 amendment: added KV-05 (per-sessionId write quota; 100 writes per rolling 1-hour window; storage inline in KV metadata as `{ window_started_at, window_count }`; overflow → silent log + skip put per D-09 posture); amended IDENT-02 to record the D-04 missing-tolerance branch (absent sessionId acceptable; malformed sessionId still → 400). No other requirement text changed.
 
 Plan 17-09 close-out: UAT-GAP-03 (COPY button feedback window) implemented (2 atomic commits: dcf597b CSS rule + 10-test chat-copy-button.test.ts replacement; b35ad94 chat.ts COPY_FEEDBACK_MS = 1500 const + M3 inline color write deletion + B-iter2 timeout literal swap). pnpm test = 409 PASS / 2 SKIP / 0 FAIL (was 404/0/2 baseline; +5 net new tests; first all-green AND >= 405 tests). DEBT-05 anti-imperative-write pattern extended from `display` to `color`. Phase 17 progress at Plan 17-09 close: 8/10 plans complete. Plan 17-07 close-out below for context.
 
