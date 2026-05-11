@@ -36,7 +36,7 @@
 ### Metadata Capture (META-)
 
 - [x] **META-01** — Each transcript captures `started_at`, `last_activity_at`, `referrer`, `user_agent`, `country` (`request.cf.country`), `region`, `colo`, `message_count`, `truncated` boolean.
-- [ ] **META-02** — Anthropic prompt-cache token counts (`cache_read_input_tokens`, `cache_creation_input_tokens`) recorded per assistant turn in transcript metadata. Closes DEBT-02.
+- [x] **META-02** — Anthropic prompt-cache token counts (`cache_read_input_tokens`, `cache_creation_input_tokens`) recorded per assistant turn in transcript metadata. Closes DEBT-02.
 
 ### Cron Sweep — Scheduling + Idempotency (CRON-)
 
@@ -143,7 +143,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | IDENT-01 | Phase 18 | Pending |
 | IDENT-02 | Phase 18 | Complete |
 | META-01 | Phase 18 | Complete |
-| META-02 | Phase 18 | Pending |
+| META-02 | Phase 18 | Complete |
 | CRON-01 | Phase 19 | Pending |
 | CRON-02 | Phase 19 | Pending |
 | CRON-03 | Phase 19 | Pending |
