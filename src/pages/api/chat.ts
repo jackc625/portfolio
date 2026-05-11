@@ -11,8 +11,40 @@ import {
   isAllowedOrigin,
   MAX_BODY_SIZE,
 } from "../../lib/validation";
+import { appendTurn, type AppendTurnMeta } from "../../lib/chat-transcripts";
 
-export const POST: APIRoute = async ({ request }) => {
+/**
+ * META-01 first-turn metadata snapshot — Plan 18-05 / D-08 / Pitfall 4.
+ *
+ * Snapshots referrer + user_agent (HTTP headers) and country + region + colo
+ * (Cloudflare request.cf injection at the edge — null in `wrangler dev` per
+ * RESEARCH § Pitfall 4). chat-transcripts.appendTurn pins these on the first
+ * turn and preserves them on subsequent turns (META-01 first-turn-only-pin
+ * convention per CONTEXT.md Claude's Discretion default).
+ */
+function captureRequestMeta(request: Request): AppendTurnMeta {
+  const cf = (request as unknown as { cf?: { country?: string; region?: string; colo?: string } }).cf;
+  return {
+    referrer: request.headers.get("Referer"),
+    user_agent: request.headers.get("User-Agent"),
+    country: cf?.country ?? null,
+    region: cf?.region ?? null,
+    colo: cf?.colo ?? null,
+  };
+}
+
+export const POST: APIRoute = async ({ request, locals }) => {
+  // Plan-time-resolved path to Workers ExecutionContext for ctx.waitUntil(appendTurn(...)).
+  // RESEARCH § Open Questions Q1 (RESOLVED): Astro v6 / @astrojs/cloudflare 13.1.7 exposes ExecutionContext at
+  // locals.cfContext (locals.runtime.ctx was REMOVED in v6 — confirmed via direct read of
+  // node_modules/@astrojs/cloudflare/dist/utils/handler.js:64-91). RESEARCH § Pitfall 1: NEVER destructure
+  // ctx — loses `this` binding ("Illegal invocation" runtime error).
+  // Defensive fallback (D-26 anti-regression): vitest tests invoke POST({ request } as never) without a
+  // real Workers locals object. The no-op waitUntil keeps chat surface bytes byte-identical in those tests;
+  // production Workers runtime ALWAYS supplies locals.cfContext per the adapter handler.
+  const ctx = (locals as { cfContext?: { waitUntil: (p: Promise<unknown>) => void } } | undefined)?.cfContext
+    ?? { waitUntil: (_p: Promise<unknown>) => {} };
+
   // S9: CORS check — exact origin whitelist, NOT endsWith()
   const origin = request.headers.get("Origin");
   if (!isAllowedOrigin(origin)) {
