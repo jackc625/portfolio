@@ -34,7 +34,7 @@ function captureRequestMeta(request: Request): AppendTurnMeta {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Plan-time-resolved path to Workers ExecutionContext for ctx.waitUntil(appendTurn(...)).
+  // Plan-time-resolved path to Workers ExecutionContext for fire-and-forget appendTurn writes.
   // RESEARCH § Open Questions Q1 (RESOLVED): Astro v6 / @astrojs/cloudflare 13.1.7 exposes ExecutionContext at
   // locals.cfContext (locals.runtime.ctx was REMOVED in v6 — confirmed via direct read of
   // node_modules/@astrojs/cloudflare/dist/utils/handler.js:64-91). RESEARCH § Pitfall 1: NEVER destructure
@@ -115,6 +115,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // S7: Sanitize history
   const messages = sanitizeMessages(validation.data.messages);
 
+  // D-10 / D-04: USER-TURN KV write — fire-and-forget AFTER validation succeeds, BEFORE Anthropic stream
+  // opens (durability anchor). Per D-04 (REQUIREMENTS.md v1.3-B6 amendment): absent sessionId skips
+  // appendTurn entirely; SSE stream still serves. Per RESEARCH § Pitfall 1: .catch chains BEFORE waitUntil
+  // — rejections silently swallowed otherwise. Plan 18-07 source-text test forward-defends this shape.
+  if (validation.data.sessionId) {
+    const sid = validation.data.sessionId;
+    const userContent = messages[messages.length - 1].content;
+    const sessionMeta = captureRequestMeta(request);
+    ctx.waitUntil(
+      appendTurn(env.CHAT_KV, sid, "user", userContent, sessionMeta).catch((err: unknown) => {
+        console.error("chat.transcript.write_failed", {
+          sessionId: sid,
+          role: "user",
+          error_class: err instanceof Error ? err.constructor.name : "unknown",
+        });
+      }),
+    );
+  }
+
   // D-08/D-11: Stream response from Claude Haiku
   const apiKey = env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -129,6 +148,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const stream = new ReadableStream({
     async start(controller) {
       try {
+        // D-11 / META-02: per-token assistant text accumulator. Single flush at controller.close()
+        // — NEVER per-token (KV's 1 write/sec/key cap would 429 the transcript per RESEARCH § Pitfall 6).
+        let accumulator = "";
         let truncated = false;
         // CR-01 (Phase 17 review): Anthropic's streaming protocol delivers the
         // FINAL output_tokens in `message_delta.usage`, NOT in `message_start`.
@@ -155,6 +177,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
                 `data: ${JSON.stringify({ text: event.delta.text })}\n\n`
               )
             );
+            accumulator += event.delta.text;
           } else if (event.type === "message_delta") {
             // Anthropic signals final stop reason here. "max_tokens" means the model
             // hit the output-token ceiling mid-generation and the reply is clipped.
@@ -200,6 +223,35 @@ export const POST: APIRoute = async ({ request, locals }) => {
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
+
+        // D-11 / D-04 / META-02: ASSISTANT-TURN KV write AFTER controller.close() — accumulator strategy.
+        // Per D-04: skipped when sessionId absent. Skipped when accumulator empty (zero-token reply edge).
+        // META-02 source-of-truth-once: cacheUsage closure object passed BYTE-IDENTICAL into appendTurn's
+        // meta — same fields the chat.cache_metrics log line consumes. .catch BEFORE waitUntil per Pitfall 1.
+        if (validation.data.sessionId && accumulator) {
+          const sid = validation.data.sessionId;
+          // META-01 first-turn pin (Plan 18-02 appendTurn idempotent on meta): pass the same
+          // captureRequestMeta(request) snapshot used for the user-turn write. If user-turn write
+          // failed per D-09 silent posture, the assistant-turn write is the FIRST surviving write
+          // to KV — passing real meta (not nulls) ensures META-01 fields (country/region/colo +
+          // referrer/user_agent) land correctly. On the normal happy path, appendTurn preserves
+          // existing pinned meta and ignores this snapshot.
+          const assistantMeta = captureRequestMeta(request);
+          ctx.waitUntil(
+            appendTurn(env.CHAT_KV, sid, "assistant", accumulator, {
+              ...assistantMeta,
+              cache_read_input_tokens: cacheUsage?.cache_read_input_tokens ?? 0,
+              cache_creation_input_tokens: cacheUsage?.cache_creation_input_tokens ?? 0,
+            }).catch((err: unknown) => {
+              console.error("chat.transcript.write_failed", {
+                sessionId: sid,
+                role: "assistant",
+                content_length: accumulator.length,
+                error_class: err instanceof Error ? err.constructor.name : "unknown",
+              });
+            }),
+          );
+        }
       } catch {
         // Addresses review concern: mid-stream error handling
         // If error occurs after stream starts, send error event so client
