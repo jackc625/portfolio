@@ -72,19 +72,24 @@ interface StoredMessage {
 }
 
 interface ChatStorage {
-  version: 1;
+  version: 2;            // IDENT-01 / D-02: bumped 1→2 — existing auto-clear at line ~104 wipes v1 blobs
+  sessionId: string;     // IDENT-01: client-minted UUIDv4 (Plan 18-06 / D-01)
   messages: StoredMessage[];
   lastActive: string; // ISO 8601
 }
 
 const STORAGE_KEY = "chat-history";
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;  // IDENT-01 / D-02: bumped 1→2 — Plan 18-06
 const MAX_MESSAGES = 50;
 const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-function saveChatHistory(msgs: StoredMessage[]): void {
+function saveChatHistory(msgs: StoredMessage[], sid: string | undefined): void {
+  // D-04: no persistence without sessionId. Caller's chat surface still works
+  // (in-memory chatLog continues); next page-load loses cross-visit continuity.
+  if (!sid) return;
   const data: ChatStorage = {
     version: STORAGE_VERSION,
+    sessionId: sid,
     messages: msgs.slice(-MAX_MESSAGES),
     lastActive: new Date().toISOString(),
   };
@@ -95,7 +100,7 @@ function saveChatHistory(msgs: StoredMessage[]): void {
   }
 }
 
-function loadChatHistory(): StoredMessage[] | null {
+function loadChatHistory(): { messages: StoredMessage[]; sessionId: string } | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
@@ -111,7 +116,7 @@ function loadChatHistory(): StoredMessage[] | null {
       localStorage.removeItem(STORAGE_KEY);
       return null;
     }
-    return data.messages;
+    return { messages: data.messages, sessionId: data.sessionId };
   } catch {
     // Corrupted JSON or other error -- clear and start fresh
     try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
@@ -120,6 +125,41 @@ function loadChatHistory(): StoredMessage[] | null {
 }
 
 let chatLog: StoredMessage[] = [];
+
+// IDENT-01 / D-01: module-scoped sessionId state. Surfaces to streamChat body
+// construction. Undefined when mint or persist fails (D-04 silent fail).
+let sessionId: string | undefined = undefined;
+
+/**
+ * IDENT-01 / D-01 / D-04: idempotent sessionId mint sub-routine.
+ *
+ * Called from the bubble-click handler BEFORE openPanel animation begins
+ * (per CONTEXT.md "Specifics"). Order: click → ensureSessionId → openPanel.
+ *
+ * - Cross-visit continuity (D-01): if a v2 blob with sessionId exists in
+ *   localStorage, adopt it (24h TTL not expired AND version matches →
+ *   loadChatHistory returns it).
+ * - Fresh mint: if no stored sessionId, call crypto.randomUUID() and
+ *   persist immediately via saveChatHistory so next page-load resumes.
+ * - D-04 silent fail: if crypto.randomUUID throws (rare — extension blocks
+ *   Web Crypto) OR localStorage throws (private browsing / quota), leave
+ *   sessionId undefined. streamChat body shape conditionally omits the
+ *   field; server's z.uuidv4().optional() accepts the absent branch.
+ */
+function ensureSessionId(): void {
+  if (sessionId) return; // idempotent — multiple calls are safe
+  const stored = loadChatHistory();
+  if (stored?.sessionId) {
+    sessionId = stored.sessionId; // D-01 cross-visit continuity
+    return;
+  }
+  try {
+    sessionId = crypto.randomUUID();
+    saveChatHistory(chatLog, sessionId);
+  } catch {
+    sessionId = undefined; // D-04: field will be omitted from /api/chat body
+  }
+}
 
 // ============================================
 // State Management (D-26)
@@ -188,7 +228,13 @@ export async function streamChat(
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: chatMessages }),
+      // IDENT-01 / D-04: sessionId emitted when present; OMITTED entirely when
+      // undefined (matches server's z.uuidv4().optional() — field absent ≠ field null).
+      body: JSON.stringify(
+        sessionId
+          ? { sessionId, messages: chatMessages }
+          : { messages: chatMessages }
+      ),
       signal: controller.signal,
     });
     // WR-01: DO NOT clearTimeout here. Keep the abort armed across the body
@@ -648,15 +694,22 @@ function initChat(): void {
     // from the first open, so replay is skipped.
     if (chatLog.length === 0) {
       const stored = loadChatHistory();
-      if (stored && stored.length > 0) {
-        chatLog = stored;
+      if (stored && stored.messages.length > 0) {
+        chatLog = stored.messages;
+        // IDENT-01 / D-01: adopt persisted sessionId for cross-visit continuity.
+        // ensureSessionId() already ran on bubble-click before openPanel, so
+        // the module-scoped sessionId is already set to stored.sessionId in
+        // the common path. This assignment is a no-op redundancy guard for
+        // the edge case where openPanel is invoked without bubble-click
+        // (test fixtures, future programmatic open).
+        sessionId = stored.sessionId;
         // Also populate the API messages array so continued conversation has context
-        for (const msg of stored) {
+        for (const msg of stored.messages) {
           messages.push({ role: msg.role === "user" ? "user" : "assistant", content: msg.content });
         }
         // Batch DOM injection via DocumentFragment to avoid multiple repaints
         const fragment = document.createDocumentFragment();
-        for (const msg of stored) {
+        for (const msg of stored.messages) {
           const wrapper = document.createElement("div");
           wrapper.className = "chat-message-wrapper";
           if (msg.role === "user") {
@@ -724,6 +777,10 @@ function initChat(): void {
     if (panelOpen) {
       closePanel();
     } else {
+      // IDENT-01 / D-01 / D-04: mint sessionId BEFORE openPanel animation
+      // begins so the first user-submit POST already carries the field.
+      // Order: click → ensureSessionId → openPanel (per CONTEXT.md "Specifics").
+      ensureSessionId();
       openPanel();
     }
   });
@@ -868,7 +925,7 @@ function initChat(): void {
 
     // Persist user message (D-22)
     chatLog.push({ role: "user", content, timestamp: new Date().toISOString() });
-    saveChatHistory(chatLog);
+    saveChatHistory(chatLog, sessionId);
 
     // Clear input
     $input.value = "";
@@ -930,7 +987,7 @@ function initChat(): void {
           // Persist bot message ONLY at stream completion (D-22)
           // Interrupted SSE streams (AbortController timeout, network error) do NOT reach here
           chatLog.push({ role: "bot", content: botContent, timestamp: new Date().toISOString() });
-          saveChatHistory(chatLog);
+          saveChatHistory(chatLog, sessionId);
         }
 
         // WR-02 (Phase 17 review): use the shared createCopyButton helper

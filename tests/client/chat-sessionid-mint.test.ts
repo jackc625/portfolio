@@ -173,12 +173,15 @@ describe("IDENT-01 — sessionId mint on bubble click (Plan 18-06 / D-01 / D-02 
       // Mock fetch returning a resolved Response with an empty SSE-like body.
       // We only need fetch to be called once with the body — we do not need to
       // exercise the SSE reader loop for this assertion.
-      const fetchMock = vi.fn(async () => {
-        return new Response("data: [DONE]\n\n", {
-          status: 200,
-          headers: { "Content-Type": "text/event-stream" },
-        });
-      });
+      // Typed signature so mock.calls[0] has tuple type [input, init?].
+      const fetchMock = vi.fn(
+        async (_input: RequestInfo | URL, _init?: RequestInit): Promise<Response> => {
+          return new Response("data: [DONE]\n\n", {
+            status: 200,
+            headers: { "Content-Type": "text/event-stream" },
+          });
+        },
+      );
       (globalThis as unknown as { fetch: unknown }).fetch = fetchMock;
 
       await import("../../src/scripts/chat");
@@ -198,8 +201,9 @@ describe("IDENT-01 — sessionId mint on bubble click (Plan 18-06 / D-01 / D-02 
 
       expect(fetchMock).toHaveBeenCalledTimes(1);
       const fetchCall = fetchMock.mock.calls[0];
-      const requestInit = fetchCall[1] as RequestInit;
-      const body = JSON.parse(requestInit.body as string);
+      const requestInit = fetchCall[1];
+      expect(requestInit).toBeDefined();
+      const body = JSON.parse(requestInit!.body as string);
       expect("sessionId" in body).toBe(false);
       expect(body.messages).toBeDefined();
     });
