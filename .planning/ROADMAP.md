@@ -121,7 +121,7 @@ Plans:
 Plans:
 
 **Wave 0** *(no dependencies — Day 1 gate)*
-- [ ] 18-01-bootstrap-spike-and-requirements-PLAN.md — REQUIREMENTS.md KV-05 amendment + IDENT-02 D-04 amendment (v1.3-B6 changelog) + SPIKE-ctx-access-path.md resolving Pitfall 8 Astro APIRoute locals.runtime.ctx binding path
+- [x] 18-01-bootstrap-spike-and-requirements-PLAN.md — REQUIREMENTS.md KV-05 amendment + IDENT-02 D-04 amendment (v1.3-B6 changelog) + SPIKE-ctx-access-path.md resolving Pitfall 8 Astro APIRoute locals.runtime.ctx binding path
 
 **Wave 1** *(depends on Wave 0 — parallel branches by file ownership)*
 - [ ] 18-02-chat-transcripts-module-PLAN.md — NEW pure module src/lib/chat-transcripts.ts (KV-02..05 + META-01) with 16-test mock-KV suite tests/api/chat-transcripts.test.ts (TDD RED -> GREEN)
@@ -187,6 +187,6 @@ Phases execute in numeric order within each milestone.
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
 | 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Complete    | 2026-05-11 |
-| 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 0/0 | Not started | - |
+| 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 1/8 | In Progress|  |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |
