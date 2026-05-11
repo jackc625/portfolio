@@ -13,13 +13,14 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 ## Current State
 
 **Shipped:** v1.2 Polish (2026-04-27)
-**Live at:** jackcutrara.com (Cloudflare Pages + Cloudflare Workers SSR for `/api/chat`)
-**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Pages/Workers + Geist/Geist Mono typography
+**In flight:** v1.3 Chat Visibility — Phase 17 (Foundations: Migration + DNS + Debt Sweep) complete on local main; 42 commits awaiting `git push origin main`. After push, jackcutrara.com cuts from Cloudflare Pages to a single Cloudflare Worker (Static Assets + per-route SSR + scheduled handler in one binding). Resend domain `mail.jackcutrara.com` verified + warmed.
+**Live at:** jackcutrara.com (Cloudflare Pages — pending FOUND-03 retirement after 24h warm window)
+**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets + Geist/Geist Mono typography (Cloudflare Pages on the legacy serving path until FOUND-03 retirement clears)
 **Source LOC:** ~4,715 (src/ — astro, ts, css, mdx, md)
 **Repo:** github.com/jackc625/portfolio (public)
 **Lighthouse (production-on-Cloudflare-edge canonical gate):** Performance 100 / Accessibility 95 / Best Practices 100 / SEO 100; motion-specific TBT=0ms / CLS≈0.0016
 **Design contract:** `design-system/MASTER.md` (locked editorial system) + `design-system/MOTION.md` (additive motion carve-outs); 6-hex palette, Geist/Geist Mono, restrained motion respecting `prefers-reduced-motion`
-**Chat:** Claude Haiku via Anthropic SDK with `cache_control: ephemeral`; `portfolio-context.json` regenerated at build time from MDX + About + Resume; D-26 regression battery 117/117 GREEN; D-15 server byte-identical phase-wide
+**Chat:** Claude Haiku via Anthropic SDK with `cache_control: ephemeral`; `portfolio-context.json` regenerated at build time from MDX + About + Resume + third-person `chatSummary`/`about-chat.ts` variants per CHAT-06 voice-split contract; D-26 regression battery extended to 30+ tests (Phase 17 gap closure added chat-panel-display, no-inline-display-on-chat-panel, chat-copy-button, view-transition-handler, validation-loopback-source); D-15 server byte-identical anchor preserved through migration + all gap-closure plans (`tests/api/sse-snapshot.test.ts` 3/3 GREEN)
 **Analytics:** Umami Cloud + Cloudflare Web Analytics live in production; cookie-free, no consent banner; recruiter-engagement events visible end-to-end
 
 ## Requirements
@@ -168,4 +169,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-09 — v1.3 Chat Visibility milestone started.*
+*Last updated: 2026-05-11 — Phase 17 (Foundations: Migration + DNS + Debt Sweep) complete on local main, including 4 UAT-driven gap-closure plans (17-07..10) closing all four UAT gaps surfaced 2026-05-10. 42 commits awaiting `git push origin main` for the Pages → Workers cutover. Phase 18 (Persistence + Identity — KV Write Path + sessionId) unblocked.*
