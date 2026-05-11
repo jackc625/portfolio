@@ -23,10 +23,10 @@
 ### Persistence — KV Write Path (KV-)
 
 - [ ] **KV-01** — Cloudflare KV namespace `CHAT_KV` bound on production AND preview; declared in `wrangler.jsonc` `kv_namespaces`. Distinct from the auto-injected `SESSION` binding (which is reserved by the Astro Cloudflare adapter).
-- [ ] **KV-02** — `src/lib/chat-transcripts.ts` provides a pure `appendTurn(kv, sessionId, role, content, meta)` API. Key naming `live:{sessionId}`. Schema versioned (`v: 1`). `expirationTtl: 30 * 24 * 3600` (30 days) on every `put()`.
-- [ ] **KV-03** — KV `metadata` field carries `{ last_activity_at, msg_count }` so cron `list({prefix:'live:'})` filters without per-key `get()`. Eliminates O(n) round-trips on cron path.
-- [ ] **KV-04** — Transcript values bounded: hard message-count cap (30 turns), `referrer` / `user_agent` truncated to 512 chars to prevent log poisoning. Worst-case value size well under KV's 25 MiB ceiling.
-- [ ] **KV-05** — Per-sessionId write quota: `appendTurn` call count tracked in KV `metadata` as `{ window_started_at, window_count }` (inline, NOT a sibling key — cheaper, more cohesive). Hard cap of 100 writes per sessionId per rolling 1-hour window. On overflow, server emits `console.warn("chat.transcript.quota_exceeded", { sessionId, count_in_window })` and continues serving the SSE stream silently (same UX posture as D-09 silent-fail). Race policy: last-writer-wins per D-13 — lossy concurrent-write counter is acceptable at v1.3 scale. Distinct from the locked-deferred per-IP rate limit (v1.4+); KV-05 protects against scripted resubmits within an authenticated session.
+- [x] **KV-02** — `src/lib/chat-transcripts.ts` provides a pure `appendTurn(kv, sessionId, role, content, meta)` API. Key naming `live:{sessionId}`. Schema versioned (`v: 1`). `expirationTtl: 30 * 24 * 3600` (30 days) on every `put()`.
+- [x] **KV-03** — KV `metadata` field carries `{ last_activity_at, msg_count }` so cron `list({prefix:'live:'})` filters without per-key `get()`. Eliminates O(n) round-trips on cron path.
+- [x] **KV-04** — Transcript values bounded: hard message-count cap (30 turns), `referrer` / `user_agent` truncated to 512 chars to prevent log poisoning. Worst-case value size well under KV's 25 MiB ceiling.
+- [x] **KV-05** — Per-sessionId write quota: `appendTurn` call count tracked in KV `metadata` as `{ window_started_at, window_count }` (inline, NOT a sibling key — cheaper, more cohesive). Hard cap of 100 writes per sessionId per rolling 1-hour window. On overflow, server emits `console.warn("chat.transcript.quota_exceeded", { sessionId, count_in_window })` and continues serving the SSE stream silently (same UX posture as D-09 silent-fail). Race policy: last-writer-wins per D-13 — lossy concurrent-write counter is acceptable at v1.3 scale. Distinct from the locked-deferred per-IP rate limit (v1.4+); KV-05 protects against scripted resubmits within an authenticated session.
 
 ### Identity — sessionId (IDENT-)
 
@@ -35,7 +35,7 @@
 
 ### Metadata Capture (META-)
 
-- [ ] **META-01** — Each transcript captures `started_at`, `last_activity_at`, `referrer`, `user_agent`, `country` (`request.cf.country`), `region`, `colo`, `message_count`, `truncated` boolean.
+- [x] **META-01** — Each transcript captures `started_at`, `last_activity_at`, `referrer`, `user_agent`, `country` (`request.cf.country`), `region`, `colo`, `message_count`, `truncated` boolean.
 - [ ] **META-02** — Anthropic prompt-cache token counts (`cache_read_input_tokens`, `cache_creation_input_tokens`) recorded per assistant turn in transcript metadata. Closes DEBT-02.
 
 ### Cron Sweep — Scheduling + Idempotency (CRON-)
@@ -136,13 +136,13 @@ Explicit exclusions — design decisions made at milestone planning:
 | UAT-GAP-03 | Phase 17 (Wave 8 gap-closure) | Implemented (Plan 17-09 — 2026-05-11) |
 | UAT-GAP-04 | Phase 17 (Wave 9 gap-closure) | Implemented (Plan 17-10 SUMMARY — 2026-05-11) |
 | KV-01 | Phase 18 | Pending |
-| KV-02 | Phase 18 | Pending |
-| KV-03 | Phase 18 | Pending |
-| KV-04 | Phase 18 | Pending |
-| KV-05 | Phase 18 | Pending |
+| KV-02 | Phase 18 | Complete |
+| KV-03 | Phase 18 | Complete |
+| KV-04 | Phase 18 | Complete |
+| KV-05 | Phase 18 | Complete |
 | IDENT-01 | Phase 18 | Pending |
 | IDENT-02 | Phase 18 | Pending |
-| META-01 | Phase 18 | Pending |
+| META-01 | Phase 18 | Complete |
 | META-02 | Phase 18 | Pending |
 | CRON-01 | Phase 19 | Pending |
 | CRON-02 | Phase 19 | Pending |

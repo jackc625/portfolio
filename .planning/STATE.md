@@ -4,14 +4,14 @@ milestone: v1.3
 milestone_name: Chat Visibility
 status: executing
 stopped_at: Phase 18 context gathered
-last_updated: "2026-05-11T19:23:24.514Z"
+last_updated: "2026-05-11T19:41:28.770Z"
 last_activity: 2026-05-11
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 18
-  completed_plans: 11
-  percent: 61
+  completed_plans: 12
+  percent: 67
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 18 (persistence-identity-kv-write-path-sessionid) — EXECUTING
-Plan: 2 of 8
+Plan: 3 of 8
 Status: Ready to execute
 Last activity: 2026-05-11
 
@@ -168,6 +168,10 @@ Plan 17-08 execution decisions (2026-05-11) — UAT Gap #2 closed via inline dis
 - **4-plan-deep listener-dedup typecheck debt absorbed at the deploy gate.** The 2 ts(7006) implicit-any errors in tests/client/listener-dedup.test.ts had been on `main` for 4 plan close-outs (17-03 → 17-04 → 17-05 → 17-09 → 17-10 baseline). Each of those plans correctly documented them as out-of-scope per SCOPE BOUNDARY (not directly caused by their task changes). Plan 17-08 was the natural absorption point because `pnpm build` (which runs `astro check && astro build`) fails on these errors, and the deploy gate CANNOT push to main with a failing build. Fix: one-line callback-param annotation per affected site. `pnpm exec astro check` now exits 0 / 0 / 0 cleanly — first time the typecheck passes on `main` since Plan 17-03 commit 0ad77b3. **Pattern: out-of-scope debt that blocks a SPECIFIC downstream plan's verification commands should be absorbed by THAT plan, not by a follow-up /gsd-quick. The plan that NEEDS the failing step must absorb the fix; deferred debt accumulates visibility but the closure path doesn't change.**
 - **DEPLOY-GATE.md option 2 — orchestrator fills operator slots on user's behalf, treating chat reply as durable audit trail.** The user re-ran the 6-step manual UAT against post-fix HEAD 7af2841 and replied `"approved — deploy gate cleared"` in the gsd-execute-phase chat session. The chat history is the canonical audit record; DEPLOY-GATE.md is the rendered artifact for the file tree. The orchestrator pre-filled the operator slots (operator=Jack Cutrara, date=2026-05-11, all six ✓ checkmarks, gate=CONFIRMED, status=confirmed) and the executor preserved them verbatim in the final metadata commit. **Pattern: when an operator confirmation can be captured via chat-reply as a durable audit trail, the rendered file-tree artifact MAY be filled by the orchestrator on the user's behalf with explicit reference to the chat-reply as the source of truth. Both layers (file artifact + chat history) persist in git history; the file artifact is the convenience surface for future code archaeology, the chat history is the audit-trail-of-record.**
 - **Single atomic metadata commit closes the plan — never push to origin/main from the executor.** Plan 17-08 success_criteria explicitly stated "Do NOT push to origin/main — the user controls that." The executor created Task 3's metadata commit (SUMMARY.md + DEPLOY-GATE.md + STATE.md + ROADMAP.md + REQUIREMENTS.md) and STOPPED. Local main is now 39 commits ahead of origin/main; the operator will run `git push origin main` manually. **Pattern: executor responsibility ENDS at the final local commit. The orchestrator-level workflow (code review, regression gate, verify_phase_goal) follows; the operator-level workflow (push, post-deploy verify, Pages retirement) is operator-controlled. The handoff is the SUMMARY.md + the gate artifact; the executor MUST NOT take operator actions.**
+- [Phase ?]: Plan 18-02: D-CT-01 D-09 surface-error-to-caller — appendTurn has no internal try/catch; kv.put rejections bubble to caller's .catch chain (RESEARCH Pitfall 1)
+- [Phase ?]: Plan 18-02: D-CT-02 D-13 race detection sourced from existingMeta.msg_count vs existing.messages.length (single-invocation scope; cross-POP stale-read observability) — last-writer-wins
+- [Phase ?]: Plan 18-02: D-CT-03 META-01 first-turn pin lives INSIDE appendTurn (existing.meta preserved byte-identically; module owns the existing-vs-fresh decision)
+- [Phase ?]: Plan 18-02: D-CT-04 KV-05 quota check executes FIRST after kv read — at-cap rejects return early without touching trim/race/build steps
 
 ### Open Blockers (carried into v1.3)
 
@@ -213,7 +217,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-11T19:23:24.502Z
+Last session: 2026-05-11T19:39:43.766Z
 Stopped at: Phase 18 context gathered
 Resume file: None
 Next command: User runs `git push origin main` manually (operator-controlled deploy). Cloudflare Workers Builds rebuilds + deploys automatically per Plan 17-02 D-03. Post-deploy: user runs Post-Deploy Verification checklist in DEPLOY-GATE.md against https://jackcutrara.com (re-run checks 4 + 5 + 6 against production). After deploy: orchestrator-level code review + regression gate + verify_phase_goal for Phase 17 closure. Then `/gsd-new-phase 18` for Persistence + Identity (KV write path + sessionId) — Phase 18 inherits a clean chat-surface baseline (D-26 419/0/2, D-15 preserved, ALLOW_LOOPBACK three-signal disjunction regression-locked, listener-dedup typecheck debt absorbed). FOUND-03 Pages retirement also unblocks post-deploy: user retires Pages manually via Cloudflare dashboard once jackcutrara.com on Worker is observed clean.
