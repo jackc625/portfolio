@@ -275,7 +275,36 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // TEMP UAT DIAGNOSTIC (Plan 18-08, will revert).
   const __uatLocals = locals as unknown as Record<string, unknown> | undefined;
   const __uatCf = __uatLocals?.cfContext as { waitUntil?: unknown } | undefined;
-  const __uatKv = (env as unknown as { CHAT_KV?: { put?: unknown } } | undefined)?.CHAT_KV;
+  const __uatKv = (env as unknown as { CHAT_KV?: KVNamespace } | undefined)?.CHAT_KV;
+
+  // Inline put probe — bypasses ctx.waitUntil entirely; await synchronously.
+  let __uatKvPutResult = "unattempted";
+  if (__uatKv && typeof __uatKv.put === "function") {
+    try {
+      await __uatKv.put("uat-probe-key", "ping-" + Date.now(), { expirationTtl: 60 });
+      __uatKvPutResult = "ok";
+    } catch (err) {
+      __uatKvPutResult = err instanceof Error
+        ? `${err.constructor.name}: ${err.message.slice(0, 200)}`
+        : "unknown";
+    }
+  }
+
+  // Inline appendTurn probe — same module/code path as the real call sites.
+  let __uatAppendTurnResult = "unattempted";
+  if (__uatKv) {
+    try {
+      await appendTurn(env.CHAT_KV, "00000000-0000-4000-8000-000000000001", "user", "uat-probe", {
+        referrer: null, user_agent: null, country: null, region: null, colo: null,
+      });
+      __uatAppendTurnResult = "ok";
+    } catch (err) {
+      __uatAppendTurnResult = err instanceof Error
+        ? `${err.constructor.name}: ${err.message.slice(0, 200)}`
+        : "unknown";
+    }
+  }
+
   const __uatDiag = JSON.stringify({
     localsKeys: __uatLocals ? Object.keys(__uatLocals) : null,
     cfContextType: typeof __uatCf,
@@ -285,6 +314,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     kvPutType: typeof __uatKv?.put,
     sessionIdParsed: typeof validation.data.sessionId,
     userTurnAttempted: __uatUserTurnAttempted,
+    kvPutResult: __uatKvPutResult,
+    appendTurnResult: __uatAppendTurnResult,
   });
 
   return new Response(stream, {
