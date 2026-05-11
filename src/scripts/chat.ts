@@ -143,9 +143,22 @@ export async function streamChat(
   onDone: () => void,
   onError: (type: string) => void
 ): Promise<void> {
-  // AbortController with 30-second timeout to prevent stuck "typing" state
+  // AbortController with 30-second timeout to prevent stuck "typing" state.
+  // WR-01 (Phase 17 review): the timeout must be armed across the FULL stream
+  // lifetime, not just the response handshake. The previous version cleared
+  // the timeout at `clearTimeout(timeout)` immediately after fetch resolved,
+  // which left the reader.read() loop with no timeout enforcement — a stalled
+  // SSE stream (server crash, network hiccup, slow upstream from Anthropic)
+  // would leave the user stuck in "typing" state forever, contradicting the
+  // stated purpose of the timeout. Now we keep the timeout armed and reset
+  // it on each successful read so a healthy stream is not aborted but a
+  // stalled one is.
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  let timeout = setTimeout(() => controller.abort(), 30000);
+  const resetTimeout = () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => controller.abort(), 30000);
+  };
 
   // DEBT-02 (Phase 17 / Plan 17-05): Client-side observability seam.
   // The client cannot read cache_read_input_tokens / cache_creation_input_tokens
@@ -165,7 +178,9 @@ export async function streamChat(
       body: JSON.stringify({ messages: chatMessages }),
       signal: controller.signal,
     });
-    clearTimeout(timeout);
+    // WR-01: DO NOT clearTimeout here. Keep the abort armed across the body
+    // read loop; resetTimeout() inside the loop refreshes it on each token.
+    resetTimeout();
 
     if (response.status === 429) {
       onError("rate_limited");
@@ -187,6 +202,10 @@ export async function streamChat(
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
+      // WR-01: refresh the abort deadline on each successful read so a
+      // healthy stream is never aborted, but a stalled mid-stream read
+      // (no bytes for 30s) trips controller.abort() and surfaces "timeout".
+      resetTimeout();
       buffer += decoder.decode(value, { stream: true });
       const lines = buffer.split("\n");
       buffer = lines.pop() || "";
@@ -211,7 +230,17 @@ export async function streamChat(
             trackChatEvent("chat_truncated");
             continue; // L7: skip onToken — this frame has no .text, would render "undefined"
           }
-          onToken(parsed.text);
+          // WR-03 (Phase 17 review): defensive type-narrow before passing to
+          // onToken. If a future server change or malformed frame yields
+          // {"text": null}, {}, or {"foo": 1}, parsed.text is undefined/null
+          // and `botContent += text` (in the onToken handler) would corrupt
+          // the bubble + persisted chatLog with the literal "undefined"
+          // or "null". Skip silently in production; surface in DEV.
+          if (typeof parsed.text === "string") {
+            onToken(parsed.text);
+          } else if (import.meta.env.DEV) {
+            console.warn("[chat] unexpected SSE frame shape", parsed);
+          }
         } catch {
           /* skip malformed SSE line */
         }
@@ -219,13 +248,15 @@ export async function streamChat(
     }
     onDone();
   } catch (err) {
-    clearTimeout(timeout);
     if (err instanceof DOMException && err.name === "AbortError") {
       onError("timeout");
     } else {
       onError("api_error");
     }
   } finally {
+    // WR-01: single clearTimeout — finally guarantees it runs whether the
+    // stream completed cleanly, errored, or aborted.
+    clearTimeout(timeout);
     // DEBT-02 (Phase 17 / Plan 17-05): DEV-only response-metrics log line.
     // Mirrors the canonical server-side `chat.cache_metrics` event name with
     // a distinct client-tier name (`chat.response_metrics_client`) so grep
