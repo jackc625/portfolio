@@ -306,13 +306,23 @@ function autoGrowTextarea(textarea: HTMLTextAreaElement): void {
 // Copy to Clipboard (D-30)
 // ============================================
 
+// UAT Gap #3 (Plan 17-09): single shared window for the .copy-success
+// class lifecycle AND the textContent COPY → COPIED → COPY swap. Both
+// setTimeouts below MUST use this constant so the visible state and
+// the visibility-pinning class expire together.
+// M3: color is set by the .copy-success CSS class (.chat-copy-btn.copy-success
+// in global.css), NOT by inline style.color writes. The class is the
+// single source of truth for both opacity and color during the feedback
+// window. See .planning/debug/copy-button-no-copied-transition.md.
+const COPY_FEEDBACK_MS = 1500;
+
 // MUST wrap in try/catch — navigator.clipboard.writeText() fails on non-HTTPS
 // Addresses review concern: Claude flagged clipboard API needing try/catch as MEDIUM
 async function copyToClipboard(text: string, button: HTMLElement): Promise<void> {
   try {
     await navigator.clipboard.writeText(text);
     button.classList.add("copy-success");
-    setTimeout(() => button.classList.remove("copy-success"), 2000);
+    setTimeout(() => button.classList.remove("copy-success"), COPY_FEEDBACK_MS);
   } catch {
     // Silently fail — no user-visible error for copy failure on non-HTTPS
   }
@@ -337,13 +347,16 @@ export function createCopyButton(getContent: () => string): HTMLButtonElement {
   copyBtn.type = "button";
   copyBtn.style.cssText = "position: absolute; top: -4px; right: 0; background: none; border: none; cursor: pointer;";
   copyBtn.addEventListener("click", () => {
+    // M3 (Plan 17-09): no inline color writes — `.copy-success` class
+    // (added inside copyToClipboard) drives both opacity and color via
+    // the .chat-copy-btn.copy-success CSS rule. On class removal after
+    // COPY_FEEDBACK_MS, the base .chat-copy-btn { color: var(--ink-faint) }
+    // rule takes over naturally.
     copyToClipboard(getContent(), copyBtn);
     copyBtn.textContent = "COPIED";
-    copyBtn.style.color = "var(--accent)";
     setTimeout(() => {
       copyBtn.textContent = "COPY";
-      copyBtn.style.color = "var(--ink-faint)";
-    }, 1000);
+    }, COPY_FEEDBACK_MS);
   });
   return copyBtn;
 }
