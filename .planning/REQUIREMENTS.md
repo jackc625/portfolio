@@ -22,7 +22,7 @@
 
 ### Persistence — KV Write Path (KV-)
 
-- [ ] **KV-01** — Cloudflare KV namespace `CHAT_KV` bound on production AND preview; declared in `wrangler.jsonc` `kv_namespaces`. Distinct from the auto-injected `SESSION` binding (which is reserved by the Astro Cloudflare adapter).
+- [x] **KV-01** — Cloudflare KV namespace `CHAT_KV` bound on production AND preview; declared in `wrangler.jsonc` `kv_namespaces`. Distinct from the auto-injected `SESSION` binding (which is reserved by the Astro Cloudflare adapter).
 - [x] **KV-02** — `src/lib/chat-transcripts.ts` provides a pure `appendTurn(kv, sessionId, role, content, meta)` API. Key naming `live:{sessionId}`. Schema versioned (`v: 1`). `expirationTtl: 30 * 24 * 3600` (30 days) on every `put()`.
 - [x] **KV-03** — KV `metadata` field carries `{ last_activity_at, msg_count }` so cron `list({prefix:'live:'})` filters without per-key `get()`. Eliminates O(n) round-trips on cron path.
 - [x] **KV-04** — Transcript values bounded: hard message-count cap (30 turns), `referrer` / `user_agent` truncated to 512 chars to prevent log poisoning. Worst-case value size well under KV's 25 MiB ceiling.
@@ -135,7 +135,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | UAT-GAP-02 | Phase 17 (Wave 10 gap-closure) | Implemented (Plan 17-08 SUMMARY — 2026-05-11; deploy gate CONFIRMED by operator Jack Cutrara) |
 | UAT-GAP-03 | Phase 17 (Wave 8 gap-closure) | Implemented (Plan 17-09 — 2026-05-11) |
 | UAT-GAP-04 | Phase 17 (Wave 9 gap-closure) | Implemented (Plan 17-10 SUMMARY — 2026-05-11) |
-| KV-01 | Phase 18 | Pending |
+| KV-01 | Phase 18 | Complete |
 | KV-02 | Phase 18 | Complete |
 | KV-03 | Phase 18 | Complete |
 | KV-04 | Phase 18 | Complete |

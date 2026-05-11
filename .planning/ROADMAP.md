@@ -46,7 +46,7 @@
 ### v1.3 Chat Visibility (Phases 17-20) — IN PROGRESS
 
 - [x] **Phase 17: Foundations — Migration + DNS + Debt Sweep** — CLOSED 2026-05-11 (6/6 baseline plans, all 14 requirements GREEN). RE-OPENED 2026-05-11 for gap closure (Wave 7-10 serial: UAT 17-UAT.md surfaced 4 blockers + 1 release blocker). Gap closure COMPLETE 2026-05-11 (10/10 plans, 100%): Wave 7 (Plan 17-07) closed UAT-GAP-01 chat voice-split regression via about-chat.ts + per-MDX chatSummary + broadened leak guard + system-prompt.ts hardening + 21 voice-split tests; Wave 8 (Plan 17-09) closed UAT-GAP-03 COPY button feedback window via new .chat-copy-btn.copy-success CSS rule + chat.ts shared COPY_FEEDBACK_MS = 1500 const + M3 inline-color-write deletion (CSS class single source of truth) + 10-test chat-copy-button.test.ts; Wave 9 (Plan 17-10) closed UAT-GAP-04 cross-document AbortError via head-level <script is:inline> pageswap handler in BaseLayout.astro (B5 raw script body) + MOTION.md §5 MOTN-01 rejection-handling spec amendment (B6 v1.3.1 changelog) + 4 build-time source-text tests using M5 multi-line regex; Wave 10 (Plan 17-08) closed UAT-GAP-02 #chat-panel inline display:none removal via single Edit on ChatWidget.astro + 5-test chat-panel-display.test.ts fixture rewrite + new tests/build/no-inline-display-on-chat-panel.test.ts source-text guard + Rule 3 inline deviation (commit 7af2841) closing late-surfacing dev-403 regression via WR-04 ALLOW_LOOPBACK three-signal disjunction (regression-locked by tests/build/validation-loopback-source.test.ts) + Rule 3 cleanup absorbing 4-plan-deep tests/client/listener-dedup.test.ts ts(7006) typecheck debt (pnpm exec astro check now 0/0/0 cleanly for first time since Plan 17-03 commit 0ad77b3) + DEPLOY-GATE.md operator-signed status=confirmed gate=CONFIRMED by Jack Cutrara 2026-05-11 (all six manual UAT checks PASSED against post-fix HEAD 7af2841 via chat-reply "approved — deploy gate cleared" as durable audit trail per option 2). Phase-end pnpm test = 419 PASS / 0 FAIL / 2 SKIP. pnpm exec astro check = 0/0/0. pnpm build = clean. D-26 chat-surface regression battery 30/30 GREEN. D-15 SSE byte-identical anchor PRESERVED. Local main 38 commits ahead of origin/main at HEAD 7af2841 (39 after Plan 17-08 metadata commit). DEPLOY-GATE.md operator-cleared next `git push origin main` — user controls actual push. After deploy: Pages retirement (FOUND-03 sub-task) unblocks via 24h warm window per D-02; user retires Pages manually via Cloudflare dashboard once jackcutrara.com on Worker is observed clean.
-- [ ] **Phase 18: Persistence + Identity — KV Write Path + sessionId** — Bind `CHAT_KV` namespace, mint UUIDv4 sessionIds, append turns to KV without leaking sessionId into Anthropic payload, capture metadata + cache-token counts per turn
+- [x] **Phase 18: Persistence + Identity — KV Write Path + sessionId** — Bind `CHAT_KV` namespace, mint UUIDv4 sessionIds, append turns to KV without leaking sessionId into Anthropic payload, capture metadata + cache-token counts per turn (completed 2026-05-11)
 - [ ] **Phase 19: Cron Sweep — Scheduling + Idempotency (DRY_RUN)** — Wire hourly cron trigger, two-keyspace partition (`live:` → `delivered:`), batch caps + structured logs, DRY_RUN flag validates sweep mechanics before email goes live
 - [ ] **Phase 20: Email Render + Resend Integration** — Plaintext-only email body via Resend REST, adversarial-payload suite hardening, idempotency-key send-once, DRY_RUN flipped off — visitor conversations land in Jack's Gmail
 
@@ -136,7 +136,7 @@ Plans:
 - [x] 18-07-forward-defense-and-meta02-PLAN.md — NEW tests/build/append-turn-call-site.test.ts source-text forward-defense for D-10/D-11/D-09 anchors + tests/api/cache-hit-logs.test.ts +META-02 source-of-truth-once + sse-snapshot D-15 re-verify
 
 **Wave 4** *(depends on Wave 3 — operational verification)*
-- [ ] 18-08-uat-and-test03-live-PLAN.md — Author 18-UAT.md (8 numbered manual steps) + operator runs against preview + production (D-14 3x identical POST verifies cache_read_input_tokens > 0 on responses 2 + 3; D-15 cache-miss-blocks-close; ROADMAP success criteria 1-5 verified live)
+- [x] 18-08-uat-and-test03-live-PLAN.md — Author 18-UAT.md (8 numbered manual steps) + operator runs against preview + production (D-14 3x identical POST verifies cache_read_input_tokens > 0 on responses 2 + 3; D-15 cache-miss-blocks-close; ROADMAP success criteria 1-5 verified live)
 
 ### Phase 19: Cron Sweep — Scheduling + Idempotency (DRY_RUN)
 
@@ -187,6 +187,6 @@ Phases execute in numeric order within each milestone.
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
 | 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Complete    | 2026-05-11 |
-| 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 7/8 | In Progress|  |
+| 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 8/8 | Complete   | 2026-05-11 |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |
