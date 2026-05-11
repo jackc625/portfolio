@@ -130,7 +130,7 @@ Plans:
 
 **Wave 2** *(depends on Waves 0+1 — parallel by file ownership)*
 - [x] 18-05-api-chat-waituntil-wiring-PLAN.md — src/pages/api/chat.ts wire two ctx.waitUntil(appendTurn(...).catch(...)) calls at D-10 + D-11 anchors + captureRequestMeta helper + accumulator wiring (KV-01..05 + IDENT-02 + META-01 + META-02 + TEST-01 + TEST-03)
-- [ ] 18-06-client-sessionid-mint-PLAN.md — src/scripts/chat.ts STORAGE_VERSION 1->2 + ChatStorage sessionId + ensureSessionId on bubble click + streamChat body emission (IDENT-01 + D-01 + D-04 silent fail) + 8-test tests/client/chat-sessionid-mint.test.ts (TDD)
+- [x] 18-06-client-sessionid-mint-PLAN.md — src/scripts/chat.ts STORAGE_VERSION 1->2 + ChatStorage sessionId + ensureSessionId on bubble click + streamChat body emission (IDENT-01 + D-01 + D-04 silent fail) + 8-test tests/client/chat-sessionid-mint.test.ts (TDD)
 
 **Wave 3** *(depends on Wave 2)*
 - [ ] 18-07-forward-defense-and-meta02-PLAN.md — NEW tests/build/append-turn-call-site.test.ts source-text forward-defense for D-10/D-11/D-09 anchors + tests/api/cache-hit-logs.test.ts +META-02 source-of-truth-once + sse-snapshot D-15 re-verify
@@ -187,6 +187,6 @@ Phases execute in numeric order within each milestone.
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
 | 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Complete    | 2026-05-11 |
-| 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 5/8 | In Progress|  |
+| 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 6/8 | In Progress|  |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |

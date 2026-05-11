@@ -4,14 +4,14 @@ milestone: v1.3
 milestone_name: Chat Visibility
 status: executing
 stopped_at: Phase 18 context gathered
-last_updated: "2026-05-11T20:14:30.768Z"
+last_updated: "2026-05-11T20:28:44.897Z"
 last_activity: 2026-05-11
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 18
-  completed_plans: 15
-  percent: 83
+  completed_plans: 16
+  percent: 89
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 18 (persistence-identity-kv-write-path-sessionid) — EXECUTING
-Plan: 6 of 8
+Plan: 7 of 8
 Status: Ready to execute
 Last activity: 2026-05-11
 
@@ -174,6 +174,7 @@ Plan 17-08 execution decisions (2026-05-11) — UAT Gap #2 closed via inline dis
 - [Phase ?]: Plan 18-02: D-CT-04 KV-05 quota check executes FIRST after kv read — at-cap rejects return early without touching trim/race/build steps
 - [Phase ?]: Plan 18-03: RequestSchema sessionId field added — z.uuidv4().optional() (version-specific; rejects UUIDv5/v6/v7) over z.uuid()/z.string().uuid(); 7 schema-level tests GREEN; Test 2 captures FIRST 'missing-and-acceptable' code path per D-04
 - [Phase ?]: Plan 18-05: D-04 missing-tolerance gating both ctx.waitUntil call sites; defensive locals.cfContext cast preserves D-26 chat-surface tests with zero test-file edits
+- [Phase ?]: Plan 18-06: client mints sessionId via crypto.randomUUID on bubble click; STORAGE_VERSION 1->2 reuses existing version-gate auto-clear; streamChat body conditionally emits sessionId (key-absent != key-with-null) per server's z.uuidv4().optional() contract
 
 ### Open Blockers (carried into v1.3)
 
@@ -219,7 +220,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-11T20:14:12.209Z
+Last session: 2026-05-11T20:28:34.621Z
 Stopped at: Phase 18 context gathered
 Resume file: None
 Next command: User runs `git push origin main` manually (operator-controlled deploy). Cloudflare Workers Builds rebuilds + deploys automatically per Plan 17-02 D-03. Post-deploy: user runs Post-Deploy Verification checklist in DEPLOY-GATE.md against https://jackcutrara.com (re-run checks 4 + 5 + 6 against production). After deploy: orchestrator-level code review + regression gate + verify_phase_goal for Phase 17 closure. Then `/gsd-new-phase 18` for Persistence + Identity (KV write path + sessionId) — Phase 18 inherits a clean chat-surface baseline (D-26 419/0/2, D-15 preserved, ALLOW_LOOPBACK three-signal disjunction regression-locked, listener-dedup typecheck debt absorbed). FOUND-03 Pages retirement also unblocks post-deploy: user retires Pages manually via Cloudflare dashboard once jackcutrara.com on Worker is observed clean.
