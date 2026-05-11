@@ -79,12 +79,38 @@ const WORKERS_PREVIEW_SUFFIX = ".jackcutrara.workers.dev";
 // defense-in-depth control. Browser same-origin policy prevents direct
 // exploitation, but non-browser clients (curl, server-side relays, malicious
 // extensions) can spoof Origin headers freely, so the production endpoint
-// silently accepted them. Vite/Astro tree-shakes the `import.meta.env.DEV`
-// branch in production builds, so the loopback bypass emits zero bytes in
-// the deployed Worker bundle. Vitest sets DEV = true by default, so the
-// existing security.test.ts assertions for localhost / 127.0.0.1 still pass.
-// IPv6 loopback [::1] is included for consistency (also DEV-only).
-const ALLOW_LOOPBACK = import.meta.env.DEV;
+// silently accepted them. Vite/Astro tree-shakes the DEV-branch disjunction
+// in production builds (each operand is a statically-replaced literal: DEV
+// becomes `false`, MODE becomes `"production"`, process.env.NODE_ENV becomes
+// `"production"`), so the loopback bypass emits zero bytes in the deployed
+// Worker bundle. IPv6 loopback [::1] is included for consistency (also
+// DEV-only).
+//
+// Plan 17-08 Task 2-ALPHA (Rule 3 inline deviation, 2026-05-11): broadened
+// from the single signal `import.meta.env.DEV` to a three-signal disjunction
+// because the @astrojs/cloudflare adapter does NOT statically replace
+// `import.meta.env.DEV` in SSR routes under `astro dev`. The single-signal
+// form evaluated falsy in the dev SSR runtime, causing every POST /api/chat
+// from http://localhost:4321 to return 403 Forbidden (Plan 17-08 deploy-gate
+// UAT regression on 2026-05-11). The three signals together cover:
+//   1. `import.meta.env.DEV === true` — Vitest (sets DEV=true by default,
+//      preserving every existing security.test.ts assertion) and Vite client
+//      bundles under `astro dev` (statically replaced).
+//   2. `import.meta.env.MODE === "development"` — @astrojs/cloudflare SSR
+//      routes under `astro dev` (MODE is reliably set even when DEV is not
+//      statically replaced).
+//   3. `process.env.NODE_ENV === "development"` — pure-Node fallback for
+//      environments where neither import.meta.env signal is populated.
+// All three operands are statically replaced to literal `false` /
+// `"production"` during production `astro build`, so the entire branch is
+// tree-shaken from the deployed Worker bundle — verifiable by post-build
+// grep on dist/_worker.js (no `ALLOW_LOOPBACK` residue). Production CORS
+// remains exactly as authored: deployed Worker continues to reject
+// Origin=http://localhost:4321 (defense-in-depth against Origin spoofing).
+const ALLOW_LOOPBACK =
+  import.meta.env.DEV === true ||
+  import.meta.env.MODE === "development" ||
+  (typeof process !== "undefined" && process.env?.NODE_ENV === "development");
 
 export function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return true; // No origin header = same-origin or non-browser
