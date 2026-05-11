@@ -404,11 +404,26 @@ Replace with:
       ),
 ```
 
-**Edit 8 — Update saveChatHistory call sites:**
-Grep for `saveChatHistory(` in src/scripts/chat.ts. Per the read context, there are at least 2 call sites: line 871 (`saveChatHistory(chatLog);`) and line 933 (`saveChatHistory(chatLog);`). Update BOTH to pass sessionId: `saveChatHistory(chatLog, sessionId);`. There may also be a call inside the new ensureSessionId function — that's already correct in Edit 5.
+**Edit 8 — Update saveChatHistory call sites (ENUMERATED — plan-time Grep result):**
 
-**Edit 9 — Update loadChatHistory call site at line 650:**
-Find the existing call (line 650): `const stored = loadChatHistory();` and its surrounding code. The current behavior assumes `stored` is `StoredMessage[] | null`. Read the surrounding 10 lines first. The current pattern is likely:
+Plan-time `grep -n "saveChatHistory(" src/scripts/chat.ts` returned EXACTLY two call sites in user code (excluding the function declaration at line 85 and the call inside ensureSessionId at the Edit-5 insertion point, which is already correctly shaped):
+
+- Line 871: `saveChatHistory(chatLog);` — inside the user-send path
+- Line 933: `saveChatHistory(chatLog);` — inside the bot-streamed-reply persist path
+
+Update BOTH call sites verbatim from `saveChatHistory(chatLog);` to `saveChatHistory(chatLog, sessionId);`. Line numbers may shift by ~1-5 after Edits 1-7 land in earlier file regions; use Grep at task time to re-confirm exact positions, but the COUNT must stay at exactly 2 user-code call sites + 1 inside ensureSessionId = 3 total `saveChatHistory(` invocations in the file.
+
+If Grep at task time returns a count OTHER than 3 (after Edit 5 lands), STOP — either an unexpected call site exists (audit before editing) or one of the documented sites is missing (audit the prior edits). The verify gate below catches a missed call site by asserting ZERO matches of the OLD single-arg pattern `/saveChatHistory\(chatLog\)(?![\s,])/` (which matches `saveChatHistory(chatLog)` NOT followed by whitespace or comma — the bare single-arg form). Any leftover bare-call would be a missed update.
+
+**Edit 9 — Update loadChatHistory call site (ENUMERATED — plan-time Grep result):**
+
+Plan-time `grep -n "loadChatHistory(" src/scripts/chat.ts` returned EXACTLY one user-code call site (excluding the function declaration at line 98 and the new call inside ensureSessionId from Edit 5 which is already correctly shaped):
+
+- Line 650: `const stored = loadChatHistory();` — inside initChat
+
+Verify count at task time: Grep for `loadChatHistory(` should return exactly 2 occurrences after Edit 5 (the existing user-code site + the ensureSessionId site). The function declaration at line 98 does NOT match because the grep includes the parenthesis.
+
+Read the surrounding 10 lines at line 650 first. The current pattern is likely:
 ```
 const stored = loadChatHistory();
 if (stored) {
@@ -436,7 +451,7 @@ After all 9 edits, run in order:
 Commit shape: `feat(18-06): src/scripts/chat.ts STORAGE_VERSION 1→2 + sessionId mint + streamChat body — IDENT-01 + D-01 + D-04 silent fail`.
   </action>
   <verify>
-    <automated>pnpm exec astro check 2>&1 | tail -3 && pnpm exec vitest run tests/client/chat-sessionid-mint.test.ts tests/client/listener-dedup.test.ts tests/client/chat-panel-display.test.ts 2>&1 | tail -3 && node -e "const fs = require('fs'); const f = fs.readFileSync('src/scripts/chat.ts', 'utf8'); const checks = [/const\s+STORAGE_VERSION\s*=\s*2\b/.test(f), !/const\s+STORAGE_VERSION\s*=\s*1\b/.test(f), /version:\s*2\b/.test(f), /sessionId\s*:\s*string/.test(f), /crypto\.randomUUID\(\)/.test(f), /function\s+ensureSessionId\s*\(\s*\)\s*:\s*void/.test(f), /let\s+sessionId\s*:\s*string\s*\|\s*undefined/.test(f), /sessionId\s*\?\s*\{\s*sessionId\s*,\s*messages/.test(f), /loadChatHistory\(\)\s*:\s*\{\s*messages:\s*StoredMessage\[\];\s*sessionId:\s*string\s*\}\s*\|\s*null/.test(f), /saveChatHistory\([^,]*,\s*sessionId\s*\)/.test(f) || /saveChatHistory\([^,]*,\s*sid\s*\)/.test(f)]; const failed = checks.findIndex(c => !c); if (failed >= 0) { console.error('Source check ' + failed + ' failed'); process.exit(1); } process.exit(0);"</automated>
+    <automated>pnpm exec astro check 2>&1 | tail -3 && pnpm exec vitest run tests/client/chat-sessionid-mint.test.ts tests/client/listener-dedup.test.ts tests/client/chat-panel-display.test.ts 2>&1 | tail -3 && node -e "const fs = require('fs'); const f = fs.readFileSync('src/scripts/chat.ts', 'utf8'); const saveCallsBare = (f.match(/saveChatHistory\(chatLog\)(?![\s,])/g) || []).length; const saveCallsTotal = (f.match(/saveChatHistory\(/g) || []).length; const loadCallsTotal = (f.match(/loadChatHistory\(/g) || []).length; const checks = [/const\s+STORAGE_VERSION\s*=\s*2\b/.test(f), !/const\s+STORAGE_VERSION\s*=\s*1\b/.test(f), /version:\s*2\b/.test(f), /sessionId\s*:\s*string/.test(f), /crypto\.randomUUID\(\)/.test(f), /function\s+ensureSessionId\s*\(\s*\)\s*:\s*void/.test(f), /let\s+sessionId\s*:\s*string\s*\|\s*undefined/.test(f), /sessionId\s*\?\s*\{\s*sessionId\s*,\s*messages/.test(f), /loadChatHistory\(\)\s*:\s*\{\s*messages:\s*StoredMessage\[\];\s*sessionId:\s*string\s*\}\s*\|\s*null/.test(f), /saveChatHistory\([^,]*,\s*sessionId\s*\)/.test(f) || /saveChatHistory\([^,]*,\s*sid\s*\)/.test(f), saveCallsBare === 0, saveCallsTotal === 3 || saveCallsTotal === 4, loadCallsTotal === 2 || loadCallsTotal === 3]; const failed = checks.findIndex(c => !c); if (failed >= 0) { console.error('Source check ' + failed + ' failed (saveCallsBare=' + saveCallsBare + ', saveCallsTotal=' + saveCallsTotal + ', loadCallsTotal=' + loadCallsTotal + ')'); process.exit(1); } process.exit(0);"</automated>
   </verify>
   <done>src/scripts/chat.ts has STORAGE_VERSION = 2, ChatStorage with sessionId field + version: 2, ensureSessionId function with crypto.randomUUID(), module-scoped `let sessionId`, conditional streamChat body shape, loadChatHistory returning `{ messages, sessionId } | null`, saveChatHistory accepting sid as second arg. tests/client/chat-sessionid-mint.test.ts ≥5 GREEN. tests/client/listener-dedup.test.ts + tests/client/chat-panel-display.test.ts GREEN. `pnpm exec astro check` 0/0/0.</done>
 </task>

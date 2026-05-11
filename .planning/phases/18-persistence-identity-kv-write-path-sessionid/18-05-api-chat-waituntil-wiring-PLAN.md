@@ -13,7 +13,7 @@ must_haves:
     - "api/chat.ts imports `appendTurn` from `../../lib/chat-transcripts` (KV-02 module wired)"
     - "Plan 18-01-verified `ctx` access expression (`locals.runtime.ctx` or alternative) is the SOLE path to `ExecutionContext.waitUntil` — no destructure (loses `this` binding per RESEARCH Pitfall 1)"
     - "USER-TURN write fires AFTER `validateRequest` succeeds, BEFORE Anthropic stream open (D-10 durability anchor) — `ctx.waitUntil(appendTurn(env.CHAT_KV, sid, \"user\", userContent, sessionMeta).catch(...))`"
-    - "ASSISTANT-TURN write fires AFTER `controller.close()`, INSIDE the start(controller) closure (D-11 — accumulator strategy) — `ctx.waitUntil(appendTurn(env.CHAT_KV, sid, \"assistant\", accumulator, { cache_read_input_tokens, cache_creation_input_tokens }).catch(...))`"
+    - "ASSISTANT-TURN write fires AFTER `controller.close()`, INSIDE the start(controller) closure (D-11 — accumulator strategy) — `ctx.waitUntil(appendTurn(env.CHAT_KV, sid, \"assistant\", accumulator, { ...captureRequestMeta(request), cache_read_input_tokens, cache_creation_input_tokens }).catch(...))`. Assistant-turn meta passes the same captureRequestMeta(request) snapshot as the user-turn write (NOT nulls) — META-01 fields land correctly even if user-turn write fails per D-09; appendTurn module is idempotent on meta (first-turn pin preserved)."
     - "Token-accumulator pattern: `let accumulator = \"\"` declared at top of `start(controller)`; updated inline at the existing `content_block_delta` branch via `accumulator += event.delta.text`. Per-token KV writes NEVER happen (KV's 1-write/sec/key cap)"
     - "D-04 missing-tolerance branch: if `validation.data.sessionId` is undefined, NEITHER waitUntil call fires; SSE stream still serves normally"
     - "Both waitUntil calls chain `.catch((err) => { console.error(\"chat.transcript.write_failed\", { sessionId, role, error_class, [content_length for assistant] }) })` BEFORE the promise is passed to waitUntil (rejection-safe per RESEARCH Pitfall 1)"
@@ -91,10 +91,17 @@ Output: `src/pages/api/chat.ts` extended (~30 LOC additive) with the two waitUnt
   // FROM: export const POST: APIRoute = async ({ request }) => {
   // TO:   export const POST: APIRoute = async ({ request, locals }) => {
 
-  // ctx access — copy literal from SPIKE-ctx-access-path.md (Plan 18-01 verified):
-  //   const ctx = locals.runtime.ctx;          // primary expected
-  //   const ctx = (locals as any).runtime.ctx; // if TS narrowing requires a cast — confirm at task time
-  //   // OR alternative path per SPIKE if locals.runtime.ctx unavailable
+  // ctx access — Astro v6 / @astrojs/cloudflare 13.1.7 canonical path is locals.cfContext.
+  // RESEARCH § Open Questions Q1 (RESOLVED): direct read of node_modules/@astrojs/cloudflare/dist/utils/handler.js:64-91
+  // confirms locals.cfContext is the binding name (locals.runtime.ctx was REMOVED in Astro v6 — getter throws).
+  // Defensive fallback shape: handles the vitest test environment where the api/chat.ts POST handler is invoked
+  // WITHOUT a real Workers locals object (e.g. tests/api/sse-snapshot.test.ts calls POST({ request } as never) per D-26).
+  // The no-op waitUntil preserves chat surface behavior in tests; production Workers runtime ALWAYS supplies locals.cfContext.
+  //
+  //   const ctx = (locals as { cfContext?: { waitUntil: (p: Promise<unknown>) => void } } | undefined)?.cfContext
+  //     ?? { waitUntil: (_p: Promise<unknown>) => {} };
+  //
+  // This single-line defensive read is what Plan 18-05 Task 1 inserts at the top of POST body.
 
 <!-- USER-TURN call site (D-10 — AFTER validateRequest succeeds at line ~81, BEFORE client.messages.create at line ~112) -->
 
@@ -143,13 +150,16 @@ Output: `src/pages/api/chat.ts` extended (~30 LOC additive) with the two waitUnt
   //   // .catch chains BEFORE waitUntil per RESEARCH § Pitfall 1.
   //   if (validation.data.sessionId && accumulator) {
   //     const sid = validation.data.sessionId;
+  //     // META-01 first-turn pin (Plan 18-02 appendTurn): captureRequestMeta(request) returns the
+  //     // same referrer/user_agent/country/region/colo snapshot used for the user-turn write. The
+  //     // appendTurn module is idempotent on meta — first-turn write pins these fields; subsequent
+  //     // turns ignore them (existing pinned values are preserved). Passing the snapshot (not nulls)
+  //     // means META-01 fields land correctly even when the assistant-turn write is the FIRST
+  //     // surviving write to KV (e.g., user-turn write failed per D-09 silent posture).
+  //     const assistantMeta = captureRequestMeta(request);
   //     ctx.waitUntil(
   //       appendTurn(env.CHAT_KV, sid, "assistant", accumulator, {
-  //         referrer: null,        // META-01 first-turn pin honored inside appendTurn — passing null preserves
-  //         user_agent: null,      // existing meta if the user-turn already pinned it.
-  //         country: null,
-  //         region: null,
-  //         colo: null,
+  //         ...assistantMeta,
   //         cache_read_input_tokens: cacheUsage?.cache_read_input_tokens ?? 0,
   //         cache_creation_input_tokens: cacheUsage?.cache_creation_input_tokens ?? 0,
   //       }).catch((err: unknown) => {
@@ -241,29 +251,36 @@ Open `src/pages/api/chat.ts`. Make these THREE additions, in this order:
    export const POST: APIRoute = async ({ request, locals }) => {
    ```
 
-4. **Add the `ctx` extraction line** AT THE TOP of the POST body, BEFORE the existing `// S9: CORS check` comment block (currently line 16). Insert this as the first statement in the POST body:
+4. **Add the `ctx` extraction line** AT THE TOP of the POST body, BEFORE the existing `// S9: CORS check` comment block (currently line 16). Insert this as the first statement in the POST body, using the DEFENSIVE FALLBACK shape so the existing chat-surface tests (tests/api/sse-snapshot.test.ts + tests/api/cache-hit-logs.test.ts) which call `POST({ request: buildRequest() } as never)` WITHOUT a locals arg do NOT regress per D-26:
 
    ```
-     // Plan 18-01 SPIKE-verified path to Workers ExecutionContext for ctx.waitUntil(appendTurn(...)).
-     // RESEARCH § Pitfall 1: never destructure ctx — loses `this` binding ("Illegal invocation" runtime error).
-     const ctx = <SPIKE-PATH>;
+     // Plan-time-resolved path to Workers ExecutionContext for ctx.waitUntil(appendTurn(...)).
+     // RESEARCH § Open Questions Q1 (RESOLVED): Astro v6 / @astrojs/cloudflare 13.1.7 exposes ExecutionContext at
+     // locals.cfContext (locals.runtime.ctx was REMOVED in v6 — confirmed via direct read of
+     // node_modules/@astrojs/cloudflare/dist/utils/handler.js:64-91). RESEARCH § Pitfall 1: NEVER destructure
+     // ctx — loses `this` binding ("Illegal invocation" runtime error).
+     // Defensive fallback (D-26 anti-regression): vitest tests invoke POST({ request } as never) without a
+     // real Workers locals object. The no-op waitUntil keeps chat surface bytes byte-identical in those tests;
+     // production Workers runtime ALWAYS supplies locals.cfContext per the adapter handler.
+     const ctx = (locals as { cfContext?: { waitUntil: (p: Promise<unknown>) => void } } | undefined)?.cfContext
+       ?? { waitUntil: (_p: Promise<unknown>) => {} };
    ```
 
-   Replace `<SPIKE-PATH>` with the exact TypeScript expression from the SPIKE file (e.g., `locals.runtime.ctx`). If the SPIKE recorded a TS narrowing requirement (e.g., the type of `locals.runtime` is `unknown`), include the cast verbatim from the SPIKE's "## Plan 18-05 import & destructure pattern" section.
+   The Plan 18-01 SPIKE remains a defense-in-depth runtime confirmation against `pnpm dev:worker` but is NOT a hard blocker for this task — the canonical path is locked at plan-time. If the SPIKE recorded a different verified path (e.g., it confirmed an alternative branch), prefer the SPIKE's resolution and align this defensive fallback's narrowed-type shape to that path.
 
 DO NOT make any other changes in this task. The rate-limit branch, JSON parse, validateRequest call, sanitizeMessages, Anthropic stream setup, content_block_delta branch, message_delta cache_metrics log, controller.close, ReadableStream wrapper, and Response construction ALL stay byte-identical.
 
 After the four edits:
-- Run `pnpm exec astro check` — MUST exit 0/0/0. If `locals.runtime.ctx` produces a type error (locals not typed; runtime is `unknown`), use the cast pattern from SPIKE-ctx-access-path.md "## Verified path" section. If the SPIKE recommends a fallback (e.g., import from `cloudflare:workers`), apply the fallback verbatim.
-- Run `pnpm test` — full suite. Plan 18-05 Task 1 expectation: same number as Plan 18-04 close (≥445 PASS), no regression. Some existing tests may import `POST` from api/chat.ts via dynamic import (e.g., `tests/api/cache-hit-logs.test.ts:82-105`) — those tests may need a `mockLocals` shape to keep the suite green. Check VALIDATION.md and PATTERNS.md `mockLocals` shape; if a downstream test breaks because the new `locals` destructure requires a shape, that test's fix is part of Task 1.
+- Run `pnpm exec astro check` — MUST exit 0/0/0. The defensive fallback's narrowed type `(locals as { cfContext?: { waitUntil: ... } } | undefined)` keeps TS strict-mode clean without depending on an Astro adapter ambient type. If a type error surfaces, double-check the narrowed shape matches the actual `locals` parameter type Astro's APIRoute provides.
+- Run `pnpm test` — full suite. Plan 18-05 Task 1 expectation: same number as Plan 18-04 close (≥445 PASS), no regression. The defensive fallback specifically protects existing tests that invoke `POST({ request } as never)` without a `locals` arg (e.g., `tests/api/sse-snapshot.test.ts` lines 82-84 + 99-101; `tests/api/cache-hit-logs.test.ts` line 129+153+177 — all three drive POST without locals). With the no-op waitUntil fallback active in test env, none of those tests need a `mockLocals` shape and Plan 18-05 does NOT need to update them. Plan 18-07 Task 2 may add a real `mockLocals` for the META-02 closure test that needs to observe `appendTurn` invocation — that's a Plan 18-07 concern, not a Plan 18-05 concern. The existing tests stay byte-identical here.
 - Run `pnpm exec vitest run tests/api/sse-snapshot.test.ts` — 3/3 GREEN. The D-15 byte-identical anchor MUST hold here even though Plan 18-05 has not yet wired the appendTurn calls.
 
 Commit shape: `refactor(18-05): src/pages/api/chat.ts add appendTurn import + locals destructure + captureRequestMeta helper — no behavior change`.
   </action>
   <verify>
-    <automated>pnpm exec astro check 2>&1 | tail -3 && pnpm exec vitest run tests/api/sse-snapshot.test.ts 2>&1 | tail -3 && node -e "const fs = require('fs'); const f = fs.readFileSync('src/pages/api/chat.ts', 'utf8'); const checks = [/import\s*\{\s*appendTurn[\s\S]*from\s*[\"']\.\.\/\.\.\/lib\/chat-transcripts[\"']/.test(f), /function\s+captureRequestMeta\s*\(\s*request\s*:\s*Request\s*\)/.test(f), /request\.headers\.get\([\"']Referer[\"']\)/.test(f), /request\.headers\.get\([\"']User-Agent[\"']\)/.test(f), /\(\s*\{\s*request\s*,\s*locals\s*\}\s*\)/.test(f), /const\s+ctx\s*=/.test(f), !/const\s*\{\s*waitUntil\s*\}\s*=\s*ctx/.test(f), /AppendTurnMeta/.test(f)]; const failed = checks.findIndex(c => !c); if (failed >= 0) { console.error('Source check ' + failed + ' failed'); process.exit(1); } process.exit(0);"</automated>
+    <automated>pnpm exec astro check 2>&1 | tail -3 && pnpm exec vitest run tests/api/sse-snapshot.test.ts 2>&1 | tail -3 && node -e "const fs = require('fs'); const f = fs.readFileSync('src/pages/api/chat.ts', 'utf8'); const checks = [/import\s*\{\s*appendTurn[\s\S]*from\s*[\"']\.\.\/\.\.\/lib\/chat-transcripts[\"']/.test(f), /function\s+captureRequestMeta\s*\(\s*request\s*:\s*Request\s*\)/.test(f), /request\.headers\.get\([\"']Referer[\"']\)/.test(f), /request\.headers\.get\([\"']User-Agent[\"']\)/.test(f), /\(\s*\{\s*request\s*,\s*locals\s*\}\s*\)/.test(f), /const\s+ctx\s*=\s*\(locals\s+as\s+\{[\s\S]{0,200}?cfContext[\s\S]{0,200}?\}\s*\|\s*undefined\s*\)\?\.cfContext\s*\?\?/.test(f), !/const\s*\{\s*waitUntil\s*\}\s*=\s*ctx/.test(f), /AppendTurnMeta/.test(f)]; const failed = checks.findIndex(c => !c); if (failed >= 0) { console.error('Source check ' + failed + ' failed'); process.exit(1); } process.exit(0);"</automated>
   </verify>
-  <done>api/chat.ts has the appendTurn import, captureRequestMeta helper declared above POST, POST destructure includes `locals`, `const ctx = <SPIKE-PATH>;` appears at the top of POST body, `ctx` is NOT destructured. `pnpm exec astro check` 0/0/0. `pnpm exec vitest run tests/api/sse-snapshot.test.ts` 3/3 GREEN. Full suite ≥445 PASS / 0 FAIL.</done>
+  <done>api/chat.ts has the appendTurn import, captureRequestMeta helper declared above POST, POST destructure includes `locals`, the defensive ctx read `const ctx = (locals as { cfContext?: ... } | undefined)?.cfContext ?? { waitUntil: ... };` appears at the top of POST body, `ctx` is NOT destructured. `pnpm exec astro check` 0/0/0. `pnpm exec vitest run tests/api/sse-snapshot.test.ts` 3/3 GREEN (the defensive fallback preserves test-env compatibility — D-26). Full suite ≥445 PASS / 0 FAIL.</done>
 </task>
 
 <task type="auto">
@@ -328,13 +345,16 @@ With Task 1 edits in place, add the THREE wiring blocks. Apply in this order:
         // meta — same fields the chat.cache_metrics log line consumes. .catch BEFORE waitUntil per Pitfall 1.
         if (validation.data.sessionId && accumulator) {
           const sid = validation.data.sessionId;
+          // META-01 first-turn pin (Plan 18-02 appendTurn idempotent on meta): pass the same
+          // captureRequestMeta(request) snapshot used for the user-turn write. If user-turn write
+          // failed per D-09 silent posture, the assistant-turn write is the FIRST surviving write
+          // to KV — passing real meta (not nulls) ensures META-01 fields (country/region/colo +
+          // referrer/user_agent) land correctly. On the normal happy path, appendTurn preserves
+          // existing pinned meta and ignores this snapshot.
+          const assistantMeta = captureRequestMeta(request);
           ctx.waitUntil(
             appendTurn(env.CHAT_KV, sid, "assistant", accumulator, {
-              referrer: null,
-              user_agent: null,
-              country: null,
-              region: null,
-              colo: null,
+              ...assistantMeta,
               cache_read_input_tokens: cacheUsage?.cache_read_input_tokens ?? 0,
               cache_creation_input_tokens: cacheUsage?.cache_creation_input_tokens ?? 0,
             }).catch((err: unknown) => {
@@ -357,7 +377,7 @@ After all three blocks land:
 3. **D-15 byte-identical sse-snapshot check** — `pnpm exec vitest run tests/api/sse-snapshot.test.ts` MUST be 3/3 GREEN. If snapshot mismatch surfaces, the waitUntil calls have somehow leaked into the SSE byte stream (which they shouldn't — they're off the controller-enqueue path). STOP and investigate before continuing.
 4. **TEST-03 forward-defense** — `pnpm exec vitest run tests/api/anthropic-payload-shape.test.ts` MUST be 8/8 GREEN (5 legacy + 3 D-16). If Test (b) source-text fails, you've accidentally referenced sessionId in `src/prompts/chat-request-shape.ts` — which Plan 18-05 should NOT touch.
 
-If a downstream test like `tests/api/cache-hit-logs.test.ts` fails because the POST signature now expects `locals`, that's a test-side fix needed in Plan 18-07 (the META-02 extension). Per VALIDATION.md the META-02 closure adds a mockLocals shape — Plan 18-07 owns adding it. If the existing 3 cache-hit-logs tests now require mockLocals to pass, the FIX belongs in Plan 18-07, not Plan 18-05. If they pass without mockLocals (because the existing dynamic import shape is already permissive), proceed.
+Per the defensive ctx fallback in Task 1: the existing 3 `tests/api/cache-hit-logs.test.ts` tests + the 3 `tests/api/sse-snapshot.test.ts` tests pass POST WITHOUT a `locals` arg, and the fallback's no-op waitUntil keeps them GREEN at Task 2 close as well (the two newly-added waitUntil calls fire against the no-op stub, which is a no-op — appendTurn is never actually invoked from those tests; assertions on response bytes / log lines are unaffected). Plan 18-07 Task 2 will ADD a META-02 closure test that DOES drive POST with a real `mockLocals` (so it can observe `appendTurn` invocation via a spy) — that mockLocals shape lives in Plan 18-07, not here. Plan 18-05 does NOT need to touch any existing test file.
 
 Commit shape: `feat(18-05): src/pages/api/chat.ts wire ctx.waitUntil(appendTurn(...)) at D-10 + D-11 anchors — KV-02..05 + META-01 + META-02 + IDENT-02 + D-04 + TEST-01 + TEST-03 wiring`.
   </action>

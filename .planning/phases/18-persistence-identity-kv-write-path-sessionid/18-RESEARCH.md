@@ -956,27 +956,36 @@ for (const key of result.keys) {
 | A6 | D-13 cross-invocation race detection should be scoped to single-invocation only (not literal cross-invocation in-memory state) | Pitfall 2 + D-13 | Workers are stateless across invocations — there is no in-memory state to compare against. Cross-invocation race detection would require reading the prior put's metadata.msg_count and comparing to the current read's messages.length. Planner reconciles the exact mechanism at plan-time. |
 | A7 | Anthropic prompt cache 5-minute default TTL still holds at v1.3 ship time | TEST-03 UAT predicate | Verified via platform.claude.com docs 2026-05-11. **Time-sensitive:** Anthropic silently changed this from 1h → 5min in March 2026 (per Pitfall 6); a future change could invalidate the UAT's "within 5 minutes" window assertion. Planner verifies the TTL at phase close before running the manual UAT. |
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+All four open questions resolved at plan-time during Phase 18 planning (revision 1). The plan-time
+resolutions below replace the prior "spike-deferred" disposition; downstream plans (18-05 in
+particular) consume these resolutions directly. The Plan 18-01 spike remains a defense-in-depth
+runtime confirmation but is no longer a hard blocker for downstream wiring.
 
 1. **What is the exact `ExecutionContext` access path in `@astrojs/cloudflare` 13.1.7 SSR routes?**
-   - What we know: Architectural research from 2026-05-09 names it `locals.cfContext`; existing api/chat.ts uses the `cloudflare:workers` virtual-module import for `env` but doesn't currently reach `ctx`.
-   - What's unclear: Is `ctx` exposed via `locals.runtime.ctx` (Astro convention) or `locals.cfContext` (older adapter) or via some other path?
-   - Recommendation: 5-minute plan-time spike — read `node_modules/@astrojs/cloudflare/dist/index.d.ts` OR write a one-shot dev probe. Cheap to resolve; blocks the D-10/D-11 wiring otherwise.
+   - What we know: Architectural research from 2026-05-09 named it `locals.cfContext`; existing api/chat.ts uses the `cloudflare:workers` virtual-module import for `env` but does not currently reach `ctx`.
+   - What was unclear: Whether `ctx` is exposed via `locals.runtime.ctx` (Astro v5 convention) or `locals.cfContext` (Astro v6 convention) or another path.
+   - **RESOLVED:** Direct read of `node_modules/@astrojs/cloudflare/dist/utils/handler.js:64-91` (adapter 13.1.7, the version pinned in this repo) confirms the canonical Astro v6 path is **`locals.cfContext`**. `locals.runtime.ctx` was REMOVED in Astro v6 — the getter at line 85-89 of handler.js throws `"Astro.locals.runtime.ctx has been removed in Astro v6. Use 'Astro.locals.cfContext' instead."`. Plan 18-05 wiring MUST use `const ctx = locals.cfContext;` (with the defensive-fallback shape per Blocker 2 — see Plan 18-05 Task 1 action). The Plan 18-01 SPIKE remains a defense-in-depth runtime confirmation against `pnpm dev:worker`, but the canonical path is locked at plan-time.
 
 2. **Is `request.cf` reachable from Astro's `APIRoute` request param, or does it require a different access path on `@astrojs/cloudflare` 13.1.7?**
    - What we know: `request.cf` is the canonical Workers-native API; Cloudflare docs verify the shape.
-   - What's unclear: Astro wraps the underlying Request — sometimes the cf properties are accessible via `request.cf` directly, sometimes via `locals.runtime.cf`.
-   - Recommendation: Same spike as Q1 — verify both `request.cf` and `locals.runtime.cf` paths in dev preview, pick whichever is populated.
+   - What was unclear: Whether Astro wraps the underlying Request such that cf properties are accessible via `request.cf` directly or via `locals.runtime.cf`.
+   - **RESOLVED:** Same handler.js read (lines 75-79) confirms `locals.runtime.cf` was REMOVED in Astro v6 and the adapter explicitly directs callers to `Astro.request.cf`. Plan 18-05 wiring MUST use `request.cf?.country` etc. (with the existing defensive cast `(request as unknown as { cf?: ... }).cf` per Pitfall 4 — `wrangler dev` mocks may surface `cf` as undefined). Resolves with Q1 from the same source file.
 
 3. **What is the exact log-line field-ordering convention for `chat.transcript.write_failed` / `chat.transcript.quota_exceeded` / `chat.transcript.race_suspected`?**
    - What we know: CONTEXT D-09/D-12/D-13 lock the field NAMES; CONTEXT's Claude's-Discretion bullet says ordering is presentational.
-   - What's unclear: Should the ordering match the existing `chat.cache_metrics` log shape (Plan 17-05)?
-   - Recommendation: Match the existing `console.log("chat.cache_metrics", { cache_read_input_tokens, cache_creation_input_tokens, input_tokens, output_tokens })` shape — sessionId first, then role / count, then error_class. Trivial to align at plan-time.
+   - What was unclear: Whether ordering should match the existing `chat.cache_metrics` log shape (Plan 17-05).
+   - **RESOLVED:** Locked to the same field-ordering convention as `chat.cache_metrics` (Plan 17-05 DEBT-02 pattern at api/chat.ts `message_delta` branch — flat primitives, JSON-parseable by `wrangler tail`). Canonical ordering for the three new namespaces: `sessionId` first, then `role` (where applicable), then count/quantity fields (`msg_count` / `count_in_window` / `in_memory_tail_len` + `kv_read_len`), then `error_class` or `content_length` last. The exact emission shape:
+     - `console.error("chat.transcript.write_failed", { sessionId, role, error_class })` (Plan 18-02 module surface OR Plan 18-05 caller `.catch`)
+     - `console.error("chat.transcript.write_failed", { sessionId, role, content_length, error_class })` (Plan 18-05 caller `.catch` for assistant turn only — adds content_length per D-11 commentary)
+     - `console.warn("chat.transcript.quota_exceeded", { sessionId, count_in_window })` (Plan 18-02 module)
+     - `console.warn("chat.transcript.race_suspected", { sessionId, in_memory_tail_len, kv_read_len })` (Plan 18-02 module)
 
 4. **Does the manual TEST-03 UAT against `*.workers.dev` preview need to use a different sessionId than production, or can the same sessionId be reused?**
    - What we know: Anthropic's prompt cache is account-keyed (the project's ANTHROPIC_API_KEY is the cache namespace); same API key + same payload = same cache entry across deploys.
-   - What's unclear: Does the preview deploy share the same API key as production, or has Plan 17-02 / DEPLOY-GATE caused a re-key that creates different cache namespaces?
-   - Recommendation: Plan 17-02 SUMMARY notes "ANTHROPIC_API_KEY (re-keyed from Pages — secrets do NOT migrate)" — so the new Worker has its own key. Preview vs production share that key. Same sessionId is fine; the cache namespace is the same. Confirm at UAT-time by reading `wrangler tail` for both preview and production calls and asserting equivalent cache hit behavior.
+   - What was unclear: Whether the preview deploy shares the same API key as production, or has Plan 17-02 / DEPLOY-GATE caused a re-key that creates different cache namespaces.
+   - **RESOLVED:** Confirmed against Plan 17-02 SUMMARY. The Worker has its own ANTHROPIC_API_KEY (re-keyed from Pages — secrets do NOT migrate), but the SAME key is shared between the Worker's preview and production environments (Workers Builds binds the same Worker secret to both). Therefore the Anthropic cache namespace IS shared across preview and production for THIS Worker. Plan 18-08 UAT Step 2 + Step 8 use the SAME sessionId across preview and production runs — TEST-03 cache-hit observability is consistent end-to-end. (Note: a future re-key would invalidate this resolution; re-verify at Phase 18 close if the ANTHROPIC_API_KEY rotates between preview and production runs.)
 
 ## Metadata
 
