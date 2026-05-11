@@ -6,6 +6,7 @@ on:
       - "Projects/**"
       - "src/content/projects/**"
       - "src/data/about.ts"
+      - "src/data/about-chat.ts"
       - "src/data/portfolio-context.static.json"
       - "src/data/portfolio-context.json"
       - "scripts/sync-projects.mjs"

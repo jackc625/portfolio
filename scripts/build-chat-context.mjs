@@ -39,6 +39,7 @@ const PROJECT_ROOT = process.cwd();
 const MDX_GLOB = "src/content/projects/*.mdx";
 const STATIC_JSON_PATH = "src/data/portfolio-context.static.json";
 const ABOUT_TS_PATH = "src/data/about.ts";
+const ABOUT_CHAT_TS_PATH = "src/data/about-chat.ts";
 const OUTPUT_JSON_PATH = "src/data/portfolio-context.json";
 const FENCE_END = "<!-- CASE-STUDY-END -->";
 const README_WORD_CAP = 5000; // D-06
@@ -55,6 +56,76 @@ const normalize = (s) => s.replace(/\r\n/g, "\n");
 
 /** Char-based token estimator (Anthropic's conservative char/4 rule). */
 export const estimateTokens = (str) => Math.ceil(str.length / 4);
+
+/**
+ * BROADENED first-person leak regex (Plan 17-07 revision B1).
+ *
+ * Closes UAT Gap #1 (BLOCKER) — the chat <knowledge> block must speak ABOUT
+ * Jack, never AS Jack. The original Plan 17-07-spec'd regex
+ *   /\b(I'?m |I built |I architected |I chose |I wanted |I reach |I read |My approach )\b/
+ * MISSED present-tense ("I build"), additional contractions ("I'd", "I'll",
+ * "I've"), and the "My favorite" / "I wonder" / "I like" tokens that are
+ * currently present in the pre-fix portfolio-context.json. The broadened
+ * regex catches:
+ *   - I'm / I'd / I'll / I've / I am
+ *   - I build / built / like / liked / wonder / wanted / reach / reached / read /
+ *     architected / chose / haven / wrote / run / set / shipped / added / prefer /
+ *     care / watch / track / love / hate
+ *   - My approach / favorite / projects / code / work / background / stack / version / first
+ *
+ * The same canonical regex is used in
+ *   tests/build/chat-knowledge-voice.test.ts (B1 self-test + artifact sweep)
+ *   tests/api/chat-voice-split.test.ts        (live system-block tripwire)
+ * — keep all three sites in sync. See .planning/debug/chat-voice-split-regression.md.
+ */
+const FIRST_PERSON_LEAK_RE = /\b(I(?:'|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate)|My\s+(?:approach|favorite|projects|code|work|background|stack|version|first))\b/i;
+
+/**
+ * First-person leak guard — exits 2 if any chat-bound field contains a
+ * first-person leading clause. Closes UAT Gap #1 root cause.
+ *
+ * Scope: about.intro/p1/p2/p3, experience, projects[].caseStudy. Does NOT
+ * walk extendedReference.content — that's technical reference material from
+ * below-the-fence Projects/*.md, not voice-bearing prose authored for either
+ * surface, and the chat <role> handles voice translation when citing it.
+ */
+function checkFirstPersonLeaks(merged) {
+  const targets = [
+    ["about.intro", merged.about?.intro],
+    ["about.p1", merged.about?.p1],
+    ["about.p2", merged.about?.p2],
+    ["about.p3", merged.about?.p3],
+    ["experience", merged.experience],
+    ...merged.projects.map((p, i) => [
+      `projects[${i}].caseStudy (${p.page})`,
+      p.caseStudy,
+    ]),
+  ];
+  const leaks = [];
+  for (const [field, value] of targets) {
+    if (typeof value !== "string") continue;
+    const m = FIRST_PERSON_LEAK_RE.exec(value);
+    if (m) {
+      leaks.push({
+        field,
+        match: m[0],
+        excerpt: value.slice(Math.max(0, m.index - 20), m.index + 60),
+      });
+    }
+  }
+  if (leaks.length > 0) {
+    process.stderr.write(
+      `ERROR first-person voice leak in chat-knowledge JSON (CHAT-06 contract violation):\n`
+    );
+    for (const { field, match, excerpt } of leaks) {
+      process.stderr.write(`  ${field}: matched "${match}" near "...${excerpt}..."\n`);
+    }
+    process.stderr.write(
+      `Fix: edit src/data/about-chat.ts or the matching MDX chatSummary frontmatter; voice MUST be third person ("Jack built X", "Jack chose Y"). See .planning/debug/chat-voice-split-regression.md.\n`
+    );
+    process.exit(2);
+  }
+}
 
 /**
  * Read a quoted OR unquoted single-line string field from a frontmatter block.
@@ -228,6 +299,42 @@ export function parseAboutExports(sourceContent) {
 }
 
 /**
+ * Extract ABOUT_CHAT_INTRO, ABOUT_CHAT_P1..P3 from src/data/about-chat.ts.
+ * Mirrors parseAboutExports — same regex shape, same error contract.
+ * The source file is the third-person variant the chat widget consumes;
+ * the first-person originals in about.ts continue to feed the website
+ * surface (homepage, about page).
+ *
+ * See .planning/debug/chat-voice-split-regression.md for the gap this closes
+ * (UAT Gap #1, Plan 17-07).
+ */
+export function parseAboutChatExports(sourceContent) {
+  const names = ["ABOUT_CHAT_INTRO", "ABOUT_CHAT_P1", "ABOUT_CHAT_P2", "ABOUT_CHAT_P3"];
+  const result = {};
+  for (const name of names) {
+    const re = new RegExp(
+      `export const ${name}\\s*=\\s*("(?:[^"\\\\]|\\\\.)*")`,
+      "m"
+    );
+    const m = re.exec(sourceContent);
+    if (!m) {
+      const existsAtAll = new RegExp(`export const ${name}\\b`, "m").test(sourceContent);
+      if (!existsAtAll) {
+        throw new Error(
+          `${ABOUT_CHAT_TS_PATH}: missing export const ${name} — add it to about-chat.ts`
+        );
+      }
+      throw new Error(
+        `${ABOUT_CHAT_TS_PATH}: export const ${name} not in single-line double-quoted form — ` +
+          `either normalize back to a \`"..."\` literal OR extend parseAboutChatExports() to handle template literals`
+      );
+    }
+    result[name] = JSON.parse(m[1]);
+  }
+  return result;
+}
+
+/**
  * Build one per-project knowledge block.
  * @param {object} args
  * @param {string} args.mdxPath
@@ -243,8 +350,19 @@ export async function buildProjectBlock({ mdxPath, mdxRaw, sourceAbs, sourceRel 
   const description = readStringField(frontmatterBlock, "description");
   const tech = readArrayField(frontmatterBlock, "techStack");
   const demoUrl = readStringField(frontmatterBlock, "demoUrl");
+  // CHAT-06 voice-split: chat consumes a third-person summary, NOT the
+  // first-person MDX body (which is correct for the /projects/[slug] surface).
+  // Plan 17-07 closes UAT Gap #1 — see .planning/debug/chat-voice-split-regression.md.
+  // Suppress unused-var lint for `body` since we deliberately stop reading it.
+  void body;
+  const chatSummary = readStringField(frontmatterBlock, "chatSummary");
   if (!title) throw new Error(`${basename(mdxPath)}: missing title`);
   if (!description) throw new Error(`${basename(mdxPath)}: missing description`);
+  if (!chatSummary) {
+    throw new Error(
+      `${basename(mdxPath)}: missing chatSummary: frontmatter field — required for chat-voice-split (CHAT-06). See .planning/debug/chat-voice-split-regression.md`
+    );
+  }
 
   const sourceRaw = normalize(await readFile(sourceAbs, "utf8"));
   const belowFence = sliceReadmeBelowFence(sourceRaw, sourceRel);
@@ -255,7 +373,10 @@ export async function buildProjectBlock({ mdxPath, mdxRaw, sourceAbs, sourceRel 
     description,
     tech,
     page: `/projects/${slug}`,
-    caseStudy: body.trimEnd(), // MDX body verbatim; NEVER truncated per D-06
+    // CHAT-06 voice-split (Plan 17-07): third-person chatSummary replaces the
+    // first-person MDX body. The body itself remains the source of truth for
+    // the /projects/[slug] case-study page render.
+    caseStudy: chatSummary,
     extendedReference: {
       content,
       truncated,
@@ -363,19 +484,23 @@ async function main() {
     process.exit(2);
   }
 
-  // 4. Read about.ts and extract exports
+  // 4. Read about-chat.ts and extract third-person variants for the chat
+  //    <knowledge> block. The first-person about.ts continues to feed the
+  //    website surface (homepage, about page) -- per CHAT-06 voice-split
+  //    contract, the two surfaces consume DIFFERENT sources. Plan 17-07
+  //    closes UAT Gap #1; see .planning/debug/chat-voice-split-regression.md.
   let aboutBlock;
   try {
-    const aboutRaw = normalize(await readFile(ABOUT_TS_PATH, "utf8"));
-    const parsed = parseAboutExports(aboutRaw);
+    const aboutChatRaw = normalize(await readFile(ABOUT_CHAT_TS_PATH, "utf8"));
+    const parsed = parseAboutChatExports(aboutChatRaw);
     aboutBlock = {
-      intro: parsed.ABOUT_INTRO,
-      p1: parsed.ABOUT_P1,
-      p2: parsed.ABOUT_P2,
-      p3: parsed.ABOUT_P3,
+      intro: parsed.ABOUT_CHAT_INTRO,
+      p1: parsed.ABOUT_CHAT_P1,
+      p2: parsed.ABOUT_CHAT_P2,
+      p3: parsed.ABOUT_CHAT_P3,
     };
   } catch (err) {
-    process.stderr.write(`ERROR ${ABOUT_TS_PATH}: ${err.message}\n`);
+    process.stderr.write(`ERROR ${ABOUT_CHAT_TS_PATH}: ${err.message}\n`);
     process.exit(2);
   }
 
@@ -404,6 +529,12 @@ async function main() {
     experience,
     about: aboutBlock,
   };
+
+  // 6b. CHAT-06 voice-split leak guard (Plan 17-07, UAT Gap #1).
+  //     Hard-fails the build if any first-person prose slips into chat-bound
+  //     fields. The leak guard is the third tripwire (after the source-text
+  //     authoring discipline + the DEBT-03 sync-check.yml CI job).
+  checkFirstPersonLeaks(merged);
 
   // 7. Token-floor + multi-threshold budget observability (REVIEWS.md MEDIUM — per-project visibility + tiered warnings)
   const serialized = JSON.stringify(merged, null, 2) + "\n";
