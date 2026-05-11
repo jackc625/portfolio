@@ -220,7 +220,7 @@ describe("KV-02 — schema versioning + 30d TTL on every put (D-22 sibling patte
     // No quota warnings on first write under cap
     expect(
       warnSpy.mock.calls.find(
-        (c) => c[0] === "chat.transcript.quota_exceeded",
+        (c: unknown[]) => c[0] === "chat.transcript.quota_exceeded",
       ),
     ).toBeUndefined();
     expect(errorSpy).not.toHaveBeenCalled();
@@ -260,12 +260,12 @@ describe("KV-02 — schema versioning + 30d TTL on every put (D-22 sibling patte
 });
 
 describe("KV-03 — metadata field for Phase 19 list({prefix}) forward-compat", () => {
-  let warnSpy: ReturnType<typeof vi.spyOn>;
-  let errorSpy: ReturnType<typeof vi.spyOn>;
-
+  // Silence console spies so quota/race observability noise from the module
+  // doesn't surface in test output; these describe blocks don't assert
+  // against the log seam directly.
   beforeEach(() => {
-    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -311,12 +311,10 @@ describe("KV-03 — metadata field for Phase 19 list({prefix}) forward-compat", 
 });
 
 describe("KV-04 — 30-turn cap drop-oldest + truncated one-way (D-05/D-06/D-07)", () => {
-  let warnSpy: ReturnType<typeof vi.spyOn>;
-  let errorSpy: ReturnType<typeof vi.spyOn>;
-
+  // Silence console spies; trim-cap behavior tests don't assert log output.
   beforeEach(() => {
-    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -575,7 +573,7 @@ describe("KV-05 — per-sessionId write quota (D-12)", () => {
     expect(options.metadata!.window_count).toBe(100);
 
     const quotaCalls = warnSpy.mock.calls.filter(
-      (c) => c[0] === "chat.transcript.quota_exceeded",
+      (c: unknown[]) => c[0] === "chat.transcript.quota_exceeded",
     );
     expect(quotaCalls).toHaveLength(0);
   });
@@ -602,7 +600,7 @@ describe("KV-05 — per-sessionId write quota (D-12)", () => {
 
     expect(putSpy).not.toHaveBeenCalled();
     const quotaCall = warnSpy.mock.calls.find(
-      (c) => c[0] === "chat.transcript.quota_exceeded",
+      (c: unknown[]) => c[0] === "chat.transcript.quota_exceeded",
     );
     expect(quotaCall).toBeDefined();
     expect(quotaCall![1]).toMatchObject({
@@ -640,7 +638,7 @@ describe("KV-05 — per-sessionId write quota (D-12)", () => {
     expect(Math.abs(newWindowStart - Date.now())).toBeLessThan(5000); // within 5s of now
 
     const quotaCalls = warnSpy.mock.calls.filter(
-      (c) => c[0] === "chat.transcript.quota_exceeded",
+      (c: unknown[]) => c[0] === "chat.transcript.quota_exceeded",
     );
     expect(quotaCalls).toHaveLength(0);
   });
@@ -724,7 +722,7 @@ describe("D-13 — race_suspected log on shorter read (single-invocation scope p
     expect(putSpy).toHaveBeenCalledOnce();
 
     const raceCall = warnSpy.mock.calls.find(
-      (c) => c[0] === "chat.transcript.race_suspected",
+      (c: unknown[]) => c[0] === "chat.transcript.race_suspected",
     );
     expect(raceCall).toBeDefined();
     expect(raceCall![1]).toMatchObject({
