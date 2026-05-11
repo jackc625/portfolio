@@ -98,6 +98,17 @@ export const POST: APIRoute = async ({ request }) => {
     async start(controller) {
       try {
         let truncated = false;
+        // CR-01 (Phase 17 review): Anthropic's streaming protocol delivers the
+        // FINAL output_tokens in `message_delta.usage`, NOT in `message_start`.
+        // At message_start, output_tokens is typically 1-3 (initial preamble
+        // accounting). Capture cache-token fields from message_start (those
+        // ARE accurate there) and defer the chat.cache_metrics log emission
+        // until message_delta arrives with the real final output_tokens.
+        let cacheUsage: {
+          cache_read_input_tokens: number;
+          cache_creation_input_tokens: number;
+          input_tokens: number;
+        } | null = null;
         const response = await client.messages.create(
           buildChatRequestArgs(portfolioContext, messages)
         );
@@ -122,19 +133,29 @@ export const POST: APIRoute = async ({ request }) => {
               truncated = true;
               console.warn("chat.truncated", { stop_reason: "max_tokens" });
             }
+            // DEBT-02 (Phase 17 / Plan 17-05) + CR-01 (Phase 17 review):
+            // Emit the canonical chat.cache_metrics log line here — message_delta
+            // carries the FINAL output_tokens. Merge with cache-token fields
+            // captured from message_start. Structured JSON log — Cloudflare
+            // Workers Logs + wrangler tail parse the second arg as JSON for
+            // query/filter. Flat primitive fields only (per RESEARCH §"Pattern 5").
+            // NO SSE frame enqueue — D-15 byte-identical anchor forbids it; the
+            // SSE stream is consumer contract, not telemetry.
+            if (cacheUsage && event.usage) {
+              console.log("chat.cache_metrics", {
+                ...cacheUsage,
+                output_tokens: event.usage.output_tokens,
+              });
+            }
           } else if (event.type === "message_start") {
-            // DEBT-02 (Phase 17 / Plan 17-05): Anthropic prompt-cache observability.
-            // Structured JSON log — Cloudflare Workers Logs + wrangler tail parse
-            // the second arg as JSON for query/filter. Flat primitive fields only
-            // (per RESEARCH §"Pattern 5"). NO SSE frame enqueue — D-15 byte-identical
-            // anchor forbids it; the SSE stream is consumer contract, not telemetry.
+            // CR-01: Capture only the cache-related fields (these ARE accurate
+            // at message_start). output_tokens is deferred to message_delta.
             const usage = event.message.usage;
-            console.log("chat.cache_metrics", {
+            cacheUsage = {
               cache_read_input_tokens: usage.cache_read_input_tokens ?? 0,
               cache_creation_input_tokens: usage.cache_creation_input_tokens ?? 0,
               input_tokens: usage.input_tokens,
-              output_tokens: usage.output_tokens,
-            });
+            };
           }
         }
 

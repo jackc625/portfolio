@@ -29,9 +29,19 @@ interface MockUsage {
 }
 
 /**
- * Build an Anthropic SDK mock that yields a message_start with the given
- * usage and a single content_block_delta. Mirrors the SSE-snapshot mock
- * pattern at tests/api/sse-snapshot.test.ts:40-56.
+ * Build an Anthropic SDK mock that yields:
+ *   1. message_start with cache-related usage fields (cache_read, cache_creation,
+ *      input_tokens). At message_start, output_tokens reported by Anthropic is
+ *      typically 1-3 (preamble accounting) — NOT the final response token count.
+ *   2. content_block_delta with one token of text.
+ *   3. message_delta with the FINAL output_tokens in usage. This mirrors the
+ *      real Anthropic streaming protocol: the canonical output_tokens lives in
+ *      message_delta.usage, not message_start.message.usage.
+ *
+ * CR-01 (Phase 17 review): Earlier versions of this mock supplied the final
+ * output_tokens at message_start and asserted it was echoed; that mocked a
+ * shape Anthropic never emits and masked a real production bug. The handler
+ * now defers the chat.cache_metrics log to message_delta. See chat.ts.
  */
 function mockAnthropicWithUsage(usage: MockUsage) {
   return {
@@ -41,11 +51,25 @@ function mockAnthropicWithUsage(usage: MockUsage) {
           async function* generate() {
             yield {
               type: "message_start",
-              message: { usage },
+              message: {
+                usage: {
+                  input_tokens: usage.input_tokens,
+                  cache_read_input_tokens: usage.cache_read_input_tokens,
+                  cache_creation_input_tokens: usage.cache_creation_input_tokens,
+                  // Real Anthropic message_start.usage.output_tokens is the
+                  // preamble count, not the final. Use 1 to model this.
+                  output_tokens: 1,
+                },
+              },
             };
             yield {
               type: "content_block_delta",
               delta: { type: "text_delta", text: "Hi" },
+            };
+            yield {
+              type: "message_delta",
+              delta: { stop_reason: "end_turn" },
+              usage: { output_tokens: usage.output_tokens },
             };
           }
           return generate();
