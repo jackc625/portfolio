@@ -45,10 +45,17 @@ describe("Umami analytics tag (ANAL-01 / D-01, D-02, D-03)", () => {
 });
 
 describe("BaseLayout is:inline precedent integrity", () => {
-  it("does not introduce a second un-scoped is:inline for Umami (catches future drift)", () => {
+  it("does not introduce extra un-scoped is:inline scripts beyond the documented set (catches future drift)", () => {
     const occurrences = (layoutSource.match(/is:inline/g) ?? []).length;
-    // BaseLayout currently has zero is:inline; Task 2 adds exactly one for
-    // Umami. Anything > 2 signals accidental duplication.
-    expect(occurrences).toBeLessThanOrEqual(2);
+    // Documented is:inline string occurrences in BaseLayout.astro:
+    //   1. Phase 15 Umami analytics tag (`<script is:inline defer src=".../script.js" ...>`)
+    //   2. Phase 17 Plan 17-10 pageswap handler (`<script is:inline>...pageswap.../<script>`)
+    //      — UAT Gap #4 closure; consumes the implicit @view-transition AbortError.
+    //      See design-system/MOTION.md §5 MOTN-01 rejection-handling contract +
+    //      .planning/debug/view-transition-aborterror.md.
+    //   3. The body-end comment block prose `(NOT is:inline)` which documents the
+    //      processed analytics/scroll/motion <script> intentionally NOT being is:inline.
+    // Total documented occurrences: 3. Anything > 3 signals accidental duplication.
+    expect(occurrences).toBeLessThanOrEqual(3);
   });
 });
