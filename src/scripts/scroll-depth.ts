@@ -31,8 +31,18 @@ export function handleScrollEntry(
   const percentAttr = (entry.target as HTMLElement).getAttribute("data-percent");
   if (!percentAttr) return;
   const percent = Number(percentAttr);
+  // WR-06 (Phase 17 review): reject non-finite percent values explicitly.
+  // Number("abc") = NaN; Number("25%") = NaN; Number("0.5x") = NaN. Without
+  // this guard, umami.track receives { percent: NaN, ... } which JSON-
+  // serializes as { percent: null, ... } and produces unusable analytics rows.
+  if (!Number.isFinite(percent)) return;
   const pathname = typeof location !== "undefined" ? location.pathname : "";
-  const slug = pathname.split("/").pop() || "unknown";
+  // WR-07 (Phase 17 review): trailing-slash URLs (e.g. /projects/foo/) split
+  // to ["", "projects", "foo", ""] whose .pop() is "", falling back to
+  // "unknown" and collapsing analytics. Filter empty segments first so the
+  // last non-empty segment wins regardless of trailingSlash configuration.
+  const segments = pathname.split("/").filter(Boolean);
+  const slug = segments[segments.length - 1] ?? "unknown";
   // Optional-chaining guards the L10 load-race window where Umami's <script>
   // hasn't loaded yet — silent no-op rather than thrown error.
   window.umami?.track("scroll_depth", { percent, slug });
