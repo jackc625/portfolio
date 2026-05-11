@@ -397,6 +397,19 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 
+/* UAT Gap #3 (Plan 17-09): post-click feedback window — pins button
+ * visible regardless of :hover or :focus-visible state. Wired to the
+ * .copy-success class set by chat.ts copyToClipboard for COPY_FEEDBACK_MS.
+ * Mouse click does NOT trigger :focus-visible (per WHATWG spec), so
+ * the existing focus-visible rule does not cover the post-click case.
+ * M3: this is the SINGLE source of truth for color during feedback —
+ * chat.ts no longer writes inline color (which would override at 1,0,0,0).
+ * See .planning/debug/copy-button-no-copied-transition.md. */
+.chat-copy-btn.copy-success {
+  opacity: 1;
+  color: var(--accent);
+}
+
 /* D-20: Mobile full-screen chat */
 @media (max-width: 767px) {
   .chat-panel-mobile {
