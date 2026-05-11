@@ -50,9 +50,10 @@
   </button>
 
   <!-- Chat Panel (D-15: flat rectangle, no shadow, 1px rule border) -->
+  <!-- Phase 17 Plan 17-08 (UAT Gap #2): NO inline display — CSS state machine in global.css:699-706 governs visibility (#chat-panel { display: none } base + #chat-panel.is-open { display: flex } / openPanel adds .is-open). Inline display: none here would beat the CSS rule via specificity (1,0,0,0 > 0,1,1,0) and break the panel-open path. See .planning/debug/chat-panel-not-opening-dev.md. -->
   <div
     id="chat-panel"
-    style="display: none; position: fixed; bottom: 84px; right: 24px; z-index: 50; width: 400px; height: 500px; background: var(--bg); border: 1px solid var(--rule); border-radius: 0; box-shadow: none; flex-direction: column; overflow: hidden;"
+    style="position: fixed; bottom: 84px; right: 24px; z-index: 50; width: 400px; height: 500px; background: var(--bg); border: 1px solid var(--rule); border-radius: 0; box-shadow: none; flex-direction: column; overflow: hidden;"
     role="dialog"
     aria-modal="true"
     aria-label="Chat with Jack's AI"

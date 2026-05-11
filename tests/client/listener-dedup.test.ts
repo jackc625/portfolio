@@ -157,11 +157,21 @@ describe("DEBT-04: idempotent astro:page-load listener registration", () => {
         vi.resetModules();
         await import(importPath);
 
+        // Rule 3 fix (Plan 17-08): annotate the filter callback param to
+        // resolve ts(7006) implicit-any errors carried forward from Plan 17-03.
+        // Plan 17-08 is the deploy gate and CANNOT push to main with a failing
+        // build; pnpm build runs astro check && astro build, and astro check
+        // failed on these two filters until this fix landed. The annotation is
+        // narrow (only the lexical type for the callback param), preserves the
+        // runtime behavior byte-identically, and is the smallest possible
+        // closure path. The mock.calls element type is the spied function's
+        // parameter tuple — for document.removeEventListener / addEventListener
+        // it's [type, listener, options?].
         const removes = removeSpy.mock.calls.filter(
-          (c) => c[0] === "astro:page-load",
+          (c: unknown[]) => c[0] === "astro:page-load",
         );
         const adds = addSpy.mock.calls.filter(
-          (c) => c[0] === "astro:page-load",
+          (c: unknown[]) => c[0] === "astro:page-load",
         );
 
         expect(removes.length).toBeGreaterThanOrEqual(1);
