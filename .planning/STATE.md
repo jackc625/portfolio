@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
-status: completed
-stopped_at: "Phase 17 CLOSED -- 6/6 plans complete, all 14 requirements GREEN (FOUND-01..04, DNS-01..02, DEBT-01..05, TEST-01..03). Plan 17-06 (Wave 5 -- DNS-01 Resend domain records + DNS-02 warmup sends + Postmaster Tools enrollment) closed in 1 atomic Task 1 commit (0b9d5c5 scripts/resend-warmup.mjs) + 4 manual-checkpoint operations (DNS authoring in Cloudflare; Resend domain verification; Postmaster Tools enrollment; wrangler secret put RESEND_API_KEY; 5 warmup sends 5/5 Inbox first-try with ZERO Not-Spam feedback needed) + this metadata commit. Resend message IDs captured: a61430df-9ebd-4b4b-8de7-383e0f31c982, 9b316537-1c76-48c6-b4e4-d1d3c5b2628a, 8f83ba2b-32b6-4f44-9e4d-171a84ea1125, de2bc127-b0d9-4c7e-ad09-3260aaa1aff8, 652bc168-720b-419e-aa49-28f13683a448. Phase-end pnpm test = 383 PASS / 1 FAIL (pre-existing tests/content/roadmap-amendment.test.ts from Plan 17-01; NOT a regression). FOUND-03 Pages retirement sub-goal PENDING -- 24h-warm-window check (NOT a timer per D-02; gated on clean window). Phase 18 (Persistence + Identity -- KV write path + sessionId) UNBLOCKED with all prereqs in place."
-last_updated: "2026-05-11T00:14:30Z"
-last_activity: "2026-05-11 -- Phase 17 CLOSED. Plan 17-06 executed (DNS-01 mail.jackcutrara.com Verified on Resend + DNS-02 5/5 warmup sends in Inbox first-try + Postmaster Tools enrolled + RESEND_API_KEY added to Worker). 6/6 plans complete; all 14 requirements GREEN. Pages retirement (FOUND-03 sub-goal) pending 24h-warm-window check per D-02 (estimated retirement window opens after 2026-05-11 ~22:00 UTC; user retires manually). Phase 18 UNBLOCKED."
+status: executing
+stopped_at: "Plan 17-07 (Wave 7 -- gap-closure for UAT Gap #1 chat voice-split BLOCKER) COMPLETE. 4 atomic commits: ad9fdad (Task 0/M8 -- skip pre-existing roadmap-amendment.test.ts; pnpm test exits 0 cleanly for first time in 6 plans), 537a0e6 (Task 1 -- src/data/about-chat.ts + 6 MDX chatSummary frontmatters; about.ts BYTE-IDENTICAL; MDX bodies BYTE-IDENTICAL above CASE-STUDY-END), 05bf93d (Task 2 -- build-chat-context.mjs reads about-chat.ts + chatSummary, BROADENED leak guard B1 hard-fails build on first-person leak, sync-check.yml triggers cover about-chat.ts; portfolio-context.json regenerated with about.intro starting 'Jack is...', est_tokens=41053), 2aa627d (Task 3 -- system-prompt.ts <role> defense-in-depth instruction + tests/build/chat-knowledge-voice.test.ts B1 self-test 16/16 + tests/api/chat-voice-split.test.ts live-system-block tripwire 2/2; D-15 sse-snapshot 3/3 GREEN, D-26 chat surface GREEN at every commit). Final pnpm test = 404 PASS / 2 SKIP / 0 FAIL (was 383/1 baseline; +21 new tests across 2 files, +2 skipped from M8 fix; first phase-end with 0 FAIL since Plan 17-01). astro check = 2 errors (both pre-existing in tests/client/listener-dedup.test.ts from Plan 17-03; logged in deferred-items.md as out-of-scope carry-forward; Plan 17-07 introduced 0 new typecheck errors). Phase 17 RE-OPENED for gap closure: now 7/10 plans complete (was 6/6 closed). Next: Plan 17-09 (Wave 8 -- COPY button feedback window) per serial chain 17-07 -> 17-09 -> 17-10 -> 17-08 (M-iter2 wave correction; 17-08 runs LAST as RELEASE BLOCKER deploy gate)."
+last_updated: "2026-05-11T03:42:00.000Z"
+last_activity: 2026-05-11 -- Plan 17-07 (Wave 7) gap-closure complete; Plan 17-09 next
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 6
-  percent: 25
+  completed_phases: 0
+  total_plans: 10
+  completed_plans: 7
+  percent: 70
 ---
 
 # Project State
@@ -21,14 +21,30 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** v1.3 Chat Visibility — roadmap locked, Phase 17 awaiting plan
+**Current focus:** Phase 17 — foundations-migration-dns-debt-sweep
 
 ## Current Position
 
-Phase: Phase 18 — Persistence + Identity — KV Write Path + sessionId (not started; entry condition SATISFIED)
-Plan: TBD (Phase 18 not yet planned — entry point is `/gsd-execute-phase 18` which will trigger planning)
-Status: Phase 17 CLOSED — 6/6 plans complete; all 14 requirements GREEN (FOUND-01..04, DNS-01..02, DEBT-01..05, TEST-01..03). Plan 17-06 (Wave 5 — DNS-01 mail.jackcutrara.com Verified on Resend + DNS-02 5/5 warmup sends in Inbox first-try + Postmaster Tools enrolled + RESEND_API_KEY added to Worker) closed via 1 Task 1 code commit (0b9d5c5 scripts/resend-warmup.mjs) + 4 human-action/verify checkpoints PASSED + this metadata commit. Phase-end pnpm test = 383 PASS / 1 FAIL (the 1 FAIL is pre-existing tests/content/roadmap-amendment.test.ts from Plan 17-01; NOT a regression). D-26 chat-surface regression battery GREEN at phase-end (no chat-surface mutation in Plan 17-06). FOUND-03 Pages retirement sub-goal PENDING — 24h-warm-window check per D-02 (NOT a timer; gated on clean window). Estimated retirement window opens after 2026-05-11 ~22:00 UTC; user retires manually via Cloudflare dashboard. Phase 18 prereqs satisfied: CHAT_KV bound (prod + preview); Worker entrypoint extensible for ctx.waitUntil(appendTurn(...)); sessionId forward-defense snapshot in place (TEST-03 5/5 GREEN locks current clean state forward); 4 secrets on Worker including RESEND_API_KEY (forward-ready for Phase 20); Resend domain Verified + warmed; phase-end D-26 baseline 383 PASS / 1 FAIL pre-existing carried forward. Phase 17 RETROSPECTIVE.md captures all lessons + carry-forward debts (listener-dedup typecheck fix + roadmap-amendment test resolution + send.* DNS dust cleanup) for Phase 18 first-plan absorption.
-Last activity: 2026-05-11 — Phase 17 CLOSED. Plan 17-06 executed: scripts/resend-warmup.mjs (Task 1 commit 0b9d5c5) + Resend account add-domain (mail.jackcutrara.com) + 4 DNS record families authored in Cloudflare (SPF TXT @ mail; DKIM 3x CNAME @ *._domainkey.mail; MX @ mail priority 10 → feedback-smtp.us-east-1.amazonses.com us-east-1; DMARC TXT @ _dmarc.mail v=DMARC1; p=none; rua=mailto:jackcutrara@gmail.com) + Postmaster Tools enrolled + RESEND_API_KEY wrangler secret put (4 secrets total on Worker now) + 5 warmup sends via `node --env-file=.env.local scripts/resend-warmup.mjs --count 5` (5/5 in Gmail Inbox first try; 0 Not-Spam feedback needed; second round NOT executed per D-08 cap honored at 5). Resend message IDs: a61430df / 9b316537 / 8f83ba2b / de2bc127 / 652bc168. Postmaster Tools auth data pending volume (24-48h lag); revisit Phase 20 close-out + v1.3 launch + 7 days. Pre-existing Resend DNS dust on send.* + root left untouched in Phase 17 (no conflict with mail.* scope); cleanup scheduled as low-priority /gsd-quick task post-phase per 17-RETROSPECTIVE.md.
+Phase: 17 (foundations-migration-dns-debt-sweep) — EXECUTING (gap-closure addendum, Wave 7-10)
+Plan: 7 of 10 complete; Plan 17-09 next per serial chain (17-07 → 17-09 → 17-10 → 17-08)
+Status: Executing Phase 17 gap-closure plans
+Last activity: 2026-05-11 -- Plan 17-07 (Wave 7) gap-closure complete; Plan 17-09 next
+
+### Phase 17 Re-Opened (Gap Closure — 2026-05-11)
+
+Phase 17 was CLOSED at Plan 17-06 (2026-05-11) with all 14 requirements GREEN per design.
+Subsequent UAT (17-UAT.md) surfaced 4 blockers + 1 RELEASE BLOCKER on local main
+(23 commits ahead of origin/main):
+- Gap #1 (BLOCKER): chat voice-split regression — chat addresses visitor as Jack [Plan 17-07: CLOSED 2026-05-11]
+- Gap #2 (BLOCKER + RELEASE BLOCKER): #chat-panel does not open on `pnpm dev` [Plan 17-08: pending — runs LAST as deploy gate]
+- Gap #3 (major): COPY button has no visible COPIED transition [Plan 17-09: pending]
+- Gap #4 (major): cross-document nav surfaces AbortError in DevTools console [Plan 17-10: pending]
+
+Gap-closure plans 17-07..10 (Wave 7-10 serial, M-iter2 corrected) re-opened Phase 17
+to ship the four fixes. FOUND-03 Pages retirement now waits for these to deploy —
+production "works" today only because origin/main is 23+ commits behind local main;
+deploying DEBT-05 (commit 1c148c9) without Plan 17-08 would break production chat
+panel-open. Plan 17-08 is THE prerequisite for next `git push origin main`.
 
 ## Roadmap Snapshot
 

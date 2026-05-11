@@ -45,7 +45,7 @@
 
 ### v1.3 Chat Visibility (Phases 17-20) — IN PROGRESS
 
-- [x] **Phase 17: Foundations — Migration + DNS + Debt Sweep** — CLOSED 2026-05-11 (6/6 plans, all 14 requirements GREEN). Migrated Cloudflare Pages → Workers Static Assets; verified Resend sending domain `mail.jackcutrara.com` with full SPF/DKIM/MX/DMARC record family in Cloudflare DNS; warmed via 5/5-Inbox-first-try sends; closed all 5 chat tech-debt carry-forwards. Pages retirement sub-task PENDING — 24h warm window in progress per D-02 (NOT a timer; user retires manually).
+- [~] **Phase 17: Foundations — Migration + DNS + Debt Sweep** — CLOSED 2026-05-11 (6/6 baseline plans, all 14 requirements GREEN). RE-OPENED 2026-05-11 for gap closure (Wave 7-10 serial: UAT 17-UAT.md surfaced 4 blockers + 1 release blocker). Wave 7 (Plan 17-07) COMPLETE 2026-05-11: chat voice-split regression closed via about-chat.ts + per-MDX chatSummary + broadened leak guard + system-prompt.ts hardening + 21 voice-split tests. Waves 8-10 (Plans 17-09, 17-10, 17-08) pending; Plan 17-08 gated LAST as release-blocker deploy gate. Pages retirement (FOUND-03 sub-task) STILL PENDING — both 24h warm window AND gap-closure deploy.
 - [ ] **Phase 18: Persistence + Identity — KV Write Path + sessionId** — Bind `CHAT_KV` namespace, mint UUIDv4 sessionIds, append turns to KV without leaking sessionId into Anthropic payload, capture metadata + cache-token counts per turn
 - [ ] **Phase 19: Cron Sweep — Scheduling + Idempotency (DRY_RUN)** — Wire hourly cron trigger, two-keyspace partition (`live:` → `delivered:`), batch caps + structured logs, DRY_RUN flag validates sweep mechanics before email goes live
 - [ ] **Phase 20: Email Render + Resend Integration** — Plaintext-only email body via Resend REST, adversarial-payload suite hardening, idempotency-key send-once, DRY_RUN flipped off — visitor conversations land in Jack's Gmail
@@ -63,7 +63,7 @@
   3. The D-26 chat regression battery is 117/117 GREEN at phase close; the `#chat-panel` display state machine is CSS-only (`.is-open` controls both display and animation, `style.display='flex'` removed from `animatePanelOpen`); `astro:page-load` listeners in `analytics.ts`, `scroll-depth.ts`, and `chat.ts` register exactly once across navigations (idempotent guard verified).
   4. PRs fail-fast on local drift between `Projects/*.md` and `portfolio-context.json` via the `build:chat-context:check` job in `.github/workflows/sync-check.yml`; structured cache-hit logs (`cache_read_input_tokens` / `cache_creation_input_tokens`) emit from chat-cache + content-snapshot + chat client seams; PROJECT.md "Known issues" entry for `CHAT_RATE_LIMITER` rewritten as "documented + Free-tier acceptable."
   5. Anthropic prompt-cache integrity verified: `system` block and `messages[0]` payload do NOT contain any session identifier (snapshot test); 3x identical-payload live test within 5min returns `cache_read_input_tokens > 0` on responses 2 and 3.
-**Plans**: 6 plans
+**Plans**: 6 plans + 4 gap-closure plans (UAT 17-UAT.md identified 4 gaps; planned via /gsd-plan-phase --gaps)
 
 Plans:
 
@@ -84,6 +84,20 @@ Plans:
 
 **Wave 5** *(blocked on Waves 1 + 4 — runs LAST against all-GREEN surface)*
 - [x] 17-06-PLAN.md — DNS-01 Resend domain records (SPF/DKIM/MX/DMARC) + DNS-02 warmup sends (5x) + Postmaster Tools enrollment — *COMPLETE 2026-05-11; commit `0b9d5c5` (Task 1 — scripts/resend-warmup.mjs Phase 20 fetch() dry-run) + 4 human-action/verify checkpoints PASSED (Resend account add-domain → DNS authoring in Cloudflare → wrangler secret put RESEND_API_KEY → Postmaster Tools enrollment → 5 warmup sends 5/5 Inbox FIRST TRY with ZERO Not-Spam feedback needed; second round NOT executed per D-08 cap honored). Resend message IDs: a61430df / 9b316537 / 8f83ba2b / de2bc127 / 652bc168. Worker secret list at phase close: 4 entries (ANTHROPIC_API_KEY, RESEND_API_KEY, CHAT_RECIPIENT_EMAIL, CHAT_SENDER_EMAIL) — all Phase 20 prereqs in place. Phase-end pnpm test = 383 PASS / 1 FAIL (pre-existing roadmap-amendment.test.ts from Plan 17-01; NOT a regression). Pre-existing Resend DNS dust on send.* + root left untouched (no conflict with mail.* scope); cleanup scheduled as low-priority /gsd-quick task post-phase. Phase 17 CLOSED for execution; Pages retirement (FOUND-03 sub-goal) pending 24h-warm-window per D-02. See [17-06-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-06-SUMMARY.md) + [17-RETROSPECTIVE.md](phases/17-foundations-migration-dns-debt-sweep/17-RETROSPECTIVE.md)*
+
+**Wave 6 → Wave 7-10 GAP CLOSURE** *(M-iter2 wave correction — serial chain occupies one wave per plan so a wave-batching orchestrator cannot accidentally parallelize chat-surface mutations; chat-surface mutations cannot run parallel without muddying D-26 attribution per CONTEXT.md D-10. Plan 17-08 is gated LAST as the deploy gate per DEPLOY-GATE.md.)*
+
+**Wave 7** *(blocked on 17-06 for clean baseline; planned via /gsd-plan-phase --gaps from 17-UAT.md)*
+- [x] 17-07-PLAN.md — UAT Gap #1 (BLOCKER) — chat voice-split regression: third-person about-chat.ts variants + per-MDX chatSummary frontmatter + build-chat-context.mjs broadened leak guard + system-prompt.ts <role> hardening + 21 voice-split tests across 2 new files (CHAT-06) — *COMPLETE 2026-05-11; 4 atomic commits: `ad9fdad` (Task 0/M8 — skip pre-existing roadmap-amendment.test.ts; pnpm test exits 0 cleanly for first time in 6 plans), `537a0e6` (Task 1 — about-chat.ts + 6 MDX chatSummary; about.ts BYTE-IDENTICAL; MDX bodies BYTE-IDENTICAL above CASE-STUDY-END), `05bf93d` (Task 2 — build-chat-context.mjs reads about-chat.ts + chatSummary, B1 broadened leak guard hard-fails on first-person, sync-check.yml triggers cover about-chat.ts; portfolio-context.json regenerated, est_tokens=41053), `2aa627d` (Task 3 — system-prompt.ts <role> defense-in-depth + tests/build/chat-knowledge-voice.test.ts B1 self-test 16/16 + tests/api/chat-voice-split.test.ts live-system-block tripwire 2/2). Final pnpm test: 404 PASS / 2 SKIP / 0 FAIL. D-15 sse-snapshot 3/3 GREEN, D-26 chat surface GREEN at every commit. See [17-07-SUMMARY.md](phases/17-foundations-migration-dns-debt-sweep/17-07-SUMMARY.md).*
+
+**Wave 8** *(blocked on Wave 7 for chat-surface serial gate)*
+- [ ] 17-09-PLAN.md — UAT Gap #3 (major) — wire .chat-copy-btn.copy-success CSS rule + align chat.ts COPY/COPIED timeout windows to shared 1500ms + chat-copy-button jsdom test (DEBT-05 polish)
+
+**Wave 9** *(blocked on Wave 8)*
+- [ ] 17-10-PLAN.md — UAT Gap #4 (major / cosmetic-noise) — pageswap handler in BaseLayout.astro head swallows implicit @view-transition AbortError + MOTION.md §5 MOTN-01 rejection-handling spec + 4 build-time tests (MOTN-01 closure)
+
+**Wave 10** *(blocked on Wave 9 — runs LAST as RELEASE BLOCKER deploy gate)*
+- [ ] 17-08-PLAN.md — UAT Gap #2 (BLOCKER, RELEASE-BLOCKER for next deploy) — remove inline display:none from #chat-panel in ChatWidget.astro + update chat-panel-display test fixture to mirror real markup + new build-time no-inline-display test (DEBT-05 integration)
 
 **Cross-cutting constraints** *(must hold across all chat-surface plans):*
 - D-26 chat regression battery 117/117 GREEN — gates 17-01, 17-02, 17-03, 17-05 (every chat-surface plan; cadence per CONTEXT.md D-10: every commit + phase end)
@@ -152,7 +166,7 @@ Phases execute in numeric order within each milestone.
 | 14. Chat Knowledge Upgrade | v1.2 | 7/7 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
-| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 6/6 | Complete (Pages retirement pending warm window) | 2026-05-11 |
+| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 7/10 | Re-opened for gap closure (Waves 7-10; 17-07 done; 17-09, 17-10, 17-08 pending) | - |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 0/0 | Not started | - |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |
