@@ -166,7 +166,7 @@ Phases execute in numeric order within each milestone.
 | 14. Chat Knowledge Upgrade | v1.2 | 7/7 | Complete | 2026-04-23 |
 | 15. Analytics Instrumentation | v1.2 | 5/5 | Complete | 2026-04-26 |
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
-| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Re-opened gap closure COMPLETE 2026-05-11 (Waves 7-10 all CLOSED; DEPLOY-GATE.md operator-cleared; awaiting user `git push origin main`) | 2026-05-11 |
+| 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Complete    | 2026-05-11 |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 0/0 | Not started | - |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |

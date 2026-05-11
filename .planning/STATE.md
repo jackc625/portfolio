@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
-status: executing
+status: ready_to_plan
 stopped_at: "Plan 17-08 (Wave 10 -- RELEASE BLOCKER deploy gate for UAT Gap #2 #chat-panel inline display:none removal) COMPLETE. 4 commits: ce0d2af (Task 1 -- tests/client/chat-panel-display.test.ts REPLACED 45-line / 3-test bare-div fixture with 5-test fixture mirroring the real ChatWidget.astro inline style attribute verbatim sans display:none -- forward-defense lock against the false-green coverage gap that hid the original DEBT-05 regression for 2 plans), 7f529a0 (Task 2 -- src/components/chat/ChatWidget.astro single Edit removing `display: none; ` (15 chars including trailing space) from the inline style attribute on #chat-panel; every other declaration preserved byte-identically; new 1-line `<!-- Phase 17 Plan 17-08 (UAT Gap #2): NO inline display ... -->` comment above the panel div; tests/build/no-inline-display-on-chat-panel.test.ts NEW 1-test build-time source-text guard greps ChatWidget.astro for any `display:` substring inside the inline style attribute; tests/client/listener-dedup.test.ts Rule 3 inline cleanup -- 4-plan-deep carry-forward ts(7006) implicit-any errors absorbed via one-line callback-param annotations so pnpm exec astro check exits 0/0/0 cleanly for first time since Plan 17-03 commit 0ad77b3), 7af2841 (Task 2-ALPHA Rule 3 inline deviation -- WR-04 ALLOW_LOOPBACK broadened from single-signal `import.meta.env.DEV` to three-signal disjunction `(import.meta.env.DEV === true) || (import.meta.env.MODE === \"development\") || (process.env.NODE_ENV === \"development\")` because @astrojs/cloudflare adapter does NOT statically replace `import.meta.env.DEV` in SSR routes under astro dev the way Vite does in client bundles; root cause of the dev-403 regression discovered at the deploy gate by the gate itself when POST /api/chat from http://localhost:4321 returned 403 Forbidden under pnpm dev; production CORS posture UNCHANGED -- each operand statically tree-shakes to literal `false` in production-bundle so the entire ALLOW_LOOPBACK branch emits zero bytes in deployed Worker; verified post-build via grep on dist/server/chunks/chat_CqagseDb.mjs showing isAllowedOrigin() skipping directly from URL parsing to WORKERS_PREVIEW_SUFFIX with no localhost/loopback references; tests/build/validation-loopback-source.test.ts NEW 3-assertion regression-lock asserts the disjunction stays present in source forever), [THIS metadata commit] (Task 3 -- 17-08-SUMMARY.md NEW + DEPLOY-GATE.md operator-signed status=confirmed gate=CONFIRMED operator=Jack Cutrara date=2026-05-11 all six manual UAT checks PASSED against post-fix HEAD 7af2841 via chat-reply `approved -- deploy gate cleared` as durable audit trail per option 2 + STATE/ROADMAP/REQUIREMENTS planning-state advancement). Phase-end pnpm test = 419 PASS / 0 FAIL / 2 SKIP (was 413/0/2 at end of Plan 17-10; +6 net new tests: chat-panel-display.test.ts +2 / no-inline-display-on-chat-panel.test.ts +1 / validation-loopback-source.test.ts +3). pnpm exec astro check = 0 errors / 0 warnings / 0 hints (FIRST TIME the typecheck passes cleanly on main since Plan 17-03 commit 0ad77b3 -- the 4-plan-deep carry-forward listener-dedup.test.ts errors were absorbed in Task 2's Rule 3 cleanup). pnpm build = clean (10 routes prerendered, server built in 7.90s, sitemap-index.xml generated). D-26 chat-surface regression battery 30/30 GREEN at every commit (chat-panel-display 5/5 + no-inline-display-on-chat-panel 1/1 + no-imperative-display-flip 3/3 + sse-snapshot 3/3 + chat-copy-button 10/10 + view-transition-handler 4/4 + validation-loopback-source 3/3). D-15 SSE byte-identical anchor PRESERVED at every commit (Plan 17-08 touched no api/chat.ts, no system-prompt.ts, no controller.enqueue() flow). M-iter2 wave correction realized -- Plan 17-08 ran solo as Wave 10 against cumulative gap-closure state. Phase 17 gap closure COMPLETE -- all four UAT gap-closure plans CLOSED (17-07 Wave 7 + 17-09 Wave 8 + 17-10 Wave 9 + 17-08 Wave 10). Local main is 38 commits ahead of origin/main at HEAD 7af2841 (39 after this metadata commit). DEPLOY-GATE.md operator-cleared next `git push origin main`. User controls actual push -- executor MUST NOT push. Phase 17 progress: 10/10 plans complete (100%); ready for orchestrator-level code review + regression gate + verify_phase_goal."
 last_updated: "2026-05-11T08:50:00.000Z"
 last_activity: 2026-05-11 -- Plan 17-08 (Wave 10) RELEASE BLOCKER deploy gate CONFIRMED; Phase 17 gap closure COMPLETE (10/10); awaiting operator `git push origin main`
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 10
   completed_plans: 10
-  percent: 100
+  percent: 25
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 
 ## Current Position
 
-Phase: 17 (foundations-migration-dns-debt-sweep) — gap closure CLOSED (all 10 plans complete; awaiting orchestrator-level code review + regression gate + verify_phase_goal + operator `git push origin main`)
-Plan: 10 of 10 complete; Phase 17 gap closure COMPLETE
-Status: Phase 17 fully closed (10/10); awaiting deploy push (operator-controlled)
-Last activity: 2026-05-11 -- Plan 17-08 (Wave 10) RELEASE BLOCKER deploy gate CONFIRMED by operator Jack Cutrara; Phase 17 gap closure complete (10/10 plans, 100%); awaiting operator-controlled `git push origin main`
+Phase: 18
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-05-11
 
 ### Phase 17 Re-Opened (Gap Closure — 2026-05-11) — CLOSED 2026-05-11
 
