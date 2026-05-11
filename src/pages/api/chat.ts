@@ -115,6 +115,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // S7: Sanitize history
   const messages = sanitizeMessages(validation.data.messages);
 
+  // TEMP UAT DIAGNOSTIC (Plan 18-08, will revert): track which write branches fire.
+  let __uatUserTurnAttempted = false;
+
   // D-10 / D-04: USER-TURN KV write — fire-and-forget AFTER validation succeeds, BEFORE Anthropic stream
   // opens (durability anchor). Per D-04 (REQUIREMENTS.md v1.3-B6 amendment): absent sessionId skips
   // appendTurn entirely; SSE stream still serves. Per RESEARCH § Pitfall 1: .catch chains BEFORE waitUntil
@@ -123,6 +126,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const sid = validation.data.sessionId;
     const userContent = messages[messages.length - 1].content;
     const sessionMeta = captureRequestMeta(request);
+    __uatUserTurnAttempted = true;
     ctx.waitUntil(
       appendTurn(env.CHAT_KV, sid, "user", userContent, sessionMeta).catch((err: unknown) => {
         console.error("chat.transcript.write_failed", {
@@ -268,12 +272,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
     },
   });
 
+  // TEMP UAT DIAGNOSTIC (Plan 18-08, will revert).
+  const __uatLocals = locals as unknown as Record<string, unknown> | undefined;
+  const __uatCf = __uatLocals?.cfContext as { waitUntil?: unknown } | undefined;
+  const __uatKv = (env as unknown as { CHAT_KV?: { put?: unknown } } | undefined)?.CHAT_KV;
+  const __uatDiag = JSON.stringify({
+    localsKeys: __uatLocals ? Object.keys(__uatLocals) : null,
+    cfContextType: typeof __uatCf,
+    waitUntilType: typeof __uatCf?.waitUntil,
+    envType: typeof env,
+    kvType: typeof __uatKv,
+    kvPutType: typeof __uatKv?.put,
+    sessionIdParsed: typeof validation.data.sessionId,
+    userTurnAttempted: __uatUserTurnAttempted,
+  });
+
   return new Response(stream, {
     headers: {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache, no-transform",
       Connection: "keep-alive",
       "Content-Encoding": "none",
+      "x-uat-diag": __uatDiag,
     },
   });
 };
