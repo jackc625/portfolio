@@ -85,6 +85,8 @@ Each row below is the locked specification for one animation. Every value origin
 
 **Inline-markup fallback (MOTN-07):** `wrapWordsInPlace` skips any `.h1-section` heading that already contains element children (`<em>`, `<strong>`, `<a>`, `<br>`, etc.). Word-stagger uses `textContent`-only splitting (the XSS-safe contract verified by `tests/client/motion.test.ts:190-200`), which would destructively flatten authored inline markup. When the fallback fires, the heading still receives the standard `.reveal-on` reveal animation; only the per-word stagger is skipped. Authors writing prose-heavy headings (e.g., emphasis spans) get their markup preserved; the visual difference is a single reveal vs a per-word reveal.
 
+**MOTN-01 rejection-handling contract (UAT Gap #4 / Plan 17-10):** Browser-native cross-document transitions create an implicit `ViewTransition` object on every navigation. When supersession occurs (rapid clicks, prefetch races, back/forward, `document.hidden` flips), the W3C CSS View Transitions Module L2 spec requires the implicit `ViewTransition.finished` Promise to reject with `DOMException AbortError: "Transition was skipped"`. Because the codebase has no `<ClientRouter />` or `document.startViewTransition()` call (both banned per §1, §9), no application code observes that Promise — the rejection would surface in DevTools as `Uncaught (in promise) AbortError`. `src/layouts/BaseLayout.astro` head registers a `<script is:inline>` (raw script body, not template-literal-in-JSX) with `window.addEventListener("pageswap", (e) => e.viewTransition?.finished.catch(() => {}))` to consume the rejection. The handler is targeted (only the implicit transition's Promise; other unhandled rejections still surface) and head-level + `is:inline` (registers before any link can be clicked).
+
 ---
 
 ## 6. Reduced-Motion Contract (MOTN-08)
@@ -133,6 +135,7 @@ Two patterns coexist in the codebase:
 | `src/styles/global.css:260-280` | Already-live `@keyframes typing-bounce` | DO NOT TOUCH (MOTN-06 zero-cost; optional `reduce` extension at Plan 05's discretion) |
 | `src/components/primitives/WorkRow.astro:81-98` | Arrow upgrade (opacity 120ms + transform 180ms ease-out, hover translateX 4px, paired `reduce` override) | MODIFIED (Phase 16 Plan 06) |
 | `src/layouts/BaseLayout.astro:118-121` | Adds `import "../scripts/motion.ts";` to existing processed script block | MODIFIED (Phase 16 Plan 04) |
+| `src/layouts/BaseLayout.astro` head `<script is:inline>` | pageswap handler — consumes implicit cross-document ViewTransition rejection (MOTN-01 closure) | NEW (Phase 17 Plan 17-10) |
 
 ---
 
@@ -178,3 +181,4 @@ These do not ship under any circumstance in v1.2+:
 ## 10. Changelog
 
 - **v1.2 — Phase 16 (2026-04-27):** Initial authoring. MASTER.md §6 superseded by this document. Property whitelist, duration bands, easing defaults, MOTN-01..MOTN-07 specs, reduced-motion contract, Lighthouse gate, anti-patterns locked at Phase 16 sign-off.
+- **v1.3.1 — Phase 17 Plan 17-10 gap-closure addendum (2026-05-11):** §5 MOTN-01 amended with the rejection-handling contract for the implicit cross-document `ViewTransition.finished` Promise. `src/layouts/BaseLayout.astro` head `<script is:inline>` (raw script body) added to consume `AbortError "Transition was skipped"` via a `pageswap` listener. §7 File Ownership gains a row for the new head-level script. Closes UAT Gap #4 — see `.planning/debug/view-transition-aborterror.md`. Note: v1.3 was the Phase 17 milestone (closed at Plan 17-06); this addendum re-opened Phase 17 to ship four UAT-blocker fixes (Plans 17-07..10).
