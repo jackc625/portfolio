@@ -40,6 +40,17 @@ new `<details>`-collapsed ROADMAP shape, or (b) retire the test if the D-02
 candidate for a `/gsd-quick` task in v1.3 or to be folded into Plan 17-04
 ("Docs/CI tech debt") since that plan already audits doc-level state.
 
+**Closed (Plan 17-07 Task 0, M8 prerequisite — 2026-05-11):** Path B taken — both
+tests marked `it.skip(...)` with skip-rationale comments pointing back to this
+deferred-items entry. The D-02 5-H2 amendment the test was guarding is already
+validated at Phase 13 close and continues to live in
+`src/content/projects/*.mdx` bodies (verified by Plan 17-07 Task 1 acceptance
+criteria asserting MDX bodies are byte-identical above CASE-STUDY-END). Path A
+(rewrite the test against the new `<details>`-collapsed ROADMAP) deferred to a
+future `/gsd-quick` task — the test's guarded invariant is held by other tests
+in the suite, so resurrecting the assertion shape on a new ROADMAP slicer is
+low-priority polish work.
+
 ## Discovered during Plan 17-05 (2026-05-10)
 
 ### Pre-existing `astro check` (typecheck) failures: `tests/client/listener-dedup.test.ts`
