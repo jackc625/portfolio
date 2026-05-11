@@ -73,6 +73,19 @@ const ALLOWED_ORIGINS = [
 // account subdomain = jackcutrara).
 const WORKERS_PREVIEW_SUFFIX = ".jackcutrara.workers.dev";
 
+// WR-04 (Phase 17 review): localhost / loopback origins are allowed ONLY in
+// DEV builds. The previous version returned true unconditionally — including
+// in the deployed Worker — which weakened the S9 CORS allowlist as a
+// defense-in-depth control. Browser same-origin policy prevents direct
+// exploitation, but non-browser clients (curl, server-side relays, malicious
+// extensions) can spoof Origin headers freely, so the production endpoint
+// silently accepted them. Vite/Astro tree-shakes the `import.meta.env.DEV`
+// branch in production builds, so the loopback bypass emits zero bytes in
+// the deployed Worker bundle. Vitest sets DEV = true by default, so the
+// existing security.test.ts assertions for localhost / 127.0.0.1 still pass.
+// IPv6 loopback [::1] is included for consistency (also DEV-only).
+const ALLOW_LOOPBACK = import.meta.env.DEV;
+
 export function isAllowedOrigin(origin: string | null): boolean {
   if (!origin) return true; // No origin header = same-origin or non-browser
   let url: URL;
@@ -81,8 +94,16 @@ export function isAllowedOrigin(origin: string | null): boolean {
   } catch {
     return false; // Malformed origin
   }
-  // Allow localhost for development
-  if (url.hostname === "localhost" || url.hostname === "127.0.0.1") return true;
+  // DEV-only: allow loopback hosts. URL parsers normalize [::1] in Origin
+  // headers to "[::1]" (square brackets preserved); list all three forms.
+  if (
+    ALLOW_LOOPBACK &&
+    (url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "[::1]")
+  ) {
+    return true;
+  }
   // Allow preview subdomains of the Worker's workers.dev hostname (https only).
   // Require exactly one non-empty label before the suffix — this rejects the
   // apex `jackcutrara.workers.dev` and empty-label forms like
