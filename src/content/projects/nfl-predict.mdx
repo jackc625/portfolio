@@ -2,6 +2,7 @@
 title: "NFL Prediction System"
 tagline: "ML-powered game predictions with walk-forward backtesting"
 description: "A full-stack prediction engine generating win probability, spread, and over/under predictions with walk-forward temporal validation, market blending, and an interactive FastAPI dashboard."
+chatSummary: "Jack designed the NFL Prediction System as a Bronze/Silver/Gold data lakehouse with Pydantic v2 quality gates at every layer boundary (one bad row fails the whole batch). Temporal safety is enforced at three independent layers: a runtime-checkable FeatureBuilder Protocol mandating an as_of_datetime cutoff, a LeakageGate validator that runs a per-builder time fence and a chronological Elo ordering check, and a TemporalSplitConfig that hard-fails on overlapping seasons. Three target-specific models — calibrated logistic + isotonic for win probability, XGBoost residual converter for ATS, XGBoost total converter for over/under — feed a market blender that combines model output with Friday-snapshot lines in the mathematically correct space. The API is architecturally quarantined from the ML layer behind a pytest AST-walking import guard, with a single shared read-only DuckDB connection and Jinja2 fragments for HTMX responses."
 techStack:
   [
     "Python",

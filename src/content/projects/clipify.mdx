@@ -2,6 +2,7 @@
 title: "Clipify"
 tagline: "AI video clipping from long-form content to social-ready clips"
 description: "An AI-powered SaaS that transforms YouTube videos, streams, and uploaded footage into captioned short-form clips using Whisper transcription, GPT-powered moment detection, and FFmpeg rendering."
+chatSummary: "Jack assembled Clipify as a pnpm monorepo with two deployed services — a Next.js 15 App Router web app handling uploads, billing, and dashboard, and a Dockerized Node 20 worker owning the heavy pipeline. Three BullMQ queues on Upstash Redis route work between them: q_transcribe (concurrency 1), q_detect (concurrency 2), q_render (concurrency 0.5). Transcription uses OpenAI Whisper with auto-chunking at the 45-minute boundary into 10-minute segments. Moment detection inverts the obvious shape: cheap heuristic scoring filters the full transcript, then only the top 15 candidate windows go to GPT-4o-mini for a structured rubric. Rendering uses FFmpeg with smart cropping per aspect ratio and burned ASS subtitles. Stripe drives three billing tiers with five webhook events persisted as audit rows."
 techStack:
   [
     "Next.js",

@@ -2,6 +2,7 @@
 title: "Optimize AI"
 tagline: "Full-stack fitness tracking with database-level data isolation"
 description: "A personal fitness platform for tracking workouts, nutrition, habits, and body composition built with Next.js 15 and Supabase, enforcing complete user data isolation through PostgreSQL Row-Level Security on every table."
+chatSummary: "Jack assembled Optimize AI as a Next.js 15 App Router application with Supabase providing Postgres, auth, and storage — zero custom API routes. The defining decision is Row-Level Security across all nine tables: tables with a direct user_id column enforce auth.uid() equality, while child tables derive ownership through EXISTS subqueries against their parent so exercises inherit isolation from the workout that owns them without denormalizing user_id onto every row. The data layer is hook-per-domain on TanStack React Query v5 with Zod safeParse on every result. The macro pipeline runs BMR via Mifflin-St Jeor, then TDEE multiplier, goal adjustment, and macro split as four pure functions with Vitest coverage. Habit streaks store dates as YYYY-MM-DD strings in the user's local timezone via a getLocalDate utility to avoid the UTC-midnight off-by-one."
 techStack:
   ["Next.js", "React", "TypeScript", "Supabase", "PostgreSQL", "Tailwind CSS"]
 featured: false

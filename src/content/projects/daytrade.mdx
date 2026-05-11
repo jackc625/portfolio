@@ -2,6 +2,7 @@
 title: "Daytrade"
 tagline: "Momentum breakout bot with composable filters and risk controls"
 description: "An automated cryptocurrency day-trading system implementing momentum breakout detection on 5-minute candles with composable signal filters, risk-based position sizing, and atomic state persistence."
+chatSummary: "Jack assembled Daytrade as a single-process Python application composed through constructor injection at TradingBot startup, where each component implements an ABC from interfaces.py so the orchestrator depends on interfaces rather than implementations. The main loop polls every 20 seconds, pulls 5-minute OHLCV candles via a CCXT Gemini wrapper, and dispatches through BreakoutStrategy, FilterChain, PositionSizer, and PaperBroker. Risk management is layered: a position sizer that clamps against available capital, a daily guard that walks open positions at mark-to-market against a -3% threshold, and a trade counter with per-symbol caps. State persistence uses portalocker plus tmp-file plus os.replace for atomic writes. The walk-forward backtest produces train/validation/test windows with Optuna TPE optimization and a 7-gate promotion evaluator; the shipped artifact emits verdict FAILED for the breakout strategy at Gemini's base-tier fees."
 techStack: ["Python", "CCXT", "pandas", "pandas-ta", "Pydantic"]
 featured: false
 status: "completed"

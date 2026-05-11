@@ -2,6 +2,7 @@
 title: "SeatWatch"
 tagline: "Automated restaurant reservations with dual-strategy booking"
 description: "A multi-service SaaS platform that monitors restaurant availability and books reservations automatically, with a dual-strategy booking engine, distributed locking, and browser identity fingerprinting across a Turborepo monorepo."
+chatSummary: "Jack designed SeatWatch as a Turborepo monorepo with four independently deployed Railway services — a React 19 SPA, an Express REST API, a BullMQ worker, and a Next.js 16 SEO content site — plus a shared package owning types, Zod schemas, the browser identity pool, and the Prisma client. The booking engine is dual-strategy: a sub-second HTTP path that transparently falls back to Patchright headless Chrome on recoverable errors. Concurrent safety rests on Redis SET NX EX distributed locks with UUID nonces, a per-user circuit breaker that survives worker restarts, and a 26-profile browser identity pool with deterministic per-user assignment. Stripe powers four billing tiers with transactional plan enforcement."
 techStack:
   [
     "TypeScript",
