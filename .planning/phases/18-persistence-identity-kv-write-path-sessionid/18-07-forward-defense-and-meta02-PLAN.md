@@ -242,18 +242,16 @@ Add the following modifications:
    import * as transcripts from "../../src/lib/chat-transcripts";
    ```
 
-2. **Declare mockLocals constant** at file scope (after existing fixture constants). Use the shape from PATTERNS.md lines 928-936:
+2. **Declare mockLocals constant** at file scope (after existing fixture constants). Shape matches Plan 18-05's defensive ctx access — Astro v6 path is `locals.cfContext` per RESEARCH § Open Questions (RESOLVED) Q1 (verified against `node_modules/@astrojs/cloudflare/dist/utils/handler.js`):
    ```
    const mockLocals = {
-     runtime: {
-       ctx: {
-         waitUntil: (p: Promise<unknown>) => { void p; },  // immediate no-op; appendTurn spy still tracks
-         passThroughOnException: () => {},
-       },
+     cfContext: {
+       waitUntil: (p: Promise<unknown>) => { void p; },  // immediate no-op; appendTurn spy captures the call synchronously when waitUntil's argument is built
+       passThroughOnException: () => {},
      },
    };
    ```
-   If Plan 18-05's SPIKE resolution used a different ctx access path (e.g., not `locals.runtime.ctx`), align mockLocals shape with that path. Read 18-01-SPIKE-ctx-access-path.md and the actual destructure in api/chat.ts to confirm.
+   Plan 18-05 reads `(locals as { cfContext?: { waitUntil: ... } } | undefined)?.cfContext` and falls back to a no-op stub when absent. Either shape allows the META-02 test to pass (spy captures call synchronously), but matching the locked path keeps PATTERNS.md, Plan 18-05, and Plan 18-07 consistent.
 
 3. **Add the META-02 test** inside the existing top-level describe block (after the existing 3 tests, before the closing `})` of the describe). The new test goes inside the `describe("DEBT-02: chat.cache_metrics structured log seam")` block (the existing describe — confirm its exact name when reading the file).
 
@@ -308,7 +306,7 @@ After writing:
 Commit shape: `test(18-07): tests/api/cache-hit-logs.test.ts +META-02 source-of-truth-once + mockLocals shape for Plan 18-05 locals`.
   </action>
   <verify>
-    <automated>pnpm exec vitest run tests/api/cache-hit-logs.test.ts 2>&1 | tail -5 && pnpm exec astro check 2>&1 | tail -3 && node -e "const fs = require('fs'); const f = fs.readFileSync('tests/api/cache-hit-logs.test.ts', 'utf8'); const checks = [/META-02/.test(f), /import\s*\*\s*as\s+transcripts\s+from\s+[\"']\.\.\/\.\.\/src\/lib\/chat-transcripts[\"']/.test(f), /vi\.spyOn\(transcripts\s*,\s*[\"']appendTurn[\"']\)/.test(f), /mockLocals|runtime[\s\S]{0,100}ctx/.test(f), /cache_read_input_tokens.*\.toBe\(80\)|toBe\(80\).*cache_read/.test(f) || /cache_read_input_tokens[\s\S]{0,50}80/.test(f)]; const failed = checks.findIndex(c => !c); if (failed >= 0) { console.error('Source check ' + failed + ' failed'); process.exit(1); } process.exit(0);"</automated>
+    <automated>pnpm exec vitest run tests/api/cache-hit-logs.test.ts 2>&1 | tail -5 && pnpm exec astro check 2>&1 | tail -3 && node -e "const fs = require('fs'); const f = fs.readFileSync('tests/api/cache-hit-logs.test.ts', 'utf8'); const checks = [/META-02/.test(f), /import\s*\*\s*as\s+transcripts\s+from\s+[\"']\.\.\/\.\.\/src\/lib\/chat-transcripts[\"']/.test(f), /vi\.spyOn\(transcripts\s*,\s*[\"']appendTurn[\"']\)/.test(f), /mockLocals[\s\S]{0,100}cfContext/.test(f), /cache_read_input_tokens.*\.toBe\(80\)|toBe\(80\).*cache_read/.test(f) || /cache_read_input_tokens[\s\S]{0,50}80/.test(f)]; const failed = checks.findIndex(c => !c); if (failed >= 0) { console.error('Source check ' + failed + ' failed'); process.exit(1); } process.exit(0);"</automated>
   </verify>
   <done>tests/api/cache-hit-logs.test.ts has ≥4 total tests (existing 3 + new META-02). META-02 test asserts appendTurn assistant-turn meta carries cache_read_input_tokens: 80 + cache_creation_input_tokens: 0 from mocked usage. mockLocals shape supports Plan 18-05's locals destructure. `pnpm exec astro check` 0/0/0. All tests in this file GREEN.</done>
 </task>

@@ -526,14 +526,16 @@ For this Worker: `jack-cutrara-portfolio-pr-{N}.jackcutrara.workers.dev`.
 export const POST: APIRoute = async ({ request }) => {
 ```
 
-**Target signature for ctx access** (per RESEARCH §"Pattern 1" + Pitfall 8 plan-time spike):
+**Target signature for ctx access** (RESEARCH § Open Questions (RESOLVED) Q1 — `locals.cfContext` is the Astro v6 canonical path; `locals.runtime.ctx` was REMOVED in Astro v6 and throws at runtime):
 ```typescript
 export const POST: APIRoute = async ({ request, locals }) => {
-  const ctx = locals.runtime.ctx;  // exact path verified at plan-time per Pitfall 8
+  const ctx = (locals as { cfContext?: { waitUntil: (p: Promise<unknown>) => void } } | undefined)
+    ?.cfContext
+    ?? { waitUntil: (_p: Promise<unknown>) => {} };  // defensive fallback for test env (no locals)
   // ...
 };
 ```
-**Planner action:** Verify `locals.runtime.ctx` path against `@astrojs/cloudflare@13.1.7` via 5-line dev-only `console.log(Object.keys(locals.runtime ?? {}))` against `astro dev` (Pitfall 8). If path differs, use alternative (`executionContext` import from `cloudflare:workers`).
+**Verified via:** direct read of `node_modules/@astrojs/cloudflare/dist/utils/handler.js:64-91` during iteration-1 revision. The v5 `locals.runtime.ctx` getter now throws `"Astro.locals.runtime.ctx has been removed in Astro v6. Use 'Astro.locals.cfContext' instead."` The defensive fallback enables existing chat-surface tests (sse-snapshot, cache-hit-logs) to call `POST({ request } as never)` without supplying locals — production Workers runtime always populates `locals.cfContext`.
 
 **D-10 insertion anchor** (AFTER `validateRequest` at line 75-81, BEFORE `client.messages.create` at line 112-114):
 ```typescript
@@ -923,14 +925,12 @@ it("META-02: appendTurn(assistant, ...) receives the same cacheUsage object the 
 });
 ```
 
-**`mockLocals` shape** (for `ctx.waitUntil` reachability under vitest — planner picks final binding name per Pitfall 8 spike):
+**`mockLocals` shape** (for `ctx.waitUntil` reachability under vitest — matches Plan 18-05's defensive `(locals as ...)?.cfContext` access path per RESEARCH § Open Questions (RESOLVED) Q1):
 ```typescript
 const mockLocals = {
-  runtime: {
-    ctx: {
-      waitUntil: (p: Promise<unknown>) => { void p; },  // immediate no-op; appendTurn promise still tracked by spy
-      passThroughOnException: () => {},
-    },
+  cfContext: {
+    waitUntil: (p: Promise<unknown>) => { void p; },  // immediate no-op; appendTurn spy captures the call synchronously when waitUntil's argument is built
+    passThroughOnException: () => {},
   },
 };
 ```
