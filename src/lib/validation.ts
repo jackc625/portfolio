@@ -29,6 +29,14 @@ export const MessageSchema = z.discriminatedUnion("role", [
 ]);
 
 export const RequestSchema = z.object({
+  // IDENT-02 (Plan 18-03 / D-04 missing-tolerant per REQUIREMENTS.md v1.3-B6):
+  // sessionId is OPTIONAL on the request envelope — absent is acceptable
+  // (server skips ctx.waitUntil(appendTurn(...)) and still serves the SSE
+  // stream). z.uuidv4() locks the UUIDv4 version per IDENT-02's "UUIDv4
+  // regex" wording — z.uuid() would also accept UUIDv5/v6/v7 (RESEARCH
+  // § "Zod uuid() vs uuidv4() — version specificity"). sessionId NEVER
+  // threads into buildChatRequestArgs / Anthropic payload (TEST-03 anchor).
+  sessionId: z.uuidv4().optional(),
   messages: z.array(MessageSchema).min(1).max(30),
 });
 
