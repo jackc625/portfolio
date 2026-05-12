@@ -148,7 +148,28 @@ Plans:
   2. With `DRY_RUN=1`, a session whose `last_activity_at` is older than 2h is detected by the sweep, its Resend payload is logged (not POSTed), `delivered:{sid}` is PUT with 24h TTL BEFORE the would-be POST, and `live:{sid}` is DELETE'd AFTER the dry-run "success" — the same crash-safe sequencing Phase 20 will rely on.
   3. Running the sweep twice over the same KV state results in exactly one would-be Resend payload logged per session: the second run skips already-delivered candidates because `delivered:{sid}` is present (application-level idempotency holds even before Resend's idempotency key joins the defense).
   4. Per-tick batch cap of 50 sessions, send-attempt counter cap of 3 retries, and pagination hard-cap of 50 pages all enforced; per-session try/catch isolates failures so one bad session never aborts the sweep; structured JSON logs surface per-tick summary (sessions_seen, sessions_due, sessions_promoted, errors).
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+
+**Wave 0** *(no dependencies — pre-flight scaffolding; zero runtime behavior change)*
+- [ ] 19-01-PLAN.md — `pnpm dev:cron` npm script + `wrangler.jsonc` `vars.DRY_RUN = "1"` + `src/worker.ts` `Env.DRY_RUN: string` (CRON-01 partial — config + type scaffolding)
+
+**Wave 1** *(depends on 19-01 — TDD-aware pure-module + unit tests)*
+- [ ] 19-02-PLAN.md — NEW `src/lib/chat-delivery.ts` (pure module: `deliverDue` + two-keyspace promotion loop + DRY_RUN gate + retry harness + 50-session batch cap + 50-page pagination cap) + NEW `tests/api/chat-delivery.test.ts` 19-case unit test battery against mock KV (CRON-02, CRON-03, CRON-04)
+
+**Wave 2** *(depends on 19-02 — wiring + source-text forward-defense)*
+- [ ] 19-03-PLAN.md — `src/worker.ts` `scheduled()` body replaced with `ctx.waitUntil(deliverDue(env, controller.scheduledTime).catch(...))` per Phase 18 D-09 pattern + NEW `tests/build/worker-scheduled-call-site.test.ts` 6-invariant source-text guard (CRON-01)
+
+**Wave 3** *(depends on 19-03 — cron flip + UAT; NON-autonomous — operator checkpoint)*
+- [ ] 19-04-PLAN.md — `wrangler.jsonc` `triggers.crons` flipped `[]` → `["0 * * * *"]` + NEW `tests/build/wrangler-cron-shape.test.ts` + tightened `wrangler-shape.test.ts` cron assertion + NEW `19-UAT.md` 5-step manual operator UAT spec (CRON-01..04 closure)
+
+**Cross-cutting constraints** *(must hold across all Phase 19 plans):*
+- D-26 chat regression battery PRESERVED (Phase 19 touches ZERO chat-surface files; forward-defense informational)
+- D-15 SSE byte-identical anchor PRESERVED (Phase 19 doesn't touch `/api/chat` SSE surface)
+- TEST-03 Anthropic prompt-cache integrity PRESERVED (Phase 19 doesn't touch Anthropic surface)
+- `pnpm exec astro check` exits 0/0/0 at every commit (Phase 17 Plan 17-08 baseline)
+- `pnpm test` PASS count grows from 419 (Phase 18 close baseline) to ~446+ at Phase 19 close (Plan 19-02 +19, Plan 19-03 +6, Plan 19-04 +2)
 
 ### Phase 20: Email Render + Resend Integration
 
@@ -188,5 +209,5 @@ Phases execute in numeric order within each milestone.
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
 | 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Complete    | 2026-05-11 |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 8/8 | Complete   | 2026-05-11 |
-| 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/0 | Not started | - |
+| 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 0/4 | In progress | -           |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |
