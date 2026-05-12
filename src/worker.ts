@@ -15,6 +15,7 @@ export interface Env {
   RESEND_API_KEY: string;         // Phase 17 D-05 — added during cutover
   CHAT_RECIPIENT_EMAIL: string;   // Phase 17 D-06 — added during cutover
   CHAT_SENDER_EMAIL: string;      // Phase 17 D-06 — added during cutover
+  DRY_RUN: string;                // Phase 19 D-01/D-02 — set in wrangler.jsonc vars block; chat-delivery.ts checks env.DRY_RUN === "1"
   // Phase 7 carry-forward (DEBT-01: Free-tier acceptable; Workers Paid v1.4+).
   CHAT_RATE_LIMITER?: RateLimit;
 }

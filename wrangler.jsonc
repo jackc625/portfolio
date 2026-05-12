@@ -15,6 +15,10 @@
       "preview_id": "115f3c1b0f8a4a1da9fee78c48dcb749"
     }
   ],
+  // Phase 19 D-01/D-02 — DRY_RUN gate. "1" = dry-run active (default); Phase 20 flips to "0" alongside the Resend POST landing.
+  "vars": {
+    "DRY_RUN": "1"
+  },
   "triggers": {
     "crons": []
   },

@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "dev:worker": "wrangler dev",
+    "dev:cron": "wrangler dev --test-scheduled",
     "build": "pnpm build:chat-context && wrangler types && astro check && astro build",
     "build:chat-context": "node scripts/build-chat-context.mjs",
     "build:chat-context:check": "node scripts/build-chat-context.mjs --check",
