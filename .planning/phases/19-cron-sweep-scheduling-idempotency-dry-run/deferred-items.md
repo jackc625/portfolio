@@ -50,4 +50,17 @@ The two `Env` interfaces (`src/worker.ts`'s declared one and the merged
   compatibility with worker.ts Env holds" — satisfied (Plan 19-02 introduces
   zero new errors; the pre-existing error is not new).
 
-**Status:** Pending Plan 19-03 absorption.
+**Status:** ABSORBED by Plan 19-03 (2026-05-12, commit `e87b513`).
+
+Resolution chose **closure path option 2** from the candidate list above:
+narrowed `src/worker.ts` Env from `DRY_RUN: string` to `DRY_RUN: "1"`
+(matches wrangler-generated literal). Trade-off accepted: source-of-truth
+is now coupled to the wrangler-generated type, which is the intended
+source of truth (the value lives in `wrangler.jsonc` vars and only ever
+equals `"1"` in Phase 19). `DeliveryEnv.DRY_RUN: string` in
+`src/lib/chat-delivery.ts` still accepts the `"1"` literal because `"1"`
+is a subtype of `string` — no chat-delivery module change required.
+
+Confirmation: `pnpm exec astro check` returns 0 errors / 0 warnings /
+0 hints after the Plan 19-03 Task 1 commit. The error is gone from the
+diagnostics output.
