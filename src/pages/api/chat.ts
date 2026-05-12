@@ -119,19 +119,40 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // opens (durability anchor). Per D-04 (REQUIREMENTS.md v1.3-B6 amendment): absent sessionId skips
   // appendTurn entirely; SSE stream still serves. Per RESEARCH § Pitfall 1: .catch chains BEFORE waitUntil
   // — rejections silently swallowed otherwise. Plan 18-07 source-text test forward-defends this shape.
+  //
+  // CR-01 (Phase 18 review): the user-turn persistence trusts that `messages` ends in role="user", but
+  // the Zod RequestSchema (discriminatedUnion) accepts ANY ordered sequence — including a trailing
+  // assistant turn. A malformed or malicious client could submit a final {role:"assistant", content:"…"}
+  // and have that attacker-controlled assistant text persisted to KV under role:"user", corrupting the
+  // transcript. Mid-stream assistant content originates from THIS server's accumulator (line ~241),
+  // NEVER from the request envelope, so a trailing-assistant request is always either a client bug or
+  // a probe. Guard at the persistence site: only persist when the trailing message is a real user turn.
+  // The chat SSE still serves regardless — the Anthropic call's own role-alternation contract handles
+  // the rejection loudly. Mark the bad shape with a structured observability log.
   if (validation.data.sessionId) {
-    const sid = validation.data.sessionId;
-    const userContent = messages[messages.length - 1].content;
-    const sessionMeta = captureRequestMeta(request);
-    ctx.waitUntil(
-      appendTurn(env.CHAT_KV, sid, "user", userContent, sessionMeta).catch((err: unknown) => {
-        console.error("chat.transcript.write_failed", {
-          sessionId: sid,
-          role: "user",
-          error_class: err instanceof Error ? err.constructor.name : "unknown",
-        });
-      }),
-    );
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.role === "user") {
+      const sid = validation.data.sessionId;
+      const userContent = lastMessage.content;
+      const sessionMeta = captureRequestMeta(request);
+      ctx.waitUntil(
+        appendTurn(env.CHAT_KV, sid, "user", userContent, sessionMeta).catch((err: unknown) => {
+          console.error("chat.transcript.write_failed", {
+            sessionId: sid,
+            role: "user",
+            error_class: err instanceof Error ? err.constructor.name : "unknown",
+          });
+        }),
+      );
+    } else {
+      // Observability: a request envelope ending in a non-user role is a
+      // client bug or a probe. Don't corrupt KV; log and continue. Flat
+      // primitives only — Workers Logs / wrangler tail parse second arg.
+      console.warn("chat.transcript.unexpected_trailing_role", {
+        sessionId: validation.data.sessionId,
+        role: lastMessage?.role ?? "missing",
+      });
+    }
   }
 
   // D-08/D-11: Stream response from Claude Haiku

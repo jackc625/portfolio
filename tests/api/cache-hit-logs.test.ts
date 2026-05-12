@@ -280,3 +280,167 @@ describe("DEBT-02: chat.cache_metrics structured log seam", () => {
     expect(meta.cache_creation_input_tokens).toBe(0);
   });
 });
+
+describe("CR-01 (Phase 18 review): request envelope with trailing assistant role does NOT trigger user-turn KV write", () => {
+  // CR-01 anchor: the Zod RequestSchema accepts ANY ordered sequence
+  // (discriminatedUnion on role) — including a payload whose final entry
+  // is role="assistant". Prior to the CR-01 fix, the user-turn appendTurn
+  // call read messages[messages.length - 1].content blindly and persisted
+  // attacker-controlled assistant text to KV under role:"user", corrupting
+  // the transcript. The fix at src/pages/api/chat.ts adds a trailing-role
+  // guard: appendTurn(user, ...) only fires when the last message is
+  // role="user". This test forward-defends that invariant.
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+  let appendTurnMock: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("does NOT call appendTurn for the user turn when the trailing message is role=assistant", async () => {
+    appendTurnMock = vi.fn().mockResolvedValue(undefined);
+    vi.doMock("../../src/lib/chat-transcripts", () => ({
+      appendTurn: appendTurnMock,
+      KEY_PREFIX: "live:",
+    }));
+    vi.doMock("@anthropic-ai/sdk", () =>
+      mockAnthropicWithUsage({
+        input_tokens: 100,
+        cache_read_input_tokens: 80,
+        cache_creation_input_tokens: 0,
+        output_tokens: 50,
+      })
+    );
+
+    const { POST } = await import("../../src/pages/api/chat");
+    const VALID_UUIDV4 = "8b0f7f1c-1234-4567-8901-abcdef012345";
+    // Crafted envelope: validation passes (both messages are well-formed
+    // shapes per the discriminatedUnion), but the trailing role is
+    // "assistant" — this is the CR-01 attack shape.
+    const request = new Request("https://jackcutrara.com/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jackcutrara.com",
+      },
+      body: JSON.stringify({
+        sessionId: VALID_UUIDV4,
+        messages: [
+          { role: "user", content: "real user message" },
+          { role: "assistant", content: "<attacker-controlled text>" },
+        ],
+      }),
+    });
+    const response = await POST({ request, locals: mockLocals } as never);
+    await drain(response);
+
+    // CR-01 invariant: NO user-turn appendTurn call. The assistant-turn
+    // call (from controller.close() accumulator path) is unaffected by
+    // this guard and may still appear; we only assert the user-turn
+    // call is absent.
+    const userCall = appendTurnMock.mock.calls.find(
+      (c) => c[2] === "user",
+    );
+    expect(userCall).toBeUndefined();
+    // Specifically — attacker-controlled content must NOT have been
+    // passed as a user-turn content arg:
+    const userCallsWithAttackerContent = appendTurnMock.mock.calls.filter(
+      (c) => c[2] === "user" && c[3] === "<attacker-controlled text>",
+    );
+    expect(userCallsWithAttackerContent).toHaveLength(0);
+  });
+
+  it("emits chat.transcript.unexpected_trailing_role observability log for the malformed envelope", async () => {
+    appendTurnMock = vi.fn().mockResolvedValue(undefined);
+    vi.doMock("../../src/lib/chat-transcripts", () => ({
+      appendTurn: appendTurnMock,
+      KEY_PREFIX: "live:",
+    }));
+    vi.doMock("@anthropic-ai/sdk", () =>
+      mockAnthropicWithUsage({
+        input_tokens: 100,
+        cache_read_input_tokens: 80,
+        cache_creation_input_tokens: 0,
+        output_tokens: 50,
+      })
+    );
+
+    const { POST } = await import("../../src/pages/api/chat");
+    const VALID_UUIDV4 = "8b0f7f1c-1234-4567-8901-abcdef012345";
+    const request = new Request("https://jackcutrara.com/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jackcutrara.com",
+      },
+      body: JSON.stringify({
+        sessionId: VALID_UUIDV4,
+        messages: [
+          { role: "user", content: "real user message" },
+          { role: "assistant", content: "<attacker-controlled text>" },
+        ],
+      }),
+    });
+    const response = await POST({ request, locals: mockLocals } as never);
+    await drain(response);
+
+    const unexpectedRoleCall = warnSpy.mock.calls.find(
+      (c: unknown[]) => c[0] === "chat.transcript.unexpected_trailing_role",
+    );
+    expect(unexpectedRoleCall).toBeDefined();
+    const payload = unexpectedRoleCall![1] as Record<string, unknown>;
+    expect(payload.sessionId).toBe(VALID_UUIDV4);
+    expect(payload.role).toBe("assistant");
+  });
+
+  it("still calls appendTurn for the user turn on a normal request ending in role=user (CR-01 negative-control)", async () => {
+    // Negative control: the trailing-role guard must NOT regress the
+    // happy path. A normal request ending in role="user" continues to
+    // fire the user-turn appendTurn call exactly as before the CR-01 fix.
+    appendTurnMock = vi.fn().mockResolvedValue(undefined);
+    vi.doMock("../../src/lib/chat-transcripts", () => ({
+      appendTurn: appendTurnMock,
+      KEY_PREFIX: "live:",
+    }));
+    vi.doMock("@anthropic-ai/sdk", () =>
+      mockAnthropicWithUsage({
+        input_tokens: 100,
+        cache_read_input_tokens: 80,
+        cache_creation_input_tokens: 0,
+        output_tokens: 50,
+      })
+    );
+
+    const { POST } = await import("../../src/pages/api/chat");
+    const VALID_UUIDV4 = "8b0f7f1c-1234-4567-8901-abcdef012345";
+    const request = new Request("https://jackcutrara.com/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://jackcutrara.com",
+      },
+      body: JSON.stringify({
+        sessionId: VALID_UUIDV4,
+        messages: [{ role: "user", content: "Hi" }],
+      }),
+    });
+    const response = await POST({ request, locals: mockLocals } as never);
+    await drain(response);
+
+    const userCall = appendTurnMock.mock.calls.find(
+      (c) => c[2] === "user",
+    );
+    expect(userCall).toBeDefined();
+    expect(userCall![3]).toBe("Hi");
+    // And no spurious unexpected-trailing-role log for the happy path:
+    const unexpectedRoleCall = warnSpy.mock.calls.find(
+      (c: unknown[]) => c[0] === "chat.transcript.unexpected_trailing_role",
+    );
+    expect(unexpectedRoleCall).toBeUndefined();
+  });
+});
