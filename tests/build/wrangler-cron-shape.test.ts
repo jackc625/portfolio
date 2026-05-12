@@ -16,19 +16,16 @@
  * CRON-01 / D-01 attribution test.
  *
  * Per 19-PATTERNS.md "tests/build/wrangler-cron-shape.test.ts" section
- * (lines 627-672) — parseJsonc helper verbatim from wrangler-shape.test.ts.
+ * (lines 627-672) — parseJsonc originally copied verbatim from
+ * wrangler-shape.test.ts. WR-05 / WR-06 (Phase 19 code review) extracted
+ * the duplicated helper to a shared module so future fixes propagate
+ * automatically; the helper also switched from a naive regex to a
+ * string-literal-aware tokenizer.
  */
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-
-// Strip JSONC line + block comments to allow JSON.parse.
-function parseJsonc(src: string): unknown {
-  const stripped = src
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/(^|[^:"])\/\/.*$/gm, "$1");
-  return JSON.parse(stripped);
-}
+import { parseJsonc } from "./_helpers/parse-jsonc";
 
 describe("CRON-01 + D-01: wrangler.jsonc cron + DRY_RUN shape", () => {
   const cfg = parseJsonc(

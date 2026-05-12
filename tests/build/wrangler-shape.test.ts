@@ -14,14 +14,11 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-
-// Strip JSONC line + block comments to allow JSON.parse.
-function parseJsonc(src: string): unknown {
-  const stripped = src
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/(^|[^:"])\/\/.*$/gm, "$1");
-  return JSON.parse(stripped);
-}
+// WR-05 / WR-06 (Phase 19 code review) — parseJsonc previously inlined here
+// (and copied verbatim into wrangler-cron-shape.test.ts). Now extracted to
+// a shared helper that uses a string-literal-aware state machine instead of
+// the regex which mishandled `//` substrings inside string values.
+import { parseJsonc } from "./_helpers/parse-jsonc";
 
 describe("FOUND-04: wrangler.jsonc Workers Static Assets shape", () => {
   const cfg = parseJsonc(
