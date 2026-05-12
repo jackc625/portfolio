@@ -201,9 +201,22 @@ async function promoteOne(
   status: "promoted" | "already_delivered" | "missing_live" | "error";
 }> {
   // (1) D-09 idempotency cursor read — cheapest short-circuit.
-  const delivered = (await env.CHAT_KV.get(`delivered:${sid}`, {
-    type: "json",
-  })) as DeliveredMarker | null;
+  // CR-01 (Phase 19 code review) — wrap in try/catch for CRON-03 isolation.
+  // A transient KV read failure on the delivered: cursor key must NOT abort
+  // the entire sweep; the outer caller's loop continues to the next session.
+  let delivered: DeliveredMarker | null = null;
+  try {
+    delivered = (await env.CHAT_KV.get(`delivered:${sid}`, {
+      type: "json",
+    })) as DeliveredMarker | null;
+  } catch (err) {
+    console.error("chat.delivery.failed", {
+      sid,
+      error_class: err instanceof Error ? err.constructor.name : "Error",
+      msg_count: 0,
+    });
+    return { status: "error" };
+  }
   if (delivered !== null) {
     console.log("chat.delivery.skipped_already_delivered", {
       sid,
