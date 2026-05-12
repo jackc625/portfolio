@@ -1,0 +1,452 @@
+---
+status: in-progress
+phase: 19-cron-sweep-scheduling-idempotency-dry-run
+source: [19-01-SUMMARY.md, 19-02-SUMMARY.md, 19-03-SUMMARY.md, 19-04-SUMMARY.md]
+started: 2026-05-12T20:45:00Z
+updated: 2026-05-12T20:45:00Z
+deviation: |
+  Phase 18 UAT learning carries forward: Workers Builds branch previews may
+  bind to the PROD KV `id` (eaa30fef259e4a6b9505b41bbf3f8f01) rather than the
+  declared `preview_id` (115f3c1b0f8a4a1da9fee78c48dcb749) depending on the
+  build environment, AND `wrangler kv key` reads can lag ~60s for eventual
+  consistency, AND wrangler CLI defaults to --local without --remote. The
+  intersection of those three behaviors burned ~2hr of debug time in Phase 18.
+  Recommendation: run this UAT directly against production (wrangler.jsonc
+  triggers.crons + scheduled handler already shipped via Plan 19-04 / commit
+  46d8d42) and use the `test-uat-*` SID prefix discipline so Step 5 cleanup
+  can `wrangler kv key list --prefix test-uat-` and bulk-delete all UAT
+  artifacts without touching real visitor sessions. ALWAYS pass --remote on
+  every wrangler kv command in Steps 2-5.
+
+  Step 1 PRE-FLIGHT (pnpm dev:cron + curl /__scheduled) is executor-runnable
+  and proves handler dispatch BEFORE the operator-controlled production
+  verification. The PRODUCTION leg is operator-only per DEPLOY-GATE.md
+  (Plan 17-08 precedent) — the executor MUST NOT run `wrangler deploy`.
+---
+
+# Phase 19 UAT — Cron Sweep (Scheduling + Idempotency under DRY_RUN)
+
+**Step 1 (CRON-01 `* * * * *` Past-Events verification) is the operator-controlled gate per D-12.**
+Executor MUST NOT run `wrangler deploy` for the `* * * * *` flip — operator owns the verification + revert cycle per DEPLOY-GATE.md posture (Plan 17-08).
+
+This UAT closes ROADMAP Phase 19 success criteria 1-4. The 5-step sequence maps:
+
+- Step 1 → SC1 (CRON-01: cron trigger wired + Past Events visible)
+- Step 2 → SC2 (CRON-02: dry-run sweep PUT delivered: BEFORE / DELETE live: AFTER)
+- Step 3 → SC3 (CRON-02 + CRON-03 idempotency: delivered: marker skips redelivery)
+- Step 4 → SC4 (CRON-03: per-tick batch cap 50 + pagination)
+- Step 5 → operational hygiene (test-uat-* cleanup, no audit-debt in PROD KV)
+
+**KV namespace IDs** (verbatim from `wrangler.jsonc:11-17`):
+
+- Production: `eaa30fef259e4a6b9505b41bbf3f8f01`
+- Preview:    `115f3c1b0f8a4a1da9fee78c48dcb749`
+
+**Cron expression** (verbatim from `wrangler.jsonc:22-24`, locked by `tests/build/wrangler-cron-shape.test.ts`):
+
+- Production: `["0 * * * *"]` (hourly, top of hour)
+- Step 1 UAT temporary: `["* * * * *"]` (every minute — REVERT after Past Events screenshot)
+
+**DRY_RUN gate** (verbatim from `wrangler.jsonc:19-21`, locked by same build test):
+
+- `vars.DRY_RUN === "1"` — full sweep loop runs but logs Resend payload instead of POSTing. Phase 20 flips to `"0"` alongside Resend integration landing.
+
+**Production URL:** `https://jackcutrara.com/`
+
+**Preview URL pattern** (Workers Builds, per Plan 17-02 D-03 / 18-UAT.md): `https://{branch-slug}-jack-cutrara-portfolio.jackcutrara.workers.dev/`
+
+---
+
+## Current Test
+
+[in-progress — operator executes Steps 1-5 against production; fills `result:` blocks below]
+
+---
+
+## Tests
+
+### 1. CRON-01 — `* * * * *` Past-Events verification (closes SC1)
+
+expected: |
+  TWO-PART step: a local PRE-FLIGHT (executor-runnable, no deploy) that
+  confirms scheduled() handler dispatch in source, then a PRODUCTION leg
+  (operator-controlled per D-12 / DEPLOY-GATE.md — executor MUST NOT run
+  `wrangler deploy`).
+
+  PRE-FLIGHT (local, executor-runnable; proves Plan 19-03 wiring before
+  operator burns Free-tier cron quota):
+
+    Terminal 1: `pnpm dev:cron`
+      - Starts `wrangler dev --test-scheduled` against the local Worker.
+      - Wait for `Ready on http://localhost:8787` log line.
+
+    Terminal 2: `curl "http://localhost:8787/__scheduled?cron=*+*+*+*+*"`
+      - Triggers the scheduled() handler exactly once via the
+        `wrangler dev --test-scheduled` HTTP shim.
+
+    Terminal 1 should emit one structured JSON log line of shape:
+      chat.delivery.tick { sessions_seen: <int>, sessions_due: <int>,
+        sessions_promoted: <int>, errors: 0, pages_scanned: <int>,
+        elapsed_ms: <int> }
+    (sessions_seen will typically be 0 in a fresh local namespace; >0 if
+    any prior `test-uat-*` keys from previous UAT attempts are still
+    seeded.)
+
+  PRE-FLIGHT PASS criteria:
+    - chat.delivery.tick log line appears in Terminal 1 within 5s of curl
+    - errors: 0 in the log payload
+    - No uncaught exception, no `worker.scheduled.failed { error_class: ... }`
+
+  If PRE-FLIGHT fails: STOP. Plan 19-03 scheduled() wiring is broken.
+  Do NOT proceed to PRODUCTION leg. Open a /gsd-debug session against
+  src/worker.ts + src/lib/chat-delivery.ts BEFORE the operator burns
+  the `*****` UAT slot.
+
+  PRODUCTION (operator-controlled per DEPLOY-GATE.md):
+    1. `git diff wrangler.jsonc` should return empty before starting.
+    2. Operator edits `wrangler.jsonc` line 23: change `["0 * * * *"]`
+       to `["* * * * *"]` (every minute). Leave the inline JSONC comment
+       intact.
+    3. Operator runs `wrangler deploy` (executor MUST NOT run this).
+       Capture the Worker version ID from the deploy output.
+    4. Wait 90 seconds.
+    5. Open Cloudflare Dashboard → Workers & Pages →
+       jack-cutrara-portfolio → Cron Triggers → Past Events tab.
+    6. Capture screenshot showing ≥1 successful invocation within the
+       90s window since the deploy.
+    7. REVERT: operator edits `wrangler.jsonc` line 23 back to
+       `["0 * * * *"]`. Re-runs `wrangler deploy`.
+    8. REVERT CHECK: `git diff wrangler.jsonc` must return empty
+       (Pitfall 6 defense — leftover `*****` would burn 1,440 cron
+       invocations/day from the Free-tier 5,000/day budget).
+    9. Build-time defense check:
+       `pnpm exec vitest run tests/build/wrangler-cron-shape.test.ts`
+       exits 0 with 2 PASS / 0 FAIL.
+
+  PASS criteria:
+    - PRE-FLIGHT: chat.delivery.tick log line observed locally.
+    - PRODUCTION: Past Events tab shows ≥1 invocation within 90s of
+      the `*****` deploy.
+    - REVERT: `git diff wrangler.jsonc` returns empty + cron-shape
+      build test exits 0.
+result: pending
+prior_result: |
+  [populated only if a re-test happened]
+notes: |
+  [optional — operator captures Worker version ID, Past Events
+  screenshot path, any deviations from the expected log shape]
+
+---
+
+### 2. CRON-02 — Seed-and-sweep end-to-end (closes SC2)
+
+expected: |
+  Seed a single stale `live:test-uat-{uuid}` key against PROD KV;
+  observe the cron sweep PUT `delivered:{sid}` BEFORE the would-be
+  Resend POST and DELETE `live:{sid}` AFTER — proving the two-keyspace
+  partition crash-safe sequencing that Phase 20 will rely on.
+
+  Operator command sequence (ALL --remote — see deviation block):
+
+    # 1. Mint a test sid and a stale timestamp (3 hours ago — well past
+    #    the 2-hour inactivity threshold).
+    SID="test-uat-$(uuidgen)"
+    STALE_TS=$(date -u -d '3 hours ago' +"%Y-%m-%dT%H:%M:%S.%3NZ")
+
+    # 2. Seed live:${SID} with a minimal valid ChatTranscript value
+    #    AND the inline metadata block (Phase 18 META-01 contract).
+    wrangler kv key put "live:${SID}" \
+      '{"v":1,"sid":"'"${SID}"'","started_at":"'"${STALE_TS}"'","last_activity_at":"'"${STALE_TS}"'","msg_count":2,"truncated":false,"meta":{"referrer":"https://example.com/","user_agent":"UAT/1.0","country":"US","region":"TX","colo":"DFW"},"messages":[{"role":"user","content":"Hi"},{"role":"assistant","content":"Hello back"}]}' \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --metadata '{"last_activity_at":"'"${STALE_TS}"'","msg_count":2,"window_started_at":"'"${STALE_TS}"'","window_count":2}' \
+      --remote
+
+    # 3. In a separate terminal, start tail filtered on chat.delivery
+    #    log namespace:
+    wrangler tail --format pretty --search chat.delivery
+
+    # 4. Wait for next top-of-hour OR (faster) reuse the Step 1
+    #    operator-controlled `*****` flip cycle to fire the cron
+    #    immediately. (Cron expression is locked back to ["0 * * * *"]
+    #    after Step 1 — operator must REVERT Step 1's UAT flip before
+    #    starting this step OR re-flip + re-revert as part of Step 2.)
+
+  PASS criteria (all four must hold):
+    - wrangler tail shows ONE chat.delivery.dry_run line of shape:
+        chat.delivery.dry_run {
+          sid: ${SID}, to, from, reply_to,
+          msg_count: 2, truncated: false,
+          country: "US", referrer_host: "example.com",
+          dry_run: true
+        }
+    - wrangler tail shows ONE chat.delivery.tick summary line of shape:
+        chat.delivery.tick {
+          sessions_seen: <int>, sessions_due: >= 1,
+          sessions_promoted: >= 1, errors: 0,
+          pages_scanned: <int>, elapsed_ms: <int>
+        }
+    - `wrangler kv key get "delivered:${SID}" --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 --remote`
+      returns the D-09-shape envelope:
+        { v: 1, sid: "${SID}", delivered_at: <ISO 8601>,
+          dry_run: true, msg_count: 2, truncated: false }
+    - `wrangler kv key get "live:${SID}" --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 --remote`
+      returns null/empty (key DELETED after promote-success per
+      crash-safe step ordering).
+
+  SC2 closure: the ordering PUT delivered: BEFORE would-be-POST and
+  DELETE live: AFTER would-be-POST is the EXACT contract Phase 20 will
+  rely on when DRY_RUN flips to "0" and the would-be POST becomes a
+  real Resend POST.
+result: pending
+prior_result: |
+  [populated only if a re-test happened]
+notes: |
+  [optional — operator pastes the actual chat.delivery.dry_run line +
+  the delivered: envelope JSON for the audit trail]
+
+---
+
+### 3. CRON-03 — Idempotency double-tap (closes SC3)
+
+expected: |
+  Re-seed the SAME `live:${SID}` from Step 2 (with the same stale
+  timestamp). The `delivered:${SID}` marker is still present in PROD
+  KV (24h TTL per D-09 — well within the same UAT session). Invoke
+  cron a second time. The sweep MUST observe the delivered: marker
+  and skip the re-seeded session — no second chat.delivery.dry_run
+  emission for ${SID}.
+
+  Operator command sequence:
+
+    # 1. Re-seed live:${SID} with the SAME stale timestamp (reuses
+    #    the SID + STALE_TS env vars from Step 2 — if shell session
+    #    rotated, set them to the SAME values via the Step 2 output).
+    wrangler kv key put "live:${SID}" \
+      '{"v":1,"sid":"'"${SID}"'","started_at":"'"${STALE_TS}"'","last_activity_at":"'"${STALE_TS}"'","msg_count":2,"truncated":false,"meta":{"referrer":"https://example.com/","user_agent":"UAT/1.0","country":"US","region":"TX","colo":"DFW"},"messages":[{"role":"user","content":"Hi"},{"role":"assistant","content":"Hello back"}]}' \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --metadata '{"last_activity_at":"'"${STALE_TS}"'","msg_count":2,"window_started_at":"'"${STALE_TS}"'","window_count":2}' \
+      --remote
+
+    # 2. Confirm delivered:${SID} still present from Step 2:
+    wrangler kv key get "delivered:${SID}" \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --remote
+    # Expected: returns the same Step 2 envelope (delivered_at unchanged).
+
+    # 3. Resume `wrangler tail --format pretty --search chat.delivery`
+    #    in a second terminal.
+
+    # 4. Wait for next top-of-hour OR operator-controlled `*****` flip
+    #    (Step 1 mechanic) to fire the cron immediately. REVERT after.
+
+  PASS criteria:
+    - wrangler tail shows ONE chat.delivery.skipped_already_delivered
+      line of shape:
+        chat.delivery.skipped_already_delivered {
+          sid: "${SID}",
+          delivered_at_existing: <ISO 8601 — matches Step 2 timestamp>
+        }
+    - chat.delivery.tick for this tick shows sessions_promoted: 0
+      for the re-seeded session (other unrelated due sessions may
+      promote independently — pin attribution by sid).
+    - NO new chat.delivery.dry_run line for ${SID} (idempotency held).
+    - `wrangler kv key get "delivered:${SID}" --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 --remote`
+      delivered_at timestamp is UNCHANGED from Step 2 (no overwrite).
+
+  SC3 closure: application-level idempotency holds BEFORE Resend's
+  Idempotency-Key joins the defense (Phase 20). The `delivered:` key
+  alone is sufficient to prevent double-delivery — the Resend
+  Idempotency-Key is defense-in-depth for the network-retry path
+  (5xx retry with same key returns idempotency_replay: true).
+result: pending
+prior_result: |
+  [populated only if a re-test happened]
+notes: |
+  [optional — operator confirms delivered_at_existing matches Step 2
+  + paste the skipped_already_delivered log line]
+
+---
+
+### 4. CRON-03 — Pagination / batch-cap stress (closes SC4)
+
+expected: |
+  Seed 60 stale `live:test-uat-batch-*` keys against PROD KV. Invoke
+  cron. The per-tick batch cap (50 sessions, locked in Plan 19-02
+  `deliverDue` PER_TICK_BATCH_CAP) and the pagination hard-cap
+  (50 pages, also Plan 19-02) MUST hold — first tick promotes 50,
+  leaving 10 due for the next tick.
+
+  Operator command sequence:
+
+    # 1. Bash loop seeds 60 stale keys with unique sids:
+    STALE_TS=$(date -u -d '3 hours ago' +"%Y-%m-%dT%H:%M:%S.%3NZ")
+    for i in $(seq 1 60); do
+      SID="test-uat-batch-$(uuidgen)"
+      wrangler kv key put "live:${SID}" \
+        '{"v":1,"sid":"'"${SID}"'","started_at":"'"${STALE_TS}"'","last_activity_at":"'"${STALE_TS}"'","msg_count":1,"truncated":false,"meta":{"referrer":"https://example.com/","user_agent":"UAT/1.0","country":"US","region":"TX","colo":"DFW"},"messages":[{"role":"user","content":"batch '"$i"'"}]}' \
+        --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+        --metadata '{"last_activity_at":"'"${STALE_TS}"'","msg_count":1,"window_started_at":"'"${STALE_TS}"'","window_count":1}' \
+        --remote
+    done
+
+    # 2. Verify the seed landed:
+    wrangler kv key list \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --remote \
+      --prefix "live:test-uat-batch-" | jq 'length'
+    # Expected: 60
+
+    # 3. Start `wrangler tail --format pretty --search chat.delivery`.
+
+    # 4. Fire cron tick 1 (wait for top-of-hour OR operator-flip
+    #    `*****` per Step 1 mechanic).
+
+    # 5. Capture chat.delivery.tick for tick 1.
+
+    # 6. Fire cron tick 2 (next minute under `*****` flip OR next
+    #    top-of-hour).
+
+    # 7. Capture chat.delivery.tick for tick 2.
+
+    # 8. Verify final state:
+    wrangler kv key list \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --remote \
+      --prefix "delivered:test-uat-batch-" | jq 'length'
+    # Expected: 60
+
+    wrangler kv key list \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --remote \
+      --prefix "live:test-uat-batch-" | jq 'length'
+    # Expected: 0
+
+  PASS criteria:
+    - Tick 1 chat.delivery.tick: sessions_due >= 60 (may also count
+      Step 2/3 leftovers if not cleaned), sessions_promoted: 50
+      (PER_TICK_BATCH_CAP enforced), errors: 0.
+    - Tick 2 chat.delivery.tick: sessions_due: 10 (the remaining
+      batch keys), sessions_promoted: 10, errors: 0.
+    - Final `delivered:test-uat-batch-*` count: 60.
+    - Final `live:test-uat-batch-*` count: 0.
+
+  SC4 closure: per-tick batch cap of 50 sessions verified live
+  against PROD KV. Pagination hard-cap of 50 pages (Plan 19-02 safety
+  valve) NOT exercised at this scale (60 keys fit in 1 page of KV
+  list — pagination cap is a defense for sessions_due >> 5,000 which
+  this test does not produce; the unit test battery in
+  tests/api/chat-delivery.test.ts proves the pagination invariants
+  against mock KV).
+result: pending
+prior_result: |
+  [populated only if a re-test happened]
+notes: |
+  [optional — operator pastes both tick summaries + the final list
+  lengths for the audit trail]
+
+---
+
+### 5. Backlog cleanup (operational hygiene — no audit-debt in PROD KV)
+
+expected: |
+  Delete ALL `live:test-uat-*` AND `delivered:test-uat-*` keys from
+  PROD KV. The `test-uat-` prefix discipline (chosen in Steps 2-4)
+  ensures every UAT artifact is greppable via
+  `wrangler kv key list --prefix test-uat-` so cleanup can be done
+  in one bulk-delete pass without touching real visitor sessions.
+
+  Operator command sequence:
+
+    # 1. List all test-uat-* keys (both live: and delivered: spaces):
+    wrangler kv key list \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --remote \
+      --prefix "live:test-uat-" > /tmp/live-uat.json
+
+    wrangler kv key list \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --remote \
+      --prefix "delivered:test-uat-" > /tmp/delivered-uat.json
+
+    # 2. Bulk-delete via the wrangler kv key delete --bulk-delete flag
+    #    (if available; otherwise loop with per-key delete):
+    cat /tmp/live-uat.json | jq -r '.[].name' | while read key; do
+      wrangler kv key delete "$key" \
+        --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+        --remote
+    done
+
+    cat /tmp/delivered-uat.json | jq -r '.[].name' | while read key; do
+      wrangler kv key delete "$key" \
+        --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+        --remote
+    done
+
+    # 3. Verify both keyspaces are clean:
+    wrangler kv key list \
+      --namespace-id eaa30fef259e4a6b9505b41bbf3f8f01 \
+      --remote \
+      --prefix "test-uat-" | jq 'length'
+    # Expected: 0
+
+  PASS criteria:
+    - `wrangler kv key list --prefix "live:test-uat-" --remote`
+      returns empty array.
+    - `wrangler kv key list --prefix "delivered:test-uat-" --remote`
+      returns empty array.
+    - `wrangler kv key list --prefix "test-uat-" --remote` returns
+      empty array (no orphans from previous prefix combinations).
+    - Real visitor session keys (live:<UUIDv4 without test-uat-*
+      prefix>) NOT touched — the prefix discipline made cleanup safe.
+
+  Rationale: no UAT audit-debt left in production KV. The
+  `test-uat-*` prefix discipline keeps every UAT artifact greppable
+  for future cleanup runs (and for Phase 20 / future debug sessions
+  that might want to inspect post-cleanup state).
+result: pending
+prior_result: |
+  [populated only if a re-test happened]
+notes: |
+  [optional — operator records final key counts + any orphans that
+  required manual cleanup outside the prefix discipline]
+
+---
+
+## Phase Exit Gates
+
+After all 5 Steps land `result: pass`, mark this checklist to close
+Phase 19 + unblock Phase 20:
+
+- [ ] Step 1 PASS — CRON-01 closes (cron trigger wired, Past Events ≥1)
+- [ ] Step 2 PASS — CRON-02 closes (PUT delivered: BEFORE / DELETE live: AFTER)
+- [ ] Step 3 PASS — CRON-03 (idempotency) partially closes
+- [ ] Step 4 PASS — CRON-03 (batch cap) closes + CRON-04 dry-run logging verified
+- [ ] Step 5 PASS — operational hygiene (no UAT audit-debt in PROD KV)
+
+Forward-defense automation (verified at every commit during Plan 19-04):
+
+- [x] `tests/build/wrangler-cron-shape.test.ts` — 2/2 GREEN (CRON-01 + DRY_RUN locked)
+- [x] `tests/build/wrangler-shape.test.ts` — 5/5 GREEN (FOUND-04 + tightened cron assertion)
+- [x] `tests/build/worker-scheduled-call-site.test.ts` — 6/6 GREEN (Plan 19-03 scheduled() wiring)
+- [x] `tests/api/chat-delivery.test.ts` — 19/19 GREEN (Plan 19-02 deliverDue contract)
+- [x] `pnpm exec astro check` — 0/0/0
+- [x] `pnpm test` — 498 PASS / 0 FAIL / 2 SKIP (beats >=446 minimum)
+
+ROADMAP Phase 19 success criteria status (filled by operator post-UAT):
+
+- [ ] SC1 (Step 1) — Cron trigger active + Past Events visible within 90s
+- [ ] SC2 (Step 2) — DRY_RUN sweep PUT delivered: BEFORE / DELETE live: AFTER
+- [ ] SC3 (Step 3) — Idempotency holds (delivered: marker skips redelivery)
+- [ ] SC4 (Step 4) — Per-tick batch cap 50 + per-session try/catch isolation
+
+After all 4 ROADMAP success criteria checked, this UAT's front-matter
+`status:` flips from `in-progress` to `complete`, `updated:` timestamp
+refreshes, and Phase 19 is shippable. Phase 20 (Email Render + Resend
+Integration) is then unblocked — Phase 20 will:
+
+1. Flip `wrangler.jsonc` `vars.DRY_RUN` from `"1"` to `"0"`
+2. Create `src/lib/email/resend.ts` (thin fetch wrapper to Resend API)
+3. Substitute the `throw new Error("send_not_implemented_in_phase_19")`
+   stub inside `src/lib/chat-delivery.ts` with a real Resend POST
+4. Ship adversarial-payload renderer hardening + idempotency-key
+   send-once contract per MAIL-01..05
