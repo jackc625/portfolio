@@ -86,6 +86,12 @@ interface DeliveryEnv {
   DRY_RUN: string;
   CHAT_RECIPIENT_EMAIL?: string; // envelope `to:` log field (Phase 19)
   CHAT_SENDER_EMAIL?: string; // envelope `from:` log field (Phase 19)
+  // WR-02 (Phase 19 code review) — envelope `reply_to:` log field. Sourced
+  // from wrangler.jsonc vars (Plan 19-01 absorption precedent). Optional so
+  // Phase 20 doesn't have to thread an additional var to ship the live POST;
+  // unset value falls through to null in the log line (operationally
+  // identical to omitting the field but greppable in Workers Logs).
+  CHAT_REPLY_TO_EMAIL?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -164,7 +170,7 @@ async function sendOne(
       sid: transcript.sid,
       to: env.CHAT_RECIPIENT_EMAIL ?? null,
       from: env.CHAT_SENDER_EMAIL ?? null,
-      reply_to: "jackcutrara@gmail.com",
+      reply_to: env.CHAT_REPLY_TO_EMAIL ?? null, // WR-02 — sourced from env, not hardcoded
       msg_count: transcript.msg_count,
       truncated: transcript.truncated,
       country: transcript.meta.country ?? null,

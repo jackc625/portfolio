@@ -16,6 +16,7 @@ export interface Env {
   RESEND_API_KEY: string;         // Phase 17 D-05 — added during cutover
   CHAT_RECIPIENT_EMAIL: string;   // Phase 17 D-06 — added during cutover
   CHAT_SENDER_EMAIL: string;      // Phase 17 D-06 — added during cutover
+  CHAT_REPLY_TO_EMAIL?: string;   // WR-02 (Phase 19 code review) — envelope reply_to: field; sourced from wrangler.jsonc vars (optional)
   // DRY_RUN narrowed to the wrangler-generated literal "1" so the local Env
   // interface assigns cleanly to the global `Env extends Cloudflare.Env` (with
   // `DRY_RUN: "1"`) at the handle(request, env, ctx) call site. The wider

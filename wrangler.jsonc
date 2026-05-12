@@ -16,8 +16,10 @@
     }
   ],
   // Phase 19 D-01/D-02 — DRY_RUN gate. "1" = dry-run active (default); Phase 20 flips to "0" alongside the Resend POST landing.
+  // WR-02 — CHAT_REPLY_TO_EMAIL sources the envelope reply_to: field. Optional in DeliveryEnv (logs null if unset).
   "vars": {
-    "DRY_RUN": "1"
+    "DRY_RUN": "1",
+    "CHAT_REPLY_TO_EMAIL": "jackcutrara@gmail.com"
   },
   "triggers": {
     "crons": ["0 * * * *"] // Phase 19 CRON-01 — hourly cron; flip to ["* * * * *"] for Step 1 UAT then REVERT (Pitfall 6: wrangler-cron-shape.test.ts catches unreverted state)

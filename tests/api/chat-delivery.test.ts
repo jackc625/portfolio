@@ -225,18 +225,21 @@ function seedLive(
 
 function buildEnv(
   kv: MockKVNamespace,
-  overrides?: { DRY_RUN?: string; CHAT_RECIPIENT_EMAIL?: string; CHAT_SENDER_EMAIL?: string },
+  overrides?: { DRY_RUN?: string; CHAT_RECIPIENT_EMAIL?: string; CHAT_SENDER_EMAIL?: string; CHAT_REPLY_TO_EMAIL?: string },
 ): {
   CHAT_KV: KVNamespace;
   DRY_RUN: string;
   CHAT_RECIPIENT_EMAIL?: string;
   CHAT_SENDER_EMAIL?: string;
+  CHAT_REPLY_TO_EMAIL?: string;
 } {
   return {
     CHAT_KV: kv as unknown as KVNamespace,
     DRY_RUN: overrides?.DRY_RUN ?? "1",
     CHAT_RECIPIENT_EMAIL: overrides?.CHAT_RECIPIENT_EMAIL ?? "to@example.com",
     CHAT_SENDER_EMAIL: overrides?.CHAT_SENDER_EMAIL ?? "from@example.com",
+    // WR-02 (Phase 19 code review) — envelope reply_to: sourced from env var.
+    CHAT_REPLY_TO_EMAIL: overrides?.CHAT_REPLY_TO_EMAIL ?? "jackcutrara@gmail.com",
   };
 }
 
