@@ -156,7 +156,7 @@ Plans:
 - [x] 19-01-PLAN.md — `pnpm dev:cron` npm script + `wrangler.jsonc` `vars.DRY_RUN = "1"` + `src/worker.ts` `Env.DRY_RUN: string` (CRON-01 partial — config + type scaffolding)
 
 **Wave 1** *(depends on 19-01 — TDD-aware pure-module + unit tests)*
-- [ ] 19-02-PLAN.md — NEW `src/lib/chat-delivery.ts` (pure module: `deliverDue` + two-keyspace promotion loop + DRY_RUN gate + retry harness + 50-session batch cap + 50-page pagination cap) + NEW `tests/api/chat-delivery.test.ts` 19-case unit test battery against mock KV (CRON-02, CRON-03, CRON-04)
+- [x] 19-02-PLAN.md — NEW `src/lib/chat-delivery.ts` (pure module: `deliverDue` + two-keyspace promotion loop + DRY_RUN gate + retry harness + 50-session batch cap + 50-page pagination cap) + NEW `tests/api/chat-delivery.test.ts` 19-case unit test battery against mock KV (CRON-02, CRON-03, CRON-04)
 
 **Wave 2** *(depends on 19-02 — wiring + source-text forward-defense)*
 - [ ] 19-03-PLAN.md — `src/worker.ts` `scheduled()` body replaced with `ctx.waitUntil(deliverDue(env, controller.scheduledTime).catch(...))` per Phase 18 D-09 pattern + NEW `tests/build/worker-scheduled-call-site.test.ts` 6-invariant source-text guard (CRON-01)
@@ -209,5 +209,5 @@ Phases execute in numeric order within each milestone.
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
 | 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Complete    | 2026-05-11 |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 8/8 | Complete   | 2026-05-11 |
-| 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 1/4 | In Progress|  |
+| 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 2/4 | In Progress|  |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |

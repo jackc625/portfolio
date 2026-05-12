@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
 status: executing
-stopped_at: Plan 19-01 complete (Wave 0 scaffolding)
-last_updated: "2026-05-12T20:05:03.611Z"
-last_activity: 2026-05-12 -- Plan 19-01 complete
+stopped_at: Plan 19-02 complete (chat-delivery.ts + 19-case test battery)
+last_updated: "2026-05-12T20:22:07Z"
+last_activity: 2026-05-12 -- Plan 19-02 complete
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 22
-  completed_plans: 19
-  percent: 86
+  completed_plans: 20
+  percent: 91
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 ## Current Position
 
 Phase: 19 (cron-sweep-scheduling-idempotency-dry-run) — EXECUTING
-Plan: 2 of 4
-Status: Plan 19-01 complete; Plan 19-02 next (chat-delivery.ts + tests/api/chat-delivery.test.ts)
-Last activity: 2026-05-12 -- Plan 19-01 complete (Wave 0 scaffolding: dev:cron script + vars.DRY_RUN + Env.DRY_RUN)
+Plan: 3 of 4
+Status: Plan 19-02 complete; Plan 19-03 next (worker.ts scheduled() body replacement — wire deliverDue + .catch chain; absorb pre-existing worker.ts:25 ts(2345) per deferred-items.md)
+Last activity: 2026-05-12 -- Plan 19-02 complete (chat-delivery.ts module + 19-case test battery; 490/0/2 GREEN)
 
 ### Phase 17 Re-Opened (Gap Closure — 2026-05-11) — CLOSED 2026-05-11
 
@@ -180,6 +180,12 @@ Plan 17-08 execution decisions (2026-05-11) — UAT Gap #2 closed via inline dis
 - [Phase 19]: Plan 19-01: Wave 0 scaffolding stays 100% additive — 3 edits / 6 insertions / 0 deletions across package.json + wrangler.jsonc + src/worker.ts; runtime behavior unchanged (cron disabled, scheduled stub preserved, DRY_RUN bound but unread)
 - [Phase 19]: Plan 19-01: src/worker.ts Env declares DRY_RUN: string (wider) while wrangler-generated Cloudflare.Env narrows to DRY_RUN: "1" (literal) — both structurally satisfy Plan 19-02's DeliveryEnv { DRY_RUN: string } match per TS structural typing
 - [Phase 19]: Plan 19-01: triggers.crons stays [] at this plan (Plan 19-04 owns the ["0 * * * *"] flip) — vars.DRY_RUN insert is the only new top-level wrangler.jsonc key; FOUND-04 wrangler-shape.test.ts accepts the extra key without modification
+- [Phase 19]: Plan 19-02: D-PA-01 full-jitter exponential backoff (vs equal-jitter or fixed) — Math.floor(Math.random() * Math.min(BACKOFF_CAP_MS, BACKOFF_BASE_MS * 2 ** attempt)) per OQ-2; trade-off accepted: slightly higher latency variance vs substantially reduced thundering-herd risk
+- [Phase 19]: Plan 19-02: D-PA-02 MockKVNamespace cursor implementation — numeric-string indices into sorted entries array; pageSize defaults 1000; production KV cursor opacity not under test (pagination CONTROL FLOW is)
+- [Phase 19]: Plan 19-02: D-PA-03 listOverride hook on MockKVNamespace enables infinite-pages (pagination-cap test) AND missing-live race test without polluting default list() with branching logic
+- [Phase 19]: Plan 19-02: D-PA-04 multi-page batch drain test uses snapshot-of-storage list() semantics (NOT live storage reads) because promoteOne's kv.delete(live:{sid}) would shrink the storage map mid-sweep; production KV's list() is point-in-time (Rule 1 test-fixture fix bundled into GREEN commit)
+- [Phase 19]: Plan 19-02: D-PA-05 promoteOne step-2 KV read wrapped in try/catch (in addition to steps-3-5 outer try/catch) so a malformed-JSON or KV-read failure on a single session does not abort the per-tick sweep loop (Group G case 18 exercises this directly)
+- [Phase 19]: Plan 19-02: D-PA-06 pre-existing src/worker.ts:25 ts(2345) error left untouched per SCOPE BOUNDARY — verified pre-Plan-19-02 by temporarily moving aside Plan 19-02 files; logged in deferred-items.md for Plan 19-03 absorption (Plan 19-01 SUMMARY claimed 0/0/0 but wrangler-types regen state currently shows the conflict)
 
 ### Open Blockers (carried into v1.3)
 
@@ -225,7 +231,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-12T20:04:48.171Z
-Stopped at: Phase 19 context gathered
+Last session: 2026-05-12T20:22:07Z
+Stopped at: Plan 19-02 complete (chat-delivery.ts module + 19-case test battery; 490/0/2 GREEN)
 Resume file: None
-Next command: User runs `git push origin main` manually (operator-controlled deploy). Cloudflare Workers Builds rebuilds + deploys automatically per Plan 17-02 D-03. Post-deploy: user runs Post-Deploy Verification checklist in DEPLOY-GATE.md against https://jackcutrara.com (re-run checks 4 + 5 + 6 against production). After deploy: orchestrator-level code review + regression gate + verify_phase_goal for Phase 17 closure. Then `/gsd-new-phase 18` for Persistence + Identity (KV write path + sessionId) — Phase 18 inherits a clean chat-surface baseline (D-26 419/0/2, D-15 preserved, ALLOW_LOOPBACK three-signal disjunction regression-locked, listener-dedup typecheck debt absorbed). FOUND-03 Pages retirement also unblocks post-deploy: user retires Pages manually via Cloudflare dashboard once jackcutrara.com on Worker is observed clean.
+Next command: Plan 19-03 — replace src/worker.ts scheduled() stub body with `ctx.waitUntil(deliverDue(env, controller.scheduledTime).catch(...))` per RESEARCH § Code Example 2. Plan 19-03 must also absorb the pre-existing src/worker.ts:25 ts(2345) error logged in .planning/phases/19-cron-sweep-scheduling-idempotency-dry-run/deferred-items.md (Plan 19-01 carry-forward — Env.DRY_RUN: string vs wrangler-generated Cloudflare.Env.DRY_RUN: "1" literal). Plan 19-04 then flips triggers.crons to ["0 * * * *"] and the cron sweep goes live (DRY_RUN gated; no real Resend POST until Phase 20).
