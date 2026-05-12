@@ -20,7 +20,7 @@
     "DRY_RUN": "1"
   },
   "triggers": {
-    "crons": []
+    "crons": ["0 * * * *"] // Phase 19 CRON-01 — hourly cron; flip to ["* * * * *"] for Step 1 UAT then REVERT (Pitfall 6: wrangler-cron-shape.test.ts catches unreverted state)
   },
   "preview_urls": true,
   "observability": {

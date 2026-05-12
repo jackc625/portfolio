@@ -45,10 +45,10 @@ describe("FOUND-04: wrangler.jsonc Workers Static Assets shape", () => {
   });
 
   it("declares triggers.crons array (Phase 17: empty; Phase 19 sets schedule)", () => {
-    // Phase 17: empty array is correct. Phase 19 sets ["0 * * * *"] —
-    // when that change lands, update this assertion accordingly.
+    // Phase 19 CRON-01 (Plan 19-04) — locked to hourly cron. tests/build/wrangler-cron-shape.test.ts
+    // is the focused CRON-01 attribution; this assertion is the FOUND-04 anchor's lockstep tighten.
     expect(cfg.triggers).toBeDefined();
-    expect(Array.isArray((cfg.triggers as { crons: unknown[] }).crons)).toBe(true);
+    expect((cfg.triggers as { crons: unknown[] }).crons).toEqual(["0 * * * *"]);
   });
 
   it("preview_urls is true (Workers Builds preview deploys)", () => {
