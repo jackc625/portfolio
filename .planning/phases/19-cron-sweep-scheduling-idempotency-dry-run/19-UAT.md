@@ -3,7 +3,7 @@ status: in-progress
 phase: 19-cron-sweep-scheduling-idempotency-dry-run
 source: [19-01-SUMMARY.md, 19-02-SUMMARY.md, 19-03-SUMMARY.md, 19-04-SUMMARY.md]
 started: 2026-05-12T20:45:00Z
-updated: 2026-05-12T20:45:00Z
+updated: 2026-05-12T22:00:00Z
 deviation: |
   Phase 18 UAT learning carries forward: Workers Builds branch previews may
   bind to the PROD KV `id` (eaa30fef259e4a6b9505b41bbf3f8f01) rather than the
@@ -58,8 +58,42 @@ This UAT closes ROADMAP Phase 19 success criteria 1-4. The 5-step sequence maps:
 ---
 
 ## Current Test
+<!-- OVERWRITE each test - shows where we are -->
 
-[in-progress — operator executes Steps 1-5 against production; fills `result:` blocks below]
+number: 1
+name: CRON-01 — PRODUCTION leg only (PRE-FLIGHT skipped, see Test 1 notes)
+expected: |
+  Executor portion COMPLETE: PRE-FLIGHT skipped (wrangler-dev + assets
+  binding harness blocks --test-scheduled; static tests cover the same
+  invariants — see Test 1 notes). WR-04 regression on
+  src/worker.ts:27 surfaced during PRE-FLIGHT debug and was fixed
+  (CHAT_REPLY_TO_EMAIL narrowed to literal to match generated
+  Cloudflare.Env). Build is now clean and the bundle ships with all
+  9 latest Phase 19 commits.
+
+  REMAINING WORK is operator-controlled per DEPLOY-GATE.md
+  (executor MUST NOT run `wrangler deploy`):
+
+    Step 1 PRODUCTION leg — flip wrangler.jsonc:25 cron to
+    ["* * * * *"], deploy, wait 90s, capture Past Events screenshot
+    showing ≥1 invocation, REVERT to ["0 * * * *"], redeploy,
+    git diff wrangler.jsonc empty, wrangler-cron-shape.test.ts 2/2.
+
+    Step 2 — Seed test-uat-* live: key against PROD KV, observe
+    delivered: PUT BEFORE / live: DELETE AFTER (see Test 2 below).
+
+    Step 3 — Re-seed same SID, observe idempotency skip
+    (chat.delivery.skipped_already_delivered, see Test 3 below).
+
+    Step 4 — Seed 60 stale keys, observe per-tick batch cap of 50
+    over two ticks (see Test 4 below).
+
+    Step 5 — Bulk-delete all test-uat-* keys (operational hygiene,
+    see Test 5 below).
+
+  Operator resumes via `/gsd-verify-work 19` after the PRODUCTION
+  work to fill in result: blocks per Step.
+awaiting: operator PRODUCTION execution (out of this executor session)
 
 ---
 
@@ -133,8 +167,55 @@ result: pending
 prior_result: |
   [populated only if a re-test happened]
 notes: |
-  [optional — operator captures Worker version ID, Past Events
-  screenshot path, any deviations from the expected log shape]
+  2026-05-12 PRE-FLIGHT SKIP — harness limitation, not a Phase 19 bug.
+
+  Attempted PRE-FLIGHT (`pnpm dev:cron` + curl /__scheduled) blocked
+  by wrangler 4.83.0's `--test-scheduled` shim not intercepting before
+  the Static Assets layer. Tried `assets.run_worker_first: true` in
+  dist/server/wrangler.json — still returns 404 HTML from assets
+  layer in ~18ms. Likely a wrangler-dev + assets-binding interaction
+  bug; not in scope for Phase 19.
+
+  PRE-FLIGHT was a defense-in-depth smoke test; the underlying
+  invariants are already proven by static tests committed to main:
+
+    - tests/build/worker-scheduled-call-site.test.ts  6/6 GREEN
+      (scheduled() exported, calls deliverDue, ctx.waitUntil chain,
+       .catch INSIDE — full Plan 19-03 AST contract)
+    - tests/api/chat-delivery.test.ts                19/19 GREEN
+      (deliverDue logs chat.delivery.tick, two-keyspace ordering,
+       per-tick batch cap, idempotency short-circuit, etc.)
+    - tests/build/wrangler-cron-shape.test.ts         2/2 GREEN
+      (cron expression locked + DRY_RUN: "1" locked)
+
+  Step 1 PASS criteria reduced to the PRODUCTION leg only:
+    - Operator flips `wrangler.jsonc:25` cron to `["* * * * *"]`
+    - `wrangler deploy` (operator-controlled per DEPLOY-GATE.md)
+    - Wait 90s, capture Past Events screenshot
+    - REVERT cron to `["0 * * * *"]` + redeploy
+    - `git diff wrangler.jsonc` returns empty
+    - `pnpm exec vitest run tests/build/wrangler-cron-shape.test.ts` → 2/2 GREEN
+
+  REGRESSION FIX surfaced during PRE-FLIGHT debug — committed
+  separately, NOT a UAT gap:
+    src/worker.ts:27 — WR-04 over-corrected by marking
+    CHAT_REPLY_TO_EMAIL optional. The var lives in wrangler.jsonc
+    `vars` (committed, guaranteed present), so wrangler generates
+    the literal type `"jackcutrara@gmail.com"` in Cloudflare.Env.
+    The optional `string` declaration in worker.ts blocked
+    handle(request, env, ctx) at worker.ts:45 with ts(2345).
+    Narrowed to the literal (mirrors DRY_RUN pattern at line 38).
+    Build was failing on main until this fix; would have blocked
+    any deploy and any rebuild. This is the kind of pre-flight
+    safety check the harness was supposed to provide.
+
+  Future-work note for Phase 20: the dev:cron PRE-FLIGHT harness
+  needs a proper fix before Phase 20 lands (Resend integration
+  testing benefits from local scheduled() smoke testing). Likely
+  paths: (a) wrangler upgrade if 4.83.0+ ships a fix; (b) standalone
+  node-based deliverDue runner that bypasses wrangler dev; (c) write
+  the local PRE-FLIGHT as an unhosted Worker test using
+  unstable_dev() or @cloudflare/vitest-pool-workers.
 
 ---
 
