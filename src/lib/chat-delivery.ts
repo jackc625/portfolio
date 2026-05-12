@@ -348,6 +348,15 @@ export async function deliverDue(
       if (!metadata?.last_activity_at) continue; // missing metadata = skip
 
       const lastActiveMs = Date.parse(metadata.last_activity_at);
+      // CR-02 (Phase 19 code review) — defensive NaN guard. Date.parse
+      // returns NaN on malformed ISO strings (truncated, locale-stamped,
+      // produced by a buggy migration tool, etc.). `nowMs - NaN` is NaN
+      // and `NaN < INACTIVITY_THRESHOLD_MS` is false, so without this
+      // guard a malformed-metadata session would skip the not-due branch
+      // and be incorrectly promoted -- Phase 20 would send a real email
+      // before its inactivity window. Treat NaN as "skip this session"
+      // so the INACTIVITY_THRESHOLD_MS contract holds defensively.
+      if (Number.isNaN(lastActiveMs)) continue; // malformed ISO = skip
       if (nowMs - lastActiveMs < INACTIVITY_THRESHOLD_MS) continue; // not due yet
 
       sessionsDue += 1;
