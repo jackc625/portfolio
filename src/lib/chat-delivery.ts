@@ -253,6 +253,11 @@ async function promoteOne(
     return { status: "missing_live" };
   }
 
+  // WR-03 (Phase 19 code review) — track whether the delivered: marker
+  // was successfully PUT so the catch block can GC the orphan live: key
+  // only when there IS an orphan (avoids accidentally deleting live: when
+  // the send itself failed and the next tick should retry).
+  let deliveredWritten = false;
   try {
     // (3) D-07 — would-be send harness (DRY_RUN-gated). Retry up to
     // MAX_SEND_ATTEMPTS with exponential full-jitter backoff.
@@ -274,6 +279,7 @@ async function promoteOne(
       // hint, not a list-surface. Layer-2 cryptographic dedupe lives at
       // the Phase 20 Resend Idempotency-Key tier.
     });
+    deliveredWritten = true; // WR-03 — only after the PUT awaits successfully
 
     // (5) Clean up live entry — AFTER successful "send" + PUT delivered.
     await env.CHAT_KV.delete(KEY_PREFIX + sid);
@@ -288,6 +294,25 @@ async function promoteOne(
       error_class: err instanceof Error ? err.constructor.name : "Error",
       msg_count: transcript.msg_count,
     });
+    // WR-03 (Phase 19 code review) — best-effort orphan-live: GC.
+    // If the catch fires AFTER step 4 (delivered:{sid} PUT succeeded)
+    // but BEFORE step 5 (live:{sid} DELETE) -- i.e. the kv.delete call
+    // itself failed -- the delivered: marker is persisted and the next
+    // tick's promoteOne short-circuits via already_delivered, but the
+    // live: key hangs for its 30-day TTL, gets re-listed every tick, and
+    // emits ~720 chat.delivery.skipped_already_delivered log lines per
+    // orphaned session. Try a single best-effort delete; gated by
+    // deliveredWritten so a pre-PUT failure (e.g. send threw, or the
+    // delivered: PUT itself failed) leaves live: in place for retry.
+    // Wrap in its own try/catch because the main error is already
+    // reported and we must never throw out of this branch.
+    if (deliveredWritten) {
+      try {
+        await env.CHAT_KV.delete(KEY_PREFIX + sid);
+      } catch {
+        // swallow — main error already logged; GC is best-effort
+      }
+    }
     return { status: "error" };
   }
 }
