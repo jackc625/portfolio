@@ -32,7 +32,13 @@ describe("CRON-01 + D-01: wrangler.jsonc cron + DRY_RUN shape", () => {
     readFileSync(join(process.cwd(), "wrangler.jsonc"), "utf8"),
   ) as Record<string, unknown>;
 
-  it("CRON-01: triggers.crons is exactly ['0 * * * *'] (Pitfall 6 anti-*****-leak)", () => {
+  it("CRON-01: triggers.crons is exactly ['0 * * * *'] (Pitfall 6 anti-wildcard-cron-leak)", () => {
+    // WR-08 (Phase 19 code review) — replaced the censored `anti-*****-leak`
+    // placeholder. The `*****` was the literal cron expression `* * * * *`
+    // (every-minute wildcard) and the test exists to prevent that UAT-only
+    // expression from leaking into production -- where it would burn through
+    // Free-tier cron quota and re-trigger the sweep every minute.
+    //
     // Forward-defense: operator UAT Step 1 flips this to ['* * * * *'] briefly.
     // Build-time fail catches the unreverted state before deploy.
     expect((cfg.triggers as { crons: string[] }).crons).toEqual(["0 * * * *"]);
