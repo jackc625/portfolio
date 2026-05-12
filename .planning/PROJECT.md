@@ -13,7 +13,7 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 ## Current State
 
 **Shipped:** v1.2 Polish (2026-04-27)
-**In flight:** v1.3 Chat Visibility — Phase 17 (Foundations: Migration + DNS + Debt Sweep) complete on local main; 42 commits awaiting `git push origin main`. After push, jackcutrara.com cuts from Cloudflare Pages to a single Cloudflare Worker (Static Assets + per-route SSR + scheduled handler in one binding). Resend domain `mail.jackcutrara.com` verified + warmed.
+**In flight:** v1.3 Chat Visibility — Phase 19 (Cron Sweep: Scheduling + Idempotency + DRY_RUN) executor-side complete (2026-05-12); hourly cron trigger `["0 * * * *"]` wired, `scheduled()` handler invokes `deliverDue` via rejection-safe `ctx.waitUntil(...).catch(...)`, full two-keyspace promotion loop (`live:` → `delivered:`) implemented under DRY_RUN with per-session try/catch isolation, batch caps, retry harness, and structured Workers Logs. 19-UAT.md (5 operator steps) pending live Cloudflare PROD verification. Phase 17 (Foundations: Migration + DNS + Debt Sweep) and Phase 18 (Persistence + Identity + KV Write Path + sessionId) shipped earlier in v1.3. Resend domain `mail.jackcutrara.com` verified + warmed; Phase 20 will wire it.
 **Live at:** jackcutrara.com (Cloudflare Pages — pending FOUND-03 retirement after 24h warm window)
 **Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets + Geist/Geist Mono typography (Cloudflare Pages on the legacy serving path until FOUND-03 retirement clears)
 **Source LOC:** ~4,715 (src/ — astro, ts, css, mdx, md)
@@ -169,4 +169,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-11 — Phase 17 (Foundations: Migration + DNS + Debt Sweep) complete on local main, including 4 UAT-driven gap-closure plans (17-07..10) closing all four UAT gaps surfaced 2026-05-10. 42 commits awaiting `git push origin main` for the Pages → Workers cutover. Phase 18 (Persistence + Identity — KV Write Path + sessionId) unblocked.*
+*Last updated: 2026-05-12 — Phase 19 (Cron Sweep: Scheduling + Idempotency + DRY_RUN) executor-side complete with all 4 plans + 10 code-review fixes applied (CR-01 CRON-03 isolation gap, CR-02 NaN fail-open, WR-01..WR-08 cap semantics + envelope env-sourcing + orphan GC + optional secrets + JSONC tokenizer + broadened regex). Hourly cron trigger live in wrangler.jsonc + locked by source-text forward-defense. 19-UAT.md (5 operator steps) pending live PROD verification. CRON-01..04 closed-by-design at executor side. Phase 20 (Email Render + Resend Integration) unblocked.*
