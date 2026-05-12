@@ -55,14 +55,53 @@ describe("CRON-01: ctx.waitUntil(deliverDue(...).catch(...)) call site in src/wo
   it("Invariant D (anti-destructure): source does NOT destructure ctx (would lose `this` binding → 'Illegal invocation')", () => {
     // RESEARCH § Pitfall 1: destructuring waitUntil out of the Workers
     // ExecutionContext loses the `this` binding and throws "Illegal
-    // invocation" at runtime. The regex pattern below is built dynamically
+    // invocation" at runtime. The regex patterns below are built dynamically
     // (string-concatenated RegExp source) so this test file itself contains
     // no literal occurrence of the anti-pattern — keeps the source-text
     // self-scan verification clean and ensures this file does NOT self-match.
+    //
+    // WR-07 (Phase 19 code review) — broaden coverage. The previous pattern
+    // matched only the exact phrasing `const { waitUntil } = ctx`. Equivalent
+    // anti-patterns that ALSO lose the `this` binding slipped past:
+    //   - let { waitUntil } = ctx;
+    //   - var { waitUntil } = ctx;
+    //   - const { waitUntil: alias } = ctx;
+    //   - const { waitUntil, ...rest } = ctx;
+    //   - const w = ctx.waitUntil; w(...);   (function-reference extraction)
+    //
+    // Two patterns cover the space:
+    //   1. Any destructuring of waitUntil from ctx (matches all let/const/var
+    //      forms plus aliases and rest-spreads — the `[^}]*` permissive class
+    //      around the waitUntil identifier accommodates aliasing and other
+    //      destructured siblings).
+    //   2. Bare function-reference extraction (`ctx.waitUntil` not immediately
+    //      followed by `(` — the call form is fine; assigning the reference
+    //      to a name is the anti-pattern).
     const destructurePattern = new RegExp(
-      ["const", "\\s*", "\\{", "\\s*", "waitUntil", "\\s*", "\\}", "\\s*", "=", "\\s*", "ctx", "\\b"].join(""),
+      [
+        "(?:const|let|var)", "\\s*", "\\{", "[^}]*", "\\b", "waitUntil", "\\b", "[^}]*", "\\}", "\\s*", "=", "\\s*", "ctx", "\\b",
+      ].join(""),
     );
     expect(src).not.toMatch(destructurePattern);
+
+    // Function-reference extraction — `ctx.waitUntil` followed by anything
+    // that ISN'T a call. The call form (`ctx.waitUntil(...)`) is the canonical
+    // pattern and must remain matchable.
+    const functionRefPattern = /\bctx\s*\.\s*waitUntil\s*(?!\()/;
+    // Filter false positives: comments and JSDoc may legitimately reference
+    // `ctx.waitUntil` in prose. We require the match to NOT be preceded by
+    // common comment markers on the same logical token.
+    const lines = src.split("\n");
+    for (const line of lines) {
+      // Skip lines that are comments (start with // optionally after whitespace,
+      // or start with * which is a continuation of a JSDoc/block comment).
+      const trimmed = line.trimStart();
+      if (trimmed.startsWith("//") || trimmed.startsWith("*")) continue;
+      // Also strip everything after a line-comment marker on a code line so we
+      // do not flag `foo(); // ctx.waitUntil prose` falsely.
+      const codeOnly = line.split("//")[0];
+      expect(codeOnly).not.toMatch(functionRefPattern);
+    }
   });
 
   it("Invariant E (substitution semantic): Phase 17 worker.scheduled.stub log line is REMOVED, replaced by worker.scheduled.failed observability", () => {
