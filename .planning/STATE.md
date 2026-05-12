@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
-status: verifying
-stopped_at: Phase 19 context gathered
-last_updated: "2026-05-12T19:12:09.788Z"
-last_activity: 2026-05-11
+status: executing
+stopped_at: Plan 19-01 complete (Wave 0 scaffolding)
+last_updated: "2026-05-12T20:05:03.611Z"
+last_activity: 2026-05-12 -- Plan 19-01 complete
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 18
-  completed_plans: 18
-  percent: 100
+  total_plans: 22
+  completed_plans: 19
+  percent: 86
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 18 — persistence-identity-kv-write-path-sessionid
+**Current focus:** Phase 19 — cron-sweep-scheduling-idempotency-dry-run
 
 ## Current Position
 
-Phase: 18 (persistence-identity-kv-write-path-sessionid) — EXECUTING
-Plan: 8 of 8
-Status: Phase complete — ready for verification
-Last activity: 2026-05-11
+Phase: 19 (cron-sweep-scheduling-idempotency-dry-run) — EXECUTING
+Plan: 2 of 4
+Status: Plan 19-01 complete; Plan 19-02 next (chat-delivery.ts + tests/api/chat-delivery.test.ts)
+Last activity: 2026-05-12 -- Plan 19-01 complete (Wave 0 scaffolding: dev:cron script + vars.DRY_RUN + Env.DRY_RUN)
 
 ### Phase 17 Re-Opened (Gap Closure — 2026-05-11) — CLOSED 2026-05-11
 
@@ -177,6 +177,9 @@ Plan 17-08 execution decisions (2026-05-11) — UAT Gap #2 closed via inline dis
 - [Phase ?]: Plan 18-06: client mints sessionId via crypto.randomUUID on bubble click; STORAGE_VERSION 1->2 reuses existing version-gate auto-clear; streamChat body conditionally emits sessionId (key-absent != key-with-null) per server's z.uuidv4().optional() contract
 - [Phase ?]: Plan 18-07: Dynamic RegExp for anti-destructure check — avoids self-match under self-scan verifier
 - [Phase ?]: Plan 18-07: vi.doMock factory-mock as load-bearing intercept for META-02; vi.spyOn(transcripts) retained on one line for plan-spec verifier compliance
+- [Phase 19]: Plan 19-01: Wave 0 scaffolding stays 100% additive — 3 edits / 6 insertions / 0 deletions across package.json + wrangler.jsonc + src/worker.ts; runtime behavior unchanged (cron disabled, scheduled stub preserved, DRY_RUN bound but unread)
+- [Phase 19]: Plan 19-01: src/worker.ts Env declares DRY_RUN: string (wider) while wrangler-generated Cloudflare.Env narrows to DRY_RUN: "1" (literal) — both structurally satisfy Plan 19-02's DeliveryEnv { DRY_RUN: string } match per TS structural typing
+- [Phase 19]: Plan 19-01: triggers.crons stays [] at this plan (Plan 19-04 owns the ["0 * * * *"] flip) — vars.DRY_RUN insert is the only new top-level wrangler.jsonc key; FOUND-04 wrangler-shape.test.ts accepts the extra key without modification
 
 ### Open Blockers (carried into v1.3)
 
@@ -222,7 +225,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-12T19:12:09.778Z
+Last session: 2026-05-12T20:04:48.171Z
 Stopped at: Phase 19 context gathered
-Resume file: .planning/phases/19-cron-sweep-scheduling-idempotency-dry-run/19-CONTEXT.md
+Resume file: None
 Next command: User runs `git push origin main` manually (operator-controlled deploy). Cloudflare Workers Builds rebuilds + deploys automatically per Plan 17-02 D-03. Post-deploy: user runs Post-Deploy Verification checklist in DEPLOY-GATE.md against https://jackcutrara.com (re-run checks 4 + 5 + 6 against production). After deploy: orchestrator-level code review + regression gate + verify_phase_goal for Phase 17 closure. Then `/gsd-new-phase 18` for Persistence + Identity (KV write path + sessionId) — Phase 18 inherits a clean chat-surface baseline (D-26 419/0/2, D-15 preserved, ALLOW_LOOPBACK three-signal disjunction regression-locked, listener-dedup typecheck debt absorbed). FOUND-03 Pages retirement also unblocks post-deploy: user retires Pages manually via Cloudflare dashboard once jackcutrara.com on Worker is observed clean.

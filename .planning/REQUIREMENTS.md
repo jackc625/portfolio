@@ -40,7 +40,7 @@
 
 ### Cron Sweep — Scheduling + Idempotency (CRON-)
 
-- [ ] **CRON-01** — `wrangler.jsonc` `triggers.crons: ["0 * * * *"]` (hourly). Worker `scheduled()` handler delegates to `deliverDue(env)` via `ctx.waitUntil()`.
+- [x] **CRON-01** — `wrangler.jsonc` `triggers.crons: ["0 * * * *"]` (hourly). Worker `scheduled()` handler delegates to `deliverDue(env)` via `ctx.waitUntil()`.
 - [ ] **CRON-02** — `src/lib/chat-delivery.ts` `deliverDue` lists `prefix: "live:"` with cursor pagination; filters via `metadata.last_activity_at < now - 2h`. Two-keyspace partition: PUT `delivered:{sid}` (24h TTL) BEFORE Resend POST; DELETE `live:{sid}` AFTER Resend success. Crash-safe at every step boundary.
 - [ ] **CRON-03** — Per-session try/catch isolates failures; per-tick batch cap (50 sessions); send-attempt counter cap (3 retries); pagination hard-cap (50 pages safety valve); structured JSON logs.
 - [ ] **CRON-04** — `DRY_RUN` env flag — full sweep loop runs but logs Resend payload instead of POSTing. Used to validate Phase 19 sweep mechanics before Phase 20 flips delivery on.
@@ -144,7 +144,7 @@ Explicit exclusions — design decisions made at milestone planning:
 | IDENT-02 | Phase 18 | Complete |
 | META-01 | Phase 18 | Complete |
 | META-02 | Phase 18 | Complete |
-| CRON-01 | Phase 19 | Pending |
+| CRON-01 | Phase 19 | Complete |
 | CRON-02 | Phase 19 | Pending |
 | CRON-03 | Phase 19 | Pending |
 | CRON-04 | Phase 19 | Pending |
