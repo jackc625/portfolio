@@ -33,17 +33,18 @@ describe("Chat API Endpoint Contract (D-09)", () => {
       }
     });
 
-    // Mirrors the endpoint's Content-Length check (WR-02). Uses Number() so
-    // malformed values (NaN, negative, fractional) are rejected as "too large"
-    // instead of being silently accepted like parseInt would have.
+    // Mirrors the endpoint's Content-Length check (WR-02 / WR-01).
+    // WR-01 (Phase 18 review): Pre-filter with /^\d+$/ BEFORE Number() to
+    // reject whitespace, signs, scientific notation, hex, and any non-
+    // ASCII-digit content. Number() alone would accept "3e4" (= 30000,
+    // sneaks under MAX_BODY_SIZE), "+32767", and "  32767  " — all of
+    // which the upstream HTTP parser may handle differently than the
+    // Worker. The strict-decimal regex makes this guard byte-equivalent
+    // to the spec it claims to enforce.
     const rejectsContentLength = (raw: string): boolean => {
+      if (!/^\d+$/.test(raw)) return true;
       const parsed = Number(raw);
-      return (
-        !Number.isFinite(parsed) ||
-        !Number.isInteger(parsed) ||
-        parsed < 0 ||
-        parsed > MAX_BODY_SIZE
-      );
+      return parsed > MAX_BODY_SIZE;
     };
 
     it("rejects Content-Length exceeding MAX_BODY_SIZE (32KB)", () => {
@@ -56,18 +57,48 @@ describe("Chat API Endpoint Contract (D-09)", () => {
     });
 
     it("rejects malformed Content-Length (non-numeric)", () => {
-      // "abc" → NaN → must be rejected, not silently allowed
+      // "abc" → not digits-only → reject
       expect(rejectsContentLength("abc")).toBe(true);
     });
 
     it("rejects negative Content-Length", () => {
-      // "-1" → -1 → must be rejected, not silently allowed
+      // "-1" → contains "-" → not digits-only → reject
       expect(rejectsContentLength("-1")).toBe(true);
     });
 
     it("rejects fractional Content-Length", () => {
-      // "32768.5" → non-integer → reject
+      // "32768.5" → contains "." → not digits-only → reject
       expect(rejectsContentLength("32768.5")).toBe(true);
+    });
+
+    // WR-01 (Phase 18 review): added edge cases the Number()-only guard accepted.
+    it("rejects Content-Length with scientific notation '3e4'", () => {
+      // Pre-fix: Number("3e4") === 30000 (integer, finite, <MAX) → accepted.
+      // Post-fix: contains "e" → not digits-only → rejected.
+      expect(rejectsContentLength("3e4")).toBe(true);
+    });
+
+    it("rejects Content-Length with explicit positive sign '+32767'", () => {
+      // Pre-fix: Number("+32767") === 32767 (integer, finite, <MAX) → accepted.
+      // Post-fix: contains "+" → not digits-only → rejected.
+      expect(rejectsContentLength("+32767")).toBe(true);
+    });
+
+    it("rejects Content-Length with surrounding whitespace '  32767  '", () => {
+      // Pre-fix: Number("  32767  ") === 32767 (integer, finite, <MAX) → accepted.
+      // Post-fix: contains whitespace → not digits-only → rejected.
+      expect(rejectsContentLength("  32767  ")).toBe(true);
+    });
+
+    it("rejects Content-Length with hex prefix '0x1000'", () => {
+      // Pre-fix: Number("0x1000") === 4096 (integer, finite, <MAX) → accepted.
+      // Post-fix: contains "x" → not digits-only → rejected.
+      expect(rejectsContentLength("0x1000")).toBe(true);
+    });
+
+    it("rejects empty Content-Length string ''", () => {
+      // Edge case: empty string. /^\d+$/ requires ≥1 digit → rejected.
+      expect(rejectsContentLength("")).toBe(true);
     });
   });
 

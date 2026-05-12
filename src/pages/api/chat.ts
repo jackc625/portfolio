@@ -52,23 +52,30 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   // Body size check — reject before parsing JSON to prevent memory abuse.
-  // Uses Number() (not parseInt) so malformed values are explicitly rejected:
-  //   "abc"     → NaN       → reject
-  //   "-1"      → -1        → reject (negative)
-  //   "32768.5" → 32768.5   → reject (non-integer)
-  // parseInt would treat these as "within limits" (NaN > limit is false,
-  // -1 > limit is false, fractional → floor), silently bypassing the guard.
-  // Cloudflare Workers enforces its own body cap upstream, so this is
-  // defense-in-depth — the intent is fail-fast before body is read.
+  // WR-01 (Phase 18 review): Pre-filter with a strict decimal-integer regex
+  // BEFORE Number() to lock the guard's behavior to the comment block's
+  // promise of "rejects malformed values." Number() alone accepts:
+  //   "3e4"        → 30000   (scientific notation — passes Number.isInteger
+  //                           and may sneak under MAX_BODY_SIZE depending on
+  //                           the exponent the client picks)
+  //   "+32767"     → 32767   (leading-sign tolerance the upstream parser
+  //                           may handle differently)
+  //   "  32767  " → 32767    (whitespace tolerance — same risk)
+  // /^\d+$/ rejects ALL three: whitespace, signs, scientific notation, hex
+  // (0x…), separators (1_000), and any non-ASCII-digit content. The Number()
+  // call afterwards is then guaranteed to produce a non-negative finite
+  // integer. Cloudflare Workers enforces its own body cap upstream, so this
+  // is defense-in-depth — the intent is fail-fast before body is read.
   const contentLength = request.headers.get("Content-Length");
   if (contentLength) {
+    if (!/^\d+$/.test(contentLength)) {
+      return new Response(JSON.stringify({ error: "payload_too_large" }), {
+        status: 413,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     const parsed = Number(contentLength);
-    if (
-      !Number.isFinite(parsed) ||
-      !Number.isInteger(parsed) ||
-      parsed < 0 ||
-      parsed > MAX_BODY_SIZE
-    ) {
+    if (parsed > MAX_BODY_SIZE) {
       return new Response(JSON.stringify({ error: "payload_too_large" }), {
         status: 413,
         headers: { "Content-Type": "application/json" },
