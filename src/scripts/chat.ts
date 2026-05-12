@@ -110,6 +110,18 @@ function loadChatHistory(): { messages: StoredMessage[]; sessionId: string } | n
       localStorage.removeItem(STORAGE_KEY);
       return null;
     }
+    // WR-03 (Phase 18 review): defense-in-depth runtime guard. The TypeScript
+    // declared shape says sessionId: string, but a v2 blob written by a buggy
+    // earlier path (or hand-edited in DevTools) could carry sessionId:
+    // undefined or "". Returning that would make ensureSessionId silently
+    // fall through to a fresh mint AND openPanel would overwrite the freshly-
+    // minted module-scoped sessionId with undefined (line ~705). Treat a v2
+    // blob without a usable sessionId as corrupt: wipe + return null so the
+    // caller path runs as if no blob existed (fresh mint, then persist).
+    if (typeof data.sessionId !== "string" || data.sessionId.length === 0) {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
     // TTL check -- clear if older than 24 hours
     const elapsed = Date.now() - new Date(data.lastActive).getTime();
     if (elapsed > TTL_MS || isNaN(elapsed)) {

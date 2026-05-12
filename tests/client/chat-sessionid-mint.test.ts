@@ -166,6 +166,68 @@ describe("IDENT-01 — sessionId mint on bubble click (Plan 18-06 / D-01 / D-02 
       expect(randomSpy).not.toHaveBeenCalled(); // D-01 cross-visit continuity
     });
 
+    it("Test WR-03a — v2 blob with sessionId undefined is wiped + fresh mint runs", async () => {
+      // WR-03 (Phase 18 review): loadChatHistory's declared return type asserts
+      // sessionId: string, but a v2 blob with sessionId: undefined (buggy
+      // earlier writer, or hand-edited in DevTools) would slip past the
+      // version check and surface a lying object. Pre-fix: ensureSessionId
+      // would fall through to a fresh mint, then openPanel line ~705
+      // would overwrite the freshly-minted sessionId with undefined.
+      // Post-fix: the runtime guard wipes the corrupt blob and the load
+      // returns null, so the fresh mint persists and stays in module state.
+      localStorage.setItem(
+        "chat-history",
+        JSON.stringify({
+          version: 2,
+          // sessionId field present but explicitly undefined (becomes absent
+          // after JSON round-trip — JSON.stringify drops undefined values,
+          // so the blob has no sessionId key. WR-03's typeof-string guard
+          // catches both "undefined" and "absent" via the same check).
+          sessionId: undefined,
+          messages: [],
+          lastActive: new Date().toISOString(),
+        }),
+      );
+      vi.spyOn(crypto, "randomUUID").mockReturnValue(UUID);
+
+      await import("../../src/scripts/chat");
+      document.getElementById("chat-bubble")!.click();
+
+      // Post-fix: the corrupt blob was wiped, fresh mint happened, the new
+      // blob now has a valid UUIDv4 sessionId.
+      const stored = JSON.parse(localStorage.getItem("chat-history") || "{}");
+      expect(stored.version).toBe(2);
+      expect(stored.sessionId).toBe(UUID);
+      // Sanity: sessionId is a non-empty string.
+      expect(typeof stored.sessionId).toBe("string");
+      expect(stored.sessionId.length).toBeGreaterThan(0);
+    });
+
+    it("Test WR-03b — v2 blob with sessionId empty string is wiped + fresh mint runs", async () => {
+      // WR-03 (Phase 18 review): empty-string sessionId is the other corrupt
+      // shape the guard defends against. JSON.stringify('') = '""' so the
+      // empty-string survives the round-trip (unlike undefined). The guard's
+      // length === 0 check is what catches this.
+      localStorage.setItem(
+        "chat-history",
+        JSON.stringify({
+          version: 2,
+          sessionId: "",
+          messages: [],
+          lastActive: new Date().toISOString(),
+        }),
+      );
+      vi.spyOn(crypto, "randomUUID").mockReturnValue(UUID);
+
+      await import("../../src/scripts/chat");
+      document.getElementById("chat-bubble")!.click();
+
+      const stored = JSON.parse(localStorage.getItem("chat-history") || "{}");
+      expect(stored.version).toBe(2);
+      expect(stored.sessionId).toBe(UUID);
+      expect(stored.sessionId.length).toBeGreaterThan(0);
+    });
+
     it("Test 8 — D-04 silent fail: when crypto.randomUUID throws, sessionId omitted from /api/chat POST body", async () => {
       vi.spyOn(crypto, "randomUUID").mockImplementation(() => {
         throw new Error("crypto unavailable");
