@@ -321,12 +321,11 @@ describe("GROUP A — CRON-02 list + inactivity filter", () => {
 
 describe("GROUP B — CRON-02 ordering invariant (D-09)", () => {
   let logSpy: ReturnType<typeof vi.spyOn>;
-  let warnSpy: ReturnType<typeof vi.spyOn>;
   let errorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
     errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
@@ -490,12 +489,11 @@ describe("GROUP C — CRON-02 envelope value shape (D-09 / D-10 / D-11)", () => 
 
 describe("GROUP D — CRON-04 DRY_RUN gate (D-01 / D-02 / D-05)", () => {
   let logSpy: ReturnType<typeof vi.spyOn>;
-  let warnSpy: ReturnType<typeof vi.spyOn>;
   let errorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
     errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
@@ -588,12 +586,11 @@ describe("GROUP D — CRON-04 DRY_RUN gate (D-01 / D-02 / D-05)", () => {
 
 describe("GROUP E — CRON-02 idempotency cursor", () => {
   let logSpy: ReturnType<typeof vi.spyOn>;
-  let warnSpy: ReturnType<typeof vi.spyOn>;
   let errorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
     errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
@@ -690,13 +687,11 @@ describe("GROUP E — CRON-02 idempotency cursor", () => {
 
 describe("GROUP F — CRON-03 batch cap + pagination", () => {
   let logSpy: ReturnType<typeof vi.spyOn>;
-  let warnSpy: ReturnType<typeof vi.spyOn>;
-  let errorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -769,20 +764,24 @@ describe("GROUP F — CRON-03 batch cap + pagination", () => {
       seedLive(kv, buildTranscript({ sid, lastActivityAt: STALE_3H }));
     }
 
-    // Override list() to paginate at 10 keys per page
+    // Capture a SNAPSHOT of keys at the start of the sweep so post-delete
+    // pagination doesn't lose track. Production KV `list()` returns a
+    // point-in-time snapshot; the mock must mirror that semantics for
+    // multi-page tests where promoteOne deletes the live: key mid-sweep.
+    const snapshot = [...kv.storage.entries()]
+      .filter(([k]) => k.startsWith(KEY_PREFIX))
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([name, entry]) => ({ name, metadata: entry.metadata as unknown }));
+
+    // Override list() to paginate at 10 keys per page over the snapshot.
     kv.listOverride = async (opts) => {
-      const prefix = opts?.prefix ?? "";
-      const all = [...kv.storage.entries()]
-        .filter(([k]) => k.startsWith(prefix))
-        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-        .map(([name, entry]) => ({ name, metadata: entry.metadata as unknown }));
       const pageSize = 10;
       const startIdx = opts?.cursor ? parseInt(opts.cursor, 10) : 0;
-      const slice = all.slice(startIdx, startIdx + pageSize);
+      const slice = snapshot.slice(startIdx, startIdx + pageSize);
       const endIdx = startIdx + slice.length;
       return {
         keys: slice,
-        list_complete: endIdx >= all.length,
+        list_complete: endIdx >= snapshot.length,
         cursor: String(endIdx),
       };
     };
@@ -801,12 +800,11 @@ describe("GROUP F — CRON-03 batch cap + pagination", () => {
 
 describe("GROUP G — CRON-03 retry harness + isolation", () => {
   let logSpy: ReturnType<typeof vi.spyOn>;
-  let warnSpy: ReturnType<typeof vi.spyOn>;
   let errorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
-    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
     errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
