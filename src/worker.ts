@@ -24,7 +24,17 @@ export interface Env {
   RESEND_API_KEY?: string;        // Phase 17 D-05 — set via dashboard secret
   CHAT_RECIPIENT_EMAIL?: string;  // Phase 17 D-06 — wrangler.jsonc vars
   CHAT_SENDER_EMAIL?: string;     // Phase 17 D-06 — wrangler.jsonc vars
-  CHAT_REPLY_TO_EMAIL?: string;   // WR-02 (Phase 19 code review) — envelope reply_to: field; sourced from wrangler.jsonc vars (optional)
+  // CHAT_REPLY_TO_EMAIL lives in wrangler.jsonc vars (line 22) — committed,
+  // guaranteed present on every deployment surface, so wrangler generates it
+  // as the literal "jackcutrara@gmail.com" in Cloudflare.Env. The local Env
+  // must mirror that literal (same pattern as DRY_RUN at line 38 below) or
+  // handle(request, env, ctx) at line 45 fails ts(2345) because the broader
+  // `string | undefined` is not assignable to the generated literal. WR-04
+  // (Phase 19 code review, commit 63a997b) over-corrected by marking this
+  // optional alongside the genuinely-dashboard-bound Phase 17 secrets;
+  // DeliveryEnv.CHAT_REPLY_TO_EMAIL stays `string | undefined` (WR-02 contract)
+  // and accepts the literal cleanly since string-literal is a subtype of string.
+  CHAT_REPLY_TO_EMAIL: "jackcutrara@gmail.com";
   // DRY_RUN narrowed to the wrangler-generated literal "1" so the local Env
   // interface assigns cleanly to the global `Env extends Cloudflare.Env` (with
   // `DRY_RUN: "1"`) at the handle(request, env, ctx) call site. The wider
