@@ -45,7 +45,7 @@ import { KEY_PREFIX } from "./chat-transcripts"; // shared "live:" — schema so
 // ---------------------------------------------------------------------------
 
 export const INACTIVITY_THRESHOLD_MS = 2 * 60 * 60 * 1000; // STATE.md / RESEARCH § Pitfall 2 lock
-export const PER_TICK_BATCH_CAP = 50; // CRON-03 lock — 50 sessions / tick
+export const PER_TICK_BATCH_CAP = 50; // CRON-03 lock — 50 due sessions processed / tick (WR-01: counts ALL processed paths, not just promoted)
 export const PAGINATION_PAGE_HARDCAP = 50; // CRON-03 safety valve — 50 pages / tick
 export const MAX_SEND_ATTEMPTS = 3; // CRON-03 lock — 3 retries / send
 export const BACKOFF_BASE_MS = 250; // OQ-2 recommendation (full-jitter)
@@ -298,7 +298,9 @@ async function promoteOne(
  * each key by `metadata.last_activity_at` against INACTIVITY_THRESHOLD_MS,
  * and dispatches due sessions to `promoteOne`. Honors three independent
  * exit conditions:
- *   1. PER_TICK_BATCH_CAP (50 sessions promoted in a single tick)
+ *   1. PER_TICK_BATCH_CAP (50 due sessions PROCESSED in a single tick --
+ *      WR-01: includes promoted + error + already_delivered + missing_live
+ *      since each path consumes per-session work-budget)
  *   2. PAGINATION_PAGE_HARDCAP (50 pages scanned)
  *   3. page.list_complete (no more keys to scan)
  *
@@ -325,6 +327,7 @@ export async function deliverDue(
   let pagesScanned = 0;
   let sessionsSeen = 0;
   let sessionsDue = 0;
+  let sessionsProcessed = 0; // WR-01 — counts ALL due sessions processed (promoted + already_delivered + missing_live + error). The batch cap binds on work-done so a tick where every session errors cannot run away past 50 sessions worth of wall-clock + retry budget.
   let sessionsPromoted = 0;
   let errors = 0;
 
@@ -340,9 +343,12 @@ export async function deliverDue(
     sessionsSeen += page.keys.length;
 
     for (const k of page.keys) {
-      // Honor the batch cap inside the loop so we exit promptly mid-page
-      // when we cross PER_TICK_BATCH_CAP.
-      if (sessionsPromoted >= PER_TICK_BATCH_CAP) break;
+      // WR-01 — honor the batch cap on PROCESSED-due sessions (not just
+      // successful promotions). Failures are also work; capping only on
+      // success would let an all-error tick burn through hundreds of
+      // sessions worth of retry + backoff budget against the free-tier
+      // 30s cron-tick ceiling.
+      if (sessionsProcessed >= PER_TICK_BATCH_CAP) break;
 
       const metadata = k.metadata;
       if (!metadata?.last_activity_at) continue; // missing metadata = skip
@@ -360,6 +366,7 @@ export async function deliverDue(
       if (nowMs - lastActiveMs < INACTIVITY_THRESHOLD_MS) continue; // not due yet
 
       sessionsDue += 1;
+      sessionsProcessed += 1; // WR-01 — count work-done units against cap
       const sid = k.name.slice(KEY_PREFIX.length);
       const r = await promoteOne(env, sid);
       if (r.status === "promoted") sessionsPromoted += 1;
@@ -368,7 +375,7 @@ export async function deliverDue(
     }
 
     // Three independent exit conditions — exit if any are met.
-    if (sessionsPromoted >= PER_TICK_BATCH_CAP) break;
+    if (sessionsProcessed >= PER_TICK_BATCH_CAP) break; // WR-01 — same cap as inner-loop guard
     if (page.list_complete) break; // RESEARCH § Pitfall 4 — use list_complete
     cursor = page.cursor;
   }
