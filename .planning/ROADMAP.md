@@ -209,5 +209,5 @@ Phases execute in numeric order within each milestone.
 | 16. Motion Layer | v1.2 | 7/7 | Complete | 2026-04-27 |
 | 17. Foundations — Migration + DNS + Debt Sweep | v1.3 | 10/10 | Complete    | 2026-05-11 |
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 8/8 | Complete   | 2026-05-11 |
-| 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete   | 2026-05-12 |
+| 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete    | 2026-05-12 |
 | 20. Email Render + Resend Integration | v1.3 | 0/0 | Not started | - |
