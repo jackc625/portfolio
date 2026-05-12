@@ -13,9 +13,17 @@ export interface Env {
   ASSETS: Fetcher;                // Workers Static Assets binding (wrangler.jsonc [assets])
   CHAT_KV: KVNamespace;           // Phase 17 declared, Phase 18 binds + writes
   ANTHROPIC_API_KEY: string;      // Existing secret — re-add to new Worker
-  RESEND_API_KEY: string;         // Phase 17 D-05 — added during cutover
-  CHAT_RECIPIENT_EMAIL: string;   // Phase 17 D-06 — added during cutover
-  CHAT_SENDER_EMAIL: string;      // Phase 17 D-06 — added during cutover
+  // WR-04 (Phase 19 code review) — these three Phase 17-introduced secrets/vars
+  // are dashboard-bound (RESEND_API_KEY) or wrangler-vars-bound and may not be
+  // present on every deployment surface (preview deploys without .dev.vars,
+  // branch-deploy environments, local wrangler dev without the secrets seeded).
+  // Marking them optional surfaces missing-binding bugs at the access site
+  // rather than letting TypeScript silently lie about a possibly-undefined
+  // value being a guaranteed string. DeliveryEnv already types these optional;
+  // worker.ts is the mismatch this aligns.
+  RESEND_API_KEY?: string;        // Phase 17 D-05 — set via dashboard secret
+  CHAT_RECIPIENT_EMAIL?: string;  // Phase 17 D-06 — wrangler.jsonc vars
+  CHAT_SENDER_EMAIL?: string;     // Phase 17 D-06 — wrangler.jsonc vars
   CHAT_REPLY_TO_EMAIL?: string;   // WR-02 (Phase 19 code review) — envelope reply_to: field; sourced from wrangler.jsonc vars (optional)
   // DRY_RUN narrowed to the wrangler-generated literal "1" so the local Env
   // interface assigns cleanly to the global `Env extends Cloudflare.Env` (with
