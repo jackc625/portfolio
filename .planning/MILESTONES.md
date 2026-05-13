@@ -1,5 +1,40 @@
 # Milestones
 
+## v1.3 Chat Visibility (Shipped: 2026-05-13)
+
+**Phases completed:** 4 phases (17-20), 26 plans
+
+**Stats:**
+
+- 195 commits since `v1.2` tag (4 days, 2026-05-09 → 2026-05-13)
+- 195 files changed repo-wide (+48,069 / −1,684 LOC); src/ alone 26 files (+2,239 / −152)
+- Source LOC src/: ~4,715 → ~6,802 (+44%)
+- `pnpm test` 560 PASS / 0 FAIL / 2 SKIP (Test Files 63 passed, 1 skipped); `pnpm exec astro check` 0/0/0 (116 files)
+- `package.json dependencies` byte-identical phase-wide (MAIL-01 zero-new-runtime-dep lock held)
+- Production deployment active at https://jackcutrara.com (Worker version `ede1431f-e92a-4fda-af54-4f8f57781d3b`); live email delivery confirmed (resend_message_id `16bc7812-011d-4fea-87a6-b4cecd7ed71b`, Gmail Inbox arrival 2026-05-13T14:00:53Z)
+
+**Key accomplishments:**
+
+- Migrated Cloudflare Pages → Workers Static Assets — single Worker binding now serves the static site, `/api/chat`, and an hourly `scheduled()` cron from one deployment; custom domain `jackcutrara.com` reattached; preview URLs migrated to `*.workers.dev`; CI/CD switched to `wrangler deploy` via Workers Builds; D-15 SSE byte-identical anchor PRESERVED through cutover (Phase 17)
+- DNS-verified + warmed Resend sending domain `mail.jackcutrara.com` — full 4-record family in Cloudflare DNS (SPF + DKIM 3x + MX feedback-smtp.us-east-1 + DMARC `p=none`); 5/5 warmup sends in Gmail Inbox first-try, ZERO Not-Spam feedback needed; Postmaster Tools enrolled (Phase 17 Plan 17-06)
+- Closed all five v1.2 chat carry-forward debt items (DEBT-01..05) — PROJECT.md "Known issues" reframed; `chat.cache_metrics` server + DEV-only client log seams; CI `build:chat-context:check` step; idempotent `astro:page-load` listener dedup across 3 scripts; CSS-only `#chat-panel` state machine structurally enforced at BOTH specificity tiers (Phase 17 Plans 17-03..05 + Phase 17 Plan 17-08 inline-style closure)
+- Wired KV persistence — every chat turn (visitor + assistant) appended to versioned `live:{sessionId}` transcripts keyed by client-minted UUIDv4 sessionId via `crypto.randomUUID()`; 30-day TTL; 30-turn cap; inline metadata `{ last_activity_at, msg_count }` eliminates O(n) cron round-trips; sessionId lives on HTTP envelope only (TEST-03 Anthropic prompt-cache integrity PRESERVED — live 3x cache test `cache_read=48527` on Calls 2+3) (Phase 18)
+- Wired hourly cron sweep with two-keyspace promotion (`live:{sid}` → `delivered:{sid}`) — DRY_RUN gate validated full sweep mechanics before email went live; crash-safe ordering (PUT delivered → POST Resend → DELETE live); per-session try/catch isolation; 50-session batch cap; 50-page pagination cap; structured JSON logs per tick; cron tick observed firing within 15s of Phase 20 deploy (Phase 19)
+- Wired Resend REST integration — pure `fetch()` wrapper to `https://api.resend.com/emails` with `Idempotency-Key: transcript/{sessionId}` 24h window; AbortController 10s timeout with `clearTimeout` in `finally`; 3-variant discriminated `Result` per D-17 (sent / failed_transient / failed_terminal); plaintext-only body with sanitizer pipeline that strips bidi overrides + null bytes + HTML-escapes every dynamic field; adversarial-payload suite covers `<script>` / `</p><img onerror=...>` / `javascript:` / RTL override / null bytes / social-engineering provenance; first real visitor-transcript email delivered to Jack's Gmail Inbox confirmed 2026-05-13 (Phase 20)
+- Phase 17 UAT gap closure — all 4 UAT-GAP-* requirements closed in serial gap-closure waves (M-iter2 wave correction: 17-07 voice-split → 17-09 COPY button → 17-10 pageswap handler → 17-08 inline `display:none` removal as release-blocker deploy gate); DEPLOY-GATE.md operator-confirmed before `git push origin main`; `pnpm exec astro check` 0/0/0 for first time since Plan 17-03 (4-plan-deep listener-dedup typecheck carry-forward absorbed)
+
+**Known deferred items at close:** 2 organic-evidence / operator items + 8 tracked operational/hygiene items
+
+- **SC4 organic-traffic idempotency-in-the-wild closure** — pending 2026-05-20 (7-day soft cap from Phase 20 deploy); Layer 1 `delivered:{sid}` cursor + Layer 2 Resend Idempotency-Key 24h window already structurally unit-locked; first organic visitor session post-deploy closes SC4; soft-cap proxy path documented (`node scripts/resend-warmup.mjs`)
+- **Phase 19 operator UAT** — 19-UAT.md Steps 1-5 (Cloudflare Dashboard Past Events screenshot + PROD KV seed-and-sweep) require dashboard access (forbidden to executor per D-12); CRON-01..04 closed-by-design at build/unit layer (32/32 PASS); cron is now ACTIVE in production per Phase 20 UAT Step 2 evidence (first per-minute cron tick observed within 15s)
+- **Phase 17 review Warnings WR-01..05** — closed at v1.3 closeout via `/gsd-quick 260513-hqk` (5 atomic commits `de781dd`..`7b53502`)
+- **Operational** — Pre-existing Resend DNS dust on `send.*` + root (no conflict with `mail.*` scope; low-priority `/gsd-quick` cleanup); KV probe key `live:00000000-...` 30-day TTL expires ~2026-06-10; Workers Builds branch preview KV-isolation (operator awareness only); WR-04 `pnpm dev:worker` 403 cliff under wrangler dev with prod-built bundle (out of phase scope)
+- **Hygiene** — Cross-phase test fragility — `worker-scheduled-call-site.test.ts` Invariant F regex now passes via comment match after Phase 20 DRY_RUN flip; functional wiring unaffected; lock fidelity degraded (fix: broaden regex to accept `"0"` literal). Dashboard-only secrets — `CHAT_SENDER_EMAIL` + `CHAT_RECIPIENT_EMAIL` no in-repo `.dev.vars` fallback documented. Frontmatter attribution gaps — Phase 17 plans 17-07/08/09/10 + Phase 19 plans 19-01..04 omit `requirements-completed:` field (requirements still covered by VERIFICATION.md + traceability table).
+
+**Archive:** [milestones/v1.3-ROADMAP.md](milestones/v1.3-ROADMAP.md) | [milestones/v1.3-REQUIREMENTS.md](milestones/v1.3-REQUIREMENTS.md) | [milestones/v1.3-MILESTONE-AUDIT.md](milestones/v1.3-MILESTONE-AUDIT.md)
+
+---
+
 ## v1.2 Polish (Shipped: 2026-04-27)
 
 **Phases completed:** 5 phases (12-16), 34 plans

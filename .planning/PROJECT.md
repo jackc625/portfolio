@@ -2,9 +2,9 @@
 
 ## What This Is
 
-A polished multi-page personal portfolio website for Jack Cutrara built with Astro 6, Tailwind CSS v4, and Geist typography. The site showcases six real project case studies, technical ability, and professional polish — functioning as a living complement to his resume that positions him as a serious, capable junior software engineer worth interviewing. Live at jackcutrara.com.
+A polished multi-page personal portfolio website for Jack Cutrara built with Astro 6, Tailwind CSS v4, and Geist typography deployed as a single Cloudflare Worker. The site showcases six real project case studies, technical ability, and professional polish — functioning as a living complement to his resume that positions him as a serious, capable junior software engineer worth interviewing. Live at jackcutrara.com.
 
-After v1.2 the site ships with a tasteful motion layer, a knowledge-grounded chat widget powered by Anthropic prompt caching, privacy-respecting analytics measuring recruiter engagement, and a locked editorial design system documented in `design-system/MASTER.md` + `design-system/MOTION.md`.
+After v1.3 the site ships with a tasteful motion layer, a knowledge-grounded chat widget powered by Anthropic prompt caching, privacy-respecting analytics measuring recruiter engagement, end-to-end conversation visibility (KV transcript persistence + hourly cron sweep + Resend email delivery to Jack's Gmail), and a locked editorial design system documented in `design-system/MASTER.md` + `design-system/MOTION.md`.
 
 ## Core Value
 
@@ -12,15 +12,16 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ## Current State
 
-**Shipped:** v1.2 Polish (2026-04-27)
-**In flight:** v1.3 Chat Visibility — Phase 19 (Cron Sweep: Scheduling + Idempotency + DRY_RUN) executor-side complete (2026-05-12); hourly cron trigger `["0 * * * *"]` wired, `scheduled()` handler invokes `deliverDue` via rejection-safe `ctx.waitUntil(...).catch(...)`, full two-keyspace promotion loop (`live:` → `delivered:`) implemented under DRY_RUN with per-session try/catch isolation, batch caps, retry harness, and structured Workers Logs. 19-UAT.md (5 operator steps) pending live Cloudflare PROD verification. Phase 17 (Foundations: Migration + DNS + Debt Sweep) and Phase 18 (Persistence + Identity + KV Write Path + sessionId) shipped earlier in v1.3. Resend domain `mail.jackcutrara.com` verified + warmed; Phase 20 will wire it.
-**Live at:** jackcutrara.com (Cloudflare Pages — pending FOUND-03 retirement after 24h warm window)
-**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets + Geist/Geist Mono typography (Cloudflare Pages on the legacy serving path until FOUND-03 retirement clears)
-**Source LOC:** ~4,715 (src/ — astro, ts, css, mdx, md)
+**Shipped:** v1.3 Chat Visibility (2026-05-13)
+**In flight:** None — planning next milestone (v1.4+)
+**Live at:** jackcutrara.com (single Cloudflare Worker `jack-cutrara-portfolio`, version `ede1431f-e92a-4fda-af54-4f8f57781d3b`; hourly cron `["0 * * * *"]` ACTIVE; Pages project retired 2026-05-13)
+**Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets (`src/worker.ts` re-exports Astro `handle()` for `fetch` + adds `scheduled()` delegating to `deliverDue`) + Cloudflare KV (`CHAT_KV`) + Resend REST + Geist/Geist Mono typography
+**Source LOC:** ~6,802 (src/ — astro, ts, css, mdx, md; +44% from v1.2 close)
 **Repo:** github.com/jackc625/portfolio (public)
 **Lighthouse (production-on-Cloudflare-edge canonical gate):** Performance 100 / Accessibility 95 / Best Practices 100 / SEO 100; motion-specific TBT=0ms / CLS≈0.0016
-**Design contract:** `design-system/MASTER.md` (locked editorial system) + `design-system/MOTION.md` (additive motion carve-outs); 6-hex palette, Geist/Geist Mono, restrained motion respecting `prefers-reduced-motion`
-**Chat:** Claude Haiku via Anthropic SDK with `cache_control: ephemeral`; `portfolio-context.json` regenerated at build time from MDX + About + Resume + third-person `chatSummary`/`about-chat.ts` variants per CHAT-06 voice-split contract; D-26 regression battery extended to 30+ tests (Phase 17 gap closure added chat-panel-display, no-inline-display-on-chat-panel, chat-copy-button, view-transition-handler, validation-loopback-source); D-15 server byte-identical anchor preserved through migration + all gap-closure plans (`tests/api/sse-snapshot.test.ts` 3/3 GREEN)
+**Design contract:** `design-system/MASTER.md` (locked editorial system) + `design-system/MOTION.md` (v1.3.1 amendment adds MOTN-01 rejection-handling spec for pageswap handler); 6-hex palette, Geist/Geist Mono, restrained motion respecting `prefers-reduced-motion`
+**Chat:** Claude Haiku via Anthropic SDK with `cache_control: ephemeral`; `portfolio-context.json` regenerated at build time from MDX + About + Resume + third-person `chatSummary`/`about-chat.ts` variants per CHAT-06 voice-split contract; D-26 regression battery preserved phase-wide; D-15 server byte-identical anchor preserved through Workers migration; TEST-03 Anthropic prompt-cache integrity verified (live 3x cache test `cache_read=48527` on Calls 2+3); `pnpm test` 560 PASS / 0 FAIL / 2 SKIP; `pnpm exec astro check` 0/0/0 (116 files)
+**Chat persistence + delivery:** Every chat turn appended to KV `live:{sid}` transcript keyed by client-minted UUIDv4 sessionId (30-day TTL, 30-turn cap, inline metadata `{ last_activity_at, msg_count }`); hourly cron sweeps stale (≥2h inactive) sessions → renderEmail → Resend REST POST with `Idempotency-Key: transcript/{sid}` (24h window) → `delivered:{sid}` 24h TTL marker → `live:{sid}` DELETE; first live transcript email delivered to Jack's Gmail Inbox confirmed 2026-05-13 (resend_message_id `16bc7812-011d-4fea-87a6-b4cecd7ed71b`)
 **Analytics:** Umami Cloud + Cloudflare Web Analytics live in production; cookie-free, no consent banner; recruiter-engagement events visible end-to-end
 
 ## Requirements
@@ -69,28 +70,18 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - ✓ Privacy-respecting analytics — Umami Cloud + Cloudflare Web Analytics live in production with cookie-free recruiter-engagement events (resume download, chat open, outbound clicks, project scroll depth, `chat_truncated`) — ANAL-01..06 closed — v1.2 (Phase 15)
 - ✓ Tasteful motion layer — cross-document `@view-transition` fade, IntersectionObserver scroll-reveal, WorkRow arrow, chat bubble pulse, chat panel scale-in, typing-dot bounce, `.h1-section` word-stagger — reduced-motion contract held, zero new runtime deps, Lighthouse motion-specific gate PASS (TBT=0ms / CLS≈0.0016), D-26 117/117 GREEN, manual UAT 13/13 PASS — MOTN-01..10 closed — v1.2 (Phase 16)
 
+- ✓ Cloudflare Pages → Workers Static Assets migration — single Worker binding serves static + `/api/chat` + hourly `scheduled()` cron from one deployment; custom domain `jackcutrara.com` reattached; CI/CD via Workers Builds; D-15 SSE byte-identical anchor PRESERVED through cutover — FOUND-01..04 closed — v1.3 (Phase 17)
+- ✓ Resend sending domain `mail.jackcutrara.com` DNS-verified + warmed — full 4-record family in Cloudflare DNS (SPF + DKIM 3x + MX feedback-smtp.us-east-1 + DMARC `p=none`); 5/5 warmup sends in Gmail Inbox first-try; Postmaster Tools enrolled — DNS-01..02 closed — v1.3 (Phase 17)
+- ✓ All five v1.2 chat carry-forward debt items closed — PROJECT.md "Known issues" reframed to "Free-tier acceptable"; `chat.cache_metrics` server + DEV-only client log seams; CI `build:chat-context:check` gate; idempotent `astro:page-load` listener dedup; CSS-only `#chat-panel` state machine structurally enforced at BOTH specificity tiers — DEBT-01..05 closed — v1.3 (Phase 17)
+- ✓ Phase 17 UAT gap closure — chat voice-split (CHAT-06) holds at chat surface; inline `display:none` removed from ChatWidget.astro; COPY button `.copy-success` CSS rule + `COPY_FEEDBACK_MS = 1500` const; head-level `<script is:inline>` pageswap handler swallows AbortError; DEPLOY-GATE.md operator-confirmed before push — UAT-GAP-01..04 closed — v1.3 (Phase 17 Waves 7-10)
+- ✓ KV transcript persistence — every chat turn appended to versioned `live:{sessionId}` keyed by client-minted UUIDv4 sessionId via `crypto.randomUUID()`; 30-day TTL; 30-turn cap; inline metadata `{ last_activity_at, msg_count }` eliminates O(n) cron round-trips; sessionId NEVER threaded into Anthropic payload (TEST-03 prompt-cache integrity PRESERVED — live `cache_read=48527`); per-sessionId 100-writes/hr quota — KV-01..05, IDENT-01..02, META-01..02 closed — v1.3 (Phase 18)
+- ✓ Hourly cron sweep with two-keyspace promotion — `wrangler.jsonc triggers.crons: ["0 * * * *"]`; `scheduled()` delegates to `deliverDue` via rejection-safe `ctx.waitUntil(...).catch(...)`; crash-safe ordering (PUT delivered → POST → DELETE live); per-session try/catch isolation; 50-session batch cap; 50-page pagination cap; DRY_RUN gate validated mechanics before delivery flip; structured JSON logs per tick — CRON-01..04 closed — v1.3 (Phase 19)
+- ✓ Resend REST email delivery — pure `fetch()` wrapper to `https://api.resend.com/emails` with `Idempotency-Key: transcript/{sessionId}` 24h window; AbortController 10s timeout; 3-variant discriminated `Result` per D-17; plaintext-only body with sanitizer pipeline stripping bidi overrides + null bytes + HTML-escaping every dynamic field; adversarial-payload suite covers `<script>` / `</p><img onerror=...>` / `javascript:` / RTL override / null bytes / social-engineering prefixes; first live transcript email delivered to Jack's Gmail Inbox confirmed 2026-05-13 — MAIL-01..05 closed — v1.3 (Phase 20)
+- ✓ Cross-phase gates HELD phase-wide — D-15 SSE byte-identical anchor + D-26 chat-surface regression battery + TEST-03 Anthropic prompt-cache integrity all PRESERVED; `pnpm test` 560 PASS / 0 FAIL / 2 SKIP; `pnpm exec astro check` 0/0/0 (116 files); `package.json dependencies` byte-identical phase-wide (MAIL-01 zero-new-runtime-dep lock) — TEST-01..03 closed — v1.3 (cross-phase)
+
 ### Active
 
-(v1.3 Chat Visibility requirements defined in `.planning/REQUIREMENTS.md` once roadmap approved.)
-
-## Current Milestone: v1.3 Chat Visibility
-
-**Goal:** Capture every visitor conversation with the chatbot and surface them to Jack's inbox so he can see what real recruiters are asking — while closing all outstanding chat-related tech debt.
-
-**Target features:**
-
-- Conversation persistence in Cloudflare KV (transcripts keyed by sessionId; metadata: referrer, UA, country, started_at, last_activity_at)
-- Per-session email delivery via Resend (one email per conversation, triggered by inactivity)
-- Cloudflare Cron Trigger — hourly scan; 2-hour inactivity threshold; worst-case email latency ~3 hr after last message
-- Silent logging posture — no in-UI disclosure; data never leaves Cloudflare → Gmail
-- Chat tech debt sweep (all 5 carry-forwards closed in Phase 17): CHAT_RATE_LIMITER binding documented + Free-tier acceptable (Workers Paid v1.4+ upgrade path), cache-hit observability, build-time chat-context drift check in CI, idempotent astro:page-load listener registration, and CSS-only chat panel display state machine
-
-**Key context:**
-
-- KV chosen over D1 because no aggregation/search needed (Jack reads every transcript in entirety)
-- Resend chosen as a justified new runtime dep — the v1.2 "zero new runtime deps preferred" rule is non-binding when justified
-- D-26 chat regression battery (117/117) and Phase 7 architecture invariants remain milestone-level cross-phase gates
-- Email content-security: transcripts contain user-typed text → must HTML-escape body, no markdown rendering of user input, no auto-link
+(v1.4 milestone requirements TBD — to be defined via `/gsd-new-milestone`.)
 
 ### Out of Scope
 
@@ -107,7 +98,9 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ## Context
 
-**v1.2 Polish (2026-04-15 → 2026-04-27, 12 days):** 5 phases (12-16), 34 plans, 213 commits, 132 code/config files (+5946 / -470 LOC). Source LOC climbed from ~3,859 to ~4,715. All 36 v1.2 requirements satisfied per milestone audit (3-source cross-reference: VERIFICATION.md + SUMMARY frontmatter + REQUIREMENTS.md). 5/5 phases verified, 5/5 E2E recruiter flows pass, 31/33 cross-phase integration points wired (1 PARTIAL: `build:chat-context:check` CI enforcement deferred; 0 BROKEN). All cross-phase gates HELD (D-26 chat regression, D-15 server byte-identical, Lighthouse CI, reduced-motion contract, zero new runtime deps, no subtractive MASTER.md amendments).
+**v1.3 Chat Visibility (2026-05-09 → 2026-05-13, 4 days):** 4 phases (17-20), 26 plans, 195 commits, 195 files changed (+48,069 / −1,684 LOC repo-wide; src/ alone 26 files +2,239 / −152). Source LOC climbed from ~4,715 to ~6,802 (+44%). 36/36 v1.3 requirements satisfied. 4/4 cross-phase wiring chains WIRED end-to-end (visitor turn → KV write; cron tick → sweep; sweep → Resend → KV mark; D-26 cross-phase chat-surface invariant). All cross-phase gates HELD (D-15 SSE byte-identical, D-26 chat regression battery, TEST-03 Anthropic prompt-cache integrity, MAIL-01 zero-new-runtime-dep). Production deployment active at jackcutrara.com on single Worker (version `ede1431f-e92a-4fda-af54-4f8f57781d3b`); live email delivery confirmed (Gmail Inbox arrival 2026-05-13T14:00:53Z). 1 deferred item at close: SC4 organic-traffic idempotency-in-the-wild 7-day soft cap closure 2026-05-20.
+
+**v1.2 Polish (2026-04-15 → 2026-04-27, 12 days):** 5 phases (12-16), 34 plans, 213 commits, 132 code/config files (+5946 / -470 LOC). Source LOC climbed from ~3,859 to ~4,715. All 36 v1.2 requirements satisfied per milestone audit. 5/5 phases verified, 5/5 E2E recruiter flows pass, 31/33 cross-phase integration points wired.
 
 **v1.1 Editorial Redesign (2026-04-07 → 2026-04-15):** 4 phases (8-11), 27 plans, 63 tasks, ~150 commits over 9 days. Source LOC ~2,875 → ~3,859. Design contract locked at `design-system/MASTER.md`.
 
@@ -115,8 +108,13 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 **Known issues / tech debt:**
 
-- `CHAT_RATE_LIMITER` Cloudflare binding documented + Free-tier acceptable (per v1.3 milestone-shape lock 2026-05-09). Code path defensively skips when binding absent — byte-identical from Phase 7. Workers Paid plan upgrade is v1.4+ trigger; reconsider if Anthropic spend or chat volume crosses thresholds that justify $60/yr.
+- `CHAT_RATE_LIMITER` Cloudflare binding documented + Free-tier acceptable. Code path defensively skips when binding absent — byte-identical from Phase 7. Workers Paid plan upgrade is v1.4+ trigger; reconsider if Anthropic spend or chat volume crosses thresholds that justify $60/yr.
 - Lighthouse Performance ≥99 on localhost not held (Phase 16 home 80 / project 81); accepted per Phase 15 §9 production-on-Cloudflare-edge canonical-gate precedent. Motion-specific TBT=0 / CLS≈0 PASS comfortably.
+- SC4 organic-traffic idempotency-in-the-wild closure pending 2026-05-20 (7-day soft cap from Phase 20 deploy); Layer 1 (`delivered:{sid}` cursor) + Layer 2 (Resend Idempotency-Key 24h window) structurally unit-locked at both layers; first organic visitor session post-deploy closes SC4.
+- Cross-phase test fragility — `tests/build/worker-scheduled-call-site.test.ts` Invariant F regex `/DRY_RUN\s*:\s*(?:"1"|string)/` now passes via comment match in `worker.ts:46` after Phase 20 DRY_RUN flip. Functional wiring unaffected; lock fidelity degraded. Fix: broaden regex to accept `"0"` literal.
+- `CHAT_SENDER_EMAIL` + `CHAT_RECIPIENT_EMAIL` live exclusively as Wrangler dashboard secrets with no in-repo `.dev.vars` fallback documented. Operationally correct (sendOne env-narrowing guard catches missing values) but creates invisible deployment dependency on fresh Workers.
+- Frontmatter attribution gaps — Phase 17 plans 17-07/08/09/10 + Phase 19 plans 19-01..04 omit `requirements-completed:` field. Requirements still covered by VERIFICATION.md + traceability table — documentation hygiene only.
+- Pre-existing Resend DNS dust on `send.*` + root left untouched (no conflict with `mail.*` scope); scheduled as low-priority `/gsd-quick` cleanup.
 
 ## Key Decisions
 
@@ -141,6 +139,17 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 | Umami Cloud + CF Web Analytics, no consent banner (v1.2) | Cookie-free by design; privacy-respecting; recruiter-engagement event surface end-to-end | ✓ Good — production dashboard live, zero PII exposure |
 | Anthropic `max_tokens` 768 → 1500 (v1.2 Phase 14 gap-closure) | UAT test 3 surfaced truncation; richer answers needed | ✓ Good — paired with `message_delta` truncation observability |
 | TDD with Wave 0 RED stubs every v1.2 phase | Goal-backward verification; nyquist coverage upstream not retroactive | ✓ Good — applied Phases 13/14/15/16; all 5 phases NYQUIST-COMPLIANT |
+| Cloudflare Pages → Workers Static Assets migration (v1.3 Phase 17) | Single binding for static + API + cron handlers; eliminate Pages/Worker hybrid complexity | ✓ Good — D-15 SSE byte-identical preserved through cutover; D-15 + D-26 cross-phase gates HELD |
+| KV (`CHAT_KV`) over D1 for transcripts (v1.3 Phase 18) | Jack reads every transcript in entirety; no aggregation/search need; KV's 1 write/sec/key cap acceptable at portfolio scale | ✓ Good — sweep cost stays O(N) where N is sessions due, not turns |
+| Client-minted UUIDv4 sessionId via `crypto.randomUUID()` (v1.3 Phase 18) | Preserves localStorage compatibility; simpler upgrade path; no server-issued cookie complexity | ✓ Good — STORAGE_VERSION 1→2 auto-clear path triggered cleanly |
+| sessionId on HTTP envelope only, NEVER in Anthropic payload (v1.3 Phase 18) | Anthropic prompt-cache hit rate preservation; TEST-03 cross-phase gate | ✓ Good — live 3x cache test `cache_read=48527` on Calls 2+3 (2026-05-11) |
+| Two-keyspace partition `live:` → `delivered:` with PUT-before-POST (v1.3 Phase 19) | Crash-safe ordering at every step boundary; application-level idempotency before Resend's | ✓ Good — Step 3 live UAT verified `delivered:{sid}` populated before `live:{sid}` deleted |
+| DRY_RUN flag with rollback runway PRESERVED BYTE-IDENTICAL (v1.3 Phase 19 D-03) | Every Phase 20 step has same-line rollback; build guard `chat-delivery-send-site.test.ts` source-text-locks runway presence | ✓ Good — single-line wrangler.jsonc flip restores DRY_RUN posture |
+| Resend REST via `fetch()` not SDK (v1.3 Phase 20 MAIL-01) | Zero new runtime deps in Workers; no Node-runtime APIs | ✓ Good — `package.json dependencies` byte-identical phase-wide |
+| Plaintext email body only — no `html` field (v1.3 Phase 20 MAIL-02) | No HTML rendering of user-typed text = no phishing-into-inbox surface | ✓ Good — adversarial-payload suite confirms Gmail renders all payloads as literal text |
+| 3-variant discriminated `ResendResult` (sent / failed_transient / failed_terminal) per D-17 (v1.3 Phase 20) | No `replayed` variant — Layer 1 `delivered:{sid}` cursor IS the application-side replay detector | ✓ Good — 3 log events (`chat.delivery.sent` / `.retry` / `.failed`) cover all paths |
+| M-iter2 serial gap-closure wave correction (v1.3 Phase 17 Waves 7-10) | Chat-surface mutations cannot run parallel without muddying D-26 attribution; deploy-blocker plan gated LAST | ✓ Good — DEPLOY-GATE.md operator-confirmed cleanly before push |
+| WR-04 `ALLOW_LOOPBACK` three-signal disjunction (Rule 3 deviation, v1.3 Phase 17 Plan 17-08) | @astrojs/cloudflare adapter doesn't statically replace `import.meta.env.DEV` in SSR routes under `astro dev` | ✓ Good — production CORS posture UNCHANGED via tree-shaking; locally `pnpm dev` works |
 
 ## Constraints
 
@@ -169,4 +178,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-12 — Phase 19 (Cron Sweep: Scheduling + Idempotency + DRY_RUN) executor-side complete with all 4 plans + 10 code-review fixes applied (CR-01 CRON-03 isolation gap, CR-02 NaN fail-open, WR-01..WR-08 cap semantics + envelope env-sourcing + orphan GC + optional secrets + JSONC tokenizer + broadened regex). Hourly cron trigger live in wrangler.jsonc + locked by source-text forward-defense. 19-UAT.md (5 operator steps) pending live PROD verification. CRON-01..04 closed-by-design at executor side. Phase 20 (Email Render + Resend Integration) unblocked.*
+*Last updated: 2026-05-13 after v1.3 Chat Visibility milestone. 4 phases (17-20), 26 plans, 195 commits over 4 days. 36/36 v1.3 requirements satisfied. Live deployment at jackcutrara.com on single Cloudflare Worker; first live transcript email delivered to Jack's Gmail Inbox confirmed (resend_message_id `16bc7812-011d-4fea-87a6-b4cecd7ed71b`). `pnpm test` 560 PASS / 0 FAIL / 2 SKIP; `pnpm exec astro check` 0/0/0 (116 files). Next milestone: TBD via `/gsd-new-milestone`.*
