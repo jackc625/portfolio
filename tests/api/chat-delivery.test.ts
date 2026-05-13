@@ -32,6 +32,24 @@
 //
 // Console-spy beforeEach/afterEach pattern mirrors chat-transcripts.test.ts:167-178.
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+
+// Phase 20 Plan 20-03 — mock the Plan 20-01 renderer + Plan 20-02 wrapper so the
+// new GROUP I wiring tests can control the rendered payload + the Resend Result
+// returned by the wrapper. vi.mock is hoisted; placement at file top is mandatory.
+vi.mock("../../src/lib/email/resend", () => ({
+  sendEmail: vi.fn(),
+}));
+vi.mock("../../src/lib/email/render", () => ({
+  renderEmail: vi.fn().mockReturnValue({
+    from: "from@example.com",
+    to: "to@example.com",
+    reply_to: "rt@example.com",
+    subject: "subj",
+    text: "text",
+    idempotency_key: "transcript/test-sid",
+  }),
+}));
+
 import {
   deliverDue,
   INACTIVITY_THRESHOLD_MS,
@@ -46,6 +64,8 @@ import {
   type ChatTranscript,
   type KVMetadata,
 } from "../../src/lib/chat-transcripts";
+import { sendEmail } from "../../src/lib/email/resend";
+import { renderEmail } from "../../src/lib/email/render";
 
 // Hard-coded fixture sessionId — sibling pattern from chat-transcripts.test.ts.
 const SID = "8b0f7f1c-1234-4567-8901-abcdef012345";
@@ -557,6 +577,8 @@ describe("GROUP D — CRON-04 DRY_RUN gate (D-01 / D-02 / D-05)", () => {
     expect(payload.referrer_host).toBe("example.com");
   });
 
+  // PHASE 20 Plan 20-03 Task 2: this test is REWRITTEN to assert sendEmail call
+  // instead of throw stub. Do NOT delete in Task 1 (RED coverage protection).
   it("dry_run gate (env.DRY_RUN !== '1' throws)", async () => {
     // With env.DRY_RUN === "0", sendOne should throw send_not_implemented_in_phase_19,
     // which the retry harness catches → promoteOne catch path logs chat.delivery.failed.
@@ -816,6 +838,11 @@ describe("GROUP G — CRON-03 retry harness + isolation", () => {
     vi.useRealTimers();
   });
 
+  // PHASE 20 Plan 20-03 Task 2: this test is REWRITTEN — under DRY_RUN='0', the
+  // Phase 20 sendOne now calls the mocked sendEmail. We force failure by setting
+  // the mocked sendEmail to resolve `failed_transient` on every call, which
+  // throws inside sendOne and exhausts the retry budget identically to the old
+  // throw-stub path. Do NOT delete in Task 1 (RED coverage protection).
   it("retry harness 3 attempts", async () => {
     // Force sendOne to throw on every attempt by using env.DRY_RUN === "0"
     // (the sendOne implementation throws send_not_implemented_in_phase_19 in
@@ -963,5 +990,293 @@ describe("GROUP H — observability (OQ-7)", () => {
 
     // Constant cross-check — the locked threshold
     expect(INACTIVITY_THRESHOLD_MS).toBe(2 * 60 * 60 * 1000);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GROUP I — Phase 20 sendOne substitution wiring (D-17 collapsed 3-variant Result)
+//
+// Plan 20-03 Task 1 RED scaffold + Task 2 GREEN sweep. Six wiring tests per
+// 20-VALIDATION.md rows 90-94 + 98. The renderer + Resend wrapper are mocked at
+// the module scope above; per-test mockResolvedValue / mockReturnValue calls
+// configure each scenario.
+//
+// Note on group letter: existing test file already used GROUP F for batch-cap
+// pagination tests; this new Plan 20-03 batch is GROUP I (the next free letter
+// after the existing GROUP H observability block). The letter is presentational
+// — what matters is the 6 named wiring cases per VALIDATION.md.
+// ---------------------------------------------------------------------------
+
+describe("GROUP I — Phase 20 sendOne substitution wiring (D-17 collapsed 3-variant Result)", () => {
+  let logSpy: ReturnType<typeof vi.spyOn>;
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    // Reset mock state between tests
+    vi.mocked(sendEmail).mockReset();
+    vi.mocked(renderEmail).mockReturnValue({
+      from: "from@example.com",
+      to: "to@example.com",
+      reply_to: "rt@example.com",
+      subject: "subj",
+      text: "text",
+      idempotency_key: "transcript/test-sid",
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it("dry_run preserves runway", async () => {
+    // D-03 rollback runway preservation: under DRY_RUN='1' the envelope log
+    // shape stays byte-identical to Phase 19; sendEmail wrapper is NOT called.
+    const kv = new MockKVNamespace();
+    seedLive(
+      kv,
+      buildTranscript({
+        lastActivityAt: STALE_3H,
+        msgCount: 5,
+        truncated: false,
+        country: "US",
+        referrer: "https://example.com/path/page",
+      }),
+    );
+
+    await deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "1",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }),
+      SCHEDULED_NOW,
+    );
+
+    const dryRunCall = findLog(logSpy, "chat.delivery.dry_run");
+    expect(dryRunCall).toBeDefined();
+    const payload = dryRunCall![1] as Record<string, unknown>;
+
+    // Byte-identical Phase 19 envelope: 9 fields, NAMES locked per D-05
+    expect(Object.keys(payload).sort()).toEqual(
+      [
+        "country",
+        "dry_run",
+        "from",
+        "msg_count",
+        "referrer_host",
+        "reply_to",
+        "sid",
+        "to",
+        "truncated",
+      ].sort(),
+    );
+    expect(payload.dry_run).toBe(true);
+    expect(payload.sid).toBe(SID);
+    expect(payload.country).toBe("US");
+    expect(payload.referrer_host).toBe("example.com");
+
+    // sendEmail wrapper MUST NOT be called under DRY_RUN='1'
+    expect(vi.mocked(sendEmail)).not.toHaveBeenCalled();
+
+    // delivered:{sid} written with dry_run: true (rollback runway forward-defense)
+    const stored = kv.storage.get(`delivered:${SID}`);
+    expect(stored).toBeDefined();
+    const value = JSON.parse(stored!.value) as DeliveredMarker;
+    expect(value.dry_run).toBe(true);
+
+    expect(warnSpy).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("live calls sendEmail", async () => {
+    // DRY_RUN='0' must invoke renderEmail then sendEmail with the rendered payload.
+    vi.mocked(sendEmail).mockResolvedValue({
+      status: "sent",
+      message_id: "test-msg-id",
+      attempt: 1,
+    });
+
+    const kv = new MockKVNamespace();
+    seedLive(kv, buildTranscript({ lastActivityAt: STALE_3H }));
+
+    await deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "0",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }) as Parameters<typeof deliverDue>[0] & { RESEND_API_KEY?: string },
+      SCHEDULED_NOW,
+    );
+
+    // sendEmail invoked exactly once with the renderEmail-returned payload
+    expect(vi.mocked(sendEmail)).toHaveBeenCalledTimes(1);
+    const callArgs = vi.mocked(sendEmail).mock.calls[0]!;
+    // First arg is env, second arg is the rendered payload from the renderEmail mock
+    expect(callArgs[1]).toEqual({
+      from: "from@example.com",
+      to: "to@example.com",
+      reply_to: "rt@example.com",
+      subject: "subj",
+      text: "text",
+      idempotency_key: "transcript/test-sid",
+    });
+
+    // renderEmail was invoked too
+    expect(vi.mocked(renderEmail)).toHaveBeenCalled();
+  });
+
+  it("delivered marker resend_message_id", async () => {
+    // On `{ status: "sent" }`, delivered:{sid} marker must carry resend_message_id
+    // and dry_run: false. Schema v: 1 unchanged (additive extension per D-09).
+    vi.mocked(sendEmail).mockResolvedValue({
+      status: "sent",
+      message_id: "test-msg-id-xyz",
+      attempt: 1,
+    });
+
+    const kv = new MockKVNamespace();
+    seedLive(kv, buildTranscript({ lastActivityAt: STALE_3H }));
+
+    await deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "0",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }) as Parameters<typeof deliverDue>[0] & { RESEND_API_KEY?: string },
+      SCHEDULED_NOW,
+    );
+
+    const stored = kv.storage.get(`delivered:${SID}`);
+    expect(stored).toBeDefined();
+    const value = JSON.parse(stored!.value) as DeliveredMarker & {
+      resend_message_id: string;
+    };
+    expect(value.v).toBe(1); // schema unchanged
+    expect(value.dry_run).toBe(false);
+    expect(value.resend_message_id).toBe("test-msg-id-xyz");
+    expect(value.sid).toBe(SID);
+
+    // live:{sid} removed after successful send
+    expect(kv.storage.has(KEY_PREFIX + SID)).toBe(false);
+  });
+
+  it("failed_transient retries", async () => {
+    // On `{ status: "failed_transient" }` every call, sendOne throws transient
+    // and retryWithBackoff fires MAX_SEND_ATTEMPTS times. delivered: NOT written.
+    vi.mocked(sendEmail).mockResolvedValue({
+      status: "failed_transient",
+      http_status: 500,
+      attempt: 1,
+    });
+
+    const kv = new MockKVNamespace();
+    seedLive(kv, buildTranscript({ lastActivityAt: STALE_3H }));
+
+    vi.useFakeTimers();
+    const p = deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "0",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }) as Parameters<typeof deliverDue>[0] & { RESEND_API_KEY?: string },
+      SCHEDULED_NOW,
+    );
+    await vi.runAllTimersAsync();
+    await p;
+    vi.useRealTimers();
+
+    // sendEmail invoked MAX_SEND_ATTEMPTS times (the retry harness)
+    expect(vi.mocked(sendEmail).mock.calls.length).toBe(MAX_SEND_ATTEMPTS);
+
+    // delivered:{sid} NOT written; live:{sid} NOT deleted
+    expect(kv.storage.has(`delivered:${SID}`)).toBe(false);
+    expect(kv.storage.has(KEY_PREFIX + SID)).toBe(true);
+
+    // chat.delivery.failed emitted by promoteOne's catch after retry exhaustion
+    const failedCall = errorSpy.mock.calls.find(
+      (c: unknown[]) => c[0] === "chat.delivery.failed",
+    );
+    expect(failedCall).toBeDefined();
+    expect((failedCall![1] as { sid: string }).sid).toBe(SID);
+  });
+
+  it("failed_terminal logs and skips", async () => {
+    // On `{ status: "failed_terminal" }`, sendOne throws once (no retry) and
+    // bubbles through promoteOne's catch which logs chat.delivery.failed.
+    // delivered:{sid} NOT written; live:{sid} NOT deleted (Phase 19 catch
+    // behavior preserved — next tick will retry from scratch).
+    vi.mocked(sendEmail).mockResolvedValue({
+      status: "failed_terminal",
+      http_status: 422,
+      resend_error: "validation_error",
+      attempt: 1,
+    });
+
+    const kv = new MockKVNamespace();
+    seedLive(kv, buildTranscript({ lastActivityAt: STALE_3H }));
+
+    vi.useFakeTimers();
+    const p = deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "0",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }) as Parameters<typeof deliverDue>[0] & { RESEND_API_KEY?: string },
+      SCHEDULED_NOW,
+    );
+    await vi.runAllTimersAsync();
+    await p;
+    vi.useRealTimers();
+
+    // delivered:{sid} NOT written
+    expect(kv.storage.has(`delivered:${SID}`)).toBe(false);
+    // live:{sid} STILL exists (NOT deleted — preserves retry on next tick)
+    expect(kv.storage.has(KEY_PREFIX + SID)).toBe(true);
+
+    // chat.delivery.failed emitted (from promoteOne's translated throw catch)
+    const failedCall = errorSpy.mock.calls.find(
+      (c: unknown[]) => c[0] === "chat.delivery.failed",
+    );
+    expect(failedCall).toBeDefined();
+    expect((failedCall![1] as { sid: string }).sid).toBe(SID);
+  });
+
+  it("delivered marker no metadata (Landmine 7)", async () => {
+    // D-11 / Landmine 7 — the kv.put on delivered:{sid} must have options
+    // equal to exactly { expirationTtl: DELIVERED_TTL_SECONDS } with NO
+    // metadata field. Plan 20-03 must preserve this contract.
+    vi.mocked(sendEmail).mockResolvedValue({
+      status: "sent",
+      message_id: "test-msg-id",
+      attempt: 1,
+    });
+
+    const kv = new MockKVNamespace();
+    seedLive(kv, buildTranscript({ lastActivityAt: STALE_3H }));
+    const putSpy = vi.spyOn(kv, "put");
+
+    await deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "0",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }) as Parameters<typeof deliverDue>[0] & { RESEND_API_KEY?: string },
+      SCHEDULED_NOW,
+    );
+
+    const deliveredPutCall = putSpy.mock.calls.find(
+      (c) => c[0] === `delivered:${SID}`,
+    );
+    expect(deliveredPutCall).toBeDefined();
+    const options = deliveredPutCall![2] as Record<string, unknown>;
+    // Deep-equal {expirationTtl: DELIVERED_TTL_SECONDS} — NO metadata key
+    expect(options).toEqual({ expirationTtl: DELIVERED_TTL_SECONDS });
+    expect(Object.keys(options)).toEqual(["expirationTtl"]);
+    expect(options.metadata).toBeUndefined();
   });
 });
