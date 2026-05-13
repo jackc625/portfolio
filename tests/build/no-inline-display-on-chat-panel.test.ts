@@ -21,17 +21,31 @@ const src = readFileSync(
 );
 
 describe("UAT Gap #2: ChatWidget.astro #chat-panel has no inline display declaration", () => {
-  it("the inline style attribute on #chat-panel contains no `display:` token", () => {
-    const panelMatch = src.match(/<div\s+id="chat-panel"\s+style="([^"]+)"/);
-    if (!panelMatch) {
-      throw new Error(
-        'Could not locate <div id="chat-panel" style="..."> in ChatWidget.astro — markup may have been refactored. Update this test to match.',
-      );
+  it("no #chat-panel <div> contains a `style=\"...display:...\"` declaration (matchAll, attribute-order tolerant)", () => {
+    // WR-05 (17-REVIEW-GAPS.md, quick-260513-hqk): use matchAll with an
+    // order-agnostic attribute regex. The previous anchor
+    //   /<div\s+id="chat-panel"\s+style="([^"]+)"/
+    // required id to be IMMEDIATELY followed by style — adding any benign
+    // attribute (e.g., `data-foo="bar"`) between them would cause the regex
+    // to miss, throwing the "Could not locate" error and masking the real
+    // situation. It also returns only the first match (no /g flag), so a
+    // second duplicate #chat-panel div with inline display would slip past.
+    const panelTagRe = /<div\s[^>]*\bid="chat-panel"[^>]*>/g;
+    const panelMatches = [...src.matchAll(panelTagRe)];
+
+    // Per-match assertion: no panel tag contains an inline `style="...display:..."`.
+    for (const match of panelMatches) {
+      expect(
+        match[0],
+        `Inline style on #chat-panel re-introduced display declaration: "${match[0]}". This breaks the CSS state machine in global.css:699-706 — see .planning/debug/chat-panel-not-opening-dev.md.`,
+      ).not.toMatch(/style="[^"]*display\s*:/);
     }
-    const inlineStyle = panelMatch[1];
+
+    // Structural lock: exactly ONE #chat-panel div in the source. Catches
+    // both accidental zero-match (markup refactor) AND duplicate (WR-05).
     expect(
-      inlineStyle,
-      `Inline style on #chat-panel re-introduced display declaration: "${inlineStyle}". This breaks the CSS state machine in global.css:699-706 — see .planning/debug/chat-panel-not-opening-dev.md.`,
-    ).not.toMatch(/display\s*:/);
+      panelMatches.length,
+      `Expected exactly one <div id="chat-panel"> in ChatWidget.astro, found ${panelMatches.length}. WR-05: a duplicate panel element would let inline display slip past per-match assertions and break the CSS state machine.`,
+    ).toBe(1);
   });
 });
