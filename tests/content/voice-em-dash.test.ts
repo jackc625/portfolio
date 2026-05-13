@@ -11,23 +11,19 @@ const PROJECTS = [
   "solsniper",
 ];
 
-const MAX_EM_DASHES_PER_PARAGRAPH = 2;
+const MAX_EM_DASHES_PER_PARAGRAPH = 0;
 
 /**
- * D-11 Rule 1 (em-dash abuse):
- *   "prefer paired em-dashes (open/close); avoid three or more in a single paragraph"
+ * D-11 Rule 1 (em-dash ban):
+ *   "Zero em dashes in case-study body prose. Use commas, semicolons, periods,
+ *   or parens. Em dashes are an AI-tells cadence and are not allowed."
  *
- * House style allows a single pair of em-dashes (open + close) inside a
- * paragraph. Three or more em-dashes in one paragraph signals hype / AI-tells
- * cadence and must be rewritten with commas, semicolons, periods, or parens.
- *
- * This test enforces the relaxed cap on every shipped case study body
- * (post-frontmatter). Code fences are NOT stripped — em-dashes inside
- * inline code should count too (none today).
+ * Updated 2026-05-13 from a ≤2 paragraph cap to a hard zero. The cap variable
+ * stays for future flexibility but the locked value is 0.
  */
 describe("Case-study em-dash cap (D-11 Rule 1)", () => {
   for (const slug of PROJECTS) {
-    it(`${slug}.mdx: no paragraph has more than ${MAX_EM_DASHES_PER_PARAGRAPH} em-dashes`, async () => {
+    it(`${slug}.mdx: zero em-dashes in body paragraphs`, async () => {
       const raw = await readFile(
         join("src", "content", "projects", `${slug}.mdx`),
         "utf8",

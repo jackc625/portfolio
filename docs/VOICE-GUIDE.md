@@ -44,7 +44,7 @@ Never use the following without a specific, on-page justification:
 - "elevate"
 - "supercharge"
 - emoji of any kind in body prose
-- em-dash abuse: prefer paired em-dashes (open/close); avoid three or more in a single paragraph
+- em-dash ban: zero em dashes anywhere in body prose. Use commas, semicolons, periods, or parens.
 
 ### Rule 2: Numbers or don't claim it
 
