@@ -155,6 +155,45 @@ describe("MAIL-01 — sendEmail status taxonomy (D-13 + D-17 3-variant Result)",
     expect(fields.attempt).toBe(1);
   });
 
+  // CR-02 (Phase 20 code review) — runtime validation of Resend `data.id`.
+  // A 2xx response with a missing/null id (queued-async edge case, partial
+  // outage, future API surface change) MUST NOT propagate `undefined` into
+  // DeliveredMarker.resend_message_id. The wrapper classifies these as
+  // failed_transient with error_class "resend_2xx_missing_id" so the retry
+  // harness gets another shot AND Workers Logs distinguish "sent emails
+  // without an id" from intentional null fields elsewhere.
+  it.each([
+    { label: "empty body", body: {} },
+    { label: "id null", body: { id: null } },
+    { label: "id empty string", body: { id: "" } },
+    { label: "id non-string", body: { id: 12345 } },
+  ])("200 with $label classified as failed_transient", async ({ body }) => {
+    mockResolved(200, body);
+    const result = await sendEmail(ENV, buildPayload());
+    expect(result.status).toBe("failed_transient");
+    if (result.status !== "failed_transient") throw new Error("unreachable");
+    expect(result.http_status).toBe(200);
+    expect(result.error_class).toBe("resend_2xx_missing_id");
+    expect(result.attempt).toBe(1);
+
+    // The chat.delivery.sent log MUST NOT fire on a missing-id 2xx.
+    expect(findLog(logSpy, "chat.delivery.sent")).toBeUndefined();
+
+    // chat.delivery.retry fires with error_class === "resend_2xx_missing_id".
+    const retryLog = findLog(logSpy, "chat.delivery.retry");
+    expect(retryLog).toBeDefined();
+    const fields = retryLog![1] as {
+      sid: string;
+      http_status: number | null;
+      error_class: string;
+      attempt: number;
+    };
+    expect(fields.sid).toBe(SID);
+    expect(fields.http_status).toBe(200);
+    expect(fields.error_class).toBe("resend_2xx_missing_id");
+    expect(fields.attempt).toBe(1);
+  });
+
   it("5xx transient", async () => {
     mockResolved(500, { name: "internal_error" });
     const result = await sendEmail(ENV, buildPayload());

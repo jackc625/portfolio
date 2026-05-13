@@ -193,7 +193,31 @@ export async function sendEmail(
 
     // 2xx success -> sent
     if (response.ok) {
-      const data = (await response.json()) as { id: string };
+      // CR-02 (Phase 20 code review) — runtime validation of Resend `data.id`.
+      // The previous `as { id: string }` cast was a TypeScript lie: a 2xx
+      // body without an id (queued-async edge cases, partial outages, future
+      // API surface change) would propagate `undefined` into
+      // DeliveredMarker.resend_message_id (declared `string`) and JSON.stringify
+      // would silently drop the field. Treat missing/empty id as transient so
+      // the retry harness gets another shot; Resend documents that successful
+      // sends always include a non-empty id, so the false-transient rate is
+      // expected to be near-zero.
+      const data = (await response.json()) as { id?: unknown };
+      if (typeof data.id !== "string" || data.id.length === 0) {
+        console.log("chat.delivery.retry", {
+          sid,
+          http_status: response.status,
+          error_class: "resend_2xx_missing_id",
+          attempt,
+          backoff_ms: null,
+        });
+        return {
+          status: "failed_transient",
+          http_status: response.status,
+          error_class: "resend_2xx_missing_id",
+          attempt,
+        };
+      }
       console.log("chat.delivery.sent", {
         sid,
         resend_message_id: data.id,
