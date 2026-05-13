@@ -247,21 +247,27 @@ async function sendOne(
   // sendEmail; the structured chat.delivery.failed log is the operationally
   // greppable surface, so emit it BEFORE the cast and throw a terminal-class
   // error that promoteOne's catch translates into the standard failure path.
-  if (env.DRY_RUN === "0") {
-    if (
-      !env.RESEND_API_KEY ||
-      !env.CHAT_RECIPIENT_EMAIL ||
-      !env.CHAT_SENDER_EMAIL ||
-      !env.CHAT_REPLY_TO_EMAIL
-    ) {
-      console.warn("chat.delivery.failed", {
-        sid: transcript.sid,
-        http_status: null,
-        error_class: "resend_terminal_env_missing",
-        attempt: 0,
-      });
-      throw new Error("resend_terminal_env_missing");
-    }
+  //
+  // WR-02 (Phase 20 code review) — defense-in-depth: validate env on EVERY
+  // live-send path, not only when DRY_RUN === "0" literally. The dry-run
+  // branch above short-circuits on === "1"; everything else (including
+  // missing, empty, "true", "yes", typos) reaches this guard. Without the
+  // hoist, a typo'd DRY_RUN value would skip both the dry path AND this
+  // guard, letting the unsafe `as RenderEnv` / `as ResendEnv` casts
+  // surface raw TypeErrors instead of the structured failure log.
+  if (
+    !env.RESEND_API_KEY ||
+    !env.CHAT_RECIPIENT_EMAIL ||
+    !env.CHAT_SENDER_EMAIL ||
+    !env.CHAT_REPLY_TO_EMAIL
+  ) {
+    console.warn("chat.delivery.failed", {
+      sid: transcript.sid,
+      http_status: null,
+      error_class: "resend_terminal_env_missing",
+      attempt: attempt,
+    });
+    throw new Error("resend_terminal_env_missing");
   }
 
   const payload = renderEmail(env as RenderEnv, transcript);
