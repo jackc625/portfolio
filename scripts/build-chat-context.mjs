@@ -143,6 +143,13 @@ function checkFirstPersonLeaks(merged) {
  * Unquoted branch strips YAML inline comments (`field: foo # TODO` → `foo`) to
  * match YAML semantics (REVIEW.md WR-03). All current MDX files use quoted
  * form, so this is latent-defect hardening, not a live-bug fix.
+ *
+ * WR-03 (17-REVIEW-GAPS.md, quick-260513-hqk): the quoted-body regex
+ * `[^"\n]+` stops at the first internal `"` — escaped quotes (`\"`) would
+ * silently truncate the field. Rather than upgrade the regex to support YAML
+ * `\"` escapes, we throw explicitly on detection (parallel to the comma-in-
+ * array guard at readArrayField lines 187-193). No current chatSummary value
+ * uses embedded quotes; the throw is hardening for forward compatibility.
  */
 export function readStringField(frontmatterBlock, fieldName) {
   const escaped = fieldName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -150,7 +157,20 @@ export function readStringField(frontmatterBlock, fieldName) {
     `^${escaped}:\\s*"([^"\\n]+)"\\s*$`,
     "m"
   ).exec(frontmatterBlock);
-  if (quoted) return quoted[1].trim();
+  if (quoted) {
+    // WR-03: reject escaped quotes explicitly — the regex would silently
+    // truncate at the first internal `"`. Mirrors the comma-in-array guard
+    // pattern at readArrayField (line ~187-193): hard-fail rather than
+    // silently mis-parse. If support for `\"` is needed in the future,
+    // upgrade the regex to `"((?:[^"\\\n]|\\.)*)"` consistent with
+    // parseAboutChatExports.
+    if (quoted[1].includes('\\"')) {
+      throw new Error(
+        `${fieldName}: escaped quote (\\") inside quoted string is not supported by readStringField; use a different phrasing or update readStringField to handle YAML escapes`
+      );
+    }
+    return quoted[1].trim();
+  }
   const unquoted = new RegExp(
     `^${escaped}:\\s*([^"\\n]+?)\\s*$`,
     "m"
