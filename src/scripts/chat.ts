@@ -376,11 +376,14 @@ const COPY_FEEDBACK_MS = 1500;
 
 // MUST wrap in try/catch — navigator.clipboard.writeText() fails on non-HTTPS
 // Addresses review concern: Claude flagged clipboard API needing try/catch as MEDIUM
+//
+// WR-01 (quick-260513-hqk): pure clipboard I/O — no DOM class side effects.
+// The `.copy-success` class is driven exclusively by createCopyButton's click
+// handler now, so the success indicator renders regardless of clipboard outcome
+// (non-HTTPS preview, denied permission, focus loss). See 17-REVIEW-GAPS.md WR-01.
 async function copyToClipboard(text: string, button: HTMLElement): Promise<void> {
   try {
     await navigator.clipboard.writeText(text);
-    button.classList.add("copy-success");
-    setTimeout(() => button.classList.remove("copy-success"), COPY_FEEDBACK_MS);
   } catch {
     // Silently fail — no user-visible error for copy failure on non-HTTPS
   }
@@ -391,6 +394,13 @@ async function copyToClipboard(text: string, button: HTMLElement): Promise<void>
  * Both live-stream and localStorage-replay paths call this helper so markup,
  * classes, inline styles, aria-label, and post-click transitions are identical.
  * Canonical behavior lifted verbatim from the replay path (pre-dedup chat.ts:553-569).
+ *
+ * WR-01 contract (quick-260513-hqk): the click handler is the SINGLE class-driver
+ * site. `.copy-success` is added synchronously at t=0 (before copyToClipboard runs)
+ * and removed alongside the textContent revert in ONE setTimeout at COPY_FEEDBACK_MS.
+ * copyToClipboard is now pure clipboard I/O with no DOM side effects. This guarantees
+ * the accent-red COPIED label renders for the full feedback window even when the
+ * clipboard write rejects.
  *
  * @param getContent Callback returning the current message text to copy.
  *                   Invoked at CLICK TIME (not creation time) so the live-stream
@@ -405,15 +415,20 @@ export function createCopyButton(getContent: () => string): HTMLButtonElement {
   copyBtn.type = "button";
   copyBtn.style.cssText = "position: absolute; top: -4px; right: 0; background: none; border: none; cursor: pointer;";
   copyBtn.addEventListener("click", () => {
-    // M3 (Plan 17-09): no inline color writes — `.copy-success` class
-    // (added inside copyToClipboard) drives both opacity and color via
-    // the .chat-copy-btn.copy-success CSS rule. On class removal after
-    // COPY_FEEDBACK_MS, the base .chat-copy-btn { color: var(--ink-faint) }
-    // rule takes over naturally.
+    // WR-01 (quick-260513-hqk): add `.copy-success` SYNCHRONOUSLY at t=0
+    // before kicking off the clipboard write. The class is the single source
+    // of truth for both opacity and color during the feedback window, and
+    // running it here (rather than inside copyToClipboard's success branch)
+    // guarantees the accent-red COPIED label renders even when the clipboard
+    // write rejects (non-HTTPS, denied permission, focus loss). Both the
+    // textContent revert AND the class removal share ONE setTimeout so they
+    // can't drift apart on slow clipboard resolution.
+    copyBtn.classList.add("copy-success");
     copyToClipboard(getContent(), copyBtn);
     copyBtn.textContent = "COPIED";
     setTimeout(() => {
       copyBtn.textContent = "COPY";
+      copyBtn.classList.remove("copy-success");
     }, COPY_FEEDBACK_MS);
   });
   return copyBtn;

@@ -155,17 +155,22 @@ describe("createCopyButton (DEBT-04, post-Plan-17-09 M3 contract)", () => {
     expect(live.outerHTML).toBe(replay.outerHTML);
   });
 
-  it("flips textContent to COPIED on click, reverts to COPY after COPY_FEEDBACK_MS, with NO inline style.color writes (M3)", async () => {
+  it("flips textContent to COPIED on click, reverts to COPY after COPY_FEEDBACK_MS, with NO inline style.color writes (M3 + WR-01)", async () => {
     vi.useFakeTimers();
     const btn = createCopyButton(() => "payload");
     document.body.appendChild(btn);
     btn.click();
-    await Promise.resolve(); // drain clipboard microtask
+    // WR-01: .copy-success class is added SYNCHRONOUSLY by the click handler
+    // (NOT inside copyToClipboard's success branch). Verify presence BEFORE
+    // draining the microtask queue.
+    expect(btn.classList.contains("copy-success")).toBe(true);
     expect(btn.textContent).toBe("COPIED");
     // M3: textContent swap is the ONLY click-handler write. No inline color.
     expect(btn.style.color).toBe("");
+    await Promise.resolve(); // drain clipboard microtask
     // .copy-success class is the visibility-pinning mechanism (added by
-    // copyToClipboard, consumed by the new CSS rule).
+    // the click handler at t=0, consumed by the .chat-copy-btn.copy-success
+    // CSS rule for both opacity and color).
     expect(btn.classList.contains("copy-success")).toBe(true);
     vi.advanceTimersByTime(1500);
     // Drain any pending microtasks queued by clipboard resolution
@@ -174,6 +179,36 @@ describe("createCopyButton (DEBT-04, post-Plan-17-09 M3 contract)", () => {
     // M3: no inline color write on revert either — base .chat-copy-btn rule
     // (color: var(--ink-faint)) takes over via class removal.
     expect(btn.style.color).toBe("");
+    expect(btn.classList.contains("copy-success")).toBe(false);
+    vi.useRealTimers();
+  });
+
+  it("WR-01: .copy-success class added even when clipboard.writeText rejects (failure-path accent color render)", async () => {
+    vi.useFakeTimers();
+    // Stub clipboard.writeText to reject — simulates non-HTTPS preview,
+    // denied permission, focus loss, browser policy block, etc.
+    Object.assign(navigator, {
+      clipboard: { writeText: vi.fn().mockRejectedValue(new Error("denied")) },
+    });
+    const btn = createCopyButton(() => "payload");
+    document.body.appendChild(btn);
+    btn.click();
+    // WR-01: class MUST be present at t=0 immediately after click — added
+    // synchronously by the handler before the rejected clipboard promise
+    // settles. This is the regression WR-01 closes: previously the class
+    // was added inside copyToClipboard's success branch only, so the failure
+    // path showed "COPIED" text in default --ink-faint color with no accent.
+    expect(btn.classList.contains("copy-success")).toBe(true);
+    expect(btn.textContent).toBe("COPIED");
+    // Allow the rejected microtask to settle — the catch swallows it.
+    await Promise.resolve();
+    await Promise.resolve();
+    // Class still present mid-window — single setTimeout governs removal,
+    // not the clipboard outcome.
+    expect(btn.classList.contains("copy-success")).toBe(true);
+    // After COPY_FEEDBACK_MS, both reverts fire in the same tick.
+    vi.advanceTimersByTime(1500);
+    expect(btn.textContent).toBe("COPY");
     expect(btn.classList.contains("copy-success")).toBe(false);
     vi.useRealTimers();
   });
