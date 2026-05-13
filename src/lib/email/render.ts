@@ -130,11 +130,18 @@ function stripCrLf(s: string): string {
 
 /**
  * Strip Unicode bidi-override codepoints:
+ *   U+061C ALM (Arabic Letter Mark)
+ *   U+200E LRM (Left-to-Right Mark), U+200F RLM (Right-to-Left Mark)
  *   U+202A LRE, U+202B RLE, U+202C PDF, U+202D LRO, U+202E RLO
  *   U+2066 LRI, U+2067 RLI, U+2068 FSI, U+2069 PDI
+ *
+ * WR-03 (Phase 20 code review) — added ALM/LRM/RLM. The original regex
+ * only covered U+202A..U+202E and U+2066..U+2069, missing the three
+ * single-char marks that OWASP / Unicode Technical Report #36 list as
+ * high-risk for visual spoofing.
  */
 function stripBidiOverrides(s: string): string {
-  return s.replace(/[‪-‮⁦-⁩]/g, "");
+  return s.replace(/[؜‎‏‪-‮⁦-⁩]/g, "");
 }
 
 /**
