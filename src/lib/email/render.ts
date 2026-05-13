@@ -95,6 +95,20 @@ export interface RenderEnv {
  *
  * Key ordering is locked by ES2015 spec preservation of object-literal order;
  * this guarantees byte-identical JSON body across two invocations (Landmine 9).
+ *
+ * WR-05 (Phase 20 code review) — FIELD ORDER IS LOAD-BEARING.
+ * Resend's 24h Idempotency-Key window matches on byte-identical request
+ * bodies. The body-shape lock in `tests/api/email-resend.test.ts` (search
+ * for `keys = ["from", "to", "reply_to", "subject", "text"]`) asserts the
+ * 5 body keys appear in this exact order after `idempotency_key` is
+ * destructured out at the wrapper boundary. ANY reorder (renderer
+ * refactor, prettier rule, Object.assign-based construction, etc.) will
+ * break idempotent retries — Resend will see a different body and a 409
+ * Idempotency-Conflict (Landmine 10).
+ *
+ * `idempotency_key` is split out at sendEmail (resend.ts: `const {
+ * idempotency_key, ...body } = payload;`) — it flows through the
+ * Idempotency-Key HTTP header, NEVER the JSON body.
  */
 export interface ResendPayload {
   from: string;
