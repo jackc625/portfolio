@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-05-09)
 Phase: 20 — code + deploy COMPLETE; SC4 pending Step 6 soft cap
 Plan: 4/4 complete (20-01 renderer + 20-02 wrapper + 20-03 sendOne substitution + DRY_RUN flip + 20-04 UAT + deploy gate)
 Status: Phase 20 deployed live on jack-cutrara-portfolio Worker (version `ede1431f-e92a-4fda-af54-4f8f57781d3b`); UAT Steps 1-5 PASS; DEPLOY-GATE.md CONFIRMED; 4 of 5 ROADMAP success criteria CLOSED (SC1+SC2+SC3+SC5); SC4 (idempotency in the wild) PENDING Step 6 organic real-traffic — 7-day soft cap closure date 2026-05-20.
-Last activity: 2026-05-13 -- Phase 20 atomic deploy live; first live transcript email landed in Gmail Inbox 15s after cron tick
+Last activity: 2026-05-13 -- Completed quick task 260513-hqk: v1.3 closeout — closed Phase 17 review Warnings WR-01..05 (5 atomic commits)
 
 ### Phase 20: Email Render + Resend Integration — DEPLOYED 2026-05-13 (UAT Steps 1-5 PASS; Step 6 7-day soft cap open)
 
@@ -297,6 +297,12 @@ Carry-forwards NOT in v1.3 scope (out-of-scope for this milestone):
 
 - Mobile menu breakpoint 380px → 768px UX revision (`.planning/todos/pending/2026-04-15-change-mobile-menu-breakpoint-from-380px-to-768px.md`).
 - OG default image authoring (`.planning/todos/pending/2026-04-15-design-and-ship-og-default-image.md`).
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260513-hqk | v1.3 closeout: close Phase 17 review Warnings WR-01..05 | 2026-05-13 | 61a359b | [260513-hqk-v1-3-closeout-close-phase-17-review-warn](./quick/260513-hqk-v1-3-closeout-close-phase-17-review-warn/) |
 
 ## Deferred Items
 
