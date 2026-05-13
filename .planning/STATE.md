@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
-status: executing
-stopped_at: Phase 20 context gathered
-last_updated: "2026-05-13T03:02:26.256Z"
-last_activity: 2026-05-13 -- Phase 20 planning complete
+status: phase-20-complete-pending-step-6-soft-cap
+stopped_at: Phase 20 UAT Steps 1-5 PASS; Step 6 (organic real-traffic) open under 7-day soft cap; closure date 2026-05-20
+last_updated: "2026-05-13T14:15:00Z"
+last_activity: 2026-05-13 -- Phase 20 deployed live; UAT Steps 1-5 PASS; first live transcript email landed in Gmail Inbox 15s after cron tick (resend_message_id 16bc7812-011d-4fea-87a6-b4cecd7ed71b)
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 26
-  completed_plans: 22
-  percent: 85
+  completed_plans: 26
+  percent: 100
 ---
 
 # Project State
@@ -21,14 +21,108 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-09)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 19 — cron-sweep-scheduling-idempotency-dry-run
+**Current focus:** v1.3 milestone closing — Phase 20 SC4 pending 7-day soft cap (closure 2026-05-20); next routing `/gsd-complete-milestone v1.3` after Step 6 closes
 
 ## Current Position
 
-Phase: 20
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-05-13 -- Phase 20 planning complete
+Phase: 20 — code + deploy COMPLETE; SC4 pending Step 6 soft cap
+Plan: 4/4 complete (20-01 renderer + 20-02 wrapper + 20-03 sendOne substitution + DRY_RUN flip + 20-04 UAT + deploy gate)
+Status: Phase 20 deployed live on jack-cutrara-portfolio Worker (version `ede1431f-e92a-4fda-af54-4f8f57781d3b`); UAT Steps 1-5 PASS; DEPLOY-GATE.md CONFIRMED; 4 of 5 ROADMAP success criteria CLOSED (SC1+SC2+SC3+SC5); SC4 (idempotency in the wild) PENDING Step 6 organic real-traffic — 7-day soft cap closure date 2026-05-20.
+Last activity: 2026-05-13 -- Phase 20 atomic deploy live; first live transcript email landed in Gmail Inbox 15s after cron tick
+
+### Phase 20: Email Render + Resend Integration — DEPLOYED 2026-05-13 (UAT Steps 1-5 PASS; Step 6 7-day soft cap open)
+
+Phase 20 closed v1.3 by replacing the Phase 19 `throw new Error("send_not_implemented_in_phase_19")`
+stub in `src/lib/chat-delivery.ts sendOne` with a real Resend POST chain (renderEmail → sendEmail →
+Result-translation) and flipping `wrangler.jsonc vars.DRY_RUN` from `"1"` to `"0"` in a single atomic
+deploy commit (`8bba4ef` Plan 20-03). Four plans across three waves; all 4 PLANs / 12+ source commits
+shipped on local main before the operator's `git push origin main` triggered Cloudflare Workers
+Builds for the live deploy.
+
+Plan execution summary:
+- Plan 20-01 (renderer) — pure `src/lib/email/render.ts` (376 LOC, 4-stage sanitizer pipeline,
+  zero I/O, deterministic) + 46 new tests (35 happy + 11 adversarial covering 6 MAIL-05 payload
+  classes). Closes MAIL-02 + MAIL-03 + MAIL-04 + MAIL-05.
+- Plan 20-02 (Resend wrapper) — pure `src/lib/email/resend.ts` (279 LOC) — AbortController 10s
+  timeout with `clearTimeout` in `finally` (Landmines 1+2), 3-variant discriminated Result per D-17,
+  3-event structured logging family (`chat.delivery.sent` / `.retry` / `.failed`; no `replayed`
+  variant per D-17), body JSON keys ordered `{from, to, reply_to, subject, text}` literal for
+  byte-identical retries within Resend's 24h Idempotency-Key window; 13 mocked-fetch unit cases.
+  Closes MAIL-01.
+- Plan 20-03 (wire-up + flip) — `chat-delivery.ts sendOne` substituted with the renderEmail →
+  sendEmail chain; `DeliveredMarker` extended additively with `resend_message_id: string` (schema
+  `v: 1` unchanged per Phase 19 D-09/D-10 additive-extension lock); `promoteOne` step-4 PUT site
+  populates the new field; DRY_RUN=`"1"` rollback runway preserved BYTE-IDENTICAL with a `ROLLBACK
+  RUNWAY` comment block (D-03 lock; build guard `chat-delivery-send-site.test.ts` Invariants D+E
+  source-text-lock its presence); `wrangler.jsonc` `vars.DRY_RUN` flipped `"1"` → `"0"` in the
+  same atomic Phase 20 commit; `src/worker.ts` `Env.DRY_RUN: "0"` literal carry-forward (Rule 3
+  deviation — adapter-regenerated `Cloudflare.Env` literal must mirror; documented bidirectional
+  lock for rollback). 3 new build guards (chat-delivery-send-site 5/5 + wrangler-dry-run-shape
+  2/2 + wrangler-cron-shape assertion update) + GROUP I 6-test wiring extension per D-17 collapsed
+  Result. Closes MAIL-01..05 wiring.
+- Plan 20-04 (UAT + deploy gate) — NEW `20-UAT.md` (620 LOC, 6-step manual operator runbook
+  mapping 1:1 to ROADMAP success criteria) + NEW `DEPLOY-GATE.md` (Plan 17-08 template mirror —
+  5-section pre-deploy checklist + executor-MUST-NOT-push prohibition + D-03 rollback procedure
+  documenting the wrangler.jsonc/src/worker.ts bidirectional update lock). Deploy gate CONFIRMED
+  2026-05-13 (Jack Cutrara, via chat-reply "you do it" → orchestrator prefilled per Plan 17-08
+  option 2 after the 5-section pre-deploy sweep returned 5/5 PASS).
+
+Operator pushed; Cloudflare Workers Builds deployed; live at `https://jackcutrara.com` with
+`env.DRY_RUN === "0"` and hourly cron `0 * * * *`.
+
+Live UAT (orchestrator-executed under explicit operator override of the D-04 KV-write prohibition;
+operator owned the deploys + Gmail visual confirmation):
+- Step 1 — seeded `live:test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3` in PROD KV
+  (`eaa30fef259e4a6b9505b41bbf3f8f01`) with 3hr-stale `last_activity_at: 2026-05-13T10:56:10.527Z`
+  and a 2-message transcript carrying `cache_read_input_tokens: 1234` on the assistant turn.
+- Step 2 — `wrangler.jsonc` line 28 flipped to `["* * * * *"]`; `pnpm build` (adapter regenerates
+  `dist/server/wrangler.json`); `wrangler deploy` shipped Worker version
+  `8ff4fe33-7250-41f4-ac24-f69c3a853215` with `schedule: * * * * *`. First per-minute scheduled()
+  invocation fired within 15s of deploy. (Adapter-config caveat captured in result block: first
+  `wrangler deploy` after the edit was a no-op because `dist/server/wrangler.json` was stale; the
+  rebuild between edit and redeploy is the missing step that the standard UAT runbook should call
+  out for future operators.)
+- Step 3 — `delivered:test-uat-f3b3c3dd-...` value `{v:1, dry_run:false,
+  resend_message_id:"16bc7812-011d-4fea-87a6-b4cecd7ed71b", msg_count:2, truncated:false,
+  delivered_at:"2026-05-13T14:00:53.121Z"}`; `live:{sid}` returned 404 (Phase 19 D-09 crash-safe
+  ordering held: PUT delivered → DELETE live); email arrived in Gmail Inbox; body shape matched
+  D-11 (8-line metadata header with LABEL_WIDTH=12 padded labels, cache aggregate `1/1 turns hit,
+  1,234 read / 0 created`) + D-12 (literal provenance line `From: chat widget on jackcutrara.com
+  — visitor message follows below this line.` then blank line then `>>> visitor:` / `<<< bot:`
+  turn markers with em-dash preserved verbatim). Closes SC1 + SC2 + SC3.
+- Step 4 — wrangler.jsonc reverted to `["0 * * * *"]`; `git diff` empty; rebuild + redeploy
+  shipped version `ede1431f-e92a-4fda-af54-4f8f57781d3b` with `schedule: 0 * * * *`; 4/4 Pitfall 6
+  build guards GREEN against the reverted source state.
+- Step 5 — `delivered:test-uat-*` deleted; both `live:test-uat-*` and `delivered:test-uat-*`
+  prefix listings return `[]`. No UAT audit-debt in PROD KV.
+- Step 6 — PENDING under 7-day soft cap; first organic visitor session post-deploy will close
+  SC4 (idempotency in the wild) via Layer 1 `delivered:{sid}` cursor + Layer 2 Resend
+  Idempotency-Key 24h window. Soft cap: by 2026-05-20, if no organic visitor, operator runs
+  `node scripts/resend-warmup.mjs` as proxy (records Resend message ID + Gmail arrival in
+  20-UAT.md Step 6 result block; logs explicit deviation note).
+
+Phase-close pnpm test = 560 PASS / 0 FAIL / 2 SKIP (Phase 19 baseline 498; +62 net new Phase 20
+tests across 5 files). `pnpm exec astro check` = 0/0/0 (116 files). `pnpm build` = clean.
+`package.json dependencies` byte-identical (MAIL-01 zero-new-runtime-dep lock holds phase-wide).
+D-15 SSE byte-identical anchor + D-26 chat-surface battery + TEST-03 Anthropic prompt-cache
+integrity + DEBT-02 cache-hit-logs all PRESERVED phase-wide (Phase 20 touched zero chat-surface
+files; full `chat.ts`/`api/chat.ts`/`validation.ts`/`ChatWidget.astro`/`global.css` byte-identical
+from Phase 19 close per `git diff origin/main..HEAD -- <chat-surface>` returning empty).
+
+v1.3 milestone status: 4/4 phases shipped (17 + 18 + 19 + 20); 26/26 plans complete; 28/28 v1.3
+requirements GREEN + 3/3 cross-phase TEST gates preserved. Once Step 6 closes (within 7 days),
+v1.3 routes to `/gsd-complete-milestone v1.3` for archival + v1.4 milestone planning.
+
+Tail-CLI observability gap (informational, NOT phase-blocking): `wrangler tail --format pretty
+--search "chat.delivery"` produced zero output during the 4-minute UAT window despite verified
+log emission on every cron tick (the delivered:{sid} write + 14:00:53Z timestamp prove
+scheduled() ran and the wrapper succeeded). Cause unknown — possibly wrangler 4.83 search-filter
+behavior, possibly tail SSE attachment race against the per-minute cron boundary. Worth a
+low-priority /gsd-quick task post-Step-6 to validate the operational query convention
+(`wrangler tail --format pretty --search "chat.delivery.sent"`) before any future cron-debug
+session relies on it.
+
+### Phase 17 Re-Opened (Gap Closure — 2026-05-11) — CLOSED 2026-05-11
 
 ### Phase 17 Re-Opened (Gap Closure — 2026-05-11) — CLOSED 2026-05-11
 

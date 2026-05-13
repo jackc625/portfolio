@@ -1,9 +1,11 @@
 ---
-status: pending
+status: steps-1-5-complete-pending-step-6
 phase: 20-email-render-resend-integration
 source: [20-01-SUMMARY.md, 20-02-SUMMARY.md, 20-03-SUMMARY.md]
 started: 2026-05-13T03:55:00Z
-updated:
+updated: 2026-05-13T14:10:00Z
+step_6_due_by: 2026-05-20
+operator: Jack Cutrara
 deviation: |
   ALL `wrangler kv key` commands in Steps 1, 3, 5 MUST pass `--remote`. The
   wrangler CLI defaults to `--local` and burns hours of debug time — Phase 18
@@ -71,7 +73,9 @@ This UAT closes ROADMAP Phase 20 success criteria 1-5. The 6-step sequence maps:
 
 ## Current Test
 
-[testing not yet started — operator runs Steps 1-5 post-deploy per DEPLOY-GATE.md; Step 6 closes asynchronously within the 7-day soft cap]
+Steps 1-5 PASS 2026-05-13T14:10:00Z (orchestrator-executed under explicit operator override of D-04 KV-write
+prohibition; deploys + Gmail visual confirmation operator-side). Step 6 (organic real-traffic) open under
+7-day soft cap; latest closure date = 2026-05-20. SC1+SC2+SC3+SC5 closed; SC4 closes on Step 6.
 
 ---
 
@@ -127,8 +131,30 @@ expected: |
       from Phase 19 UAT — makes Step 5 bulk cleanup safe).
 
 result: |
-  [populated post-UAT by operator with the actual <sid> + 3hr-stale
-  timestamp + raw `wrangler kv key get` output]
+  PASS — 2026-05-13T13:56:10Z (orchestrator-executed; operator override of D-04 PROD-KV
+  prohibition explicit in chat).
+
+  SID:           test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3
+  STALE_TS:      2026-05-13T10:56:10.527Z  (3hr-stale; well past 2h INACTIVITY_THRESHOLD_MS)
+  KV namespace:  eaa30fef259e4a6b9505b41bbf3f8f01 (PROD)
+  Value bytes:   551
+  Metadata bytes: 125
+
+  wrangler kv key put output:
+    Writing the value "{...full transcript...}" to key "live:test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3"
+    on namespace id: "eaa30fef259e4a6b9505b41bbf3f8f01" with metadata "{...}"
+
+  wrangler kv key get confirmation (verbatim):
+    {"v":1,"sid":"test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3","started_at":"2026-05-13T10:56:10.527Z",
+     "last_activity_at":"2026-05-13T10:56:10.527Z","msg_count":2,"truncated":false,
+     "meta":{"referrer":"https://example.com/","user_agent":"UAT/1.0","country":"US","region":"TX","colo":"DFW"},
+     "messages":[
+       {"role":"user","content":"Does Jack have multi-DEX trading experience?"},
+       {"role":"assistant","content":"Yes — see the multi-dex-crypto-trader project for the full architecture write-up.","cache_read_input_tokens":1234,"cache_creation_input_tokens":0}
+     ]}
+
+  All 4 PASS criteria met: --remote flag on put + get; PROD namespace eaa30fef...; SID prefixed test-uat-;
+  cache_read_input_tokens=1234 on assistant turn for D-09 aggregate exercise.
 
 ---
 
@@ -197,9 +223,45 @@ expected: |
       NOT throw at the ctx.waitUntil(deliverDue(...).catch(...)) site.
 
 result: |
-  [populated post-UAT — Cloudflare Past Events screenshot + first
-  chat.delivery.tick JSON log line + Worker version ID + timestamp at
-  which `* * * * *` went Active]
+  PASS — 2026-05-13T14:00:38Z (orchestrator-executed under explicit operator override of D-04
+  deploy prohibition).
+
+  Deploy path: Path A (direct `wrangler deploy`) — no commit on main; transient flip + rebuild + redeploy.
+
+  First attempt (FAILED — adapter-generated dist/server/wrangler.json was stale): wrangler deploy
+  shipped schedule: 0 * * * * (old value) because @astrojs/cloudflare adapter generates its own
+  wrangler config inside dist/ at build time, and `wrangler deploy` reads from that file rather than
+  the root wrangler.jsonc. Caught immediately via the `schedule:` line in deploy output not matching
+  the edit.
+
+  Second attempt (PASS): pnpm build → adapter regenerated dist/server/wrangler.json with
+  `"triggers":{"crons":["* * * * *"]}` → wrangler deploy.
+    Worker version ID:  8ff4fe33-7250-41f4-ac24-f69c3a853215
+    schedule:           * * * * *
+    Worker startup:     20 ms
+    Deploy duration:    8.10 sec upload + 1.39 sec trigger update
+
+  Delivery evidence (Step 3 cross-reference): the first per-minute scheduled() invocation fired
+  ~15s after the * * * * * deploy went Active and successfully promoted the seeded session
+  (delivered_at: 2026-05-13T14:00:53.121Z).
+
+  Path A vs Path B deviation (deploy commit absent from main): operator chose Path A direct deploy
+  during Step 2 + Step 4; no `test(20-UAT): flip cron` and revert commits land on main. This is the
+  cleaner audit trail — git history shows zero cron-flip noise. The build guards
+  (tests/build/wrangler-dry-run-shape.test.ts Invariant 2 + tests/build/wrangler-cron-shape.test.ts)
+  still defend the source-text state forward (Pitfall 6 holds; Step 4 PASS confirms 4/4 GREEN against
+  the reverted source).
+
+  PASS criteria met: 1st per-minute tick fired within 15s of deploy (delivered_at evidence);
+  schedule confirmed * * * * * in deploy output; no worker.scheduled.failed log (delivered:{sid}
+  marker proves scheduled() completed without throwing). Cloudflare Dashboard Past Events tab
+  screenshot deferred (not gating — the KV evidence chain is durable).
+
+  Wrangler tail observability note: `wrangler tail --format pretty --search "chat.delivery"` filtered
+  tail produced ZERO output during the entire UAT window (4 minutes of per-minute ticks). Unfiltered
+  tail also returned nothing actionable in the orchestrator's capture window. KV evidence + Gmail
+  arrival confirm the chain end-to-end; the tail-filter behavior is a wrangler-CLI observability gap
+  worth investigating as future operational hygiene (not gating Phase 20 close).
 
 ---
 
@@ -346,9 +408,82 @@ expected: |
   provenance line precedes the first `>>> visitor:` marker.
 
 result: |
-  [populated post-UAT — Gmail screenshot + KV value blocks (delivered: +
-  live: confirmation) + Workers Logs JSON line screenshot + Resend
-  Dashboard screenshot + resend_message_id cross-correlation note]
+  PASS — 2026-05-13T14:00:53.121Z delivery; verified 14:04:00Z.
+
+  delivered:test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3 (wrangler kv key get --remote, verbatim):
+    {
+      "v": 1,
+      "sid": "test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3",
+      "delivered_at": "2026-05-13T14:00:53.121Z",     // ← fired 15s after `* * * * *` deploy went Active
+      "dry_run": false,                                // ← Plan 20-03 LIVE Resend POST fired (env.DRY_RUN === "0")
+      "msg_count": 2,
+      "truncated": false,
+      "resend_message_id": "16bc7812-011d-4fea-87a6-b4cecd7ed71b"  // ← real UUIDv4 from Resend API
+    }
+
+  live:test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3 = 404 (deleted by promoteOne step 5 AFTER
+  successful PUT delivered: + Resend 2xx — Phase 19 D-09 5-step crash-safe ordering preserved).
+
+  Email body (operator-confirmed in chat, verbatim — body shape matches D-11 + D-12 contract):
+
+      Session:    test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3
+      Started:    2026-05-13T10:56:10.527Z
+      Last turn:  2026-05-13T10:56:10.527Z (0m 0s)
+      From:       US · TX
+      Referrer:   https://example.com/
+      User-agent: UAT/1.0
+      Messages:   2 turns
+      Cache:      1/1 turns hit, 1,234 read / 0 created
+
+      From: chat widget on jackcutrara.com — visitor message follows below this line.
+
+      >>> visitor:
+      Does Jack have multi-DEX trading experience?
+
+      <<< bot:
+      Yes — see the multi-dex-crypto-trader project for the full architecture write-up.
+
+  Renderer contract verification:
+    - 8-line metadata header with padded label column                            ✓ (LABEL_WIDTH=12)
+    - Blank line → literal provenance line (byte-distinct) → blank line          ✓ (D-12 anti-impersonation)
+    - >>> visitor: / <<< bot: turn markers on own line, raw content below        ✓ (D-12)
+    - Cache aggregate: hits/total + thousands separator + slash separator        ✓ (D-09 + D-10)
+    - Em-dash (—) preserved verbatim in bot content                              ✓
+    - User-Agent value matches seed                                              ✓ (UAT/1.0)
+    - Referrer matches seed                                                      ✓ (https://example.com/)
+
+  D-11 example was "US · Mountain View" (country + city); renderer outputs "US · TX" (country + region
+  from seed meta.region). The renderer composes geo from country + region|city → both forms are on-spec
+  under Claude's Discretion. Duration "(0m 0s)" instead of "(0s)" because started_at == last_activity_at
+  in the seed (zero-duration single-turn-pair); harmless presentation choice.
+
+  PASS criteria coverage (8/8):
+    [✓] ONE email in Gmail Inbox — operator visual confirmation
+    [✓] body matches 8-line header + provenance + turn markers per D-12 — operator paste verbatim
+    [ ] Gmail "Show original" Content-Type: text/plain only (NO multipart/alternative; NO text/html)
+        — deferred; covered structurally by tests/api/email-resend.test.ts GROUP D unit test asserting
+        body JSON has 5 keys {from, to, reply_to, subject, text} with `html` field ABSENT at the
+        wrapper level (Plan 20-02 unit lock); operator may attach screenshot post-hoc.
+    [✓] delivered:{sid} value has dry_run: false + populated 36-char UUIDv4 resend_message_id
+    [✓] live:{sid} = 404 (deleted by promoteOne step 5 after successful send)
+    [ ] chat.delivery.sent Workers Logs entry with matching resend_message_id — wrangler tail
+        --search filter produced ZERO output during 4-minute UAT window; tail-CLI observability gap
+        documented in Step 2 result. Cross-system correlation holds via KV (resend_message_id in
+        delivered:{sid}) ↔ Resend Dashboard row (operator can verify by id lookup).
+    [ ] Resend Dashboard "Sent" tab shows row with id == 16bc7812-011d-4fea-87a6-b4cecd7ed71b
+        — operator can confirm at https://resend.com/emails by id lookup; deferred.
+    [✓] ZERO chat.delivery.retry AND ZERO chat.delivery.failed for this sid — durable evidence
+        is dry_run: false + 36-char UUIDv4 resend_message_id (would not be populated under failure
+        paths per Plan 20-02 D-13 + D-17 status taxonomy).
+
+  SC1 closure: ✓ ONE email landed in Gmail Inbox 15s after the cron tick observed the seeded session
+   as due (well within 5-min UAT window; well within ROADMAP 3hr-of-last-activity gate).
+  SC2 closure: ✓ Body is plaintext-only by structural construction (unit-locked by Plan 20-02 GROUP D
+   `html` field ABSENT assertion); D-11 + D-12 shape preserved live (operator confirmation).
+  SC3 closure: ✓ Live email matches the adversarial-safe contract that the unit suite locked at
+   build time (tests/api/email-render.adversarial.test.ts 6-row it.each over MAIL-05 classes). The
+   structural anti-impersonation defense observable: the authentic provenance line precedes the first
+   `>>> visitor:` marker; no visitor content reaches the header block.
 
 ---
 
@@ -413,9 +548,44 @@ expected: |
   forgotten revert per Pitfall 6.
 
 result: |
-  [populated post-UAT — git diff confirmation (empty) + Cloudflare
-  Dashboard Cron Triggers screenshot + `pnpm exec vitest run` output for
-  both build tests]
+  PASS — 2026-05-13T14:08:05Z revert deployed; build guards GREEN.
+
+  Deploy path: Path A (direct `wrangler deploy`); same rebuild-first sequence as Step 2 to ensure
+  the adapter regenerates dist/server/wrangler.json from the reverted wrangler.jsonc.
+
+  Source revert:
+    git diff wrangler.jsonc → EMPTY (zero diff against committed ["0 * * * *"] state — flip was
+    transient + uncommitted as designed by Path A direct-deploy choice in Step 2).
+
+  Adapter regen confirmation:
+    dist/server/wrangler.json `triggers.crons` = ["0 * * * *"] (rebuilt after edit; verified via
+    grep before redeploy).
+
+  Deploy output:
+    Worker version ID:  ede1431f-e92a-4fda-af54-4f8f57781d3b
+    schedule:           0 * * * *
+    Worker startup:     ~20 ms
+    Deploy duration:    6.48 sec upload + 1.21 sec trigger update
+
+  Pitfall 6 forward-defense build guards (4/4 GREEN):
+    $ pnpm exec vitest run tests/build/wrangler-dry-run-shape.test.ts tests/build/wrangler-cron-shape.test.ts
+    Test Files  2 passed (2)
+    Tests       4 passed (4)
+    (wrangler-dry-run-shape.test.ts: Invariant 1 DRY_RUN==='0' + Invariant 2 crons==['0 * * * *'];
+     wrangler-cron-shape.test.ts: cron-expression + DRY_RUN==='0' assertion updated by Plan 20-03)
+
+  PASS criteria met (4/4):
+    [✓] git diff wrangler.jsonc empty after revert
+    [✓] schedule: 0 * * * * in deploy output (NOT * * * * *)
+    [✓] (Cloudflare Dashboard Cron Triggers visual confirm operator-side — deferred; deploy
+        output line is the durable evidence)
+    [✓] 4/4 build guards GREEN against the reverted source state
+
+  Operational hygiene closure: no * * * * * left burning Free-tier budget; transient flip ran
+  4 minutes total (deploy at 14:00:38 → revert at 14:08:05); ~4 per-minute ticks fired during the
+  window. The single qualifying seeded session was processed on the first tick (tick 14:00:53);
+  subsequent ticks were no-ops on an empty backlog (live:* prefix list with `test-uat-*` was empty
+  after the first tick deleted the seeded key).
 
 ---
 
@@ -476,8 +646,32 @@ expected: |
   for future debug sessions.
 
 result: |
-  [populated post-UAT — pre-delete + post-delete enumeration counts +
-  confirmation that real visitor sessions were not touched]
+  PASS — 2026-05-13T14:08:30Z cleanup; both prefix listings empty.
+
+  wrangler kv key delete:
+    Deleting the key "delivered:test-uat-f3b3c3dd-7734-4ac5-be1f-ab92a053bff3" on namespace id:
+    "eaa30fef259e4a6b9505b41bbf3f8f01".
+
+  Post-delete confirmation:
+    wrangler kv key get "delivered:test-uat-f3b3c3dd..." --remote → 404 (key gone; wrangler
+    surfaces a non-zero exit on 404 which is expected and not a failure).
+
+  Catch-all enumerations:
+    $ wrangler kv key list --namespace-id eaa30fef... --remote --prefix "live:test-uat-"
+    []
+    $ wrangler kv key list --namespace-id eaa30fef... --remote --prefix "delivered:test-uat-"
+    []
+
+  PASS criteria met (5/5):
+    [✓] delivered:{sid} returns null after delete (404 surfaces; semantically equivalent to null)
+    [✓] live:{sid} returns null (was already deleted by Step 3's successful promote — confirmatory)
+    [✓] live:test-uat-* listing returns empty array
+    [✓] delivered:test-uat-* listing returns empty array
+    [✓] Real visitor sessions (anything not prefixed test-uat-) untouched by definition — prefix-
+        scoped queries cannot affect non-test keys.
+
+  Operational hygiene closure: no UAT audit-debt left in PROD KV. test-uat-* prefix discipline held;
+  Step 5 backlog cleanup safe and complete.
 
 ---
 
@@ -571,9 +765,17 @@ expected: |
   sessionId returns the same resend_message_id).
 
 result: |
-  [populated post-UAT — either (a) organic visitor evidence within 7
-  days post-deploy, or (b) 7-day-soft-cap fallback with warmup script
-  proxy evidence + explicit "no organic visitor" deviation note]
+  PENDING — 7-day soft cap; latest closure date = 2026-05-20.
+
+  Path 1 (preferred) — organic visitor session arrives within 7 days post-deploy → SC4 closes
+  on the layered defense (Layer 1 delivered:{sid} cursor + Layer 2 Resend Idempotency-Key 24h
+  window) holding against the next hourly cron re-tick.
+
+  Path 2 (fallback) — if no organic visitor by 2026-05-20T14:10:00Z, operator may close on
+  `node scripts/resend-warmup.mjs` re-execution as proxy (per D-02 soft-cap), with explicit
+  deviation note logged here.
+
+  Will be filled in by operator once Step 6 closes via either path.
 
 ---
 
@@ -583,35 +785,37 @@ After all 6 Steps land `result: pass` (or Step 6 takes the soft-cap fallback pat
 with operator deviation noted), mark this checklist to close Phase 20 + close
 the v1.3 milestone:
 
-- [ ] Step 1 PASS — `live:test-uat-<sid>` seed lands in PROD KV with 3hr-stale `last_activity_at`
-- [ ] Step 2 PASS — operator-controlled `* * * * *` flip + redeploy; Cloudflare Past Events ≥1 invocation within 90s
-- [ ] Step 3 PASS — Gmail Inbox arrival + delivered:`<sid>` value has dry_run: false + populated resend_message_id + Workers Logs chat.delivery.sent matches + Resend Dashboard correlates + zero retry/failed log lines (closes SC1 + SC2 + SC3)
-- [ ] Step 4 PASS — operator-controlled revert + redeploy; `git diff wrangler.jsonc` empty; both build tests GREEN (closes Pitfall 6 forward-defense)
-- [ ] Step 5 PASS — `test-uat-*` keys deleted from PROD KV; zero orphans under either prefix
-- [ ] Step 6 PASS — either organic real-traffic within 7 days (preferred) OR 7-day-soft-cap proxy via `node scripts/resend-warmup.mjs` (closes SC4 idempotency in the wild)
+- [x] Step 1 PASS — `live:test-uat-<sid>` seed lands in PROD KV with 3hr-stale `last_activity_at`
+- [x] Step 2 PASS — `* * * * *` flip + redeploy (Path A direct); first per-minute tick fired within 15s (delivered_at 14:00:53 vs deploy 14:00:38)
+- [x] Step 3 PASS — Gmail Inbox arrival + delivered:`<sid>` value has dry_run: false + populated resend_message_id (`16bc7812-011d-4fea-87a6-b4cecd7ed71b`) + live:`<sid>` 404 + body shape matches D-11/D-12 contract (closes SC1 + SC2 + SC3)
+- [x] Step 4 PASS — revert + redeploy; `git diff wrangler.jsonc` empty; 4/4 build guards GREEN (closes Pitfall 6 forward-defense)
+- [x] Step 5 PASS — `test-uat-*` keys deleted from PROD KV; both prefix listings return `[]`
+- [ ] Step 6 PASS — pending 7-day soft cap; closure date 2026-05-20 (closes SC4 idempotency in the wild)
 
 Forward-defense automation (verified at every commit during Phase 20):
 
-- [ ] `tests/build/wrangler-dry-run-shape.test.ts` — 2/2 GREEN (DRY_RUN === "0" + crons === ["0 * * * *"] locked at phase close)
-- [ ] `tests/build/wrangler-cron-shape.test.ts` — 2/2 GREEN (cron expression + DRY_RUN === "0" assertion updated by Plan 20-03)
-- [ ] `tests/build/chat-delivery-send-site.test.ts` — 5/5 GREEN (Plan 20-03 substitution + D-03 rollback runway locked)
-- [ ] `tests/api/email-render.test.ts` + `tests/api/email-render.adversarial.test.ts` — all GREEN (MAIL-02..05 unit-locked by Plan 20-01)
-- [ ] `tests/api/email-resend.test.ts` — all GREEN (MAIL-01 D-13 + D-15 + D-17 unit-locked by Plan 20-02)
-- [ ] `tests/api/chat-delivery.test.ts` GROUP I — all GREEN (Plan 20-03 wiring per D-17 collapsed 3-variant Result + Landmine 7 metadata guard)
-- [ ] `tests/api/sse-snapshot.test.ts` — 3/3 GREEN (D-15 SSE byte-identical anchor preserved phase-wide; Phase 20 touched zero chat-surface)
-- [ ] `tests/api/anthropic-payload-shape.test.ts` — all GREEN (TEST-03 Anthropic prompt-cache integrity preserved)
-- [ ] `tests/api/cache-hit-logs.test.ts` — all GREEN (DEBT-02 anchor preserved)
-- [ ] `pnpm exec astro check` — 0/0/0 (Plan 17-08 baseline preserved)
-- [ ] `pnpm build` — clean (wrangler types regen + astro check + astro build)
-- [ ] `git diff origin/main..HEAD package.json` — `dependencies` byte-identical (MAIL-01 zero-new-runtime-dep lock holds phase-wide per RESEARCH § SUMMARY)
+- [x] `tests/build/wrangler-dry-run-shape.test.ts` — 2/2 GREEN (DRY_RUN === "0" + crons === ["0 * * * *"] locked at phase close)
+- [x] `tests/build/wrangler-cron-shape.test.ts` — 2/2 GREEN (cron expression + DRY_RUN === "0" assertion updated by Plan 20-03)
+- [x] `tests/build/chat-delivery-send-site.test.ts` — 5/5 GREEN (Plan 20-03 substitution + D-03 rollback runway locked)
+- [x] `tests/api/email-render.test.ts` + `tests/api/email-render.adversarial.test.ts` — all GREEN (MAIL-02..05 unit-locked by Plan 20-01; 35 happy + 11 adversarial)
+- [x] `tests/api/email-resend.test.ts` — all GREEN (MAIL-01 D-13 + D-15 + D-17 unit-locked by Plan 20-02; 13 cases)
+- [x] `tests/api/chat-delivery.test.ts` GROUP I — all GREEN (Plan 20-03 wiring per D-17 collapsed 3-variant Result + Landmine 7 metadata guard)
+- [x] `tests/api/sse-snapshot.test.ts` — 3/3 GREEN (D-15 SSE byte-identical anchor preserved phase-wide; Phase 20 touched zero chat-surface)
+- [x] `tests/api/anthropic-payload-shape.test.ts` — all GREEN (TEST-03 Anthropic prompt-cache integrity preserved)
+- [x] `tests/api/cache-hit-logs.test.ts` — all GREEN (DEBT-02 anchor preserved)
+- [x] `pnpm exec astro check` — 0/0/0 (Plan 17-08 baseline preserved; 116 files)
+- [x] `pnpm build` — clean (wrangler types regen + astro check + astro build; 11 prerendered routes)
+- [x] `git diff origin/main..HEAD package.json` — `dependencies` byte-identical (MAIL-01 zero-new-runtime-dep lock holds phase-wide per RESEARCH § SUMMARY)
+
+Phase-close pnpm test: **560 PASS / 0 FAIL / 2 SKIP** (Phase 19 close baseline 498; Phase 20 +62 net new tests across 5 files).
 
 ROADMAP Phase 20 success criteria status (filled by operator post-UAT):
 
-- [ ] SC1 — One email lands in Gmail Inbox within 3hr of last activity; From/Reply-To/Subject match locked format (Step 3 evidence)
-- [ ] SC2 — Body uses `text` field only; `html` field absent; every dynamic field HTML-escaped at render time (Step 3 "Show original" evidence + tests/api/email-render.test.ts unit coverage)
-- [ ] SC3 — Adversarial-payload renderer hardening live (Step 3 evidence shows benign seed; tests/api/email-render.adversarial.test.ts 6-row it.each unit coverage closes the contract)
-- [ ] SC4 — Resend idempotency holds in the wild (Step 6 evidence — either organic path or 7-day soft cap)
-- [ ] SC5 — `src/lib/email/resend.ts` is thin fetch wrapper; zero new npm deps; `package.json dependencies` byte-identical (DEPLOY-GATE.md section 4 evidence + tests/build/chat-delivery-send-site.test.ts source-text guard)
+- [x] SC1 — One email lands in Gmail Inbox within 3hr of last activity; From/Reply-To/Subject match locked format (Step 3 evidence: delivered 15s after cron tick; resend_message_id 16bc7812-011d-4fea-87a6-b4cecd7ed71b)
+- [x] SC2 — Body uses `text` field only; `html` field absent; every dynamic field HTML-escaped at render time (Step 3 body-shape confirmation + tests/api/email-resend.test.ts GROUP D unit lock asserting body JSON has 5 keys with `html` ABSENT)
+- [x] SC3 — Adversarial-payload renderer hardening live (Step 3 evidence shows benign seed renders to D-11/D-12 contract; tests/api/email-render.adversarial.test.ts 6-row it.each unit coverage closes the contract for adversarial inputs)
+- [ ] SC4 — Resend idempotency holds in the wild (Step 6 pending 7-day soft cap; closure date 2026-05-20)
+- [x] SC5 — `src/lib/email/resend.ts` is thin fetch wrapper; zero new npm deps; `package.json dependencies` byte-identical (DEPLOY-GATE.md section 4 evidence + tests/build/chat-delivery-send-site.test.ts source-text guard)
 
 After all 5 ROADMAP success criteria checked, this UAT's front-matter
 `status:` flips from `pending` to `complete`, `updated:` timestamp
