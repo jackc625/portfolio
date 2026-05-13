@@ -161,3 +161,13 @@ None — no external service configuration. All Phase 20 secrets (`RESEND_API_KE
 ---
 *Phase: 20-email-render-resend-integration*
 *Completed: 2026-05-12*
+
+## Self-Check: PASSED
+
+- FOUND: src/lib/email/render.ts
+- FOUND: tests/api/email-render.test.ts
+- FOUND: tests/api/email-render.adversarial.test.ts
+- FOUND: .planning/phases/20-email-render-resend-integration/20-01-SUMMARY.md
+- FOUND: commit 0dfd8eb (Task 1 — test scaffold)
+- FOUND: commit 56ba76d (Task 2 — feat renderer)
+- FOUND: commit d6589a8 (docs SUMMARY)
