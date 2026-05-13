@@ -281,7 +281,12 @@ function pad(label: string): string {
  * Examples: 514_000 -> "8m 34s", 0 -> "0m 0s", 65_000 -> "1m 5s".
  */
 function formatDuration(durationMs: number): string {
-  const totalSeconds = Math.max(0, Math.floor(durationMs / 1000));
+  // CR-01 (Phase 20 code review) — belt-over-suspenders NaN/Infinity coerce.
+  // composeBody already guards the call site against NaN inputs from
+  // Date.parse, but `formatDuration` is reached by any future caller too;
+  // coerce non-finite to 0 so this helper is safe in isolation.
+  const safeMs = Number.isFinite(durationMs) ? durationMs : 0;
+  const totalSeconds = Math.max(0, Math.floor(safeMs / 1000));
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes}m ${seconds}s`;
@@ -303,7 +308,16 @@ function composeBody(transcript: ChatTranscript): string {
   const meta = transcript.meta;
   const startMs = Date.parse(transcript.started_at);
   const lastMs = Date.parse(transcript.last_activity_at);
-  const durationMs = Math.max(0, lastMs - startMs);
+  // CR-01 (Phase 20 code review) — guard against malformed ISO timestamps.
+  // `Math.max(0, NaN)` returns NaN, not 0; without this guard a corrupted
+  // KV entry, manual KV edit, or buggy migration tool would produce a
+  // literal "(NaNm NaNs)" suffix on the "Last turn" header line. Mirrors
+  // the chat-delivery.ts:504 NaN guard added for the same reason against
+  // metadata.last_activity_at.
+  const durationMs =
+    Number.isNaN(startMs) || Number.isNaN(lastMs)
+      ? 0
+      : Math.max(0, lastMs - startMs);
   const durationLabel = formatDuration(durationMs);
 
   // Sid is server-generated (UUID) and not visitor-typable but flows through
