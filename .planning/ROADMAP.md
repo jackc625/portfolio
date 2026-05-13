@@ -182,7 +182,28 @@ Plans:
   3. Adversarial-payload unit suite covers `<script>` injection, `</p><img onerror=...>`, `javascript:` URLs, RTL/Unicode bidi overrides (`U+202A..U+202E`, `U+2066..U+2069`), null bytes, and social-engineering provenance prefixes (e.g. visitor typing "From: chat widget on jackcutrara.com") — Gmail renders all payloads as literal text and CR/LF stripped from every header component.
   4. Resend idempotency holds: every POST carries `Idempotency-Key: transcript/{sessionId}`; running the sweep twice over the same delivered session results in exactly one delivered email (Resend returns `idempotency_replay: true` on the second attempt); 5xx errors retry with the same key under exponential backoff.
   5. `src/lib/email/resend.ts` is a thin `fetch()` wrapper to `https://api.resend.com/emails` — zero new npm dependencies introduced (`package.json` `dependencies` byte-identical phase-wide); no Node-runtime APIs called.
-**Plans**: TBD
+**Plans**: 4 plans across 3 waves
+
+Plans:
+
+**Wave 1** *(no dependencies — parallel branches by file ownership)*
+- [ ] 20-01-PLAN.md — Email Renderer (Pure Module + Adversarial Tests): NEW src/lib/email/render.ts pure ChatTranscript -> ResendPayload renderer (subject D-05/06/07/08 + body D-09/10/11/12 + sanitizer pipeline Landmine 6) + NEW tests/api/email-render.test.ts (~13 happy + edge tests) + NEW tests/api/email-render.adversarial.test.ts (it.each over 6 MAIL-05 payload classes). Closes MAIL-02 + MAIL-03 + MAIL-04 + MAIL-05.
+- [ ] 20-02-PLAN.md — Resend HTTP Wrapper (Pure Module + Mocked-Fetch Tests): NEW src/lib/email/resend.ts pure REST wrapper (POST + Authorization Bearer + Idempotency-Key + AbortController 10s + 3-variant Result per D-17 + 3-event structured logging per D-16+D-17) + NEW tests/api/email-resend.test.ts (mocked fetch + DOMException AbortError mock per Landmine 1). Closes MAIL-01.
+
+**Wave 2** *(depends on 20-01 + 20-02)*
+- [ ] 20-03-PLAN.md — Wire sendOne Substitution + Wrangler Flip + Forward-Defense: src/lib/chat-delivery.ts sendOne substitution + DeliveredMarker.resend_message_id additive extension + promoteOne step-4 PUT site populates field + wrangler.jsonc DRY_RUN "1" -> "0" (single-line atomic flip per D-01) + EXTEND tests/api/chat-delivery.test.ts (GROUP F 6 wiring tests per D-17 collapsed Result + GROUP D rewrite for new contract) + NEW tests/build/chat-delivery-send-site.test.ts (5 invariants source-text-locking sendEmail + renderEmail wired AND throw stub gone AND DRY_RUN=='1' rollback runway preserved per D-03) + NEW tests/build/wrangler-dry-run-shape.test.ts (2 invariants — DRY_RUN=='0' + cron==['0 * * * *'] Pitfall 6 defense) + UPDATE tests/build/wrangler-cron-shape.test.ts existing DRY_RUN=='1' assertion to '0'.
+
+**Wave 3** *(depends on 20-03 — autonomous: false; operator-driven deploy gate)*
+- [ ] 20-04-PLAN.md — UAT + Deploy Gate (Phase Closure): NEW 20-UAT.md (6 numbered manual operator steps mapping 1:1 to ROADMAP success criteria 1-5 + Step 6 organic real-traffic 7-day soft cap) + NEW DEPLOY-GATE.md (mirrors Plan 17-08 template; status=pending at first commit; 5-section pre-deploy checklist + executor-MUST-NOT-push prohibition + ROLLBACK PROCEDURE per D-03). Task 2 is a checkpoint:human-verify pausing for operator UAT + chat-reply 'approved — deploy gate cleared' + git push origin main (operator-controlled).
+
+**Cross-cutting constraints** *(must hold across all Phase 20 plans):*
+- D-26 chat-surface battery PRESERVED at every commit (Phase 20 touches ZERO chat-surface files: chat.ts / api/chat.ts / validation.ts / ChatWidget.astro / global.css UNTOUCHED)
+- D-15 SSE byte-identical anchor PRESERVED (`tests/api/sse-snapshot.test.ts` GREEN at every commit; informational forward-defense)
+- TEST-03 Anthropic prompt-cache integrity PRESERVED (`tests/api/anthropic-payload-shape.test.ts` GREEN at every commit)
+- `pnpm exec astro check` exits 0/0/0 at every commit (Plan 17-08 baseline)
+- `package.json` `dependencies` BYTE-IDENTICAL phase-wide (MAIL-01 zero-new-runtime-dep lock — REST via global fetch, no SDK install)
+- DRY_RUN=='1' branch in `src/lib/chat-delivery.ts` sendOne PRESERVED in source as the rollback runway (D-03 — do NOT remove as 'dead code'; tests/build/chat-delivery-send-site.test.ts Invariants D + E source-text-lock its presence)
+- D-17 supersedes D-14/D-16: ResendResult is a 3-variant discriminated union (sent / failed_transient / failed_terminal) — NO replayed variant; 3 log events (chat.delivery.sent / .failed / .retry) — NO chat.delivery.idempotency_replay event; Layer 1 (`delivered:{sid}` cursor + Phase 19 chat.delivery.skipped_already_delivered log) IS the application-side replay detector
 
 ## Progress
 

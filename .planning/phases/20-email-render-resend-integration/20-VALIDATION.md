@@ -1,8 +1,8 @@
 ---
 phase: 20
 slug: email-render-resend-integration
-status: draft
-nyquist_compliant: false
+status: planned
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-05-12
 ---
@@ -44,7 +44,14 @@ created: 2026-05-12
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| _populated by planner_ | | | | | | | | | ⬜ pending |
+| 20-01-T1 | 20-01 | 1 | MAIL-02, MAIL-03, MAIL-04, MAIL-05 | T-20-01-01..07 | Wave 0 scaffold: 2 NEW test files with stubs covering all renderer + adversarial test names from VALIDATION.md | unit (RED stubs) | pnpm exec astro check | ❌ to be created | ⬜ pending |
+| 20-01-T2 | 20-01 | 1 | MAIL-02, MAIL-03, MAIL-04, MAIL-05 | T-20-01-01..07 | Author src/lib/email/render.ts pure renderer (subject + body + sanitizer pipeline + cache aggregate); turn RED tests GREEN | unit | pnpm exec vitest run tests/api/email-render.test.ts tests/api/email-render.adversarial.test.ts | ❌ to be created | ⬜ pending |
+| 20-02-T1 | 20-02 | 1 | MAIL-01 | T-20-02-01..07 | Wave 0 scaffold: tests/api/email-resend.test.ts with mocked-fetch + AbortController + 3-variant Result stubs | unit (RED stubs) | pnpm exec astro check | ❌ to be created | ⬜ pending |
+| 20-02-T2 | 20-02 | 1 | MAIL-01 | T-20-02-01..07 | Author src/lib/email/resend.ts pure REST wrapper (POST + headers + AbortController + Result + 3-event logging); turn RED tests GREEN | unit | pnpm exec vitest run tests/api/email-resend.test.ts | ❌ to be created | ⬜ pending |
+| 20-03-T1 | 20-03 | 2 | MAIL-01, MAIL-02, MAIL-03, MAIL-04, MAIL-05 | T-20-03-01..07 | Wave 0 scaffold: extend chat-delivery.test.ts GROUP F + author 2 NEW build tests (chat-delivery-send-site + wrangler-dry-run-shape) as RED | unit + build (RED stubs) | pnpm exec astro check | ❌ to be created | ⬜ pending |
+| 20-03-T2 | 20-03 | 2 | MAIL-01, MAIL-02, MAIL-03, MAIL-04, MAIL-05 | T-20-03-01..07 | sendOne substitution + DeliveredMarker.resend_message_id additive + promoteOne step-4 PUT site populates field + wrangler.jsonc DRY_RUN "1" -> "0" + update existing wrangler-cron-shape DRY_RUN assertion + rewrite GROUP D throw-stub test | unit + build | pnpm exec vitest run tests/api/chat-delivery.test.ts tests/build/chat-delivery-send-site.test.ts tests/build/wrangler-dry-run-shape.test.ts tests/build/wrangler-cron-shape.test.ts | ❌ to be created | ⬜ pending |
+| 20-04-T1 | 20-04 | 3 | MAIL-01, MAIL-02, MAIL-03, MAIL-04, MAIL-05 | T-20-04-01..06 | Author 20-UAT.md (6 numbered operator steps) + DEPLOY-GATE.md (mirrors Plan 17-08; status=pending) | docs (no source) | pnpm exec vitest run tests/build/wrangler-dry-run-shape.test.ts tests/build/chat-delivery-send-site.test.ts tests/build/wrangler-cron-shape.test.ts | ❌ to be created | ⬜ pending |
+| 20-04-T2 | 20-04 | 3 | MAIL-01, MAIL-02, MAIL-03, MAIL-04, MAIL-05 | T-20-04-01..06 | Operator-controlled checkpoint: pre-deploy checklist + UAT runbook + chat-reply approval + git push origin main (executor MUST NOT push) | manual operator UAT | (manual; resume-signal: "approved — deploy gate cleared") | n/a (operator-driven) | ⬜ pending |
 
 ### Requirements → Test Coverage (from RESEARCH § Validation Architecture)
 
@@ -79,7 +86,7 @@ created: 2026-05-12
 | MAIL-01 / MAIL-04 | `Authorization: Bearer ${env.RESEND_API_KEY}` literal set | unit | `pnpm exec vitest run tests/api/email-resend.test.ts -t "bearer auth header"` | ❌ Wave 0 |
 | MAIL-01 | `User-Agent` header set (Landmine 4 mitigation) | unit | `pnpm exec vitest run tests/api/email-resend.test.ts -t "user-agent header"` | ❌ Wave 0 |
 | MAIL-02 | Request body has `text` field present + `html` field ABSENT | unit | `pnpm exec vitest run tests/api/email-resend.test.ts -t "text field only"` | ❌ Wave 0 |
-| D-17 | Wrapper does NOT differentiate replay from sent; both are `{ status: "sent" }` (Layer 1 KV cursor is application-side replay detector) | unit | `pnpm exec vitest run tests/api/email-resend.test.ts -t "200 sent"` | ❌ Wave 0 |
+| D-17 | Wrapper has NO `replayed` Result variant and NO `idempotency_replay` log event; both source-text greps return 0 (Layer 1 KV cursor is the sole application-side replay detector) | source-text | `grep -c 'replayed' src/lib/email/resend.ts` returns 0 AND `grep -c 'idempotency_replay' src/lib/email/resend.ts` returns 0 (negative-coverage assertion is structurally orthogonal to the `200 sent` vitest filter — that filter only verifies the sent variant works, NOT that the replayed variant is absent; the source-text grep is the load-bearing D-17 gate per Plan 20-02 Task 2 acceptance criteria) | ❌ Wave 0 |
 | Wiring | DRY_RUN=`"1"` branch in `sendOne` STILL emits `chat.delivery.dry_run` (rollback runway preserved byte-identical) | unit (extend chat-delivery.test.ts) | `pnpm exec vitest run tests/api/chat-delivery.test.ts -t "dry_run preserves runway"` | ✅ exists, EXTEND |
 | Wiring | DRY_RUN=`"0"` branch in `sendOne` calls `sendEmail` with rendered payload | unit (mock + spy) | `pnpm exec vitest run tests/api/chat-delivery.test.ts -t "live calls sendEmail"` | ✅ exists, EXTEND |
 | Wiring | On `{ status: "sent", message_id }` → `delivered:{sid}` value has `dry_run: false` + populated `resend_message_id: string` matching message_id; emits `chat.delivery.sent` | unit | `pnpm exec vitest run tests/api/chat-delivery.test.ts -t "delivered marker resend_message_id"` | ✅ exists, EXTEND |
@@ -127,12 +134,12 @@ created: 2026-05-12
 
 ## Validation Sign-Off
 
-- [ ] All planned tasks have `<automated>` verify (per Per-Task Verification Map) or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] All planned tasks have `<automated>` verify (per Per-Task Verification Map) or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
 - [ ] Wave 0 covers all MISSING references (4 NEW test files + 1 EXTEND)
 - [ ] No watch-mode flags (no `--watch`; vitest run only)
 - [ ] Feedback latency < 12s (quick) / < 35s (full)
-- [ ] Manual-only verifications routed to `20-UAT.md` (5 steps + 1 organic step) and `DEPLOY-GATE.md`
-- [ ] `nyquist_compliant: true` set in frontmatter (after planner populates Per-Task Verification Map)
+- [x] Manual-only verifications routed to `20-UAT.md` (5 steps + 1 organic step) and `DEPLOY-GATE.md`
+- [x] `nyquist_compliant: true` set in frontmatter (after planner populates Per-Task Verification Map)
 
-**Approval:** pending
+**Approval:** planner-signed 2026-05-12 (8 task rows populated; nyquist_compliant true; wave_0_complete false until 20-01-T1 + 20-02-T1 + 20-03-T1 scaffold the test files at execute-time)
