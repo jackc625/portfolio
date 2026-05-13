@@ -214,3 +214,26 @@ After v1.3 close: scope re-triage for v1.4 (per CONTEXT.md `<deferred>` block). 
 *Phase: 20-email-render-resend-integration*
 *Plan 20-04 Task 1 committed: 2026-05-13 (commit b460e06)*
 *Plan 20-04 Task 2 status: awaiting operator UAT + chat-reply approval + git push origin main*
+
+## Self-Check: PASSED
+
+- FOUND: .planning/phases/20-email-render-resend-integration/20-UAT.md (620 lines, ≥ 250 minimum)
+- FOUND: .planning/phases/20-email-render-resend-integration/DEPLOY-GATE.md (190 lines, ≥ 100 minimum)
+- FOUND: .planning/phases/20-email-render-resend-integration/20-04-SUMMARY.md (216 lines)
+- FOUND: commit b460e06 (Task 1 — docs: 20-UAT.md + DEPLOY-GATE.md atomic commit)
+- FOUND: commit f664147 (Task 1 metadata — docs: 20-04 SUMMARY)
+
+Acceptance criteria probes (verified at SUMMARY-commit time):
+- 20-UAT.md frontmatter `status: pending` ✓
+- 20-UAT.md contains exactly 6 numbered step headings (`### 1.` through `### 6.`) ✓ (count = 6)
+- 20-UAT.md `--remote` flag appears 17 times (≥ 5 required) ✓
+- 20-UAT.md cites PROD KV ID `eaa30fef259e4a6b9505b41bbf3f8f01` 12 times (≥ 4 required) ✓
+- 20-UAT.md "7-day soft cap" present 10 times + `scripts/resend-warmup.mjs` referenced 5 times ✓
+- 20-UAT.md "executor MUST NOT" / "Executor MUST NOT" present 5 times (≥ 1 required) ✓
+- DEPLOY-GATE.md frontmatter `status: pending` + `gate: PENDING` + `operator:` (empty) ✓
+- DEPLOY-GATE.md Pre-Deploy Checklist has exactly 5 numbered sections ✓
+- DEPLOY-GATE.md contains `git push origin main` 9 times (≥ 1 required) ✓
+- DEPLOY-GATE.md contains `approved — deploy gate cleared` 3 times (≥ 1 required) ✓
+- DEPLOY-GATE.md ROLLBACK PROCEDURE references D-03 (5 D-03 mentions; ROLLBACK PROCEDURE heading present) ✓
+- `git diff --stat fd346aa..HEAD` shows ONLY the 3 new .md files (1026 insertions across 20-UAT + DEPLOY-GATE + SUMMARY); zero source files modified ✓
+- Phase 20 forward-defense build tests: 9/9 GREEN at Task 1 commit (verified pre-commit) ✓
