@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: Chat Visibility
-status: ready_to_plan
-stopped_at: Plan 19-04 complete (cron flip + 19-UAT.md operator runbook; 498/0/2 GREEN); Phase 19 executor-side COMPLETE; Task 3 operator UAT pending per Plan 17-08 DEPLOY-GATE precedent
-last_updated: "2026-05-12T20:46:09.769Z"
+status: planning
+stopped_at: Phase 20 context gathered
+last_updated: "2026-05-13T01:38:46.886Z"
 last_activity: 2026-05-12
 progress:
   total_phases: 4
-  completed_phases: 4
+  completed_phases: 3
   total_plans: 22
   completed_plans: 22
   percent: 100
@@ -233,7 +233,7 @@ Items deferred at v1.3 roadmap time (locked):
 
 ## Session Continuity
 
-Last session: 2026-05-12T20:45:58.853Z
-Stopped at: Plan 19-02 complete (chat-delivery.ts module + 19-case test battery; 490/0/2 GREEN)
-Resume file: None
+Last session: 2026-05-13T01:38:46.872Z
+Stopped at: Phase 20 context gathered
+Resume file: .planning/phases/20-email-render-resend-integration/20-CONTEXT.md
 Next command: Plan 19-03 — replace src/worker.ts scheduled() stub body with `ctx.waitUntil(deliverDue(env, controller.scheduledTime).catch(...))` per RESEARCH § Code Example 2. Plan 19-03 must also absorb the pre-existing src/worker.ts:25 ts(2345) error logged in .planning/phases/19-cron-sweep-scheduling-idempotency-dry-run/deferred-items.md (Plan 19-01 carry-forward — Env.DRY_RUN: string vs wrangler-generated Cloudflare.Env.DRY_RUN: "1" literal). Plan 19-04 then flips triggers.crons to ["0 * * * *"] and the cron sweep goes live (DRY_RUN gated; no real Resend POST until Phase 20).
