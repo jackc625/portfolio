@@ -101,9 +101,15 @@ const WEBSITE_ID = "32f8fdf4-1f21-4895-9e4c-938285c08240";
     {/* banned per MOTION.md §1 / MASTER.md §8). This handler is the documented */}
     {/* closure point per MOTION.md §5 MOTN-01. B5: raw script body syntax (plain */}
     {/* JS between <script> tags), NOT template-literal-inside-JSX. */}
+    {/* WR-04 (17-REVIEW-GAPS.md, quick-260513-hqk): double optional-chain on */}
+    {/* `.finished?.catch(...)`. Spec guarantees `.finished` exists whenever */}
+    {/* `viewTransition` does, but early Chromium dev-channel builds shipped a */}
+    {/* partial ViewTransition shim missing `.finished`; the second `?.` is */}
+    {/* one-byte defensive hardening so a TypeError can't propagate into the */}
+    {/* listener loop and defeat the purpose of the catch. */}
     {/* See .planning/debug/view-transition-aborterror.md for full diagnosis. */}
     <script is:inline>
-      window.addEventListener("pageswap", (e) => { e.viewTransition?.finished.catch(() => {}); });
+      window.addEventListener("pageswap", (e) => { e.viewTransition?.finished?.catch(() => {}); });
     </script>
     <Font cssVariable="--font-display-src" />
     <Font cssVariable="--font-body-src" />

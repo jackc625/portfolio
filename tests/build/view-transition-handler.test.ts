@@ -36,8 +36,11 @@ describe("UAT Gap #4: BaseLayout.astro pageswap handler", () => {
   });
 
   it("the listener body consumes the implicit ViewTransition rejection via .finished.catch", () => {
-    // Tightest assertion: the literal `viewTransition?.finished.catch(` substring exists.
-    expect(baseLayoutSrc).toMatch(/viewTransition\?\.finished\.catch\(/);
+    // WR-04 (17-REVIEW-GAPS.md, quick-260513-hqk): relaxed regex accepts both
+    // `.finished.catch(` (pre-WR-04) and `.finished?.catch(` (post-WR-04
+    // double optional-chain). Either form is acceptable — the second `?.` is
+    // defensive against early-Chromium ViewTransition shims missing .finished.
+    expect(baseLayoutSrc).toMatch(/viewTransition\?\.finished\??\.catch\(/);
   });
 
   it("the handler is rendered as is:inline within a <script is:inline>...</script> block (M5 multi-line regex)", () => {
