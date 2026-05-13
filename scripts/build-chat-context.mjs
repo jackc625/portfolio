@@ -58,7 +58,8 @@ const normalize = (s) => s.replace(/\r\n/g, "\n");
 export const estimateTokens = (str) => Math.ceil(str.length / 4);
 
 /**
- * BROADENED first-person leak regex (Plan 17-07 revision B1).
+ * BROADENED first-person leak regex (Plan 17-07 revision B1, hardened by
+ * WR-02 quick-260513-hqk).
  *
  * Closes UAT Gap #1 (BLOCKER) — the chat <knowledge> block must speak ABOUT
  * Jack, never AS Jack. The original Plan 17-07-spec'd regex
@@ -67,18 +68,25 @@ export const estimateTokens = (str) => Math.ceil(str.length / 4);
  * "I've"), and the "My favorite" / "I wonder" / "I like" tokens that are
  * currently present in the pre-fix portfolio-context.json. The broadened
  * regex catches:
- *   - I'm / I'd / I'll / I've / I am
+ *   - I'm / I'd / I'll / I've / I am (with ASCII U+0027 ' OR curly U+2019 ’
+ *     in the contraction — WR-02 close)
  *   - I build / built / like / liked / wonder / wanted / reach / reached / read /
  *     architected / chose / haven / wrote / run / set / shipped / added / prefer /
- *     care / watch / track / love / hate
- *   - My approach / favorite / projects / code / work / background / stack / version / first
+ *     care / watch / track / love / hate /
+ *     made / created / developed / implemented / designed / think / learned /
+ *     noticed / tried / tested  (WR-02 verb extensions)
+ *   - My approach / favorite / favourite (British, WR-02) / projects / code /
+ *     work / background / stack / version / first /
+ *     implementation / solution / design / team / experience  (WR-02 possessives)
  *
  * The same canonical regex is used in
  *   tests/build/chat-knowledge-voice.test.ts (B1 self-test + artifact sweep)
  *   tests/api/chat-voice-split.test.ts        (live system-block tripwire)
- * — keep all three sites in sync. See .planning/debug/chat-voice-split-regression.md.
+ * — keep all three sites BYTE-IDENTICAL in sync. Triplicated string literal is
+ * accepted per 17-REVIEW-GAPS.md WR-02 (shared-module extraction deferred).
+ * See .planning/debug/chat-voice-split-regression.md.
  */
-const FIRST_PERSON_LEAK_RE = /\b(I(?:'|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate)|My\s+(?:approach|favorite|projects|code|work|background|stack|version|first))\b/i;
+const FIRST_PERSON_LEAK_RE = /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
 
 /**
  * First-person leak guard — exits 2 if any chat-bound field contains a

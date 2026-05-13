@@ -23,14 +23,21 @@ const ctx = JSON.parse(
   readFileSync(resolve(projectRoot, "src/data/portfolio-context.json"), "utf8")
 );
 
-// BROADENED canonical regex (Plan 17-07 revision B1). Covers:
-//   - I'm / I'd / I'll / I've / I am
+// BROADENED canonical regex (Plan 17-07 revision B1, hardened by WR-02 quick-260513-hqk).
+// Covers:
+//   - I'm / I'd / I'll / I've / I am (ASCII U+0027 ' OR curly U+2019 ’ — WR-02)
 //   - I build / built / like / liked / wonder / wanted / reach / reached / read /
 //     architected / chose / haven / wrote / run / set / shipped / added / prefer /
-//     care / watch / track / love / hate
-//   - My approach / favorite / projects / code / work / background / stack / version / first
+//     care / watch / track / love / hate /
+//     made / created / developed / implemented / designed / think / learned /
+//     noticed / tried / tested  (WR-02 verb extensions)
+//   - My approach / favorite / favourite (British, WR-02) / projects / code /
+//     work / background / stack / version / first /
+//     implementation / solution / design / team / experience  (WR-02 possessives)
+// MUST stay BYTE-IDENTICAL to FIRST_PERSON_LEAK_RE in scripts/build-chat-context.mjs
+// AND FIRST_PERSON_LEAK in tests/api/chat-voice-split.test.ts.
 const FIRST_PERSON_LEAK =
-  /\b(I(?:'|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate)|My\s+(?:approach|favorite|projects|code|work|background|stack|version|first))\b/i;
+  /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
 
 describe("UAT Gap #1: B1 self-test — regex catches known first-person tokens", () => {
   // SELF-TEST: prove the regex catches what it SHOULD catch, not just whatever
@@ -54,6 +61,29 @@ describe("UAT Gap #1: B1 self-test — regex catches known first-person tokens",
     "I've shipped 6 projects",
     "My approach is",
     "My favorite bug reports",
+    // WR-02 (quick-260513-hqk) — newly covered verbs
+    "I made a small CLI",
+    "I created the build script",
+    "I developed the parser",
+    "I implemented the cache",
+    "I designed the schema",
+    "I think the boring path wins",
+    "I learned the hard way",
+    "I noticed the race",
+    "I tried the new flag",
+    "I tested with vitest",
+    // WR-02 — newly covered possessives
+    "My implementation uses...",
+    "My solution was...",
+    "My design philosophy",
+    "My team shipped...",
+    "My experience tells me...",
+    // WR-02 — British spelling
+    "My favourite tool",
+    // WR-02 — curly apostrophe (U+2019)
+    "I’m Jack",
+    "I’d like to ship",
+    "I’ve added tests",
   ];
 
   for (const sample of KNOWN_LEAKS) {
