@@ -218,19 +218,29 @@ describe("MAIL-01 — sendEmail status taxonomy (D-13 + D-17 3-variant Result)",
 describe("MAIL-01 / D-15 / Landmine 1 — AbortController 10s timeout", () => {
   it("abort timeout", async () => {
     vi.useFakeTimers();
-    // Landmine 1 — the mock MUST throw DOMException with name === "AbortError",
-    // NOT plain Error. The wrapper's catch branch uses `instanceof DOMException
-    // && err.name === "AbortError"` which will not match Error.
-    fetchMock.mockImplementation(
-      () =>
-        new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new DOMException("aborted", "AbortError")),
-            12_000,
-          ),
-        ),
-    );
+    // Landmine 1 — the mock MUST reject with DOMException name === "AbortError"
+    // (NOT plain Error). The wrapper's catch branch uses
+    // `err instanceof DOMException && err.name === "AbortError"` so a plain
+    // Error mock would silently route through the network-error branch.
+    //
+    // Real `fetch` listens for AbortSignal abort events and rejects with
+    // exactly this DOMException shape. The mock mirrors that behavior: hang
+    // forever, listen for `signal.aborted`, and reject when the wrapper's
+    // 10s setTimeout fires controller.abort().
+    fetchMock.mockImplementation((_url: string, init: RequestInit) => {
+      return new Promise((_, reject) => {
+        const signal = init.signal as AbortSignal | undefined;
+        if (signal) {
+          signal.addEventListener("abort", () => {
+            reject(new DOMException("aborted", "AbortError"));
+          });
+        }
+      });
+    });
     const p = sendEmail(ENV, buildPayload());
+    // Advance past the wrapper's 10s FETCH_TIMEOUT_MS so its internal
+    // setTimeout fires controller.abort() -> signal listener rejects the
+    // mocked fetch promise -> DOMException flows into the catch branch.
     await vi.advanceTimersByTimeAsync(11_000);
     const result = await p;
     expect(result.status).toBe("failed_transient");
