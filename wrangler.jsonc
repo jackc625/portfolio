@@ -15,10 +15,13 @@
       "preview_id": "115f3c1b0f8a4a1da9fee78c48dcb749"
     }
   ],
-  // Phase 19 D-01/D-02 — DRY_RUN gate. "1" = dry-run active (default); Phase 20 flips to "0" alongside the Resend POST landing.
+  // Phase 19 D-01/D-02 — DRY_RUN gate. "1" = dry-run active; "0" = live mail.
+  // Phase 20 flipped 2026-05-12 alongside the Resend POST landing (Plan 20-03).
+  // Rollback = single-line revert to "1" per D-03 (chat-delivery.ts DRY_RUN
+  // branch is the runway; one-line wrangler.jsonc edit + wrangler deploy ~60s).
   // WR-02 — CHAT_REPLY_TO_EMAIL sources the envelope reply_to: field. Optional in DeliveryEnv (logs null if unset).
   "vars": {
-    "DRY_RUN": "1",
+    "DRY_RUN": "0",
     "CHAT_REPLY_TO_EMAIL": "jackcutrara@gmail.com"
   },
   "triggers": {

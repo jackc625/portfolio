@@ -3,7 +3,13 @@
  *
  * Source-text guard locking two invariants:
  *   1. triggers.crons === ["0 * * * *"]      — hourly cron expression locked
- *   2. vars.DRY_RUN === "1"                  — DRY_RUN gate held until Phase 20
+ *   2. vars.DRY_RUN === "0"                  — Phase 20 live-mail toggle (D-01)
+ *
+ * Plan 20-03 (2026-05-12) updated invariant 2 from "1" to "0" at the same
+ * commit as the wrangler.jsonc flip. The DRY_RUN === "1" branch in
+ * src/lib/chat-delivery.ts sendOne stays in source as the rollback runway
+ * (D-03) — a single-line wrangler.jsonc revert from "0" back to "1" reverts
+ * all Phase 20 behavior without source edit.
  *
  * Pitfall 6 defense: the 19-UAT.md Step 1 operator manually flips
  * triggers.crons to ["* * * * *"] for ~90s to confirm Past Events in the
@@ -44,8 +50,8 @@ describe("CRON-01 + D-01: wrangler.jsonc cron + DRY_RUN shape", () => {
     expect((cfg.triggers as { crons: string[] }).crons).toEqual(["0 * * * *"]);
   });
 
-  it("D-01 / D-02: vars.DRY_RUN === '1'", () => {
+  it("D-01 / D-02: vars.DRY_RUN === '0' (Phase 20 live-mail toggle per D-01)", () => {
     expect(cfg.vars).toBeDefined();
-    expect((cfg.vars as { DRY_RUN: string }).DRY_RUN).toBe("1");
+    expect((cfg.vars as { DRY_RUN: string }).DRY_RUN).toBe("0");
   });
 });

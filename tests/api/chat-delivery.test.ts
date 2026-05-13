@@ -245,13 +245,21 @@ function seedLive(
 
 function buildEnv(
   kv: MockKVNamespace,
-  overrides?: { DRY_RUN?: string; CHAT_RECIPIENT_EMAIL?: string; CHAT_SENDER_EMAIL?: string; CHAT_REPLY_TO_EMAIL?: string },
+  overrides?: {
+    DRY_RUN?: string;
+    CHAT_RECIPIENT_EMAIL?: string;
+    CHAT_SENDER_EMAIL?: string;
+    CHAT_REPLY_TO_EMAIL?: string;
+    // Plan 20-03 — RESEND_API_KEY threaded for env-narrowing guard under DRY_RUN='0'
+    RESEND_API_KEY?: string;
+  },
 ): {
   CHAT_KV: KVNamespace;
   DRY_RUN: string;
   CHAT_RECIPIENT_EMAIL?: string;
   CHAT_SENDER_EMAIL?: string;
   CHAT_REPLY_TO_EMAIL?: string;
+  RESEND_API_KEY?: string;
 } {
   return {
     CHAT_KV: kv as unknown as KVNamespace,
@@ -260,6 +268,9 @@ function buildEnv(
     CHAT_SENDER_EMAIL: overrides?.CHAT_SENDER_EMAIL ?? "from@example.com",
     // WR-02 (Phase 19 code review) — envelope reply_to: sourced from env var.
     CHAT_REPLY_TO_EMAIL: overrides?.CHAT_REPLY_TO_EMAIL ?? "jackcutrara@gmail.com",
+    // Plan 20-03 — RESEND_API_KEY default present so the env-narrowing guard
+    // under DRY_RUN='0' passes without each test passing it explicitly.
+    RESEND_API_KEY: overrides?.RESEND_API_KEY ?? "test-resend-api-key",
   };
 }
 
@@ -454,9 +465,20 @@ describe("GROUP C — CRON-02 envelope value shape (D-09 / D-10 / D-11)", () => 
     expect(stored).toBeDefined();
     const value = JSON.parse(stored!.value) as DeliveredMarker;
 
-    // Exact key set — no extras, no missing keys
+    // Exact key set — no extras, no missing keys.
+    // Plan 20-03 added the additive `resend_message_id` field (D-09 additive
+    // extension lock; schema v: 1 unchanged). Under DRY_RUN='1' the sentinel
+    // value is "dry-run-no-id" per the rollback-runway sendOne branch.
     expect(Object.keys(value).sort()).toEqual(
-      ["delivered_at", "dry_run", "msg_count", "sid", "truncated", "v"].sort(),
+      [
+        "delivered_at",
+        "dry_run",
+        "msg_count",
+        "resend_message_id",
+        "sid",
+        "truncated",
+        "v",
+      ].sort(),
     );
     expect(value.v).toBe(1);
     expect(value.sid).toBe(SID);
@@ -466,6 +488,8 @@ describe("GROUP C — CRON-02 envelope value shape (D-09 / D-10 / D-11)", () => 
     expect(value.dry_run).toBe(true);
     expect(value.msg_count).toBe(4);
     expect(value.truncated).toBe(true);
+    // Plan 20-03 — under DRY_RUN='1' the sentinel "dry-run-no-id" flows through
+    expect(value.resend_message_id).toBe("dry-run-no-id");
   });
 
   it("24h TTL", async () => {
@@ -577,31 +601,43 @@ describe("GROUP D — CRON-04 DRY_RUN gate (D-01 / D-02 / D-05)", () => {
     expect(payload.referrer_host).toBe("example.com");
   });
 
-  // PHASE 20 Plan 20-03 Task 2: this test is REWRITTEN to assert sendEmail call
-  // instead of throw stub. Do NOT delete in Task 1 (RED coverage protection).
-  it("dry_run gate (env.DRY_RUN !== '1' throws)", async () => {
-    // With env.DRY_RUN === "0", sendOne should throw send_not_implemented_in_phase_19,
-    // which the retry harness catches → promoteOne catch path logs chat.delivery.failed.
+  // PHASE 20 Plan 20-03 Task 2: REWRITTEN. The Phase 19 throw stub is gone;
+  // sendOne now calls the mocked sendEmail under DRY_RUN='0'. This test
+  // asserts the live-send branch invokes sendEmail and succeeds when the
+  // wrapper returns a `sent` Result.
+  it("dry_run gate (env.DRY_RUN !== '1' calls sendEmail wrapper per Plan 20-03)", async () => {
+    vi.mocked(sendEmail).mockReset();
+    vi.mocked(sendEmail).mockResolvedValue({
+      status: "sent",
+      message_id: "test-msg-id",
+      attempt: 1,
+    });
+
     const kv = new MockKVNamespace();
     seedLive(kv, buildTranscript({ lastActivityAt: STALE_3H }));
 
-    // Use fake timers so retry backoff completes instantly
-    vi.useFakeTimers();
-    const p = deliverDue(buildEnv(kv, { DRY_RUN: "0" }), SCHEDULED_NOW);
-    await vi.runAllTimersAsync();
-    await p;
-    vi.useRealTimers();
+    await deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "0",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }) as Parameters<typeof deliverDue>[0] & { RESEND_API_KEY?: string },
+      SCHEDULED_NOW,
+    );
 
-    const failedCall = errorSpy.mock.calls.find(
+    // sendEmail invoked (substitution-call assertion replacing Phase 19 throw)
+    expect(vi.mocked(sendEmail).mock.calls.length).toBeGreaterThanOrEqual(1);
+
+    // tick log reports successful promotion
+    const tick = findLog(logSpy, "chat.delivery.tick");
+    expect((tick![1] as { errors: number }).errors).toBe(0);
+    expect((tick![1] as { sessions_promoted: number }).sessions_promoted).toBe(1);
+
+    // No "send_not_implemented_in_phase_19" error in the failure path
+    const failedCalls = errorSpy.mock.calls.filter(
       (c: unknown[]) => c[0] === "chat.delivery.failed",
     );
-    expect(failedCall).toBeDefined();
-    expect((failedCall![1] as { sid: string }).sid).toBe(SID);
-
-    // tick log reports errors >= 1, sessions_promoted: 0
-    const tick = findLog(logSpy, "chat.delivery.tick");
-    expect((tick![1] as { errors: number }).errors).toBeGreaterThanOrEqual(1);
-    expect((tick![1] as { sessions_promoted: number }).sessions_promoted).toBe(0);
+    expect(failedCalls.length).toBe(0);
   });
 });
 
@@ -639,6 +675,9 @@ describe("GROUP E — CRON-02 idempotency cursor", () => {
         dry_run: true,
         msg_count: 1,
         truncated: false,
+        // Plan 20-03 — additive resend_message_id field; sentinel value
+        // mirrors the DRY_RUN sentinel emitted by sendOne under "1".
+        resend_message_id: "dry-run-no-id",
       } satisfies DeliveredMarker),
       metadata: undefined,
     });
@@ -838,21 +877,30 @@ describe("GROUP G — CRON-03 retry harness + isolation", () => {
     vi.useRealTimers();
   });
 
-  // PHASE 20 Plan 20-03 Task 2: this test is REWRITTEN — under DRY_RUN='0', the
-  // Phase 20 sendOne now calls the mocked sendEmail. We force failure by setting
-  // the mocked sendEmail to resolve `failed_transient` on every call, which
-  // throws inside sendOne and exhausts the retry budget identically to the old
-  // throw-stub path. Do NOT delete in Task 1 (RED coverage protection).
+  // PHASE 20 Plan 20-03 Task 2: REWRITTEN. The Phase 19 throw stub is gone;
+  // we force failure by mocking sendEmail to resolve `failed_transient` on
+  // every call, which throws inside sendOne and exhausts the retry budget
+  // identically to the old throw-stub path.
   it("retry harness 3 attempts", async () => {
-    // Force sendOne to throw on every attempt by using env.DRY_RUN === "0"
-    // (the sendOne implementation throws send_not_implemented_in_phase_19 in
-    // that branch). This proves the retry harness exhausts MAX_SEND_ATTEMPTS
-    // and the catch path emits chat.delivery.failed.
+    vi.mocked(sendEmail).mockReset();
+    vi.mocked(sendEmail).mockResolvedValue({
+      status: "failed_transient",
+      http_status: 500,
+      attempt: 1,
+    });
+
     const kv = new MockKVNamespace();
     seedLive(kv, buildTranscript({ lastActivityAt: STALE_3H }));
 
     vi.useFakeTimers();
-    const p = deliverDue(buildEnv(kv, { DRY_RUN: "0" }), SCHEDULED_NOW);
+    const p = deliverDue(
+      buildEnv(kv, {
+        DRY_RUN: "0",
+        CHAT_RECIPIENT_EMAIL: "jack@example.com",
+        CHAT_SENDER_EMAIL: "noreply@example.com",
+      }) as Parameters<typeof deliverDue>[0] & { RESEND_API_KEY?: string },
+      SCHEDULED_NOW,
+    );
     await vi.runAllTimersAsync();
     await p;
 

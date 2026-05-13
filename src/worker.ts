@@ -35,17 +35,17 @@ export interface Env {
   // DeliveryEnv.CHAT_REPLY_TO_EMAIL stays `string | undefined` (WR-02 contract)
   // and accepts the literal cleanly since string-literal is a subtype of string.
   CHAT_REPLY_TO_EMAIL: "jackcutrara@gmail.com";
-  // DRY_RUN narrowed to the wrangler-generated literal "1" so the local Env
-  // interface assigns cleanly to the global `Env extends Cloudflare.Env` (with
-  // `DRY_RUN: "1"`) at the handle(request, env, ctx) call site. The wider
-  // `string` declaration (Plan 19-01) produced ts(2345) at worker.ts:25
-  // because `string` is not assignable to the literal `"1"`. Narrowing to
-  // `"1"` is the carry-forward absorption per Plan 19-03 deferred-items.md
-  // closure path option 2 — couples the source-of-truth to wrangler's
-  // generated type (the value lives in wrangler.jsonc vars and only ever
-  // equals "1" in Phase 19). DeliveryEnv.DRY_RUN: string still accepts the
-  // "1" literal because "1" is a subtype of string.
-  DRY_RUN: "1";
+  // DRY_RUN narrowed to the wrangler-generated literal so the local Env
+  // interface assigns cleanly to the global `Env extends Cloudflare.Env` at
+  // the handle(request, env, ctx) call site. The literal value mirrors the
+  // current wrangler.jsonc vars value — Phase 19 was "1" (dry-run); Phase 20
+  // Plan 20-03 flipped to "0" (live-mail toggle per D-01 atomic commit). Any
+  // future rollback per D-03 (single-line wrangler.jsonc revert from "0" to
+  // "1") MUST also revert this literal at the same commit to keep the local
+  // Env interface assignable to the wrangler-regenerated Cloudflare.Env.
+  // DeliveryEnv.DRY_RUN: string still accepts the "0" literal because "0"
+  // is a subtype of string.
+  DRY_RUN: "0";
   // Phase 7 carry-forward (DEBT-01: Free-tier acceptable; Workers Paid v1.4+).
   CHAT_RATE_LIMITER?: RateLimit;
 }

@@ -31,13 +31,20 @@
 //   • cloudflare:workers         — caller (worker.ts scheduled()) passes Env
 //   • src/prompts/, src/pages/   — no chat-surface coupling (D-26 anchor)
 //   • src/scripts/chat.ts        — same anchor (browser-tier surface)
-//   • src/lib/email/             — does NOT exist in Phase 19 (D-06; Phase 20)
+//
+// Phase 20 additions (Plan 20-03):
+//   • renderEmail (./email/render) — pure ChatTranscript -> ResendPayload renderer
+//   • sendEmail (./email/resend)   — pure REST wrapper around Resend POST
+//   Both imported as named value imports; consumed under DRY_RUN === "0" in
+//   the live-send branch of sendOne.
 //
 // Callers wrap deliverDue with ctx.waitUntil(...) and chain .catch() per
 // RESEARCH § Pattern 1 + § Pitfall 1; see Plan 19-03 wiring spec in worker.ts.
 
 import type { ChatTranscript, KVMetadata } from "./chat-transcripts";
 import { KEY_PREFIX } from "./chat-transcripts"; // shared "live:" — schema source-of-truth
+import { renderEmail, type RenderEnv } from "./email/render"; // Plan 20-01 — pure renderer
+import { sendEmail, type ResendEnv } from "./email/resend"; // Plan 20-02 — pure REST wrapper
 
 // ---------------------------------------------------------------------------
 // Locked constants — Plan 19-02 exports these for test-side assertion + for
@@ -60,8 +67,15 @@ export const DELIVERED_TTL_SECONDS = 24 * 3600; // D-09 lock — 24h marker
  * D-09 / D-10 — schema-versioned envelope written to `delivered:{sid}`
  * after a successful (DRY_RUN-gated) send.
  *
- * Layer-1 idempotency cursor. Phase 20 will additively append a
- * `resend_message_id: string` field after the Resend POST integration lands.
+ * Layer-1 idempotency cursor. Phase 20 ADDED `resend_message_id` per D-09
+ * additive lock + 20-03 close. Schema `v: 1` UNCHANGED — additive-extension
+ * lock means existing Phase 19 readers (D-09 cursor short-circuit in
+ * promoteOne step 1) still parse the value cleanly without schema migration.
+ *
+ * Under DRY_RUN === "1" (rollback runway), `resend_message_id` carries the
+ * sentinel `"dry-run-no-id"` and `dry_run` flips true; under DRY_RUN === "0"
+ * (Phase 20 live-mail), `resend_message_id` carries the Resend `data.id` from
+ * the sendEmail Result and `dry_run` flips false.
  */
 export interface DeliveredMarker {
   v: 1; // schema discriminator, matches ChatTranscript.v
@@ -70,6 +84,7 @@ export interface DeliveredMarker {
   dry_run: boolean; // true in Phase 19; false in Phase 20
   msg_count: number;
   truncated: boolean;
+  resend_message_id: string; // Phase 20 (Plan 20-03) — Resend data.id on live send; "dry-run-no-id" sentinel under DRY_RUN==="1"
 }
 
 /**
@@ -92,6 +107,12 @@ interface DeliveryEnv {
   // unset value falls through to null in the log line (operationally
   // identical to omitting the field but greppable in Workers Logs).
   CHAT_REPLY_TO_EMAIL?: string;
+  // Phase 20 — sourced from Wrangler secret (set Plan 17-06); read by sendEmail
+  // wrapper under DRY_RUN='0' live path. Runtime narrowing guard at sendOne
+  // entry (sendOne body below) emits chat.delivery.failed before the as-cast
+  // on missing values — surfaces a structured failure log instead of a raw
+  // TypeError when an env var is missing under the live-send branch.
+  RESEND_API_KEY?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -152,18 +173,46 @@ async function retryWithBackoff<T>(
  * CRON-04 / D-01 / D-02 / D-05 — DRY_RUN-gated send harness.
  *
  * Under `env.DRY_RUN === "1"`: emits the flat-primitive envelope log line
- * `chat.delivery.dry_run` with the locked D-05 field names and returns
- * synthetic success. NO Resend POST exists in Phase 19; the would-be call
- * is unreachable at runtime under the dry-run flag.
+ * `chat.delivery.dry_run` with the locked D-05 field names and returns a
+ * sentinel `{ message_id: "dry-run-no-id" }`. Phase 20 (Plan 20-03) widened
+ * the return type from `Promise<void>` to `Promise<{ message_id: string }>`
+ * so promoteOne can persist the Resend data.id into the additive
+ * DeliveredMarker.resend_message_id field.
  *
- * Under any other value: throws `send_not_implemented_in_phase_19`. This
- * is the Phase 20 substitution target — Plan 20-XX will replace this
- * branch with the real Resend POST + Idempotency-Key.
+ * Under `env.DRY_RUN !== "1"` (Phase 20 live-send branch): renderEmail
+ * composes the ResendPayload, sendEmail POSTs to Resend, and the
+ * discriminated Result is translated to:
+ *   sent             -> return { message_id: result.message_id }
+ *   failed_transient -> throw Error(resend_transient_...) caught by
+ *                       retryWithBackoff (next attempt within MAX_SEND_ATTEMPTS)
+ *   failed_terminal  -> throw Error(resend_terminal_...) which also bubbles
+ *                       through retryWithBackoff (net 3x log noise on
+ *                       terminal; trade-off accepted per RESEARCH § Pattern 3
+ *                       refinement note — the alternative is exposing a
+ *                       no-retry-class signal that couples sendOne to the
+ *                       harness internals).
+ *
+ * Return-type widening note: sendOne returns the message_id so promoteOne can
+ * read the Resend data.id and populate the additive DeliveredMarker field
+ * (D-09 / D-10 additive-extension lock).
  */
 async function sendOne(
   env: DeliveryEnv,
   transcript: ChatTranscript,
-): Promise<void> {
+): Promise<{ message_id: string }> {
+  // ─────────────────────────────────────────────────────────────────────────
+  // D-03 ROLLBACK RUNWAY — DO NOT DELETE this branch as "dead code".
+  // The DRY_RUN="1" path is the instant-rollback mechanism: a single-line
+  // wrangler.jsonc revert to "DRY_RUN": "1" reverts ALL Phase 20 behavior
+  // without source code edit. Operator runs wrangler deploy; ~60s recovery.
+  // The sentinel "dry-run-no-id" message_id flows through promoteOne where
+  // the line-272 dry_run discriminator (env.DRY_RUN === "1") flags the value
+  // as dry_run: true so this sentinel only ever appears in dry-run-flagged
+  // delivered: markers — not in real sends.
+  // Build-time forward-defense locks in tests/build/chat-delivery-send-site.test.ts
+  // (Invariants D + E) — removing either the DRY_RUN gate or the
+  // chat.delivery.dry_run envelope log fails the next CI run.
+  // ─────────────────────────────────────────────────────────────────────────
   if (env.DRY_RUN === "1") {
     // D-05 — locked field NAMES; ORDER is planner's discretion.
     console.log("chat.delivery.dry_run", {
@@ -177,10 +226,58 @@ async function sendOne(
       referrer_host: hostnameOrNull(transcript.meta.referrer),
       dry_run: true,
     });
-    return; // synthetic success
+    return { message_id: "dry-run-no-id" }; // sentinel — see comment block above
   }
-  // Phase 20 replaces this branch with the real Resend POST.
-  throw new Error("send_not_implemented_in_phase_19");
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Phase 20 live-send branch (DRY_RUN !== "1") — Plan 20-03 substitution.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  // Env-narrowing guard: closes the unsafe `as RenderEnv` / `as ResendEnv`
+  // cast gap. Without this guard, a missing env var at runtime surfaces as a
+  // raw TypeError ("Cannot read property of undefined") inside renderEmail or
+  // sendEmail; the structured chat.delivery.failed log is the operationally
+  // greppable surface, so emit it BEFORE the cast and throw a terminal-class
+  // error that promoteOne's catch translates into the standard failure path.
+  if (env.DRY_RUN === "0") {
+    if (
+      !env.RESEND_API_KEY ||
+      !env.CHAT_RECIPIENT_EMAIL ||
+      !env.CHAT_SENDER_EMAIL ||
+      !env.CHAT_REPLY_TO_EMAIL
+    ) {
+      console.warn("chat.delivery.failed", {
+        sid: transcript.sid,
+        http_status: null,
+        error_class: "resend_terminal_env_missing",
+        attempt: 0,
+      });
+      throw new Error("resend_terminal_env_missing");
+    }
+  }
+
+  const payload = renderEmail(env as RenderEnv, transcript);
+  const result = await sendEmail(env as ResendEnv, payload);
+
+  if (result.status === "sent") {
+    return { message_id: result.message_id };
+  }
+  if (result.status === "failed_transient") {
+    // RESEARCH § Pattern 3 — throw so retryWithBackoff catches and retries
+    // within MAX_SEND_ATTEMPTS. The error message encodes http_status (or
+    // error_class for AbortError / network errors) for log grep-ability.
+    throw new Error(
+      `resend_transient_${result.http_status ?? result.error_class ?? "unknown"}`,
+    );
+  }
+  // failed_terminal — throw so promoteOne's catch logs chat.delivery.failed.
+  // The throw also bubbles through retryWithBackoff which means the same
+  // error gets caught + thrown again on attempts 2 and 3 producing ~3x log
+  // noise on terminal errors. This is accepted per RESEARCH § Pattern 3
+  // refinement note (lines 783-792): the alternative is exposing a
+  // no-retry-class signal that couples sendOne to retryWithBackoff's
+  // internals; the 3x noise is preferable to a tight harness coupling.
+  throw new Error(`resend_terminal_${result.http_status}`);
 }
 
 /**
@@ -259,12 +356,22 @@ async function promoteOne(
   // the send itself failed and the next tick should retry).
   let deliveredWritten = false;
   try {
-    // (3) D-07 — would-be send harness (DRY_RUN-gated). Retry up to
-    // MAX_SEND_ATTEMPTS with exponential full-jitter backoff.
-    await retryWithBackoff(() => sendOne(env, transcript!), MAX_SEND_ATTEMPTS);
+    // (3) D-07 — send harness (DRY_RUN-gated, Phase 20 live under "0").
+    // Retry up to MAX_SEND_ATTEMPTS with exponential full-jitter backoff.
+    // Plan 20-03 widened sendOne return to { message_id: string } so we
+    // capture sendResult for step 4 (additive DeliveredMarker field).
+    const sendResult = await retryWithBackoff(
+      () => sendOne(env, transcript!),
+      MAX_SEND_ATTEMPTS,
+    );
 
     // (4) D-09 — idempotency marker. PUT delivered:{sid} BEFORE step 5.
-    // D-11 — NO metadata field on delivered: writes.
+    // D-11 — NO metadata field on delivered: writes (Landmine 7 lock per
+    // Plan 20-03 — idempotency cursor stays a hint, not a list-surface).
+    // Plan 20-03 — additive resend_message_id field populated from
+    // sendResult; sentinel "dry-run-no-id" under DRY_RUN=="1" or real
+    // Resend data.id under DRY_RUN=="0". Schema v: 1 UNCHANGED per
+    // D-09 / D-10 additive-extension lock.
     const value: DeliveredMarker = {
       v: 1,
       sid,
@@ -272,6 +379,7 @@ async function promoteOne(
       dry_run: env.DRY_RUN === "1", // D-02 — strict-equals-string gate
       msg_count: transcript.msg_count,
       truncated: transcript.truncated,
+      resend_message_id: sendResult.message_id, // Plan 20-03 additive (D-09/D-10)
     };
     await env.CHAT_KV.put(`delivered:${sid}`, JSON.stringify(value), {
       expirationTtl: DELIVERED_TTL_SECONDS,
