@@ -1,9 +1,9 @@
 ---
-status: in-progress
+status: complete
 phase: 19-cron-sweep-scheduling-idempotency-dry-run
 source: [19-01-SUMMARY.md, 19-02-SUMMARY.md, 19-03-SUMMARY.md, 19-04-SUMMARY.md]
 started: 2026-05-12T20:45:00Z
-updated: 2026-05-12T22:00:00Z
+updated: 2026-05-13T00:30:00Z
 deviation: |
   Phase 18 UAT learning carries forward: Workers Builds branch previews may
   bind to the PROD KV `id` (eaa30fef259e4a6b9505b41bbf3f8f01) rather than the
@@ -58,42 +58,8 @@ This UAT closes ROADMAP Phase 19 success criteria 1-4. The 5-step sequence maps:
 ---
 
 ## Current Test
-<!-- OVERWRITE each test - shows where we are -->
 
-number: 1
-name: CRON-01 — PRODUCTION leg only (PRE-FLIGHT skipped, see Test 1 notes)
-expected: |
-  Executor portion COMPLETE: PRE-FLIGHT skipped (wrangler-dev + assets
-  binding harness blocks --test-scheduled; static tests cover the same
-  invariants — see Test 1 notes). WR-04 regression on
-  src/worker.ts:27 surfaced during PRE-FLIGHT debug and was fixed
-  (CHAT_REPLY_TO_EMAIL narrowed to literal to match generated
-  Cloudflare.Env). Build is now clean and the bundle ships with all
-  9 latest Phase 19 commits.
-
-  REMAINING WORK is operator-controlled per DEPLOY-GATE.md
-  (executor MUST NOT run `wrangler deploy`):
-
-    Step 1 PRODUCTION leg — flip wrangler.jsonc:25 cron to
-    ["* * * * *"], deploy, wait 90s, capture Past Events screenshot
-    showing ≥1 invocation, REVERT to ["0 * * * *"], redeploy,
-    git diff wrangler.jsonc empty, wrangler-cron-shape.test.ts 2/2.
-
-    Step 2 — Seed test-uat-* live: key against PROD KV, observe
-    delivered: PUT BEFORE / live: DELETE AFTER (see Test 2 below).
-
-    Step 3 — Re-seed same SID, observe idempotency skip
-    (chat.delivery.skipped_already_delivered, see Test 3 below).
-
-    Step 4 — Seed 60 stale keys, observe per-tick batch cap of 50
-    over two ticks (see Test 4 below).
-
-    Step 5 — Bulk-delete all test-uat-* keys (operational hygiene,
-    see Test 5 below).
-
-  Operator resumes via `/gsd-verify-work 19` after the PRODUCTION
-  work to fill in result: blocks per Step.
-awaiting: operator PRODUCTION execution (out of this executor session)
+[testing complete — all 5 Steps PASS against PROD KV on 2026-05-12 / 2026-05-13]
 
 ---
 
@@ -163,11 +129,41 @@ expected: |
       the `*****` deploy.
     - REVERT: `git diff wrangler.jsonc` returns empty + cron-shape
       build test exits 0.
-result: pending
+result: pass
 prior_result: |
   [populated only if a re-test happened]
 notes: |
-  2026-05-12 PRE-FLIGHT SKIP — harness limitation, not a Phase 19 bug.
+  2026-05-12T22:30Z — PRODUCTION leg PASS. Cron flip + revert
+  executed via Workers Builds (not manual `wrangler deploy` —
+  see UAT.md text correction below). Operator confirmed ≥1
+  scheduled() invocation in Cloudflare Past Events panel within
+  the 90s window between flip-deploy-active and observation.
+
+  Commit trail:
+    - 20e43e7  test(19-UAT): flip cron to ['* * * * *']
+    - {Past Events confirmed by operator: "Fired"}
+    - 1eeb3b2  test(19-UAT): REVERT cron to ['0 * * * *']
+
+  Post-revert defense check:
+    - `pnpm exec vitest run tests/build/wrangler-cron-shape.test.ts`
+      → 2/2 GREEN (forward-defense restored)
+    - `git diff wrangler.jsonc` returns empty
+    - Cloudflare Workers Builds deployment of 1eeb3b2 confirmed
+      Active by operator before marking pass (closed the
+      Free-tier quota burn window)
+
+  TEXT CORRECTION for future phase docs: this UAT's expected
+  block instructs "Operator runs `wrangler deploy`" in three
+  places. The actual deploy mechanism for this project is
+  `git push origin main` → Cloudflare Workers Builds auto-deploys
+  per Plan 17-02 D-03 / DEPLOY-GATE.md. The `wrangler deploy`
+  phrasing was inherited from a Workers-without-Builds assumption
+  and should be corrected when Phase 20 UAT is drafted. The
+  CRON-01 invariant still holds; only the deploy command name
+  changes (commit + push instead of direct CLI deploy).
+
+  2026-05-12T21:30Z — PRE-FLIGHT SKIP (executor portion of UAT).
+  Original PRE-FLIGHT skip notes preserved below for audit trail.
 
   Attempted PRE-FLIGHT (`pnpm dev:cron` + curl /__scheduled) blocked
   by wrangler 4.83.0's `--test-scheduled` shim not intercepting before
@@ -278,12 +274,47 @@ expected: |
   DELETE live: AFTER would-be-POST is the EXACT contract Phase 20 will
   rely on when DRY_RUN flips to "0" and the would-be POST becomes a
   real Resend POST.
-result: pending
+result: pass
 prior_result: |
   [populated only if a re-test happened]
 notes: |
-  [optional — operator pastes the actual chat.delivery.dry_run line +
-  the delivered: envelope JSON for the audit trail]
+  2026-05-13T00:16:52Z PASS.
+
+  Seeded live:test-uat-cb2a3019-4e7e-4101-a1a8-d297487186f5 with
+  last_activity_at 2026-05-12T21:14:40.395Z (3hr stale, well past
+  D-08 INACTIVITY_THRESHOLD_MS). Cron tick at 8:16:52 PM local /
+  00:16:52 UTC emitted exactly:
+
+    chat.delivery.dry_run {
+      sid: 'test-uat-cb2a3019-4e7e-4101-a1a8-d297487186f5',
+      to: 'jackcutrara@gmail.com',
+      from: '"Portfolio Chat" <transcripts@mail.jackcutrara.com>',
+      reply_to: 'jackcutrara@gmail.com',
+      msg_count: 2, truncated: false,
+      country: 'US', referrer_host: 'example.com',
+      dry_run: true
+    }
+
+    chat.delivery.tick {
+      sessions_seen: 1, sessions_due: 1, sessions_promoted: 1,
+      errors: 0, pages_scanned: 1, elapsed_ms: 228
+    }
+
+  Post-conditions verified via wrangler kv:
+    - delivered:test-uat-cb2a3019-... returned D-09 envelope:
+      {"v":1,"sid":"test-uat-cb2a3019-...","delivered_at":
+      "2026-05-13T00:16:52.573Z","dry_run":true,"msg_count":2,
+      "truncated":false}
+    - live:test-uat-cb2a3019-... DELETED (kv list returned [])
+
+  PUT delivered: BEFORE / DELETE live: AFTER ordering proven against
+  real Cloudflare KV. Exact contract Phase 20 will rely on.
+
+  Bonus end-to-end confirmation: the `reply_to: 'jackcutrara@gmail.com'`
+  field in the dry_run log line proves the WR-04 follow-up fix
+  (commit 5dc96eb — narrowing CHAT_REPLY_TO_EMAIL to literal in
+  src/worker.ts:27) landed correctly in production and propagated
+  through deliverDue → buildEnvelope to the log emission.
 
 ---
 
@@ -339,12 +370,46 @@ expected: |
   alone is sufficient to prevent double-delivery — the Resend
   Idempotency-Key is defense-in-depth for the network-retry path
   (5xx retry with same key returns idempotency_replay: true).
-result: pending
+result: pass
 prior_result: |
   [populated only if a re-test happened]
 notes: |
-  [optional — operator confirms delivered_at_existing matches Step 2
-  + paste the skipped_already_delivered log line]
+  2026-05-13T00:20:52Z PASS.
+
+  Re-seeded SAME live:test-uat-cb2a3019-... with SAME stale
+  timestamp. delivered:test-uat-cb2a3019-... still present from
+  Step 2 (24h TTL per D-09). Cron tick at 8:20:52 PM emitted:
+
+    chat.delivery.skipped_already_delivered {
+      sid: 'test-uat-cb2a3019-4e7e-4101-a1a8-d297487186f5',
+      delivered_at_existing: '2026-05-13T00:16:52.573Z'
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+                              EXACT match to Step 2's delivered_at
+    }
+
+    chat.delivery.tick {
+      sessions_seen: 1, sessions_due: 1, sessions_promoted: 0,
+      errors: 0, pages_scanned: 1, elapsed_ms: 74
+    }
+
+  NO new chat.delivery.dry_run line emitted for the re-seeded SID
+  (idempotency held).
+
+  Post-tick re-read of delivered:test-uat-cb2a3019-... returned
+  the IDENTICAL envelope from Step 2 — delivered_at unchanged at
+  "2026-05-13T00:16:52.573Z" (no overwrite). Confirms the idempotency
+  short-circuit READS delivered:, never WRITES it.
+
+  Behavior detail (not in PASS criteria but worth noting): the skip
+  path does NOT delete the live: key — only the promote path does.
+  Means re-seeded live:test-uat-cb2a3019-... persisted after the
+  skip tick. This is conservative (live: TTL eventually expires it,
+  or Step 5 bulk delete catches it). Deleted manually before Step 4
+  to keep Step 4's promoted-count stats clean against
+  PER_TICK_BATCH_CAP=50.
+
+  SC3 closure: application-level idempotency holds BEFORE Resend's
+  Idempotency-Key joins as defense-in-depth in Phase 20.
 
 ---
 
@@ -418,12 +483,51 @@ expected: |
   this test does not produce; the unit test battery in
   tests/api/chat-delivery.test.ts proves the pagination invariants
   against mock KV).
-result: pending
+result: pass
 prior_result: |
   [populated only if a re-test happened]
 notes: |
-  [optional — operator pastes both tick summaries + the final list
-  lengths for the audit trail]
+  2026-05-13T00:23-00:25Z PASS.
+
+  Bulk-seeded 60 live:test-uat-batch-* keys via
+  `wrangler kv bulk put` (single API call, ~36KB payload, ~5s).
+  Each key carried the same 3hr-stale last_activity_at
+  (2026-05-12T21:14:40.395Z).
+
+  Tick 1 (within ~30s of bulk-put completion):
+    Observed indirectly via KV count delta:
+      live:test-uat-batch-* count dropped 60 → 10 in ~10s
+    = 50 sessions promoted in tick 1, exactly hitting
+      PER_TICK_BATCH_CAP. The user's wrangler tail showed
+      ~50 chat.delivery.dry_run lines (scrolled past before
+      capture; the count delta is the canonical proof).
+
+  Tick 2 (next minute):
+    chat.delivery.tick {
+      sessions_seen: 10, sessions_due: 10, sessions_promoted: 10,
+      errors: 0, pages_scanned: 1, elapsed_ms: 2093
+    }
+    Remaining 10 batch keys promoted; no leftover due.
+
+  Final state verified via wrangler kv:
+    - delivered:test-uat-batch-* count: 60  ✓
+    - live:test-uat-batch-*      count:  0  ✓
+    - errors: 0 across both ticks         ✓
+
+  SC4 closure: per-tick batch cap of 50 sessions (Plan 19-02
+  PER_TICK_BATCH_CAP, WR-01 narrowed cap to processed rather than
+  promoted) enforced live against PROD KV. Pagination hard-cap of
+  50 pages NOT exercised at this scale (60 keys fit in 1 page;
+  the unit test battery in tests/api/chat-delivery.test.ts proves
+  pagination invariants against mock KV).
+
+  Eventual-consistency note for operator-facing UAT writers: the
+  first `wrangler kv key list` against the seed showed 44/60 keys
+  due to KV read-after-write lag mentioned in the deviation block.
+  Cron iteration uses a different consistency layer and saw all 60
+  (or at least 50, which is the cap). Future Phase 20 / Phase 22+
+  UAT should expect a ~5-10s lag between bulk-put completion and
+  full visibility via the listing API.
 
 ---
 
@@ -484,12 +588,33 @@ expected: |
   `test-uat-*` prefix discipline keeps every UAT artifact greppable
   for future cleanup runs (and for Phase 20 / future debug sessions
   that might want to inspect post-cleanup state).
-result: pending
+result: pass
 prior_result: |
   [populated only if a re-test happened]
 notes: |
-  [optional — operator records final key counts + any orphans that
-  required manual cleanup outside the prefix discipline]
+  2026-05-13T00:25Z PASS.
+
+  Pre-delete enumeration:
+    - live:test-uat-*      count:  0  (already cleaned by promote
+                                       path during Steps 2 and 4)
+    - delivered:test-uat-* count: 61  (60 batch + 1 from Step 2/3)
+    - total                       61
+
+  Used `wrangler kv bulk delete` (single API call, ~5s) rather
+  than the per-key delete loop suggested in the original UAT.md
+  expected block — much faster and the same result.
+
+  Post-delete enumeration (5s settle):
+    - live:test-uat-*           count: 0  ✓
+    - delivered:test-uat-*      count: 0  ✓
+    - test-uat- (catch-all)     count: 0  ✓ (no orphans under any
+                                            combined prefix)
+
+  Real visitor session keys (`live:<UUIDv4>` without test-uat-
+  prefix) NOT touched — the prefix discipline made cleanup safe.
+
+  No UAT audit-debt left in production KV. Phase 20 can proceed
+  with a clean keyspace.
 
 ---
 
@@ -498,11 +623,11 @@ notes: |
 After all 5 Steps land `result: pass`, mark this checklist to close
 Phase 19 + unblock Phase 20:
 
-- [ ] Step 1 PASS — CRON-01 closes (cron trigger wired, Past Events ≥1)
-- [ ] Step 2 PASS — CRON-02 closes (PUT delivered: BEFORE / DELETE live: AFTER)
-- [ ] Step 3 PASS — CRON-03 (idempotency) partially closes
-- [ ] Step 4 PASS — CRON-03 (batch cap) closes + CRON-04 dry-run logging verified
-- [ ] Step 5 PASS — operational hygiene (no UAT audit-debt in PROD KV)
+- [x] Step 1 PASS — CRON-01 closes (cron trigger wired, Past Events ≥1) — 2026-05-12T22:30Z, commits 20e43e7/1eeb3b2
+- [x] Step 2 PASS — CRON-02 closes (PUT delivered: BEFORE / DELETE live: AFTER) — 2026-05-13T00:16:52Z, SID test-uat-cb2a3019-...
+- [x] Step 3 PASS — CRON-03 (idempotency) partially closes — 2026-05-13T00:20:52Z, skipped_already_delivered with delivered_at_existing exact match
+- [x] Step 4 PASS — CRON-03 (batch cap) closes + CRON-04 dry-run logging verified — 2026-05-13T00:23-00:25Z, 50+10 over two ticks, errors 0
+- [x] Step 5 PASS — operational hygiene (no UAT audit-debt in PROD KV) — 2026-05-13T00:25Z, 61 keys bulk-deleted, 0 orphans
 
 Forward-defense automation (verified at every commit during Plan 19-04):
 
@@ -515,10 +640,10 @@ Forward-defense automation (verified at every commit during Plan 19-04):
 
 ROADMAP Phase 19 success criteria status (filled by operator post-UAT):
 
-- [ ] SC1 (Step 1) — Cron trigger active + Past Events visible within 90s
-- [ ] SC2 (Step 2) — DRY_RUN sweep PUT delivered: BEFORE / DELETE live: AFTER
-- [ ] SC3 (Step 3) — Idempotency holds (delivered: marker skips redelivery)
-- [ ] SC4 (Step 4) — Per-tick batch cap 50 + per-session try/catch isolation
+- [x] SC1 (Step 1) — Cron trigger active + Past Events visible within 90s — 2026-05-12T22:30Z
+- [x] SC2 (Step 2) — DRY_RUN sweep PUT delivered: BEFORE / DELETE live: AFTER — 2026-05-13T00:16:52Z
+- [x] SC3 (Step 3) — Idempotency holds (delivered: marker skips redelivery) — 2026-05-13T00:20:52Z
+- [x] SC4 (Step 4) — Per-tick batch cap 50 + per-session try/catch isolation — 2026-05-13T00:23-00:25Z (errors: 0 over both ticks)
 
 After all 4 ROADMAP success criteria checked, this UAT's front-matter
 `status:` flips from `in-progress` to `complete`, `updated:` timestamp
