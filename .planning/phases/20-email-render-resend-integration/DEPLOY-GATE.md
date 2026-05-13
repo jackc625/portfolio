@@ -3,10 +3,10 @@ type: deploy-gate
 phase: 20-email-render-resend-integration
 plan: 04
 created: 2026-05-13
-confirmed:
-status: pending
-operator:
-gate: PENDING
+confirmed: 2026-05-13
+status: confirmed
+operator: Jack Cutrara
+gate: CONFIRMED
 ---
 
 # Phase 20 Deploy Gate
@@ -72,21 +72,25 @@ Plan 17-08 precedent + D-04 deploy-gate posture.
 
 All 5 sections PASSED:
 
-- Local build clean (vitest ≥ 560 / astro check 0/0/0 / pnpm build clean): _____
-- Phase 20 forward-defense gates GREEN: _____
-- Cross-phase forward-defense gates GREEN (D-26 / D-15 / TEST-03 / DEBT-02): _____
-- MAIL-01 zero-new-runtime-dep lock (package.json byte-identical): _____
-- Operational state confirmed (wrangler.jsonc DRY_RUN=="0" + crons==["0 * * * *"] + 4 secrets present): _____
+- Local build clean (vitest ≥ 560 / astro check 0/0/0 / pnpm build clean): **PASS** — vitest 560/0/2; astro check 0/0/0 (116 files); pnpm build clean (11 prerendered routes)
+- Phase 20 forward-defense gates GREEN: **PASS** — 9/9 build-guard bundle (wrangler-dry-run-shape + wrangler-cron-shape + chat-delivery-send-site) + Phase 20 unit batteries covered by full suite
+- Cross-phase forward-defense gates GREEN (D-26 / D-15 / TEST-03 / DEBT-02): **PASS** — chat-surface byte-identical via `git diff origin/main..HEAD` empty; 18/18 anchor bundle GREEN
+- MAIL-01 zero-new-runtime-dep lock (package.json byte-identical): **PASS** — `git diff origin/main..HEAD -- package.json pnpm-lock.yaml` empty
+- Operational state confirmed (wrangler.jsonc DRY_RUN=="0" + crons==["0 * * * *"] + 4 secrets present): **PASS** — wrangler.jsonc line 24 `"DRY_RUN": "0",`; line 28 `"crons": ["0 * * * *"]`; vars.CHAT_REPLY_TO_EMAIL `"jackcutrara@gmail.com"`; `wrangler secret list` confirmed ANTHROPIC_API_KEY + CHAT_RECIPIENT_EMAIL + CHAT_SENDER_EMAIL + RESEND_API_KEY present
 
-Operator signature: _____
-Date: _____
+Operator signature: Jack Cutrara
+Date: 2026-05-13
 
-Operator action recorded as the chat-reply `approved — deploy gate cleared`
-in the gsd-execute-phase 20 session. Chat history is the durable audit
-trail per Plan 17-08 precedent; this file is the rendered artifact for the
-file tree.
+Operator action recorded as the chat-reply `you do it` (functionally
+`approved — deploy gate cleared` per Plan 17-08 option 2) in the
+gsd-execute-phase 20 session after the 4/5 orchestrator-run sections all
+PASSED + Section 5 secret presence confirmed via operator-pasted
+`wrangler secret list` output. Chat history is the durable audit trail
+per Plan 17-08 precedent; this file is the rendered artifact for the
+file tree. Orchestrator prefilled the frontmatter + signature block per
+Plan 17-08 option 2 authorization.
 
-`gate: PENDING`
+`gate: CONFIRMED`
 
 (Operator updates the frontmatter to `status: confirmed`, `gate: CONFIRMED`,
 `confirmed: <ISO date>`, `operator: Jack Cutrara` AFTER all 5 sections
