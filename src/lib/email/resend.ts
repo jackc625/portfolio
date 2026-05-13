@@ -270,26 +270,25 @@ export async function sendEmail(
       attempt,
     };
   } catch (err) {
-    // Landmine 1 — DOMException check, NOT generic Error. Workers + jsdom
-    // both expose DOMException; AbortController.abort() fires this exact
-    // type with name === "AbortError".
-    if (err instanceof DOMException && err.name === "AbortError") {
-      console.log("chat.delivery.retry", {
-        sid,
-        http_status: null,
-        error_class: "AbortError",
-        attempt,
-        backoff_ms: null,
-      });
-      return {
-        status: "failed_transient",
-        error_class: "AbortError",
-        attempt,
-      };
+    // Landmine 1 — DOMException routing. Workers + jsdom both expose
+    // DOMException; AbortController.abort() fires this exact type with
+    // name === "AbortError".
+    //
+    // WR-06 (Phase 20 code review) — classify DOMException via `err.name`
+    // (NOT `err.constructor.name`) so AbortError, TimeoutError, and any
+    // future runtime variant carry their semantic name into the
+    // chat.delivery.retry log line. Previously a non-AbortError
+    // DOMException (e.g. a future runtime emitting "TimeoutError" on cancel)
+    // would fall through to the generic branch and be classified as
+    // "DOMException" — losing the timeout attribution at log-grep time.
+    let errorClass: string;
+    if (err instanceof DOMException) {
+      errorClass = err.name;
+    } else if (err instanceof Error) {
+      errorClass = err.constructor.name;
+    } else {
+      errorClass = "UnknownError";
     }
-    // Network / TypeError / other thrown — also transient per D-15.
-    const errorClass =
-      err instanceof Error ? err.constructor.name : "Error";
     console.log("chat.delivery.retry", {
       sid,
       http_status: null,
