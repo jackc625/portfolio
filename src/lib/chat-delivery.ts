@@ -147,13 +147,20 @@ function hostnameOrNull(url?: string | null): string | null {
  * sessions retry simultaneously.
  */
 async function retryWithBackoff<T>(
-  fn: () => Promise<T>,
+  fn: (attempt: number) => Promise<T>,
   maxAttempts: number,
 ): Promise<T> {
   let lastErr: unknown;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      return await fn();
+      // WR-01 (Phase 20 code review) — pass the 1-indexed attempt number
+      // through so sendOne -> sendEmail can stamp the correct value on every
+      // chat.delivery.{sent,retry,failed} log line. Previously every retry's
+      // logs reported attempt: 1, breaking the D-16 / D-17 retry-budget
+      // grep-ability contract (operators running
+      // `wrangler tail --search "chat.delivery.retry" | grep '"attempt":3'`
+      // would never get a hit).
+      return await fn(attempt + 1);
     } catch (err) {
       lastErr = err;
       if (attempt + 1 >= maxAttempts) break;
@@ -199,6 +206,7 @@ async function retryWithBackoff<T>(
 async function sendOne(
   env: DeliveryEnv,
   transcript: ChatTranscript,
+  attempt = 1,
 ): Promise<{ message_id: string }> {
   // ─────────────────────────────────────────────────────────────────────────
   // D-03 ROLLBACK RUNWAY — DO NOT DELETE this branch as "dead code".
@@ -257,7 +265,10 @@ async function sendOne(
   }
 
   const payload = renderEmail(env as RenderEnv, transcript);
-  const result = await sendEmail(env as ResendEnv, payload);
+  // WR-01 (Phase 20 code review) — thread the harness iteration through so
+  // sendEmail's chat.delivery.{sent,retry,failed} log lines stamp the true
+  // attempt number rather than the default 1.
+  const result = await sendEmail(env as ResendEnv, payload, attempt);
 
   if (result.status === "sent") {
     return { message_id: result.message_id };
@@ -361,7 +372,7 @@ async function promoteOne(
     // Plan 20-03 widened sendOne return to { message_id: string } so we
     // capture sendResult for step 4 (additive DeliveredMarker field).
     const sendResult = await retryWithBackoff(
-      () => sendOne(env, transcript!),
+      (attempt) => sendOne(env, transcript!, attempt),
       MAX_SEND_ATTEMPTS,
     );
 
