@@ -56,7 +56,7 @@
 
 ### 🚧 v1.4 Professional Experience (Phases 21-25) — IN PROGRESS
 
-- [ ] **Phase 21: Experience Content Pipeline & Collection** — Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline
+- [x] **Phase 21: Experience Content Pipeline & Collection** — Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline (completed 2026-07-09)
 - [ ] **Phase 22: Experience Page & Holloway Case Study** — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry
 - [ ] **Phase 23: Projects Reconciliation & Featured Tier** — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below
 - [ ] **Phase 24: Positioning Shift & Home Teaser** — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser
@@ -76,7 +76,7 @@
   3. Querying the collection returns entries in reverse-chronological order (most recent engagement first), establishing the ordering + field contract the Experience page renders against.
   4. `pnpm build` succeeds with the new collection wired in and no new runtime dependencies are added.
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **Wave 1**
 
 - [x] 21-01-PLAN.md — Sync mechanism: `sync-experience.mjs` (lift + D-07 strip) + Wave 0 tests-first suite + npm scripts
@@ -88,7 +88,7 @@
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 21-04-PLAN.md — CI drift gate step + `docs/CONTENT-SCHEMA.md` experience documentation
+- [x] 21-04-PLAN.md — CI drift gate step + `docs/CONTENT-SCHEMA.md` experience documentation
 
 ### Phase 22: Experience Page & Holloway Case Study
 
@@ -179,7 +179,7 @@ Phases execute in numeric order within each milestone.
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 8/8 | Complete | 2026-05-11 |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete | 2026-05-12 |
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
-| 21. Experience Content Pipeline & Collection | v1.4 | 3/4 | In Progress|  |
+| 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete   | 2026-07-09 |
 | 22. Experience Page & Holloway Case Study | v1.4 | 0/TBD | Not started | - |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 0/TBD | Not started | - |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
