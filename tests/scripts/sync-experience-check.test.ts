@@ -53,7 +53,7 @@ async function scaffold(): Promise<{ sourcePath: string; mdxPath: string }> {
     'summary: "A sample engagement."',
     'techStack: ["Node"]',
     'highlights: ["Did a thing"]',
-    'engagementType: "full-time"',
+    'engagementType: "contract"',
     "hasCaseStudy: true",
     'source: "Experience/1 - SAMPLE.md"',
     "---",
@@ -93,5 +93,17 @@ describe("sync-experience.mjs --check mode (EXP-01)", () => {
       status = (err as { status?: number }).status ?? null;
     }
     expect(status).toBe(1);
+  });
+
+  // WR-05: guard the committed real files. Runs --check against the actual
+  // repo root so a future hand-edit that drifts balfour-beatty.mdx or
+  // holloway.mdx from their Experience/ sources fails this test, not just CI.
+  it("exits 0 for the committed repo (real files are in sync)", () => {
+    expect(() =>
+      execFileSync("node", [syncScript, "--check"], {
+        cwd: repoRoot,
+        stdio: "pipe",
+      }),
+    ).not.toThrow();
   });
 });

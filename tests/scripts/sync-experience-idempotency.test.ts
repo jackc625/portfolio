@@ -63,7 +63,7 @@ describe("sync-experience.mjs idempotency (EXP-01 / S6)", () => {
       'summary: "A sample engagement."',
       'techStack: ["Node"]',
       'highlights: ["Did a thing"]',
-      'engagementType: "full-time"',
+      'engagementType: "contract"',
       "hasCaseStudy: true",
       'source: "Experience/1 - SAMPLE.md"',
       "---",
