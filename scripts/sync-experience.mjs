@@ -39,10 +39,18 @@ export const normalize = (s) => s.replace(/\r\n/g, "\n");
 /**
  * Parse just the `source:` field from a frontmatter block.
  *
- * Accepts either a fully-quoted value (`source: "Experience/1 - SAMPLE.md"`)
- * or a fully-unquoted value (`source: Experience/1 - SAMPLE.md`) and
- * returns the inner string. Returns null when the field is absent, blank,
- * or has mismatched quotes (opening quote with no close, or vice versa).
+ * Accepts a double-quoted value (`source: "Experience/1 - SAMPLE.md"`), a
+ * single-quoted value (`source: 'Experience/1 - SAMPLE.md'`), or a fully
+ * unquoted/bare value (`source: Experience/1 - SAMPLE.md`) and returns the
+ * inner string. Returns null when the field is absent, blank, or has
+ * mismatched quotes (opening quote with no close, or vice versa).
+ *
+ * WR-02: single-quoted values are handled explicitly so this parser agrees
+ * with how Astro/gray-matter parse the same YAML. The bare branch excludes
+ * BOTH quote characters so a stray/mismatched quote is not silently captured
+ * as part of the path (which previously surfaced as a misleading
+ * "source file not found"). Inline YAML comments after a bare value are NOT
+ * supported — see docs/CONTENT-SCHEMA.md §5.
  *
  * Mismatched-quote rejection is intentional: a partial regex that permitted
  * an optional close quote would silently accept frontmatter that is likely
@@ -52,7 +60,8 @@ export const normalize = (s) => s.replace(/\r\n/g, "\n");
 export function readSourceField(frontmatterBlock) {
   const m =
     frontmatterBlock.match(/^source:\s*"([^"\n]+)"\s*$/m) ??
-    frontmatterBlock.match(/^source:\s*([^"\n]+?)\s*$/m);
+    frontmatterBlock.match(/^source:\s*'([^'\n]+)'\s*$/m) ??
+    frontmatterBlock.match(/^source:\s*([^"'\n]+?)\s*$/m);
   return m ? m[1].trim() : null;
 }
 
