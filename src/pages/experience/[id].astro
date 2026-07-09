@@ -1,0 +1,240 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/primitives/Container.astro";
+import ArticleImage from "../../components/ArticleImage.astro";
+import { sortExperienceEntries } from "../../lib/experience";
+
+export async function getStaticPaths() {
+  // EXP-05 structural gate: only entries with hasCaseStudy build a detail
+  // route. Balfour (hasCaseStudy false) generates NO path -- only holloway.mdx
+  // yields /experience/holloway. sortExperienceEntries keeps order deterministic.
+  const caseStudies = sortExperienceEntries(
+    await getCollection("experience")
+  ).filter((entry) => entry.data.hasCaseStudy);
+  return caseStudies.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"experience">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={entry.data.company} description={entry.data.summary}>
+  <article>
+    <section class="section experience-header">
+      <Container>
+        <!-- D-02: TOP back link (return affordance, not a "next" card) -->
+        <a class="back-link back-top" href="/experience">
+          <span class="back-arrow" aria-hidden="true">&larr;</span> Back to experience
+        </a>
+        <!-- D-07: Mono eyebrow = dateRange . techStack (dateRange, NOT year) -->
+        <div class="label-mono project-meta">
+          {entry.data.dateRange} &middot; {entry.data.techStack.join(" · ").toUpperCase()}
+        </div>
+        <!-- D-07/D-08: H1 = company ("Holloway Company") -->
+        <h1 class="h1-section project-title">{entry.data.company}</h1>
+        <!-- D-07: Tagline = first-person summary as .lead -->
+        <p class="lead project-tagline">{entry.data.summary}</p>
+        <!-- D-07: external-links row OMITTED (confidential contract, no urls) -->
+      </Container>
+    </section>
+
+    <section class="section project-body-section">
+      <Container>
+        <!-- D-09: MDX body inside .prose-editorial wrapper with scoped overrides -->
+        <div class="prose-editorial">
+          <Content components={{ img: ArticleImage }} />
+        </div>
+      </Container>
+    </section>
+
+    <section class="section">
+      <Container>
+        <!-- D-02: BOTTOM back link, in the slot NextProject occupied -->
+        <a class="back-link back-bottom" href="/experience">
+          <span class="back-arrow" aria-hidden="true">&larr;</span> Back to experience
+        </a>
+      </Container>
+    </section>
+
+    {/* Phase 15 D-06: scroll-depth sentinels -- 4 invisible divs at CSS */}
+    {/* top 25/50/75/100% of <article> height. Observer in */}
+    {/* src/scripts/scroll-depth.ts fires scroll_depth events per D-05..D-08. */}
+    <div class="scroll-sentinel" data-percent="25" aria-hidden="true"></div>
+    <div class="scroll-sentinel" data-percent="50" aria-hidden="true"></div>
+    <div class="scroll-sentinel" data-percent="75" aria-hidden="true"></div>
+    <div class="scroll-sentinel" data-percent="100" aria-hidden="true"></div>
+  </article>
+</BaseLayout>
+
+<style>
+  /* Phase 15 D-06, D-07: scroll-depth sentinels. <article> needs position: relative
+     so sentinels position as percent of article height (survives reflow). No layout
+     impact on existing children -- none are absolutely positioned. */
+  article {
+    position: relative;
+  }
+  .scroll-sentinel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    pointer-events: none;
+  }
+  .scroll-sentinel[data-percent="25"]  { top: 25%; }
+  .scroll-sentinel[data-percent="50"]  { top: 50%; }
+  .scroll-sentinel[data-percent="75"]  { top: 75%; }
+  .scroll-sentinel[data-percent="100"] { top: 100%; }
+
+  /* Project header (class names reused verbatim from projects/[id].astro so
+     the copied header CSS applies with zero orphaned selectors -- REVIEWS 22-04) */
+  .project-meta {
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+  }
+  .project-title {
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .project-tagline {
+    color: var(--ink);
+    max-width: 60ch;
+  }
+
+  /* D-02 back link -- shared treatment (top + bottom identical affordance).
+     Frontend-design ruling: the leading arrow is PERSISTENT (part of the
+     readable breadcrumb label), color-only hover, no opacity reveal, no
+     translate -- the forward "Read the full case study ->" reveal idiom does
+     not transfer to a leading glyph. */
+  .back-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+  .back-arrow {
+    color: inherit; /* flows --ink-muted -> --accent with the label */
+  }
+  .back-link:hover,
+  .back-link:focus-visible {
+    color: var(--accent);
+  }
+  .back-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  /* top: quiet wayfinding cue grouped under the header */
+  .back-top {
+    margin-bottom: 24px;
+  }
+  /* bottom: inherits NextProject's structural closure (rule + rhythm), not its
+     card weight -- a single mono line closing the article */
+  .back-bottom {
+    border-top: 1px solid var(--rule);
+    padding-top: 48px;
+  }
+
+  /* D-07 + D-09: MDX body overrides using .prose-editorial wrapper
+     CRITICAL: Use :global() for MDX-rendered elements that don't get Astro scope attributes.
+     The .prose-editorial wrapper IS scoped by Astro, so :global() only matches INSIDE it. */
+  .prose-editorial {
+    max-width: 68ch;
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .prose-editorial :global(h2) {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+  .prose-editorial :global(h2)::before {
+    content: "\00A7\00A0";  /* section sign + nbsp */
+  }
+  /* REVIEWS 22-04 prose-CSS gap: h3 numbered-highlight subheads. Subordinate to
+     the mono h2 section marker -- a readable Geist subhead, no section prefix.
+     Hierarchy carried by weight + margin asymmetry (loose above, tight below so
+     the title binds to its paragraph), NOT a new size. */
+  .prose-editorial :global(h3) {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 1.125rem;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-top: 28px;
+    margin-bottom: 8px;
+  }
+  .prose-editorial :global(p) {
+    margin-bottom: 16px;
+  }
+  .prose-editorial :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  /* REVIEWS 22-04 prose-CSS gap: the lead-in blockquote. Quiet framing aside --
+     ink-muted, hairline left rule, no background, no italic. */
+  .prose-editorial :global(blockquote) {
+    margin: 0 0 16px;
+    padding-left: 16px;
+    border-left: 1px solid var(--rule);
+    color: var(--ink-muted);
+  }
+  .prose-editorial :global(ul),
+  .prose-editorial :global(ol) {
+    padding-left: 24px;
+    margin-bottom: 16px;
+  }
+  .prose-editorial :global(li) {
+    margin-bottom: 8px;
+  }
+  /* REVIEWS 22-04 prose-CSS gap: horizontal rules between major sections.
+     Hairline --rule divider; 48px margins collapse to a clean 48px each side. */
+  .prose-editorial :global(hr) {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 48px 0;
+  }
+  .prose-editorial :global(a) {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .prose-editorial :global(a:hover) {
+    text-decoration: underline;
+  }
+  .prose-editorial :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+  /* D-13: Code blocks match editorial minimal box */
+  .prose-editorial :global(pre) {
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    margin-bottom: 16px;
+  }
+
+  /* Reduced motion: no opacity reveal exists on the back link, so only the
+     color transition ease is dropped (the affordance color still changes). */
+  @media (prefers-reduced-motion: reduce) {
+    .back-link {
+      transition: none;
+    }
+  }
+</style>
