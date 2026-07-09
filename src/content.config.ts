@@ -32,7 +32,8 @@ const experience = defineCollection({
     endDate: z.coerce.date().optional(), // absence ⇒ present (D-01); OMIT from Holloway, do not use ""
     dateRange: z.string(), // display-only, decoupled from sort (D-05)
     techStack: z.array(z.string()), // NO .min(1) — Balfour is [] (D-10)
-    summary: z.string(), // first-person site voice
+    summary: z.string(), // first-person site voice (on-page .lead tagline)
+    description: z.string().optional(), // WR-02: short recruiter-facing meta/OG description; detail route falls back to summary when absent (Balfour has none)
     highlights: z.array(z.string()).max(5), // .max(5), NO hard min (A1) so Balfour validates
     engagementType: z.enum(["contract", "internship"]),
     hasCaseStudy: z.boolean(),
