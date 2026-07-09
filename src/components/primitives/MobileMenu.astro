@@ -239,10 +239,18 @@ function isActive(href: string): boolean {
   //      script but the guarded binding block early-returns, leaving the new
   //      page without listeners.
 
+  // IN-01: canonical reference to the currently-bound focus-trap keydown
+  // handler (bound at the document level in openMenu). Held at module scope so
+  // resetMobileMenuState can tear it down on a re-init from an open state
+  // without hoisting the whole focus-trap closure. Null until the first bind.
+  let currentKeyDownHandler: ((e: KeyboardEvent) => void) | null = null;
+
   function resetMobileMenuState(menu: HTMLElement) {
-    // Unconditional reset — safe to call on every init/navigation. Does NOT
-    // touch event listeners (those are bound separately by
-    // bindMobileMenuListeners and guarded by the menuInitialized flag).
+    // Unconditional reset — safe to call on every init/navigation. Listener
+    // binding is guarded separately by bindMobileMenuListeners (menuInitialized
+    // flag), but the document-level keydown trap and the `inert` flags applied
+    // in openMenu ARE torn down here so a re-init from an open menu (IN-01:
+    // forward-compat View Transitions navigation) is fully idempotent.
     const trigger = document.getElementById("menu-trigger");
     menu.classList.remove("is-open");
     menu.setAttribute("aria-hidden", "true");
@@ -251,6 +259,17 @@ function isActive(href: string): boolean {
       trigger.setAttribute("aria-label", "Open menu");
     }
     document.body.style.overflow = "";
+    // IN-01: defensively remove the focus-trap keydown listener and clear the
+    // inert flags on the page shell so stale listeners/inert never survive a
+    // re-init that lands while the menu is open. removeEventListener with the
+    // canonical handler reference is a no-op when it was never added.
+    if (currentKeyDownHandler) {
+      document.removeEventListener("keydown", currentKeyDownHandler);
+    }
+    document.querySelector("header")?.removeAttribute("inert");
+    document.querySelector("main")?.removeAttribute("inert");
+    document.querySelector("footer")?.removeAttribute("inert");
+    document.querySelector(".chat-widget")?.removeAttribute("inert");
   }
 
   function bindMobileMenuListeners(menu: HTMLElement) {
@@ -326,6 +345,10 @@ function isActive(href: string): boolean {
         first.focus();
       }
     }
+
+    // IN-01: publish the canonical handler reference so resetMobileMenuState
+    // can remove this exact listener on a later re-init from an open state.
+    currentKeyDownHandler = handleKeyDown;
 
     // Trigger open/close
     trigger.addEventListener("click", () => {
