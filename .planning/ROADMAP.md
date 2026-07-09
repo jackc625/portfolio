@@ -73,7 +73,11 @@
   2. Each experience entry exposes role, company, dates, and tech/skills as typed frontmatter validated at build time (`astro check` passes on the new collection).
   3. Querying the collection returns entries in reverse-chronological order (most recent engagement first), establishing the ordering + field contract the Experience page renders against.
   4. `pnpm build` succeeds with the new collection wired in and no new runtime dependencies are added.
-**Plans**: TBD
+**Plans**: 4 plans
+- [ ] 21-01-PLAN.md — Sync mechanism: `sync-experience.mjs` (lift + D-07 strip) + Wave 0 tests-first suite + npm scripts
+- [ ] 21-02-PLAN.md — `experience` Zod schema registered in `content.config.ts` (D-01 fields, A1 highlights bound)
+- [ ] 21-03-PLAN.md — Author fenced sources (Holloway fence + new Balfour) + both MDX entries + run sync + build gate
+- [ ] 21-04-PLAN.md — CI drift gate step + `docs/CONTENT-SCHEMA.md` experience documentation
 
 ### Phase 22: Experience Page & Holloway Case Study
 **Goal**: Visitors can reach a dedicated Experience page from the primary nav that presents Holloway as a scannable summary opening into a full deep-dive, alongside a lightweight Balfour Beatty entry — all rendered from the Phase 21 collection.
@@ -152,7 +156,7 @@ Phases execute in numeric order within each milestone.
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 8/8 | Complete | 2026-05-11 |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete | 2026-05-12 |
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
-| 21. Experience Content Pipeline & Collection | v1.4 | 0/TBD | Not started | - |
+| 21. Experience Content Pipeline & Collection | v1.4 | 0/4 | Not started | - |
 | 22. Experience Page & Holloway Case Study | v1.4 | 0/TBD | Not started | - |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 0/TBD | Not started | - |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
