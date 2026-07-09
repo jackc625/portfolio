@@ -76,10 +76,10 @@
   3. Querying the collection returns entries in reverse-chronological order (most recent engagement first), establishing the ordering + field contract the Experience page renders against.
   4. `pnpm build` succeeds with the new collection wired in and no new runtime dependencies are added.
 
-**Plans**: 4 plans
+**Plans**: 1/4 plans executed
 **Wave 1**
 
-- [ ] 21-01-PLAN.md — Sync mechanism: `sync-experience.mjs` (lift + D-07 strip) + Wave 0 tests-first suite + npm scripts
+- [x] 21-01-PLAN.md — Sync mechanism: `sync-experience.mjs` (lift + D-07 strip) + Wave 0 tests-first suite + npm scripts
 - [ ] 21-02-PLAN.md — `experience` Zod schema registered in `content.config.ts` (D-01 fields, A1 highlights bound)
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -179,7 +179,7 @@ Phases execute in numeric order within each milestone.
 | 18. Persistence + Identity — KV Write Path + sessionId | v1.3 | 8/8 | Complete | 2026-05-11 |
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete | 2026-05-12 |
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
-| 21. Experience Content Pipeline & Collection | v1.4 | 0/4 | Not started | - |
+| 21. Experience Content Pipeline & Collection | v1.4 | 1/4 | In Progress|  |
 | 22. Experience Page & Holloway Case Study | v1.4 | 0/TBD | Not started | - |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 0/TBD | Not started | - |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |

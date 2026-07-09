@@ -3,16 +3,17 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 21
+current_phase_name: experience-content-pipeline-collection
 status: executing
 stopped_at: Phase 21 replanned with cross-AI review feedback (4 plans, 3 waves)
-last_updated: "2026-07-09T04:59:52.000Z"
+last_updated: "2026-07-09T08:38:43.008Z"
 last_activity: 2026-07-09
-last_activity_desc: Phase 21 replanned — cross-AI review feedback incorporated (5 findings)
+last_activity_desc: Phase 21 execution started
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -23,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 21 replanned with cross-AI review feedback (4 plans, 3 waves). Next: `/gsd-execute-phase 21` (Experience Content Pipeline & Collection).
+**Current focus:** Phase 21 — experience-content-pipeline-collection
 
 ## Current Position
 
-Phase: 21 — Experience Content Pipeline & Collection (planned — ready to execute)
-Plan: 0/4 plans executed
+Phase: 21 (experience-content-pipeline-collection) — EXECUTING
+Plan: 2 of 4
 Status: Ready to execute
-Last activity: 2026-07-09 — Phase 21 replanned (cross-AI review feedback incorporated)
+Last activity: 2026-07-09 — Phase 21 execution started
 Progress: [░░░░░░░░░░] 0% (0/5 phases)
 
 ### v1.4 phase map
@@ -62,6 +63,8 @@ v1.4 roadmap-level notes carried into planning:
 - **Projects schema already supports featuring (PROJ-04):** `src/content.config.ts` already carries `featured: boolean` + `order: number` — reconciliation is applying them consistently, not adding schema.
 - **Chat #7 exclusion must be lifted (CHAT-10 / PROJ-01):** `scripts/build-chat-context.mjs` currently hard-fails on `Projects/7` via the D-04 `/MULTI[- ]?DEX/` regex and the source allow-list. Syncing #7 (Phase 23) and ingesting it into chat (Phase 25) both require deliberately lifting that exclusion.
 - **Voice split (CHAT-06) holds:** site copy is first person (`about.ts`, MDX bodies); chat consumes third-person variants (`about-chat.ts`, MDX `chatSummary`). The build-time `checkFirstPersonLeaks` guard hard-fails on leakage — new experience content needs a third-person chat variant.
+- [Phase ?]: Phase 21-01: shipped sortExperienceEntries helper (SC3 finding #3) as a Phase-22-consumable ordering contract, not a reworded criterion
+- [Phase ?]: Phase 21-01: path-escape test asserts err.status===2 in addition to the message (finding #2); added write-mode idempotency test asserting mtime+contents unchanged (finding #1)
 
 ### Open Blockers
 
@@ -94,6 +97,12 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T04:21:31.000Z
+**Last session:** 2026-07-09T08:38:02.554Z
 **Stopped at:** Phase 21 replanned with cross-AI review feedback (4 plans, 3 waves) — ready to execute
 **Resume file:** .planning/phases/21-experience-content-pipeline-collection/21-01-PLAN.md
+
+## Performance Metrics
+
+| Phase | Plan | Duration | Notes |
+|-------|------|----------|-------|
+| Phase 21 P01 | 4min | 3 tasks | 6 files |
