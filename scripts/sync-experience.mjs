@@ -27,7 +27,12 @@ import { fileURLToPath } from "node:url";
 
 const CHECK_MODE = process.argv.includes("--check");
 const PROJECT_ROOT = process.cwd();
-const MDX_GLOB = "src/content/experience/*.mdx";
+// WR-03: recursive glob to match the Astro collection loader
+// (`pattern: "**/*.mdx"` in src/content.config.ts). A single-level glob would
+// load & ship a nested entry (e.g. archive/old-role.mdx) that is never
+// drift-checked. slug (basename) may be non-unique across subdirs — acceptable
+// since it is used only for log/error labels, not for resolution.
+const MDX_GLOB = "src/content/experience/**/*.mdx";
 const FENCE_START = "<!-- CASE-STUDY-START -->";
 const FENCE_END = "<!-- CASE-STUDY-END -->";
 
