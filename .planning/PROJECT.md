@@ -10,10 +10,23 @@ After v1.3 the site ships with a tasteful motion layer, a knowledge-grounded cha
 
 Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing — the site must make him more credible than a resume alone.
 
+## Current Milestone: v1.4 Professional Experience
+
+**Goal:** Add Jack's real professional experience to the site and reposition him from "student with side projects" to a new-grad engineer with shipped production work — raising recruiter credibility while giving engineers a deep technical read.
+
+**Target features:**
+- New Experience page (route + nav) — Holloway contract engagement as a scannable summary → full deep-dive case study
+- Balfour Beatty 2023 internship as a lightweight earlier-work-history entry
+- Home page experience teaser for the 30-second recruiter scan
+- Positioning shift to "new-grad engineer with production experience" — Core Value, About narrative, and education status (WGU BS CS May 2026, VT transfer, LPI Linux Essentials cert)
+- Sync the Multi-Chain EVM / Multi-Dex Crypto Trader project (#7) onto the site via the existing `sync-projects.mjs` pipeline
+- Reconcile projects with the résumé — feature SeatWatch, Multi-Chain EVM, NFL Prediction in a top tier; keep the other 4 accessible below (nothing deleted)
+- Refresh the chat knowledge base (`portfolio-context.json`) to ingest the new experience + project, honoring the CHAT-06 voice split (third person in chat)
+
 ## Current State
 
 **Shipped:** v1.3 Chat Visibility (2026-05-13)
-**In flight:** None — planning next milestone (v1.4+)
+**In flight:** v1.4 Professional Experience (planning — requirements + roadmap)
 **Live at:** jackcutrara.com (single Cloudflare Worker `jack-cutrara-portfolio`, version `ede1431f-e92a-4fda-af54-4f8f57781d3b`; hourly cron `["0 * * * *"]` ACTIVE; Pages project retired 2026-05-13)
 **Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets (`src/worker.ts` re-exports Astro `handle()` for `fetch` + adds `scheduled()` delegating to `deliverDue`) + Cloudflare KV (`CHAT_KV`) + Resend REST + Geist/Geist Mono typography
 **Source LOC:** ~6,802 (src/ — astro, ts, css, mdx, md; +44% from v1.2 close)
@@ -81,7 +94,16 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 ### Active
 
-(v1.4 milestone requirements TBD — to be defined via `/gsd-new-milestone`.)
+<!-- v1.4 Professional Experience — high-level scope; detailed REQ-IDs in REQUIREMENTS.md -->
+
+- [ ] Dedicated Experience page (new route + nav entry) surfacing professional work
+- [ ] Holloway contract case study — scannable summary → full deep-dive
+- [ ] Balfour Beatty 2023 internship as earlier work-history entry
+- [ ] Home page experience teaser for the 30-second recruiter scan
+- [ ] Positioning shift to new-grad-with-production-experience (Core Value, About narrative, education status)
+- [ ] Sync Multi-Chain EVM / Multi-Dex Crypto Trader project (#7) to the site
+- [ ] Reconcile projects — featured tier (SeatWatch, Multi-Chain EVM, NFL Prediction) with the rest accessible below
+- [ ] Refresh chat knowledge base with experience + new project, preserving CHAT-06 voice split
 
 ### Out of Scope
 
@@ -178,4 +200,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-13 after v1.3 Chat Visibility milestone. 4 phases (17-20), 26 plans, 195 commits over 4 days. 36/36 v1.3 requirements satisfied. Live deployment at jackcutrara.com on single Cloudflare Worker; first live transcript email delivered to Jack's Gmail Inbox confirmed (resend_message_id `16bc7812-011d-4fea-87a6-b4cecd7ed71b`). `pnpm test` 560 PASS / 0 FAIL / 2 SKIP; `pnpm exec astro check` 0/0/0 (116 files). Next milestone: TBD via `/gsd-new-milestone`.*
+*Last updated: 2026-07-08 — started v1.4 Professional Experience milestone. Adds a dedicated Experience page (Holloway contract + Balfour Beatty internship), a Home teaser, a positioning shift to new-grad-with-production-experience, a synced 7th project (Multi-Chain EVM), résumé-aligned project reconciliation, and a refreshed chat knowledge base. Requirements + roadmap being defined via `/gsd-new-milestone`. Previous: v1.3 Chat Visibility shipped 2026-05-13 (4 phases 17-20, 36/36 requirements).*

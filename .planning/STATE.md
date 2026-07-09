@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: Chat Visibility
-status: shipped
-stopped_at: v1.3 milestone closed 2026-05-13 — archived to .planning/milestones/v1.3-*; awaiting /gsd-new-milestone to start v1.4
-last_updated: "2026-05-13T16:00:00Z"
-last_activity: 2026-05-13 — Archived v1.3 Chat Visibility milestone; tagged v1.3; planning next milestone
+milestone: v1.4
+milestone_name: Professional Experience
+status: planning
+last_updated: "2026-07-09T02:09:52.483Z"
+last_activity: 2026-07-09
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 26
-  completed_plans: 26
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,9 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-13)
 
 ## Current Position
 
-Milestone: v1.3 Chat Visibility — SHIPPED 2026-05-13
-Phases: 4/4 complete (17 + 18 + 19 + 20); 26/26 plans complete
-Last activity: 2026-05-13 — `/gsd-complete-milestone v1.3` archived ROADMAP, REQUIREMENTS, MILESTONE-AUDIT, and phase directories to `.planning/milestones/v1.3-*`; tagged `v1.3` in git
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-07-09 — Milestone v1.4 started
 
 ### Latest snapshot at v1.3 close
 
