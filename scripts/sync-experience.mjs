@@ -37,9 +37,12 @@ const FENCE_START = "<!-- CASE-STUDY-START -->";
 const FENCE_END = "<!-- CASE-STUDY-END -->";
 
 /**
- * Normalize CRLF to LF (S2 / Pitfall 4).
+ * Normalize CRLF and lone CR to LF (S2 / Pitfall 4).
+ * IN-01: `\r\n?` collapses both `\r\n` (Windows) and a bare `\r`
+ * (classic-Mac) so odd line endings can't defeat the idempotent byte
+ * comparison.
  */
-export const normalize = (s) => s.replace(/\r\n/g, "\n");
+export const normalize = (s) => s.replace(/\r\n?/g, "\n");
 
 /**
  * Parse just the `source:` field from a frontmatter block.
