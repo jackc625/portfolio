@@ -11,6 +11,9 @@ on:
       - "src/data/portfolio-context.json"
       - "scripts/sync-projects.mjs"
       - "scripts/build-chat-context.mjs"
+      - "Experience/**"
+      - "src/content/experience/**"
+      - "scripts/sync-experience.mjs"
   push:
     branches:
       - main
@@ -37,6 +40,9 @@ jobs:
 
       - name: Verify Projects/ <-> MDX sync is clean
         run: pnpm sync:check
+
+      - name: Verify Experience/ <-> MDX sync is clean
+        run: pnpm sync:experience:check
 
       - name: Verify portfolio-context.json is in sync with sources
         run: pnpm build:chat-context:check
