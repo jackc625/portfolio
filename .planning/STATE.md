@@ -6,14 +6,14 @@ current_phase: 22
 current_phase_name: experience-page-holloway-case-study
 status: executing
 stopped_at: Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
-last_updated: "2026-07-09T21:14:41.099Z"
+last_updated: "2026-07-09T21:27:56.141Z"
 last_activity: 2026-07-09
 last_activity_desc: Phase 22 execution started
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 9
-  completed_plans: 6
+  completed_plans: 7
   percent: 20
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 22 (experience-page-holloway-case-study) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-07-09 — Phase 22 execution started
 Progress: [██░░░░░░░░] 20% (1/5 phases)
@@ -69,6 +69,8 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase ?]: Phase 21-03: two real experience entries double as schema optionality fixtures (Holloway omits endDate/present role, Balfour techStack: [] non-engineering); MDX bodies machine-synced from fenced Experience/*.md sources, deps unchanged 11/12
 - [Phase ?]: Phase 22-01: authored Wave 0 tests-first suite (nav/summary/detail RED, em-dash GREEN); 3 files intentionally RED until Wave 2 ships pages+nav+D-08 normalization
 - [Phase 22]: Phase 22-02: added experience-first nav to Header+MobileMenu with startsWith('/experience') active branch; did NOT edit v1.1-locked MASTER.md three-link contract (supersession recorded in SUMMARY, not spec)
+- [Phase 22]: 22-03: /experience two-tier — Holloway featured (display + accent CTA) vs Balfour non-linked mono 'Earlier' entry; highlights as hairline ledger (not numbered)
+- [Phase 22]: 22-03: deep-dive link uses static href=/experience/holloway (Wave-0 test regex needs quote-adjacent href) + build-time id-invariant guard; company normalized to 'Holloway Company' (D-08)
 
 ### Open Blockers
 
@@ -101,7 +103,7 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T21:13:55.037Z
+**Last session:** 2026-07-09T21:26:48.249Z
 **Stopped at:** Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
 **Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-01-PLAN.md
 
@@ -115,3 +117,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 21 P04 | 10m | 2 tasks | 2 files |
 | Phase 22 P01 | 4min | 4 tasks | 4 files |
 | Phase 22 P02 | 3min | 2 tasks tasks | 2 files files |
+| Phase 22 P03 | 9min | 2 tasks | 2 files |

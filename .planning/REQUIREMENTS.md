@@ -12,9 +12,9 @@ Requirements for the v1.4 Professional Experience milestone. Each maps to a road
 
 - [x] **EXP-01**: An `experience` content collection with a Zod-validated schema (role, company, dates, stack/skills, summary) sourced from `Experience/*.md` via a sync pipeline mirroring the established `scripts/sync-projects.mjs` pattern
 - [x] **EXP-02**: Visitor can reach a dedicated Experience page from the primary navigation
-- [ ] **EXP-03**: Visitor sees the Holloway contract engagement as a scannable summary (headline highlights) on the Experience page
+- [x] **EXP-03**: Visitor sees the Holloway contract engagement as a scannable summary (headline highlights) on the Experience page
 - [ ] **EXP-04**: Visitor can open a full Holloway deep-dive case study (its own detail view) from the summary — Problem→Approach→Outcome depth drawn from `HOLLOWAY_EXPERIENCE.md`
-- [ ] **EXP-05**: Visitor sees the Balfour Beatty 2023 internship as a lightweight earlier-work-history entry (role, dates, 1–2 lines) without a full case study
+- [x] **EXP-05**: Visitor sees the Balfour Beatty 2023 internship as a lightweight earlier-work-history entry (role, dates, 1–2 lines) without a full case study
 - [x] **EXP-06**: Experience entries render in reverse-chronological order with role, company, dates, and tech/skills visible at a glance
 
 ### Home Teaser (HOME)
@@ -77,9 +77,9 @@ Which phases cover which requirements. Populated during roadmap creation.
 |-------------|-------|--------|
 | EXP-01 | Phase 21 | Complete |
 | EXP-02 | Phase 22 | Complete |
-| EXP-03 | Phase 22 | Pending |
+| EXP-03 | Phase 22 | Complete |
 | EXP-04 | Phase 22 | Pending |
-| EXP-05 | Phase 22 | Pending |
+| EXP-05 | Phase 22 | Complete |
 | EXP-06 | Phase 21 | Complete |
 | HOME-01 | Phase 24 | Pending |
 | POS-01 | Phase 24 | Pending |
