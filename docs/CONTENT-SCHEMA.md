@@ -158,6 +158,21 @@ As with projects, the `source` field is validated for **string shape only** at
 build time. File existence is verified by `scripts/sync-experience.mjs` at sync
 time (see Pitfall 7).
 
+**Frontmatter is independently authored — NOT synced (IN-03 / D-10, A1):** The
+single-source-of-truth guarantee covers **only the MDX body**. Metadata fields
+(`summary`, `techStack`, `highlights`, `dateRange`, etc.) are hand-authored
+directly in the `.mdx` frontmatter and are **not** derived from, nor checked
+against, the `Experience/<NAME>.md` source. The same facts may appear in the
+source prose (e.g. "0 → ~1,400 checks"), but nothing keeps the frontmatter
+numbers in step with the body — the drift gate does **not** cover frontmatter.
+When you update a figure in the source prose, update the corresponding
+frontmatter field by hand.
+
+**`source:` value syntax (WR-02):** the sync parser accepts a double-quoted,
+single-quoted, or bare `source:` value. It does **not** support an inline YAML
+comment after a bare value (`source: Experience/X.md # note`) — quote the value
+or drop the comment.
+
 ## 6. Experience Sync Contract
 
 `Experience/<NAME>.md` is the authoritative source for every experience body.
