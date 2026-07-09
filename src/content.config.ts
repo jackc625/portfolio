@@ -22,4 +22,23 @@ const projects = defineCollection({
     }),
 });
 
-export const collections = { projects };
+const experience = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/experience" }),
+  schema: z.object({
+    role: z.string(),
+    company: z.string(),
+    location: z.string(),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().optional(), // absence ⇒ present (D-01); OMIT from Holloway, do not use ""
+    dateRange: z.string(), // display-only, decoupled from sort (D-05)
+    techStack: z.array(z.string()), // NO .min(1) — Balfour is [] (D-10)
+    summary: z.string(), // first-person site voice
+    highlights: z.array(z.string()).max(5), // .max(5), NO hard min (A1) so Balfour validates
+    engagementType: z.enum(["contract", "internship"]),
+    hasCaseStudy: z.boolean(),
+    chatSummary: z.string().optional(), // content deferred to Phase 25 (D-02)
+    source: z.string(), // existence validated by sync script, not Zod
+  }),
+});
+
+export const collections = { projects, experience };
