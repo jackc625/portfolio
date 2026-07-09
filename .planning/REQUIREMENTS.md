@@ -11,7 +11,7 @@ Requirements for the v1.4 Professional Experience milestone. Each maps to a road
 ### Experience Surface (EXP)
 
 - [x] **EXP-01**: An `experience` content collection with a Zod-validated schema (role, company, dates, stack/skills, summary) sourced from `Experience/*.md` via a sync pipeline mirroring the established `scripts/sync-projects.mjs` pattern
-- [ ] **EXP-02**: Visitor can reach a dedicated Experience page from the primary navigation
+- [x] **EXP-02**: Visitor can reach a dedicated Experience page from the primary navigation
 - [ ] **EXP-03**: Visitor sees the Holloway contract engagement as a scannable summary (headline highlights) on the Experience page
 - [ ] **EXP-04**: Visitor can open a full Holloway deep-dive case study (its own detail view) from the summary — Problem→Approach→Outcome depth drawn from `HOLLOWAY_EXPERIENCE.md`
 - [ ] **EXP-05**: Visitor sees the Balfour Beatty 2023 internship as a lightweight earlier-work-history entry (role, dates, 1–2 lines) without a full case study
@@ -76,7 +76,7 @@ Which phases cover which requirements. Populated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | EXP-01 | Phase 21 | Complete |
-| EXP-02 | Phase 22 | Pending |
+| EXP-02 | Phase 22 | Complete |
 | EXP-03 | Phase 22 | Pending |
 | EXP-04 | Phase 22 | Pending |
 | EXP-05 | Phase 22 | Pending |

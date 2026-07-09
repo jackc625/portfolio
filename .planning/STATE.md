@@ -6,14 +6,14 @@ current_phase: 22
 current_phase_name: experience-page-holloway-case-study
 status: executing
 stopped_at: Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
-last_updated: "2026-07-09T21:05:51.174Z"
+last_updated: "2026-07-09T21:14:41.099Z"
 last_activity: 2026-07-09
 last_activity_desc: Phase 22 execution started
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 9
-  completed_plans: 4
+  completed_plans: 6
   percent: 20
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 22 (experience-page-holloway-case-study) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-07-09 — Phase 22 execution started
 Progress: [██░░░░░░░░] 20% (1/5 phases)
@@ -68,6 +68,7 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 21]: Experience schema: techStack unbounded (no .min(1)) and highlights.max(5) with no hard min so empty/lightweight entries validate (Pitfall 4 / A1)
 - [Phase ?]: Phase 21-03: two real experience entries double as schema optionality fixtures (Holloway omits endDate/present role, Balfour techStack: [] non-engineering); MDX bodies machine-synced from fenced Experience/*.md sources, deps unchanged 11/12
 - [Phase ?]: Phase 22-01: authored Wave 0 tests-first suite (nav/summary/detail RED, em-dash GREEN); 3 files intentionally RED until Wave 2 ships pages+nav+D-08 normalization
+- [Phase 22]: Phase 22-02: added experience-first nav to Header+MobileMenu with startsWith('/experience') active branch; did NOT edit v1.1-locked MASTER.md three-link contract (supersession recorded in SUMMARY, not spec)
 
 ### Open Blockers
 
@@ -100,7 +101,7 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T21:05:29.389Z
+**Last session:** 2026-07-09T21:13:55.037Z
 **Stopped at:** Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
 **Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-01-PLAN.md
 
@@ -113,3 +114,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 21 P03 | 4min | 3 tasks | 5 files |
 | Phase 21 P04 | 10m | 2 tasks | 2 files |
 | Phase 22 P01 | 4min | 4 tasks | 4 files |
+| Phase 22 P02 | 3min | 2 tasks tasks | 2 files files |
