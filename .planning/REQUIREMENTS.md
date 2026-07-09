@@ -75,31 +75,33 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| EXP-01 | — | Pending |
-| EXP-02 | — | Pending |
-| EXP-03 | — | Pending |
-| EXP-04 | — | Pending |
-| EXP-05 | — | Pending |
-| EXP-06 | — | Pending |
-| HOME-01 | — | Pending |
-| POS-01 | — | Pending |
-| POS-02 | — | Pending |
-| POS-03 | — | Pending |
-| POS-04 | — | Pending |
-| PROJ-01 | — | Pending |
-| PROJ-02 | — | Pending |
-| PROJ-03 | — | Pending |
-| PROJ-04 | — | Pending |
-| CHAT-10 | — | Pending |
-| CHAT-11 | — | Pending |
-| QA-01 | — | Pending |
-| QA-02 | — | Pending |
+| EXP-01 | Phase 21 | Pending |
+| EXP-02 | Phase 22 | Pending |
+| EXP-03 | Phase 22 | Pending |
+| EXP-04 | Phase 22 | Pending |
+| EXP-05 | Phase 22 | Pending |
+| EXP-06 | Phase 21 | Pending |
+| HOME-01 | Phase 24 | Pending |
+| POS-01 | Phase 24 | Pending |
+| POS-02 | Phase 24 | Pending |
+| POS-03 | Phase 24 | Pending |
+| POS-04 | Phase 24 | Pending |
+| PROJ-01 | Phase 23 | Pending |
+| PROJ-02 | Phase 23 | Pending |
+| PROJ-03 | Phase 23 | Pending |
+| PROJ-04 | Phase 23 | Pending |
+| CHAT-10 | Phase 25 | Pending |
+| CHAT-11 | Phase 25 | Pending |
+| QA-01 | Phase 25 | Pending |
+| QA-02 | Phase 25 | Pending |
 
 **Coverage:**
 - v1.4 requirements: 19 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 19 ⚠️
+- Mapped to phases: 19 ✓
+- Unmapped: 0 ✓
+
+Phase distribution: Phase 21 (2 — EXP-01, EXP-06) · Phase 22 (4 — EXP-02..05) · Phase 23 (4 — PROJ-01..04) · Phase 24 (5 — POS-01..04, HOME-01) · Phase 25 (4 — CHAT-10, CHAT-11, QA-01, QA-02). QA-01/QA-02 are milestone-level cross-cutting invariants owned by Phase 25 (where chat-surface risk concentrates + the final verification pass runs), but asserted phase-wide via each UI phase's success criteria.
 
 ---
 *Requirements defined: 2026-07-08*
-*Last updated: 2026-07-08 after initial v1.4 definition*
+*Last updated: 2026-07-08 — traceability populated during v1.4 roadmap creation (Phases 21-25, 19/19 mapped)*

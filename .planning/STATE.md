@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
-status: planning
-last_updated: "2026-07-09T02:09:52.483Z"
-last_activity: 2026-07-09
+status: roadmap_complete
+last_updated: "2026-07-08T00:00:00.000Z"
+last_activity: 2026-07-08
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -17,17 +17,28 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-13)
+See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Planning next milestone — run `/gsd-new-milestone` to define v1.4
+**Current focus:** v1.4 roadmap approved (Phases 21-25). Next: `/gsd-plan-phase 21` (Experience Content Pipeline & Collection).
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 21 — Experience Content Pipeline & Collection (not started)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-07-09 — Milestone v1.4 started
+Status: Roadmap complete — ready to plan Phase 21
+Last activity: 2026-07-08 — v1.4 roadmap created (5 phases, 19/19 requirements mapped)
+Progress: [░░░░░░░░░░] 0% (0/5 phases)
+
+### v1.4 phase map
+
+| Phase | Goal | Requirements | UI |
+|-------|------|--------------|----|
+| 21 — Experience Content Pipeline & Collection | Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline | EXP-01, EXP-06 | — |
+| 22 — Experience Page & Holloway Case Study | Experience page + nav; Holloway scannable summary → deep-dive; Balfour lightweight entry | EXP-02..05 | UI |
+| 23 — Projects Reconciliation & Featured Tier | Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest below | PROJ-01..04 | UI |
+| 24 — Positioning Shift & Home Teaser | New-grad-with-production-experience framing (Core Value, About, education, metadata); Home Holloway teaser | POS-01..04, HOME-01 | UI |
+| 25 — Chat Knowledge Refresh & Milestone Verification | Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates | CHAT-10, CHAT-11, QA-01, QA-02 | — |
 
 ### Latest snapshot at v1.3 close
 
@@ -42,9 +53,15 @@ Last activity: 2026-07-09 — Milestone v1.4 started
 
 All v1.0/v1.1/v1.2/v1.3 milestone-level decisions logged in PROJECT.md Key Decisions table. Plan-level decision history retained in archived `.planning/milestones/v1.*-phases/*/SUMMARY.md` and `.planning/RETROSPECTIVE.md`.
 
+v1.4 roadmap-level notes carried into planning:
+- **Experience pipeline reuse (EXP-01):** build a parallel `Experience/*.md → experience` collection + sync script mirroring `scripts/sync-projects.mjs` (fenced-block extraction, Zod-validated, idempotent `--check`). Do not invent a new mechanism.
+- **Projects schema already supports featuring (PROJ-04):** `src/content.config.ts` already carries `featured: boolean` + `order: number` — reconciliation is applying them consistently, not adding schema.
+- **Chat #7 exclusion must be lifted (CHAT-10 / PROJ-01):** `scripts/build-chat-context.mjs` currently hard-fails on `Projects/7` via the D-04 `/MULTI[- ]?DEX/` regex and the source allow-list. Syncing #7 (Phase 23) and ingesting it into chat (Phase 25) both require deliberately lifting that exclusion.
+- **Voice split (CHAT-06) holds:** site copy is first person (`about.ts`, MDX bodies); chat consumes third-person variants (`about-chat.ts`, MDX `chatSummary`). The build-time `checkFirstPersonLeaks` guard hard-fails on leakage — new experience content needs a third-person chat variant.
+
 ### Open Blockers
 
-(none — awaiting next milestone definition)
+(none — v1.4 roadmap approved; ready to plan Phase 21)
 
 ### Deferred Items (carried into next milestone or organic-evidence wait)
 
@@ -65,6 +82,8 @@ All v1.0/v1.1/v1.2/v1.3 milestone-level decisions logged in PROJECT.md Key Decis
 
 ## Roadmap Snapshot
 
-v1.3 phases (Phases 17-20) shipped and archived. See `.planning/ROADMAP.md` for the collapsed-milestone view + `.planning/milestones/v1.3-ROADMAP.md` for full phase detail.
+v1.4 Professional Experience roadmap created 2026-07-08 — 5 phases (21-25), 19/19 requirements mapped (0 unmapped). Phase numbering continues from v1.3 (which ended at Phase 20). See `.planning/ROADMAP.md` for full phase detail + success criteria.
 
-Next milestone: TBD via `/gsd-new-milestone`.
+**Sequencing:** 21 (Experience pipeline/collection — foundational) → 22 (Experience page + Holloway, UI) → 23 (Projects reconciliation + featured tier, UI) → 24 (Positioning + Home teaser, UI) → 25 (Chat knowledge refresh + milestone verification). Phase 25 depends on 22/23/24 (needs Experience content, synced project #7, and finalized positioning before regenerating chat knowledge and running the gate pass).
+
+v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROADMAP.md`.
