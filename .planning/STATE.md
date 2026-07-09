@@ -5,8 +5,8 @@ milestone_name: Professional Experience
 current_phase: 22
 current_phase_name: Experience Page & Holloway Case Study
 status: planning
-stopped_at: Phase 21 complete, ready to plan Phase 22
-last_updated: "2026-07-09T12:43:31.222Z"
+stopped_at: Phase 22 context gathered
+last_updated: "2026-07-09T13:49:34.569Z"
 last_activity: 2026-07-09
 last_activity_desc: Phase 21 complete, transitioned to Phase 22
 progress:
@@ -99,9 +99,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T08:56:42.160Z
-**Stopped at:** Completed 21-02-PLAN.md
-**Resume file:** .planning/phases/21-experience-content-pipeline-collection/21-01-PLAN.md
+**Last session:** 2026-07-09T13:49:34.558Z
+**Stopped at:** Phase 22 context gathered
+**Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-CONTEXT.md
 
 ## Performance Metrics
 
