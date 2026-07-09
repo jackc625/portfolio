@@ -2,9 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
+current_phase: 21
 status: roadmap_complete
-last_updated: "2026-07-08T00:00:00.000Z"
+stopped_at: Phase 21 context gathered
+last_updated: "2026-07-09T03:05:29.335Z"
 last_activity: 2026-07-08
+last_activity_desc: v1.4 roadmap created (5 phases, 19/19 requirements mapped)
 progress:
   total_phases: 5
   completed_phases: 0
@@ -54,6 +57,7 @@ Progress: [░░░░░░░░░░] 0% (0/5 phases)
 All v1.0/v1.1/v1.2/v1.3 milestone-level decisions logged in PROJECT.md Key Decisions table. Plan-level decision history retained in archived `.planning/milestones/v1.*-phases/*/SUMMARY.md` and `.planning/RETROSPECTIVE.md`.
 
 v1.4 roadmap-level notes carried into planning:
+
 - **Experience pipeline reuse (EXP-01):** build a parallel `Experience/*.md → experience` collection + sync script mirroring `scripts/sync-projects.mjs` (fenced-block extraction, Zod-validated, idempotent `--check`). Do not invent a new mechanism.
 - **Projects schema already supports featuring (PROJ-04):** `src/content.config.ts` already carries `featured: boolean` + `order: number` — reconciliation is applying them consistently, not adding schema.
 - **Chat #7 exclusion must be lifted (CHAT-10 / PROJ-01):** `scripts/build-chat-context.mjs` currently hard-fails on `Projects/7` via the D-04 `/MULTI[- ]?DEX/` regex and the source allow-list. Syncing #7 (Phase 23) and ingesting it into chat (Phase 25) both require deliberately lifting that exclusion.
@@ -87,3 +91,9 @@ v1.4 Professional Experience roadmap created 2026-07-08 — 5 phases (21-25), 19
 **Sequencing:** 21 (Experience pipeline/collection — foundational) → 22 (Experience page + Holloway, UI) → 23 (Projects reconciliation + featured tier, UI) → 24 (Positioning + Home teaser, UI) → 25 (Chat knowledge refresh + milestone verification). Phase 25 depends on 22/23/24 (needs Experience content, synced project #7, and finalized positioning before regenerating chat knowledge and running the gate pass).
 
 v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROADMAP.md`.
+
+## Session
+
+**Last session:** 2026-07-09T03:05:29.319Z
+**Stopped at:** Phase 21 context gathered
+**Resume file:** .planning/phases/21-experience-content-pipeline-collection/21-CONTEXT.md
