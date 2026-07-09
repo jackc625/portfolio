@@ -103,8 +103,22 @@
   4. The Balfour Beatty 2023 internship appears as a lightweight earlier-work-history entry (role, dates, 1–2 lines) with no full case study.
   5. All visual/layout decisions were routed through the frontend-design skill against `design-system/MASTER.md`; `astro check` stays 0/0/0 and the D-26 chat-surface battery holds through any `BaseLayout.astro`/`global.css` change.
 
-**Plans**: TBD
+**Plans**: 5 plans
 **UI hint**: yes
+
+**Wave 1** *(tests-first)*
+
+- [ ] 22-01-PLAN.md — Wave 0 validation suite: experience-nav / experience-summary / experience-detail / experience-voice-em-dash tests (mirror case-studies-shape / voice-em-dash / projects-collection)
+
+**Wave 2** *(blocked on Wave 1; no file overlap — parallel)*
+
+- [ ] 22-02-PLAN.md — Primary nav entry `experience` FIRST in Header.astro + MobileMenu.astro (D-03); focus-trap/inert script untouched (D-26)
+- [ ] 22-03-PLAN.md — `/experience` listing page (asymmetric two-tier D-04/D-05/D-06, frontend-design-composed) + D-08 company normalization in holloway.mdx
+- [ ] 22-04-PLAN.md — `/experience/[id]` Holloway deep-dive (hasCaseStudy filter D-01, D-07 header, D-02 back links, D-11 scroll sentinels, page-scoped prose CSS)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 22-05-PLAN.md — Phase gate: full suite (D-26 battery) + build route set + drift + QA-02 dep lock + frontend-design human visual sign-off (SC5d)
 
 ### Phase 23: Projects Reconciliation & Featured Tier
 
@@ -180,7 +194,7 @@ Phases execute in numeric order within each milestone.
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete | 2026-05-12 |
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
-| 22. Experience Page & Holloway Case Study | v1.4 | 0/TBD | Not started | - |
+| 22. Experience Page & Holloway Case Study | v1.4 | 0/5 | Not started | - |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 0/TBD | Not started | - |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |
