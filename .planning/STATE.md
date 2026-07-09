@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 21
-status: roadmap_complete
-stopped_at: Phase 21 context gathered
-last_updated: "2026-07-09T03:05:29.335Z"
-last_activity: 2026-07-08
-last_activity_desc: v1.4 roadmap created (5 phases, 19/19 requirements mapped)
+status: executing
+stopped_at: Phase 21 planned (4 plans, 3 waves)
+last_updated: "2026-07-09T04:21:31.000Z"
+last_activity: 2026-07-09
+last_activity_desc: Phase 21 planning complete — 4 plans ready
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
+  total_plans: 4
   completed_plans: 0
   percent: 0
 ---
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** v1.4 roadmap approved (Phases 21-25). Next: `/gsd-plan-phase 21` (Experience Content Pipeline & Collection).
+**Current focus:** Phase 21 planned (4 plans, 3 waves). Next: `/gsd-execute-phase 21` (Experience Content Pipeline & Collection).
 
 ## Current Position
 
-Phase: 21 — Experience Content Pipeline & Collection (not started)
-Plan: —
-Status: Roadmap complete — ready to plan Phase 21
-Last activity: 2026-07-08 — v1.4 roadmap created (5 phases, 19/19 requirements mapped)
+Phase: 21 — Experience Content Pipeline & Collection (planned — ready to execute)
+Plan: 0/4 plans executed
+Status: Ready to execute
+Last activity: 2026-07-09 — Phase 21 planning complete (4 plans, 3 waves)
 Progress: [░░░░░░░░░░] 0% (0/5 phases)
 
 ### v1.4 phase map
@@ -94,6 +94,6 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T03:05:29.319Z
-**Stopped at:** Phase 21 context gathered
-**Resume file:** .planning/phases/21-experience-content-pipeline-collection/21-CONTEXT.md
+**Last session:** 2026-07-09T04:21:31.000Z
+**Stopped at:** Phase 21 planned (4 plans, 3 waves) — ready to execute
+**Resume file:** .planning/phases/21-experience-content-pipeline-collection/21-01-PLAN.md

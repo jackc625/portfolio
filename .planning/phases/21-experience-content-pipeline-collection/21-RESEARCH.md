@@ -389,14 +389,16 @@ No external services, network, or new binaries. **No missing dependencies.**
 
 **Note:** A1 and A2 are genuine authoring/decision points the planner should resolve explicitly (or defer to a `checkpoint:human-verify`). A3 is stylistic only.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **`highlights` min bound (A1).**
    - Known: D-03 wants 3–5 bullets; Balfour is a 1–2 line lightweight entry.
    - Unclear: whether Balfour carries highlights at all.
    - Recommendation: `.max(5)` no min; author 3–5 on Holloway, 0–2 on Balfour. Lock in planning.
+   - **RESOLVED (Plan 21-02):** schema uses `highlights: z.array(z.string()).max(5)` with **no hard min** — Holloway carries 3–5, Balfour 0–2, both validate.
 2. **Balfour date precision (Claude's discretion, D-noted).**
    - Either `2023-05`/`2023-08` (month) or full ISO both `z.coerce.date()` correctly and sort correctly. Recommend month precision for honesty; `dateRange: "May 2023 – Aug 2023"`.
+   - **RESOLVED (Plan 21-03):** month-precision dates used; `dateRange: "May 2023 – Aug 2023"`.
 
 ## Sources
 

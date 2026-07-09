@@ -1,0 +1,69 @@
+# API Surface
+
+> Generated from `.planning/intel/api-map.json`. Do not edit by hand.
+
+> **Warning:** api-map.json is stale (>24 hours old). Data below may be out of date.
+
+## `POST /api/chat`
+
+- **method:** POST
+- **path:** /api/chat
+- **params:** messages, sessionId
+- **file:** src/pages/api/chat.ts
+- **description:** SSR (prerender=false) Cloudflare Workers endpoint. Streams Anthropic Claude Haiku 4.5 replies as SSE (text/event-stream). Enforces CORS origin whitelist, 32KB body cap, Cloudflare rate limiter, Zod validation, message sanitization, and fire-and-forget KV transcript persistence via appendTurn.
+
+## `GET /`
+
+- **method:** GET
+- **path:** /
+- **params:** 
+- **file:** src/pages/index.astro
+- **description:** Static homepage. Renders 3 featured projects, about intro, contact section, and Person/WebSite JSON-LD.
+
+## `GET /about`
+
+- **method:** GET
+- **path:** /about
+- **params:** 
+- **file:** src/pages/about.astro
+- **description:** Static about page.
+
+## `GET /projects`
+
+- **method:** GET
+- **path:** /projects
+- **params:** 
+- **file:** src/pages/projects.astro
+- **description:** Static projects index, ordered by project.order ascending.
+
+## `GET /projects/[id]`
+
+- **method:** GET
+- **path:** /projects/[id]
+- **params:** id
+- **file:** src/pages/projects/[id].astro
+- **description:** Static project case study pages generated via getStaticPaths from the projects content collection. Renders MDX Content plus wrap-around NextProject navigation.
+
+## `GET /contact`
+
+- **method:** GET
+- **path:** /contact
+- **params:** 
+- **file:** src/pages/contact.astro
+- **description:** Static contact page.
+
+## `GET /404`
+
+- **method:** GET
+- **path:** /404
+- **params:** 
+- **file:** src/pages/404.astro
+- **description:** Static 404 not-found page.
+
+## `scheduled() cron`
+
+- **method:** CRON
+- **path:** worker.scheduled
+- **params:** controller, env, ctx
+- **file:** src/worker.ts
+- **description:** Cloudflare Workers scheduled() handler dispatching deliverDue for the transcript delivery cron sweep (live: -> delivered: keyspace partition, DRY_RUN-gated Resend email).
