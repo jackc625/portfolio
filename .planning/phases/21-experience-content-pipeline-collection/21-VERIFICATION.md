@@ -1,7 +1,8 @@
 ---
 phase: 21-experience-content-pipeline-collection
 verified: 2026-07-09T09:06:30Z
-status: human_needed
+status: passed
+human_verified: 2026-07-09T12:39:09Z
 score: 15/16 must-haves verified
 behavior_unverified: 0
 overrides_applied: 0
@@ -15,7 +16,7 @@ human_verification:
 
 **Phase Goal:** A typed, Zod-validated `experience` content collection exists, fed from `Experience/*.md` through a sync pipeline mirroring `scripts/sync-projects.mjs`, carrying the fields and ordering contract the Experience surface will render.
 **Verified:** 2026-07-09T09:06:30Z
-**Status:** human_needed
+**Status:** passed (human check cleared via 21-UAT.md on 2026-07-09)
 **Re-verification:** No — initial verification
 
 ## Goal Achievement
@@ -111,6 +112,8 @@ No TBD/FIXME/HACK/PLACEHOLDER debt markers found in any file modified by this ph
 **Test:** Open `src/content/experience/holloway.mdx` after sync and read the body top to bottom.
 **Expected:** Opens with the "Contract engagement" blockquote lede, then Overview -> Highlights (9 numbered sections) -> Themes at a glance, reading coherently as the intended deep-dive with no garbled formatting or missing content.
 **Why human:** Automated checks (fence extraction, lede-string grep, schema validation) prove the mechanism worked, but only a human can judge whether the fenced prose is well-formed, complete, and reads as intended. This is the single Manual-Only check documented in 21-VALIDATION.md (A2) and was explicitly deferred to end-of-phase per the `<human-check>` block in 21-03-PLAN.md rather than requiring a mid-execution checkpoint.
+
+**Resolution (2026-07-09):** PASSED via 21-UAT.md test 1. During the read-out the user flagged em dashes throughout the copy; these were removed site-wide (Holloway body + all project case-study source fences) and the body re-read cleanly. User approved with `pass`. See 21-UAT.md Gaps G1 for the full fix record.
 
 ### Gaps Summary
 

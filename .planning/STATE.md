@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
-current_phase: 21
-current_phase_name: experience-content-pipeline-collection
-status: verifying
-stopped_at: Completed 21-02-PLAN.md
-last_updated: "2026-07-09T08:57:30.993Z"
+current_phase: 22
+current_phase_name: Experience Page & Holloway Case Study
+status: planning
+stopped_at: Phase 21 complete, ready to plan Phase 22
+last_updated: "2026-07-09T12:43:31.222Z"
 last_activity: 2026-07-09
-last_activity_desc: Phase 21 execution started
+last_activity_desc: Phase 21 complete, transitioned to Phase 22
 progress:
   total_phases: 5
   completed_phases: 1
@@ -24,15 +24,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 21 — experience-content-pipeline-collection
+**Current focus:** Phase 22 — Experience Page & Holloway Case Study
 
 ## Current Position
 
-Phase: 21 (experience-content-pipeline-collection) — EXECUTING
-Plan: 4 of 4
-Status: Phase complete — ready for verification
-Last activity: 2026-07-09 — Phase 21 execution started
-Progress: [░░░░░░░░░░] 0% (0/5 phases)
+Phase: 22 — Experience Page & Holloway Case Study
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-07-09 — Phase 21 complete, transitioned to Phase 22
+Progress: [██░░░░░░░░] 20% (1/5 phases)
 
 ### v1.4 phase map
 
