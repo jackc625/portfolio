@@ -4,8 +4,8 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 23
 current_phase_name: Projects Reconciliation & Featured Tier
-status: verifying
-stopped_at: Phase 22 complete (5/5 plans) — capstone gate green + SC5d sign-off approved; ready for verification
+status: ready
+stopped_at: Phase 22 complete and verified (9/9 must-haves, SC5d approved); ready to start Phase 23
 last_updated: "2026-07-09T22:05:46.531Z"
 last_activity: 2026-07-09
 last_activity_desc: Phase 22 complete, transitioned to Phase 23
@@ -24,13 +24,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 22 — experience-page-holloway-case-study
+**Current focus:** Phase 23 — Projects Reconciliation & Featured Tier
 
 ## Current Position
 
 Phase: 23 — Projects Reconciliation & Featured Tier
 Plan: Not started
-Status: Phase complete — capstone gate green + SC5d sign-off approved; ready for verification
+Status: Phase 22 complete and verified (9/9 must-haves passed); Phase 23 not started
 Last activity: 2026-07-09 — Phase 22 complete, transitioned to Phase 23
 Progress: [████░░░░░░] 40% (2/5 phases)
 
@@ -77,7 +77,7 @@ v1.4 roadmap-level notes carried into planning:
 
 ### Open Blockers
 
-(none — Phase 22 planned; ready to execute)
+(none — Phase 22 complete and verified; Phase 23 not started)
 
 ### Deferred Items (carried into next milestone or organic-evidence wait)
 
@@ -107,8 +107,8 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 ## Session
 
 **Last session:** 2026-07-09T21:52:09.954Z
-**Stopped at:** Phase 22 complete (5/5 plans) — capstone gate green + SC5d sign-off approved; ready for verification
-**Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-05-SUMMARY.md
+**Stopped at:** Phase 22 complete and verified (9/9 must-haves passed, SC5d approved); transitioned to Phase 23
+**Resume file:** (none — next step is /gsd-discuss-phase 23 or /gsd-plan-phase 23)
 
 ## Performance Metrics
 

@@ -26,7 +26,7 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 ## Current State
 
 **Shipped:** v1.3 Chat Visibility (2026-05-13)
-**In flight:** v1.4 Professional Experience (planning — requirements + roadmap)
+**In flight:** v1.4 Professional Experience (2/5 phases complete — Phase 21 Experience pipeline + Phase 22 Experience page & Holloway case study shipped; Phases 23–25 remaining)
 **Live at:** jackcutrara.com (single Cloudflare Worker `jack-cutrara-portfolio`, version `ede1431f-e92a-4fda-af54-4f8f57781d3b`; hourly cron `["0 * * * *"]` ACTIVE; Pages project retired 2026-05-13)
 **Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets (`src/worker.ts` re-exports Astro `handle()` for `fetch` + adds `scheduled()` delegating to `deliverDue`) + Cloudflare KV (`CHAT_KV`) + Resend REST + Geist/Geist Mono typography
 **Source LOC:** ~6,802 (src/ — astro, ts, css, mdx, md; +44% from v1.2 close)
@@ -92,13 +92,12 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 - ✓ Resend REST email delivery — pure `fetch()` wrapper to `https://api.resend.com/emails` with `Idempotency-Key: transcript/{sessionId}` 24h window; AbortController 10s timeout; 3-variant discriminated `Result` per D-17; plaintext-only body with sanitizer pipeline stripping bidi overrides + null bytes + HTML-escaping every dynamic field; adversarial-payload suite covers `<script>` / `</p><img onerror=...>` / `javascript:` / RTL override / null bytes / social-engineering prefixes; first live transcript email delivered to Jack's Gmail Inbox confirmed 2026-05-13 — MAIL-01..05 closed — v1.3 (Phase 20)
 - ✓ Cross-phase gates HELD phase-wide — D-15 SSE byte-identical anchor + D-26 chat-surface regression battery + TEST-03 Anthropic prompt-cache integrity all PRESERVED; `pnpm test` 560 PASS / 0 FAIL / 2 SKIP; `pnpm exec astro check` 0/0/0 (116 files); `package.json dependencies` byte-identical phase-wide (MAIL-01 zero-new-runtime-dep lock) — TEST-01..03 closed — v1.3 (cross-phase)
 
+- ✓ Dedicated Experience page + Holloway case study + Balfour entry — `/experience` two-tier listing reachable from an experience-first nav (Holloway rich scannable summary → `/experience/holloway` deep-dive with dual back links; Balfour lightweight non-linked "Earlier" entry structurally excluded from any detail route via `getStaticPaths` `hasCaseStudy` filter); D-08 company normalized to "Holloway Company"; tests-first validation suite (623 tests green incl. D-26 chat battery); astro check 0/0; zero new deps; SC5d human visual sign-off approved — EXP-02..05 closed — v1.4 (Phase 22)
+
 ### Active
 
 <!-- v1.4 Professional Experience — high-level scope; detailed REQ-IDs in REQUIREMENTS.md -->
 
-- [ ] Dedicated Experience page (new route + nav entry) surfacing professional work
-- [ ] Holloway contract case study — scannable summary → full deep-dive
-- [ ] Balfour Beatty 2023 internship as earlier work-history entry
 - [ ] Home page experience teaser for the 30-second recruiter scan
 - [ ] Positioning shift to new-grad-with-production-experience (Core Value, About narrative, education status)
 - [ ] Sync Multi-Chain EVM / Multi-Dex Crypto Trader project (#7) to the site
@@ -200,4 +199,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-08 — started v1.4 Professional Experience milestone. Adds a dedicated Experience page (Holloway contract + Balfour Beatty internship), a Home teaser, a positioning shift to new-grad-with-production-experience, a synced 7th project (Multi-Chain EVM), résumé-aligned project reconciliation, and a refreshed chat knowledge base. Requirements + roadmap being defined via `/gsd-new-milestone`. Previous: v1.3 Chat Visibility shipped 2026-05-13 (4 phases 17-20, 36/36 requirements).*
+*Last updated: 2026-07-09 — Phase 22 (Experience Page & Holloway Case Study) complete and verified: `/experience` two-tier listing + experience-first nav, Holloway scannable summary → `/experience/holloway` deep-dive, Balfour lightweight entry (structurally route-excluded), D-08 company normalization; EXP-02..05 closed. v1.4 now 2/5 phases complete (21 + 22). Next: Phase 23 Projects Reconciliation & Featured Tier. Previous: v1.3 Chat Visibility shipped 2026-05-13 (4 phases 17-20, 36/36 requirements).*
