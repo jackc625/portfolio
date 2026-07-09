@@ -1,0 +1,27 @@
+{
+  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "languages": ["TypeScript", "JavaScript", "Astro", "CSS"],
+  "frameworks": ["Astro 6", "Tailwind CSS v4"],
+  "tools": ["Vite 7", "ESLint", "Prettier", "Vitest", "Wrangler", "Shiki", "astro-check"],
+  "build_system": "pnpm scripts (astro build via Wrangler)",
+  "test_framework": "Vitest",
+  "package_manager": "pnpm",
+  "runtime": "Node.js 22+ (dev) / Cloudflare Workers (SSR + cron)",
+  "key_dependencies": {
+    "astro": "^6.0.8",
+    "tailwindcss": "^4.2.2",
+    "@tailwindcss/vite": "^4.2.2",
+    "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/mdx": "^5.0.2",
+    "@astrojs/sitemap": "^3.7.1",
+    "astro-seo": "^1.1.0",
+    "zod": "^4.3.6",
+    "@anthropic-ai/sdk": "^0.82.0",
+    "marked": "^17.0.5",
+    "dompurify": "^3.3.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.83.0"
+  },
+  "content_formats": ["MDX (project case studies)", "Markdown (content collections)", "Astro components (.astro)", "JSON (portfolio-context, config)", "CSS custom properties (design tokens)"]
+}

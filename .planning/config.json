@@ -34,6 +34,11 @@
   },
   "mode": "yolo",
   "granularity": "standard",
-  "branching_strategy": "none",
-  "quick_branch_template": null
+  "quick_branch_template": null,
+  "graphify": {
+    "enabled": true
+  },
+  "intel": {
+    "enabled": true
+  }
 }

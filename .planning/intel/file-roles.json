@@ -1,0 +1,165 @@
+{
+  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "entries": {
+    "astro.config.mjs": {
+      "exports": ["default"],
+      "imports": ["astro/config", "@tailwindcss/vite", "@astrojs/mdx", "@astrojs/sitemap", "@astrojs/cloudflare"],
+      "type": "config"
+    },
+    "src/content.config.ts": {
+      "exports": ["collections"],
+      "imports": ["astro:content", "astro/loaders", "astro/zod"],
+      "type": "config"
+    },
+    "src/worker.ts": {
+      "exports": ["Env", "default"],
+      "imports": ["@astrojs/cloudflare/handler", "./lib/chat-delivery"],
+      "type": "entry-point"
+    },
+    "src/layouts/BaseLayout.astro": {
+      "exports": ["Props"],
+      "imports": ["astro:assets", "astro-seo", "../components/SkipToContent.astro", "../components/primitives/Header.astro", "../components/primitives/MobileMenu.astro", "../components/primitives/Footer.astro", "../components/chat/ChatWidget.astro", "../styles/global.css"],
+      "type": "template"
+    },
+    "src/pages/index.astro": {
+      "exports": [],
+      "imports": ["astro:content", "../layouts/BaseLayout.astro", "../components/primitives/Container.astro", "../components/primitives/SectionHeader.astro", "../components/primitives/WorkRow.astro", "../components/ContactSection.astro", "../components/JsonLd.astro", "../data/contact", "../data/about"],
+      "type": "entry-point"
+    },
+    "src/pages/projects.astro": {
+      "exports": [],
+      "imports": ["astro:content", "../layouts/BaseLayout.astro"],
+      "type": "entry-point"
+    },
+    "src/pages/projects/[id].astro": {
+      "exports": ["getStaticPaths", "Props"],
+      "imports": ["astro:content", "../../layouts/BaseLayout.astro", "../../components/primitives/Container.astro", "../../components/NextProject.astro", "../../components/ArticleImage.astro"],
+      "type": "entry-point"
+    },
+    "src/pages/about.astro": {
+      "exports": [],
+      "imports": ["../layouts/BaseLayout.astro", "../data/about"],
+      "type": "entry-point"
+    },
+    "src/pages/contact.astro": {
+      "exports": [],
+      "imports": ["../layouts/BaseLayout.astro", "../data/contact"],
+      "type": "entry-point"
+    },
+    "src/pages/404.astro": {
+      "exports": [],
+      "imports": ["../layouts/BaseLayout.astro"],
+      "type": "entry-point"
+    },
+    "src/pages/api/chat.ts": {
+      "exports": ["prerender", "POST"],
+      "imports": ["astro", "@anthropic-ai/sdk", "cloudflare:workers", "../../data/portfolio-context.json", "../../prompts/chat-request-shape", "../../lib/validation", "../../lib/chat-transcripts"],
+      "type": "entry-point"
+    },
+    "src/lib/validation.ts": {
+      "exports": ["MessageSchema", "RequestSchema", "ValidatedMessage", "ValidatedRequest", "validateRequest", "sanitizeMessages", "isAllowedOrigin", "MAX_BODY_SIZE"],
+      "imports": ["zod"],
+      "type": "module"
+    },
+    "src/lib/chat-transcripts.ts": {
+      "exports": ["KEY_PREFIX", "TRANSCRIPT_TTL_SECONDS", "TURN_CAP", "REFERRER_MAX", "USER_AGENT_MAX", "QUOTA_WINDOW_MS", "QUOTA_CAP", "appendTurn", "AppendTurnMeta"],
+      "imports": [],
+      "type": "module"
+    },
+    "src/lib/chat-delivery.ts": {
+      "exports": ["deliverDue"],
+      "imports": ["./email/render", "./email/resend"],
+      "type": "module"
+    },
+    "src/lib/email/render.ts": {
+      "exports": ["renderEmail"],
+      "imports": [],
+      "type": "module"
+    },
+    "src/lib/email/resend.ts": {
+      "exports": ["sendEmail"],
+      "imports": [],
+      "type": "module"
+    },
+    "src/prompts/chat-request-shape.ts": {
+      "exports": ["ChatMessage", "buildChatRequestArgs"],
+      "imports": ["./system-prompt", "./portfolio-context-types"],
+      "type": "module"
+    },
+    "src/prompts/system-prompt.ts": {
+      "exports": ["buildSystemPrompt"],
+      "imports": ["./portfolio-context-types"],
+      "type": "module"
+    },
+    "src/prompts/portfolio-context-types.ts": {
+      "exports": ["PortfolioContext"],
+      "imports": [],
+      "type": "type-def"
+    },
+    "src/prompts/chat-request-shape.ts:messages": {
+      "exports": [],
+      "imports": [],
+      "type": "module"
+    },
+    "src/scripts/chat.ts": {
+      "exports": [],
+      "imports": ["marked", "dompurify"],
+      "type": "script"
+    },
+    "src/scripts/motion.ts": {
+      "exports": [],
+      "imports": ["./lib/observer"],
+      "type": "script"
+    },
+    "src/scripts/scroll-depth.ts": {
+      "exports": [],
+      "imports": ["./lib/observer"],
+      "type": "script"
+    },
+    "src/scripts/analytics.ts": {
+      "exports": [],
+      "imports": [],
+      "type": "script"
+    },
+    "src/scripts/lib/observer.ts": {
+      "exports": ["RevealObserverOptions", "createRevealObserver"],
+      "imports": [],
+      "type": "module"
+    },
+    "src/components/chat/ChatWidget.astro": {
+      "exports": [],
+      "imports": ["../../scripts/chat.ts"],
+      "type": "module"
+    },
+    "src/data/contact.ts": {
+      "exports": ["CONTACT"],
+      "imports": [],
+      "type": "data"
+    },
+    "src/data/about.ts": {
+      "exports": ["ABOUT_INTRO", "ABOUT_P1"],
+      "imports": [],
+      "type": "data"
+    },
+    "src/styles/global.css": {
+      "exports": [],
+      "imports": ["tailwindcss"],
+      "type": "style"
+    },
+    "scripts/build-chat-context.mjs": {
+      "exports": [],
+      "imports": [],
+      "type": "script"
+    },
+    "scripts/sync-projects.mjs": {
+      "exports": [],
+      "imports": [],
+      "type": "script"
+    },
+    "src/content/projects/seatwatch.mdx": {
+      "exports": [],
+      "imports": [],
+      "type": "data"
+    }
+  }
+}

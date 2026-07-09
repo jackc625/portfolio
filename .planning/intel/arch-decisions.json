@@ -1,0 +1,58 @@
+{
+  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "entries": {
+    "overview": {
+      "pattern": "Astro 6 islands architecture with per-route SSR on Cloudflare",
+      "description": "Static-first personal portfolio site. Pages are pure HTML built at compile time; only the chat widget and small vanilla-JS scripts hydrate on the client. A single API route opts into SSR (prerender=false) to stream LLM responses. Deployed to Cloudflare Pages (static) + Cloudflare Workers (SSR route + cron) at jackcutrara.com."
+    },
+    "data-flow": {
+      "flow": "MDX content collections -> Zod-validated frontmatter -> getStaticPaths -> static HTML pages; chat: browser widget -> POST /api/chat (SSE) -> Anthropic Haiku stream -> KV transcript -> cron deliverDue -> Resend email",
+      "description": "Content is authored as MDX in src/content/projects/, validated by Zod schemas at build, and rendered to static pages ordered by project.order. The chat surface streams via SSE and persists transcripts to Cloudflare KV, later swept by a scheduled Worker into email delivery."
+    },
+    "conventions": {
+      "naming": "Decision IDs (D-xx), review gaps (WR-xx, CR-xx), and phase tags annotate load-bearing code in comments. Design tokens are six CSS hex custom properties.",
+      "file-organization": "src/pages (routes), src/layouts (BaseLayout wrapper), src/components/primitives (scoped-style building blocks), src/lib (pure server modules), src/prompts (LLM prompt builders), src/scripts (client vanilla JS), src/data (typed content constants), src/content/projects (MDX case studies).",
+      "imports": "Pure server lib modules avoid cross-coupling to Anthropic SDK, cloudflare:workers, prompts, and browser scripts (D-26 isolation anchor). Client scripts share an IntersectionObserver factory (scripts/lib/observer.ts)."
+    },
+    "styling": {
+      "system": "Tailwind CSS v4 (Oxide engine) via @tailwindcss/vite plus CSS custom-property design tokens in src/styles/global.css",
+      "description": "Locked editorial design system per design-system/MASTER.md. Six hex tokens only (--bg, --ink, --ink-muted, --ink-faint, --rule, --accent). Geist + Geist Mono self-hosted via Astro 6 Fonts API. Single light theme, restrained motion. Type role classes (.display, .h1-section, etc.) in global.css."
+    },
+    "chat-architecture": {
+      "pattern": "SSE streaming chat widget with hardened Workers SSR backend",
+      "description": "Client widget (src/scripts/chat.ts) renders markdown via marked + DOMPurify XSS sanitization. Backend (src/pages/api/chat.ts) enforces exact-origin CORS whitelist, 32KB body cap, Cloudflare rate limiter binding, Zod validation, and prompt-cached Anthropic Claude Haiku 4.5 streaming. Transcripts persist to KV (chat-transcripts.ts) fire-and-forget via ctx.waitUntil, with a scheduled cron (chat-delivery.ts) delivering via Resend."
+    },
+    "content-collections": {
+      "pattern": "Astro Content Layer with Zod schemas + MDX",
+      "description": "projects collection defined in src/content.config.ts via glob loader over src/content/projects/**/*.mdx. Zod schema validates title, tagline, techStack, status enum, category enum, order, year, and source at build time. Six project case studies present."
+    },
+    "component:BaseLayout": {
+      "path": "src/layouts/BaseLayout.astro",
+      "responsibility": "Wraps every page: SEO meta (astro-seo), OG/Twitter cards, JSON-LD, self-hosted fonts, Umami analytics (PROD-gated), header/footer/mobile menu, chat widget, and client script bootstrap."
+    },
+    "component:ChatAPI": {
+      "path": "src/pages/api/chat.ts",
+      "responsibility": "SSR SSE endpoint streaming Anthropic Haiku with CORS, rate limiting, validation, and KV transcript persistence."
+    },
+    "component:Worker": {
+      "path": "src/worker.ts",
+      "responsibility": "Custom Cloudflare Worker entrypoint providing fetch (Astro handler) and scheduled (cron -> deliverDue) handlers plus the Env binding interface."
+    },
+    "component:validation": {
+      "path": "src/lib/validation.ts",
+      "responsibility": "Zod request/message schemas, message sanitization, CORS origin allowlist, and body-size constant for the chat API."
+    },
+    "component:chat-transcripts": {
+      "path": "src/lib/chat-transcripts.ts",
+      "responsibility": "Pure KV write module: schema-versioned transcripts, 30-day TTL, 30-turn sliding window, per-session quota, and first-turn metadata pin."
+    },
+    "component:chat-delivery": {
+      "path": "src/lib/chat-delivery.ts",
+      "responsibility": "Pure cron sweep: partitions live: -> delivered: keyspace, DRY_RUN-gated Resend email send with retry/jitter and batch caps."
+    },
+    "component:prompts": {
+      "path": "src/prompts/",
+      "responsibility": "Pure prompt builders: system-prompt.ts (third-person biographer prompt), chat-request-shape.ts (Anthropic request args with ephemeral prompt caching), portfolio-context-types.ts (context type)."
+    }
+  }
+}

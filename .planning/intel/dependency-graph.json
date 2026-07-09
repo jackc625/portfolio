@@ -1,0 +1,113 @@
+{
+  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "entries": {
+    "astro": {
+      "version": "^6.0.8",
+      "type": "production",
+      "invocation": "npm run build",
+      "used_by": ["dev", "build", "preview", "check"]
+    },
+    "@astrojs/cloudflare": {
+      "version": "^13.1.7",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["astro.config.mjs", "src/worker.ts", "src/pages/api/chat.ts"]
+    },
+    "@astrojs/mdx": {
+      "version": "^5.0.2",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["astro.config.mjs", "src/content/projects/"]
+    },
+    "@astrojs/sitemap": {
+      "version": "^3.7.1",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["astro.config.mjs"]
+    },
+    "@tailwindcss/vite": {
+      "version": "^4.2.2",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["astro.config.mjs"]
+    },
+    "tailwindcss": {
+      "version": "^4.2.2",
+      "type": "production",
+      "invocation": "implicit",
+      "used_by": ["src/styles/global.css"]
+    },
+    "astro-seo": {
+      "version": "^1.1.0",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["src/layouts/BaseLayout.astro"]
+    },
+    "zod": {
+      "version": "^4.3.6",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["src/content.config.ts", "src/lib/validation.ts"]
+    },
+    "@anthropic-ai/sdk": {
+      "version": "^0.82.0",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["src/pages/api/chat.ts"]
+    },
+    "marked": {
+      "version": "^17.0.5",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["src/scripts/chat.ts"]
+    },
+    "dompurify": {
+      "version": "^3.3.3",
+      "type": "production",
+      "invocation": "require",
+      "used_by": ["src/scripts/chat.ts"]
+    },
+    "wrangler": {
+      "version": "^4.83.0",
+      "type": "development",
+      "invocation": "npm run build",
+      "used_by": ["build", "dev:worker", "dev:cron", "types"]
+    },
+    "vitest": {
+      "version": "^4.1.0",
+      "type": "development",
+      "invocation": "npm test",
+      "used_by": ["test"]
+    },
+    "jsdom": {
+      "version": "^29.0.1",
+      "type": "development",
+      "invocation": "implicit",
+      "used_by": ["test"]
+    },
+    "eslint": {
+      "version": "^10.1.0",
+      "type": "development",
+      "invocation": "npm run lint",
+      "used_by": ["lint"]
+    },
+    "prettier": {
+      "version": "^3.8.1",
+      "type": "development",
+      "invocation": "npm run format",
+      "used_by": ["format", "format:check"]
+    },
+    "@astrojs/check": {
+      "version": "^0.9.8",
+      "type": "development",
+      "invocation": "npm run check",
+      "used_by": ["check", "build"]
+    },
+    "typescript": {
+      "version": "^5.9.3",
+      "type": "development",
+      "invocation": "implicit",
+      "used_by": ["check", "lint"]
+    }
+  }
+}
