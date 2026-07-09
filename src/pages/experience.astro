@@ -1,0 +1,234 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/primitives/Container.astro";
+import SectionHeader from "../components/primitives/SectionHeader.astro";
+import { sortExperienceEntries } from "../lib/experience";
+
+// Reverse-chronological (startDate desc) via the shared helper -- do NOT inline
+// a .sort() (experience orders by startDate, not the projects `order` field).
+const entries = sortExperienceEntries(await getCollection("experience"));
+
+// D-05: the rich featured summary (case-study owner). D-06: lighter "Earlier"
+// non-linked entries. Strict-TS: `.find` returns T | undefined, so guard before
+// any `holloway.` access -- this also fails the build loudly if the collection
+// invariant (exactly one hasCaseStudy entry) is ever broken (REVIEWS 22-03).
+const holloway = entries.find((e) => e.data.hasCaseStudy);
+if (!holloway) {
+  throw new Error(
+    "experience.astro: no experience entry has hasCaseStudy: true -- expected the Holloway featured summary.",
+  );
+}
+const earlier = entries.filter((e) => !e.data.hasCaseStudy);
+if (earlier.length === 0) {
+  throw new Error(
+    "experience.astro: no earlier (hasCaseStudy: false) experience entries found.",
+  );
+}
+
+// The deep-dive link is the static `/experience/holloway` route (built by
+// 22-04's getStaticPaths, keyed on entry id). Assert the featured entry's id
+// matches that slug so the listing link can never point at a route that will
+// not be generated -- fails the build loudly if the MDX file is ever renamed.
+if (holloway.id !== "holloway") {
+  throw new Error(
+    `experience.astro: featured entry id "${holloway.id}" != "holloway"; the /experience/holloway deep-dive link would 404.`,
+  );
+}
+
+const hollowayStack = holloway.data.techStack.join(" · ").toUpperCase();
+---
+
+<BaseLayout
+  title="Experience"
+  description="Production engineering experience – the Holloway Connect contract and earlier work."
+>
+  <section class="section" aria-labelledby="section-experience">
+    <Container>
+      <SectionHeader number="01" title="EXPERIENCE" id="section-experience" />
+
+      {/* D-04 tier 1 -- Holloway rich featured summary (D-05) */}
+      <article class="featured">
+        <p class="meta-mono featured-eyebrow">
+          {holloway.data.role} &middot; {holloway.data.dateRange}
+        </p>
+        <h2 class="h2-project featured-title">{holloway.data.company}</h2>
+        <p class="featured-stack">{hollowayStack}</p>
+        <p class="lead featured-summary">{holloway.data.summary}</p>
+
+        <ul class="highlights">
+          {holloway.data.highlights.map((h) => (
+            <li class="body highlight">{h}</li>
+          ))}
+        </ul>
+
+        <a class="label-mono deep-link" href="/experience/holloway">
+          Read the full case study
+          <span class="deep-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
+
+      {/* D-06 tier 2 -- lighter, NON-LINKED "Earlier" entries (no accent, no link) */}
+      <div class="earlier-divider">
+        <span class="label-mono earlier-label">Earlier</span>
+        <span class="earlier-rule" aria-hidden="true"></span>
+      </div>
+
+      {earlier.map((e) => (
+        <div class="earlier-entry">
+          <p class="meta-mono earlier-role">
+            {e.data.role} &middot; {e.data.company}
+          </p>
+          <p class="meta-mono earlier-dates">{e.data.dateRange}</p>
+          <ul class="earlier-highlights">
+            {e.data.highlights.map((h) => (
+              <li class="body earlier-highlight">{h}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  /* -- Tier 1: Holloway featured summary (the 30-second recruiter payload) -- */
+  .featured {
+    margin-top: 24px;
+  }
+
+  .featured-eyebrow {
+    color: var(--ink-muted);
+    margin-bottom: 12px;
+  }
+
+  .featured-title {
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .featured-stack {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    margin-bottom: 24px;
+  }
+
+  .featured-summary {
+    color: var(--ink);
+    max-width: 68ch;
+    margin-bottom: 28px;
+  }
+
+  /* Highlights as a hairline "ledger" -- honest parallel list, no false numbering */
+  .highlights {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+    max-width: 68ch;
+  }
+
+  .highlight {
+    color: var(--ink);
+    border-top: 1px solid var(--rule);
+    padding: 16px 0;
+  }
+
+  /* Deep-dive link -- the only accent affordance on the page (MASTER §7 signal) */
+  .deep-link {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 120ms ease;
+  }
+
+  .deep-arrow {
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+
+  .deep-link:hover,
+  .deep-link:focus-visible {
+    color: var(--accent);
+  }
+
+  .deep-link:hover .deep-arrow,
+  .deep-link:focus-visible .deep-arrow {
+    opacity: 1;
+  }
+
+  .deep-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* -- "EARLIER" cue: a quiet mono label with a trailing hairline rule -- */
+  .earlier-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 48px;
+    margin-bottom: 24px;
+  }
+
+  .earlier-label {
+    color: var(--ink-faint);
+    flex: 0 0 auto;
+  }
+
+  .earlier-rule {
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* -- Tier 2: Earlier entries -- all-mono/muted register, no accent, no link -- */
+  .earlier-entry + .earlier-entry {
+    margin-top: 24px;
+  }
+
+  .earlier-role {
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  .earlier-dates {
+    color: var(--ink-faint);
+    margin-bottom: 12px;
+  }
+
+  .earlier-highlights {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 68ch;
+  }
+
+  .earlier-highlight {
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  .earlier-highlight:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Reduced motion: keep the accent color change (affordance) but drop the
+     arrow reveal, matching the WorkRow/NextProject reduce contract. */
+  @media (prefers-reduced-motion: reduce) {
+    .deep-link,
+    .deep-arrow {
+      transition: none;
+    }
+    .deep-link:hover .deep-arrow,
+    .deep-link:focus-visible .deep-arrow {
+      opacity: 0;
+    }
+  }
+</style>
