@@ -159,6 +159,14 @@ async function syncOne(mdxPath) {
   const sourceContent = normalize(await readFile(absSource, "utf8"));
   const newBody = extractFence(sourceContent, sourcePath);
 
+  // IN-02: an emptied fence (markers present but nothing between them) is a
+  // valid extraction but almost always an accidental full-content deletion.
+  // Experience bodies deliberately have no length check (D-07), so warn on
+  // stderr (non-fatal, exit 0) to make the silent wipe visible.
+  if (newBody === "") {
+    process.stderr.write(`WARN ${slug}.mdx: extracted body is empty\n`);
+  }
+
   // Assemble: frontmatter (verbatim) + newline + extracted body + trailing newline.
   const newMdx = frontmatterBlock + "\n" + newBody + "\n";
 
