@@ -3,7 +3,7 @@
  * Header — MASTER §5.1 (+ D-06 container-query hamburger + D-27 internal pathname)
  *
  * Sticky 72px-tall editorial header: JACK CUTRARA mono wordmark on the left,
- * 3-link mono nav (works/about/contact) on the right. Active link gets the
+ * mono nav (experience · works · about · contact) on the right. Active link gets the
  * accent-red underline from mockup.html §137–143.
  *
  * Below a 380px container width (not viewport width) the inline nav is hidden
@@ -21,12 +21,15 @@
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
+  { href: "/experience", label: "experience" },
   { href: "/projects", label: "works" },
   { href: "/about", label: "about" },
   { href: "/contact", label: "contact" },
 ];
 
 function isActive(href: string): boolean {
+  // /experience covers the "experience" nav label and any /experience/[id] sub-route
+  if (href === "/experience") return currentPath.startsWith("/experience");
   // /projects covers the "works" nav label and any /projects/[id] sub-route
   if (href === "/projects") return currentPath.startsWith("/projects");
   if (href === "/about") return currentPath.startsWith("/about");
