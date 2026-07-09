@@ -35,3 +35,6 @@ pnpm-debug.log*
 
 # Generated Cloudflare worker types
 worker-configuration.d.ts
+
+# Graphify knowledge graph artifacts
+.planning/graphs/*
