@@ -10,7 +10,7 @@
  *
  * Contents:
  *   1. Close button (top-right ×)
- *   2. Three stacked mono nav links (works / about / contact) — active link
+ *   2. Stacked mono nav links (experience · works · about · contact) — active link
  *      gets accent underline matching Header.astro .nav-link.is-active
  *   3. GITHUB · LINKEDIN · EMAIL mono link row at the bottom (imports from contact.ts, null entries skipped)
  *
@@ -36,6 +36,7 @@ import { CONTACT } from "../../data/contact";
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
+  { href: "/experience", label: "experience" },
   { href: "/projects", label: "works" },
   { href: "/about", label: "about" },
   { href: "/contact", label: "contact" },
@@ -50,6 +51,7 @@ const socialLinks = [
 ].filter((link): link is NonNullable<typeof link> => link !== null);
 
 function isActive(href: string): boolean {
+  if (href === "/experience") return currentPath.startsWith("/experience");
   if (href === "/projects") return currentPath.startsWith("/projects");
   if (href === "/about") return currentPath.startsWith("/about");
   if (href === "/contact") return currentPath.startsWith("/contact");
