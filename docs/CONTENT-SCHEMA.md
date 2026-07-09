@@ -220,6 +220,13 @@ rather than only the deploy build.
 
 **What sync leaves alone:** the entire frontmatter block, preserved byte-for-byte.
 
+**Frontmatter constraint — no bare `---` line (IN-04):** The sync script finds
+the end of the frontmatter by scanning for the first `\n---\n` after the opening
+delimiter. A frontmatter that legitimately contains a line whose value is
+exactly `---` (e.g. a YAML block scalar) would be truncated early and split
+mid-frontmatter. Do **not** place a bare `---` line inside experience
+frontmatter; if you need that literal value, quote it (`field: "---"`).
+
 ## 7. Experience Author Workflow
 
 1. Edit `Experience/<NAME>.md` between the fence markers. Edit nothing else inside the fence range.
