@@ -5,15 +5,15 @@ milestone_name: Professional Experience
 current_phase: 21
 current_phase_name: experience-content-pipeline-collection
 status: executing
-stopped_at: Phase 21 replanned with cross-AI review feedback (4 plans, 3 waves)
-last_updated: "2026-07-09T08:38:43.008Z"
+stopped_at: Completed 21-02-PLAN.md
+last_updated: "2026-07-09T08:43:47.686Z"
 last_activity: 2026-07-09
 last_activity_desc: Phase 21 execution started
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 21 (experience-content-pipeline-collection) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-07-09 — Phase 21 execution started
 Progress: [░░░░░░░░░░] 0% (0/5 phases)
@@ -65,6 +65,7 @@ v1.4 roadmap-level notes carried into planning:
 - **Voice split (CHAT-06) holds:** site copy is first person (`about.ts`, MDX bodies); chat consumes third-person variants (`about-chat.ts`, MDX `chatSummary`). The build-time `checkFirstPersonLeaks` guard hard-fails on leakage — new experience content needs a third-person chat variant.
 - [Phase ?]: Phase 21-01: shipped sortExperienceEntries helper (SC3 finding #3) as a Phase-22-consumable ordering contract, not a reworded criterion
 - [Phase ?]: Phase 21-01: path-escape test asserts err.status===2 in addition to the message (finding #2); added write-mode idempotency test asserting mtime+contents unchanged (finding #1)
+- [Phase 21]: Experience schema: techStack unbounded (no .min(1)) and highlights.max(5) with no hard min so empty/lightweight entries validate (Pitfall 4 / A1)
 
 ### Open Blockers
 
@@ -97,8 +98,8 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T08:38:02.554Z
-**Stopped at:** Phase 21 replanned with cross-AI review feedback (4 plans, 3 waves) — ready to execute
+**Last session:** 2026-07-09T08:43:47.676Z
+**Stopped at:** Completed 21-02-PLAN.md
 **Resume file:** .planning/phases/21-experience-content-pipeline-collection/21-01-PLAN.md
 
 ## Performance Metrics
@@ -106,3 +107,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase | Plan | Duration | Notes |
 |-------|------|----------|-------|
 | Phase 21 P01 | 4min | 3 tasks | 6 files |
+| Phase 21 P02 | 6min | 1 tasks | 1 files |
