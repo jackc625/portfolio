@@ -1,9 +1,12 @@
-// Scroll-depth client-side tracker — Phase 15
+// Scroll-depth client-side tracker — Phase 15 (scope widened Phase 22, WR-01)
 // Handles: IntersectionObserver on .scroll-sentinel elements; fires
-// scroll_depth events at 25/50/75/100% of <article> height on project
-// detail pages only (D-05 scope). Observer construction is gated by
-// sentinel presence in the DOM — no-op on non-project routes.
-// See 15-CONTEXT.md D-05..D-08 and 15-RESEARCH.md §2.
+// scroll_depth events at 25/50/75/100% of <article> height on long-form
+// detail pages that embed the sentinels — project case studies
+// (/projects/[id]) AND the experience case study (/experience/holloway).
+// Observer construction is gated by sentinel presence in the DOM — no-op on
+// routes without sentinels. The event payload carries `pageType` (the first
+// path segment, e.g. "projects" | "experience") so scroll depth on each
+// surface is attributable. See 15-CONTEXT.md D-05..D-08 and 15-RESEARCH.md §2.
 // Phase 16 D-19: refactored to consume the shared makeRevealObserver factory
 // (src/scripts/lib/observer.ts). Behavior is byte-equivalent — handleScrollEntry
 // preserves its own per-target unobserve call, oneShot is omitted
@@ -43,9 +46,14 @@ export function handleScrollEntry(
   // last non-empty segment wins regardless of trailingSlash configuration.
   const segments = pathname.split("/").filter(Boolean);
   const slug = segments[segments.length - 1] ?? "unknown";
+  // WR-01 (Phase 22 review): the sentinels now ship on /experience/holloway as
+  // well as /projects/[id], so a slug-only payload is ambiguous across surfaces.
+  // Carry the first path segment as pageType ("projects" | "experience") so
+  // scroll depth stays attributable per surface in analytics.
+  const pageType = segments[0] ?? "unknown";
   // Optional-chaining guards the L10 load-race window where Umami's <script>
   // hasn't loaded yet — silent no-op rather than thrown error.
-  window.umami?.track("scroll_depth", { percent, slug });
+  window.umami?.track("scroll_depth", { percent, slug, pageType });
   // D-08: one-shot per page-view; reloads refire (matches GA4 semantics).
   observer.unobserve(entry.target);
 }
@@ -67,7 +75,7 @@ export function initScrollDepth(): void {
     threshold: 0,
     onIntersect: handleScrollEntry,
   });
-  if (!observer) return; // Not on a /projects/[id] route (D-05 scope gate)
+  if (!observer) return; // No .scroll-sentinel elements on this route (scope gate)
   scrollDepthInitialized = true;
 
   if (import.meta.env.DEV) {

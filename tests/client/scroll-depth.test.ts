@@ -126,7 +126,11 @@ describe("scroll-depth observer (D-05, D-06, D-07, D-08)", () => {
     handleScrollEntry(makeEntry(s), mockObserver);
     const umamiTrack = (window as unknown as { umami: { track: ReturnType<typeof vi.fn> } })
       .umami.track;
-    expect(umamiTrack).toHaveBeenCalledWith("scroll_depth", { percent: 75, slug: "seatwatch" });
+    expect(umamiTrack).toHaveBeenCalledWith("scroll_depth", {
+      percent: 75,
+      slug: "seatwatch",
+      pageType: "projects",
+    });
   });
 });
 
