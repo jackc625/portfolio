@@ -1,0 +1,57 @@
+# Holloway Connect — Engineering Experience
+
+<!-- CASE-STUDY-START -->
+
+> **Contract engagement.** I was contracted by the Holloway Company (a construction / field-services contractor in the Virginia–Maryland–DC area) to take Holloway Connect — their internal operations platform — from "unaudited and fragile" to a trustworthy foundation their crews and office run day-to-day operations on.
+
+## Overview
+
+Holloway Connect is a **live, production operations platform** serving real paying customers and real field crews. As the solo contract engineer, I ran a phased audit-and-stabilization program across the entire codebase — test infrastructure, security, data-access, deployment, and mobile field-crew features — with every change made **non-destructively against live production data**, one change per commit, and logged in plain English for the owner.
+
+**Stack:** React 18 SPA (Vite / JSX) + TanStack Query + shadcn/ui on a Base44 BaaS backend with ~79 Deno serverless functions and 47 JSONC entity schemas. Integrations: CompanyCam, Dropbox, OneDrive, Google Calendar, Miss Utility.
+
+**Scale:** ~600 commits over the engagement; test suite grown from **0 → ~1,400 passing checks**.
+
+---
+
+## Highlights
+
+### 1. Built a test suite from zero to ~1,400 passing checks on a live codebase — protecting money & payroll math
+Stood up Vitest + coverage-v8 with a **coverage-gated pre-commit hook**, then wrote golden-master / characterization tests pinning all money- and time-affecting logic (paver/wall kit-bid pricing, shade-screen quoting, job cost/margin, and crew-hour/billable-hour calculation) to the penny before extracting it into shared, tested modules — refactoring the math into a canonical layer **without changing a single computed value**.
+
+### 2. Ran a full security pass: closed a critical cross-tenant data leak and added row-level security across the entire data model
+Authored a **role × entity permission matrix over all 47 entities** and added/verified row-level security (RLS) on every one. Diagnosed and closed a **critical cross-client leak** where the customer portal fetched all jobs client-side and filtered in the browser — re-scoped it **server-side** so a test client dropped from seeing **~223 jobs to exactly its own 1**. Audited **203 elevated-privilege (`asServiceRole`) call sites across 67 serverless functions**, justifying each and adding a CI check that fails on any new unjustified use. Later found and fixed a **HIGH-severity IDOR** in a photo-download/link function.
+
+### 3. Diagnosed and recovered from a production data-loss regression — recovered 91 wrongly-archived records
+Traced why active jobs were vanishing to an over-broad bulk/auto-archive rule, narrowed the archival predicate to only terminal statuses, then **recovered 91 wrongly-archived production jobs** (backup-first, human-reviewed candidate list, reversible affected-ID audit log), restoring the active job list from **28 → 119**. Also hardened two legacy "cleanup" functions that could hard-delete records by name-match down to safe, audited, dry-run-default, soft-delete-only behavior.
+
+### 4. Reverse-engineered and hardened the deploy / rollback path for an opaque managed platform
+Empirically proved how code reaches production (GitHub two-way sync → Publish) and how to roll back, including a **timed rollback fire-drill (~4.5 min recovery)** using canary deploys against read-only functions. Caught and fixed a **P0 mobile-blanking bug** where a missing baked-in app-ID env var left fresh phones with a valid login but no data — added a hardcoded fallback plus a **publish-time guard that refuses to ship without it** — and wired production error monitoring (Sentry) with URL-token / PII scrubbing.
+
+### 5. Consolidated the data-access layer — eliminated a class of silent truncation and cache-collision bugs
+Built a centralized **query-factory layer** and a **single canonical job-reference resolver**, replacing 5–6 divergent copies across ~30+ call sites. Killed a class of **silent 5,000-record fetch truncations** (converting to server-side filtering / fetch-all with a no-truncation guard) and fixed a **React Query cache-key collision** where two queries shared a `["jobs"]` key and raced — one 500-cap variant clobbering the full set and dropping jobs off a field feature. Every conversion verified behavior-neutral with **old-vs-new parity diffs against production data**.
+
+### 6. Built a geolocation field time-clock on an idempotent state machine — no duplicate or lost payroll punches
+Designed an **idempotent time-punch service / state machine** guaranteeing that double-taps, offline retries, and simultaneous check-ins from two screens reconcile to exactly one open entry — with correct across-midnight and forgot-to-clock-out handling (never fabricating a checkout). Wrapped it in geofenced "check in / check out" UX, GPS-address matching (reused a tolerant street-number comparator to kill a chronic false "addresses don't match" warning), and drafts stored under opaque per-user keys so shared field phones never leak entries.
+
+### 7. Delivered a video-walkthrough capture pipeline with AI transcription and bounded, always-terminal processing
+Built a durable-upload video capture flow (mid-recording snapshot grab, retry surface) that feeds an LLM transcription / summarization step. Fixed a **silent-hang deadlock** where a state-flag race made analysis skip itself and spin on "analyzing…" forever — introduced a queued → processing handoff, **90-second timeouts, and a guaranteed terminal status** so failures surface as a retryable error instead of hanging.
+
+### 8. Audited and repaired flaky third-party sync integrations (CompanyCam / Dropbox / OneDrive)
+Fixed a **CSV-parser bug** that silently dropped new jobs from the nightly OneDrive spreadsheet sync (quoted `"Last, First"` header case). Killed a **surname-only fuzzy-match bug** that mis-filed one client's job-site photos under another and **re-keyed all linking to exact `C-XXXX-YYYY` job-number matching**. Ran a read-only survey of **~11,500 Dropbox folders**, then linked 60 active jobs to correct folders and corrected 28 CompanyCam photo paths pointing at a nonexistent directory — all backup-first and reversible, with an in-app assign screen for the leftovers a machine couldn't safely place.
+
+### 9. Shipped a bilingual crew-time dashboard (feature build) replacing an owner's spreadsheet
+Built a phone-first **English / Spanish** crew-time logging dashboard (live man-hours, roster auto-fill, duplicate-soft-warning) with **role-gated cost visibility** (dollars only for financial roles, enforced in exports too) and CSV / Excel / PDF export. Migrated **675 historical time entries** with totals reconciled against the source spreadsheet (17/18 jobs matching exactly), and added a build-time guard that fails the build on any untranslated user-facing string.
+
+---
+
+## Themes at a glance
+
+- **Test-driven safe refactoring** on a system that can't break — 0 → ~1,400 tests, money/time math pinned to the penny.
+- **Security & multi-tenancy** — RLS across 47 entities, server-side portal scoping (223 → 1), IDOR fix, 203 privileged call sites audited.
+- **Production incident recovery** — 91 records recovered, archival regression fixed, backup-first / reversible discipline throughout.
+- **Platform & deployment engineering** — empirically-proven deploy/rollback on an opaque BaaS, timed fire-drills, publish-time guards.
+- **Reliability under real-world conditions** — idempotent payroll punches, always-terminal async pipelines, no silent failures on weak mobile signal.
+- **Full-stack delivery** — React/TanStack front end, Deno serverless back end, third-party integrations, bilingual mobile UX.
+
+<!-- CASE-STUDY-END -->
