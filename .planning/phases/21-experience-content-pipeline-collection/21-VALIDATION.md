@@ -39,11 +39,13 @@ created: 2026-07-08
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| W0 — sync unit tests | TBD | 0 | EXP-01 (SC1) | T-21-01 (path traversal) | `source:` path escaping repo root exits 2; lifted `readSourceField`/`sliceFrontmatter`/`extractFence`/`normalize` behave | unit + integration | `pnpm test` (`tests/scripts/sync-experience.test.ts`) | ❌ W0 | ⬜ pending |
-| W0 — `--check` drift tests | TBD | 0 | EXP-01 (SC1) | — | Clean tree exits 0; mutated fenced source exits 1 | integration (execFileSync in tmpdir) | `pnpm test` (`tests/scripts/sync-experience-check.test.ts`) | ❌ W0 | ⬜ pending |
-| W0 — ordering comparator | TBD | 0 | EXP-06 (SC3) | — | Comparator returns Holloway(2026) before Balfour(2023) on mock `{data:{startDate}}` | unit (no Astro runtime) | `pnpm test` | ❌ W0 | ⬜ pending |
-| Impl — schema + collection | TBD | ≥1 | EXP-01 (SC2) | T-21-02 (input validation) | Typed frontmatter validated at build; Holloway (omitted `endDate`) + Balfour (empty `techStack`) pass Zod | build gate | `pnpm exec astro check` | ✅ (gate exists) | ⬜ pending |
-| Impl — build green / no new deps | TBD | ≥1 | EXP-01 (SC4) | — | `pnpm build` succeeds; `package.json` dependencies byte-identical | build gate + dep-diff | `pnpm build`; `git diff --exit-code package.json` | ✅ (gate) / ❌ dep-diff | ⬜ pending |
+| W0 — sync unit tests | 21-01 | 0 | EXP-01 (SC1) | T-21-01 (path traversal) | `source:` path escaping repo root exits 2 — test asserts BOTH the `escapes project root` message AND captured `err.status === 2` (review finding #2); lifted `readSourceField`/`sliceFrontmatter`/`extractFence`/`normalize` behave | unit + integration | `pnpm test` (`tests/scripts/sync-experience.test.ts`) | ❌ W0 | ⬜ pending |
+| W0 — `--check` drift tests | 21-01 | 0 | EXP-01 (SC1) | — | Clean tree exits 0; mutated fenced source exits 1 (`status === 1`) | integration (execFileSync in tmpdir) | `pnpm test` (`tests/scripts/sync-experience-check.test.ts`) | ❌ W0 | ⬜ pending |
+| W0 — write-mode idempotency | 21-01 | 0 | EXP-01 (SC1) | — | Second write-mode run leaves `secondContents === firstContents` AND `secondStat.mtimeMs === firstStat.mtimeMs` on an unchanged entry, using freeform (non-5-H2) prose (review finding #1 — `--check` alone does not catch a rewrite-every-run script) | integration (execFileSync + stat in tmpdir) | `pnpm test` (`tests/scripts/sync-experience-idempotency.test.ts`) | ❌ W0 | ⬜ pending |
+| W0 — ordering helper | 21-01 | 0 | EXP-06 (SC3) | — | The REAL `sortExperienceEntries()` helper (`src/lib/experience.ts`) returns Holloway(2026) before Balfour(2023) on mock `{data:{startDate}}` entries — a reusable, Phase-22-consumable ordering contract, not a throwaway inline comparator (review finding #3, option a) | unit (no Astro runtime) | `pnpm test` | ❌ W0 | ⬜ pending |
+| Impl — schema + collection | 21-02 | 1 | EXP-01 (SC2) | T-21-02 (input validation) | Typed frontmatter validated at build; Holloway (omitted `endDate`) + Balfour (empty `techStack`) pass Zod | build gate | `pnpm exec astro check` | ✅ (gate exists) | ⬜ pending |
+| Impl — source-existence (pnpm test) | 21-03 | 2 | EXP-01 (SC1) | — | `pnpm test` asserts each `src/content/experience/*.mdx` `source:` file resolves via `access()` (review finding #5 — extends the project-only `tests/content/source-files-exist.test.ts`) | integration (readdir + access) | `pnpm test` (`tests/content/source-files-exist.test.ts`) | ❌ (entries authored 21-03) | ⬜ pending |
+| Impl — build green / no new deps | 21-03 | 2 | EXP-01 (SC4) | — | `pnpm build` succeeds; `package.json` dependencies byte-identical | build gate + dep-diff | `pnpm build`; `git diff --exit-code package.json` | ✅ (gate) / ❌ dep-diff | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -55,10 +57,13 @@ created: 2026-07-08
 
 ## Wave 0 Requirements
 
-- [ ] `tests/scripts/sync-experience.test.ts` — unit tests for lifted `readSourceField` / `sliceFrontmatter` / `extractFence` / `normalize` + path-traversal integration (exit 2). Mirror `tests/scripts/sync-projects.test.ts`.
-- [ ] `tests/scripts/sync-experience-check.test.ts` — `--check` no-drift (exit 0) and drift (exit 1) integration. Mirror `tests/scripts/sync-projects-check.test.ts`.
-- [ ] Ordering unit test — reverse-chron sort comparator on mock entries (SC3 / EXP-06). May live in either new test file.
+- [ ] `tests/scripts/sync-experience.test.ts` — unit tests for lifted `readSourceField` / `sliceFrontmatter` / `extractFence` / `normalize` + path-traversal integration asserting BOTH the `escapes project root` message AND captured `err.status === 2` (review finding #2). Mirror `tests/scripts/sync-projects.test.ts`.
+- [ ] `tests/scripts/sync-experience-check.test.ts` — `--check` no-drift (exit 0) and drift (`status === 1`) integration. Mirror `tests/scripts/sync-projects-check.test.ts`.
+- [ ] `tests/scripts/sync-experience-idempotency.test.ts` — write-mode idempotency: second run leaves contents + mtime unchanged, freeform (non-5-H2) prose (review finding #1). Mirror `tests/scripts/sync-projects-idempotency.test.ts`.
+- [ ] Ordering unit test — imports and exercises the REAL `sortExperienceEntries()` helper (`src/lib/experience.ts`) for reverse-chron order (SC3 / EXP-06; review finding #3, option a). Lives in `sync-experience.test.ts`.
 - [ ] (Optional) dep-diff assertion for SC4 — or rely on CI `git diff --exit-code package.json`.
+
+*Note (finding #5): `tests/content/source-files-exist.test.ts` gains an experience describe block in Plan 03 (Wave 2, once the two `.mdx` entries exist) so `pnpm test` — not only CI — asserts the experience `source:` files resolve. It is NOT a Wave 0 item because it depends on the authored entries.*
 
 *Framework install: none — Vitest ^4.1.0 present and already running the `sync-projects` tests.*
 
