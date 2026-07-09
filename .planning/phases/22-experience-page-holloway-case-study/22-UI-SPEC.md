@@ -100,7 +100,7 @@ Voice: **first person** site-wide (MASTER project convention / CHAT-06 — third
 |---------|------|
 | Nav entry label | `experience` (lowercase in markup, uppercased via `.label-mono`), positioned FIRST: `experience · works · about · contact` (D-03) |
 | `/experience` page `<title>` | `Experience` (D-10, basic per-page title only) |
-| `/experience` meta description | `Production engineering experience — the Holloway Connect contract and earlier work.` (first person optional here; keep positioning-neutral, POS copy is Phase 24) |
+| `/experience` meta description | `Production engineering experience – the Holloway Connect contract and earlier work.` (en dash, NOT em dash — site-wide zero-em-dash rule; first person optional here; keep positioning-neutral, POS copy is Phase 24) |
 | Summary deep-dive link (D-05) | `Read the full case study →` (`.label-mono`, accent on hover) |
 | Summary meta line (D-05) | `Software Engineer, Contract · Holloway Company · May 2026 – Present · JAVASCRIPT · TYPESCRIPT · DENO · REACT · TANSTACK QUERY · BASE44 · VITEST · GITHUB ACTIONS` (role · company · dates · stack, all from frontmatter; **company normalized to "Holloway Company"** per D-08; stack uppercased) |
 | Balfour "Earlier" cue (D-06) | `EARLIER` (`.label-mono`, `--ink-faint`) — a quiet mono label/divider, not a numbered `SectionHeader`; exact form → frontend-design |
