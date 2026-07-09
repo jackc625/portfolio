@@ -4,17 +4,17 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 22
 current_phase_name: experience-page-holloway-case-study
-status: executing
-stopped_at: Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
-last_updated: "2026-07-09T21:36:56.240Z"
+status: verifying
+stopped_at: Phase 22 complete (5/5 plans) — capstone gate green + SC5d sign-off approved; ready for verification
+last_updated: "2026-07-09T21:52:09.967Z"
 last_activity: 2026-07-09
-last_activity_desc: Phase 22 execution started
+last_activity_desc: Phase 22 capstone gate (22-05) green + SC5d visual sign-off approved — all 5 plans complete
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 9
-  completed_plans: 8
-  percent: 20
+  completed_plans: 9
+  percent: 40
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 ## Current Position
 
-Phase: 22 (experience-page-holloway-case-study) — EXECUTING
-Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-07-09 — Phase 22 execution started
-Progress: [██░░░░░░░░] 20% (1/5 phases)
+Phase: 22 (experience-page-holloway-case-study) — READY FOR VERIFICATION
+Plan: 5 of 5 (all complete)
+Status: Phase complete — capstone gate green + SC5d sign-off approved; ready for verification
+Last activity: 2026-07-09 — Phase 22 capstone gate (22-05) green + SC5d visual sign-off approved
+Progress: [████░░░░░░] 40% (2/5 phases)
 
 ### v1.4 phase map
 
@@ -73,6 +73,7 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 22]: 22-03: deep-dive link uses static href=/experience/holloway (Wave-0 test regex needs quote-adjacent href) + build-time id-invariant guard; company normalized to 'Holloway Company' (D-08)
 - [Phase ?]: 22-04: D-02 back link uses a persistent leading arrow (color-only hover, no reveal, no translate) per frontend-design ruling
 - [Phase ?]: 22-04: getStaticPaths filters hasCaseStudy so only /experience/holloway builds; balfour structurally excluded (EXP-05)
+- [Phase 22]: 22-05: capstone gate green — astro check 0/0, pnpm test 623 pass/2 skip (incl D-26 chat battery), sync drift 0, build route set correct (dist/client, balfour absent), QA-02 dep-lock exit 0; SC5d visual sign-off APPROVED (nav no-wrap at 768/1024px, 404 on balfour route, zero em dashes)
 
 ### Open Blockers
 
@@ -105,9 +106,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T21:36:28.940Z
-**Stopped at:** Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
-**Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-01-PLAN.md
+**Last session:** 2026-07-09T21:52:09.954Z
+**Stopped at:** Phase 22 complete (5/5 plans) — capstone gate green + SC5d sign-off approved; ready for verification
+**Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-05-SUMMARY.md
 
 ## Performance Metrics
 
@@ -121,3 +122,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 22 P02 | 3min | 2 tasks tasks | 2 files files |
 | Phase 22 P03 | 9min | 2 tasks | 2 files |
 | Phase 22 P04 | 12 min | 2 tasks | 1 files |
+| Phase 22 P05 | ~9 min | 2 tasks | 0 files (verification-only gate) |

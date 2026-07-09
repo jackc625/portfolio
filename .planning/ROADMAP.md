@@ -57,7 +57,7 @@
 ### 🚧 v1.4 Professional Experience (Phases 21-25) — IN PROGRESS
 
 - [x] **Phase 21: Experience Content Pipeline & Collection** — Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline (completed 2026-07-09)
-- [ ] **Phase 22: Experience Page & Holloway Case Study** — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry
+- [x] **Phase 22: Experience Page & Holloway Case Study** — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry (completed 2026-07-09)
 - [ ] **Phase 23: Projects Reconciliation & Featured Tier** — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below
 - [ ] **Phase 24: Positioning Shift & Home Teaser** — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser
 - [ ] **Phase 25: Chat Knowledge Refresh & Milestone Verification** — Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates
@@ -103,7 +103,7 @@
   4. The Balfour Beatty 2023 internship appears as a lightweight earlier-work-history entry (role, dates, 1–2 lines) with no full case study.
   5. All visual/layout decisions were routed through the frontend-design skill against `design-system/MASTER.md`; `astro check` stays 0/0/0 and the D-26 chat-surface battery holds through any `BaseLayout.astro`/`global.css` change.
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans complete
 **UI hint**: yes
 
 **Wave 1** *(tests-first)*
@@ -118,7 +118,7 @@
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 22-05-PLAN.md — Phase gate: full suite (D-26 battery) + build route set + drift + QA-02 dep lock + frontend-design human visual sign-off (SC5d)
+- [x] 22-05-PLAN.md — Phase gate: full suite (D-26 battery) + build route set + drift + QA-02 dep lock + frontend-design human visual sign-off (SC5d)
 
 ### Phase 23: Projects Reconciliation & Featured Tier
 
@@ -194,7 +194,7 @@ Phases execute in numeric order within each milestone.
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete | 2026-05-12 |
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
-| 22. Experience Page & Holloway Case Study | v1.4 | 4/5 | In Progress|  |
+| 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete   | 2026-07-09 |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 0/TBD | Not started | - |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |
