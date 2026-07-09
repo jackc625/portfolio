@@ -1,8 +1,8 @@
 # Content Schema
 
-Authoritative reference for the project and experience content pipelines. If
-anything here disagrees with `src/content.config.ts`, `scripts/sync-projects.mjs`,
-or `scripts/sync-experience.mjs`, code wins and this doc is wrong; file an issue.
+Authoritative reference for the project and experience content pipelines. If anything here
+disagrees with `src/content.config.ts`, `scripts/sync-projects.mjs`, or
+`scripts/sync-experience.mjs`, code wins and this doc is wrong; file an issue.
 
 ## 1. Frontmatter Schema
 
