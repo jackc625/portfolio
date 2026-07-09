@@ -46,3 +46,16 @@ jobs:
 
       - name: Verify portfolio-context.json is in sync with sources
         run: pnpm build:chat-context:check
+
+      # Generate Cloudflare worker types first (worker-configuration.d.ts is
+      # gitignored) so `astro check` has the Env bindings it needs — mirrors
+      # the ordering in the `build` script (wrangler types && astro check).
+      - name: Generate Cloudflare worker types
+        run: pnpm types
+
+      # WR-01: run the Zod schema through `astro check` so schema-invalid
+      # content frontmatter fails pre-merge instead of only at the Cloudflare
+      # deploy build. The drift gates above prove body↔source parity; this
+      # proves schema validity.
+      - name: Type-check content collections (Zod)
+        run: pnpm check
