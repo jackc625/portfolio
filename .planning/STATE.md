@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
-current_phase: 22
-current_phase_name: experience-page-holloway-case-study
+current_phase: 23
+current_phase_name: Projects Reconciliation & Featured Tier
 status: verifying
 stopped_at: Phase 22 complete (5/5 plans) — capstone gate green + SC5d sign-off approved; ready for verification
-last_updated: "2026-07-09T21:52:09.967Z"
+last_updated: "2026-07-09T22:05:46.531Z"
 last_activity: 2026-07-09
-last_activity_desc: Phase 22 capstone gate (22-05) green + SC5d visual sign-off approved — all 5 plans complete
+last_activity_desc: Phase 22 complete, transitioned to Phase 23
 progress:
   total_phases: 5
   completed_phases: 2
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 ## Current Position
 
-Phase: 22 (experience-page-holloway-case-study) — READY FOR VERIFICATION
-Plan: 5 of 5 (all complete)
+Phase: 23 — Projects Reconciliation & Featured Tier
+Plan: Not started
 Status: Phase complete — capstone gate green + SC5d sign-off approved; ready for verification
-Last activity: 2026-07-09 — Phase 22 capstone gate (22-05) green + SC5d visual sign-off approved
+Last activity: 2026-07-09 — Phase 22 complete, transitioned to Phase 23
 Progress: [████░░░░░░] 40% (2/5 phases)
 
 ### v1.4 phase map
