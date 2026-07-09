@@ -188,6 +188,19 @@ fence is not synced.
 H2 shape** and **no 600–900-word target**. The 5-H2 order check and the word-count
 warnings do NOT apply — an experience body may contain any headings and any length.
 
+**MDX escaping (WR-04):** The synced body is written verbatim into an `.mdx`
+file, and MDX compiles it. A bare `<` followed by a word is parsed as JSX
+(`<Word>`) and a bare `{` is parsed as a JS expression. Any such token that
+appears **outside** an inline-code span (backticks) or fenced code block will
+break `astro build`. When writing freeform prose:
+
+- Wrap hazardous tokens in backticks: `` `if (n < 3)` ``, `` `{config}` ``.
+- Or escape them: `&lt;` for `<`, and `\{` for `{`.
+
+The sync script does not escape these for you. The CI `astro check` step
+(WR-01) now compiles the collection, so an unescaped hazard fails the PR check
+rather than only the deploy build.
+
 **What sync writes:** the MDX body (everything after the closing `---` of frontmatter).
 
 **What sync leaves alone:** the entire frontmatter block, preserved byte-for-byte.
