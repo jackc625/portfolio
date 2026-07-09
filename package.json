@@ -22,7 +22,9 @@
     "test": "vitest run",
     "astro": "astro",
     "sync:projects": "node scripts/sync-projects.mjs",
-    "sync:check": "node scripts/sync-projects.mjs --check"
+    "sync:check": "node scripts/sync-projects.mjs --check",
+    "sync:experience": "node scripts/sync-experience.mjs",
+    "sync:experience:check": "node scripts/sync-experience.mjs --check"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.82.0",
