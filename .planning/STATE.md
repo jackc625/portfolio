@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 22
-current_phase_name: Experience Page & Holloway Case Study
+current_phase_name: experience-page-holloway-case-study
 status: executing
 stopped_at: Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
-last_updated: "2026-07-09T15:55:23.487Z"
+last_updated: "2026-07-09T21:05:51.174Z"
 last_activity: 2026-07-09
-last_activity_desc: Phase 22 replanned via --reviews — 5 plans updated for Codex findings (1 HIGH dist/client build-path fix + 5 MEDIUM + 3 LOW); plan-check passed
+last_activity_desc: Phase 22 execution started
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 4
+  total_plans: 9
   completed_plans: 4
   percent: 20
 ---
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 22 — Experience Page & Holloway Case Study
+**Current focus:** Phase 22 — experience-page-holloway-case-study
 
 ## Current Position
 
-Phase: 22 — Experience Page & Holloway Case Study
-Plan: 5 plans ready (3 waves) — revised for cross-AI review feedback
+Phase: 22 (experience-page-holloway-case-study) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-07-09 — Phase 22 replanned via --reviews (5 plans, 3 waves)
+Last activity: 2026-07-09 — Phase 22 execution started
 Progress: [██░░░░░░░░] 20% (1/5 phases)
 
 ### v1.4 phase map
@@ -67,6 +67,7 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase ?]: Phase 21-01: path-escape test asserts err.status===2 in addition to the message (finding #2); added write-mode idempotency test asserting mtime+contents unchanged (finding #1)
 - [Phase 21]: Experience schema: techStack unbounded (no .min(1)) and highlights.max(5) with no hard min so empty/lightweight entries validate (Pitfall 4 / A1)
 - [Phase ?]: Phase 21-03: two real experience entries double as schema optionality fixtures (Holloway omits endDate/present role, Balfour techStack: [] non-engineering); MDX bodies machine-synced from fenced Experience/*.md sources, deps unchanged 11/12
+- [Phase ?]: Phase 22-01: authored Wave 0 tests-first suite (nav/summary/detail RED, em-dash GREEN); 3 files intentionally RED until Wave 2 ships pages+nav+D-08 normalization
 
 ### Open Blockers
 
@@ -99,7 +100,7 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T15:55:23.487Z
+**Last session:** 2026-07-09T21:05:29.389Z
 **Stopped at:** Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
 **Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-01-PLAN.md
 
@@ -111,3 +112,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 21 P02 | 6min | 1 tasks | 1 files |
 | Phase 21 P03 | 4min | 3 tasks | 5 files |
 | Phase 21 P04 | 10m | 2 tasks | 2 files |
+| Phase 22 P01 | 4min | 4 tasks | 4 files |

@@ -103,7 +103,7 @@
   4. The Balfour Beatty 2023 internship appears as a lightweight earlier-work-history entry (role, dates, 1–2 lines) with no full case study.
   5. All visual/layout decisions were routed through the frontend-design skill against `design-system/MASTER.md`; `astro check` stays 0/0/0 and the D-26 chat-surface battery holds through any `BaseLayout.astro`/`global.css` change.
 
-**Plans**: 5 plans
+**Plans**: 0/5 plans executed
 **UI hint**: yes
 
 **Wave 1** *(tests-first)*
@@ -194,7 +194,7 @@ Phases execute in numeric order within each milestone.
 | 19. Cron Sweep — Scheduling + Idempotency (DRY_RUN) | v1.3 | 4/4 | Complete | 2026-05-12 |
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
-| 22. Experience Page & Holloway Case Study | v1.4 | 0/5 | Not started | - |
+| 22. Experience Page & Holloway Case Study | v1.4 | 0/5 | Planned    |  |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 0/TBD | Not started | - |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |
