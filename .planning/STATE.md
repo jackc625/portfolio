@@ -5,10 +5,10 @@ milestone_name: Professional Experience
 current_phase: 22
 current_phase_name: Experience Page & Holloway Case Study
 status: executing
-stopped_at: Phase 22 planned (5 plans, 3 waves)
-last_updated: "2026-07-09T14:37:36.211Z"
+stopped_at: Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
+last_updated: "2026-07-09T15:55:23.487Z"
 last_activity: 2026-07-09
-last_activity_desc: Phase 22 planned — 5 plans across 3 waves (research + Nyquist + plan-check passed)
+last_activity_desc: Phase 22 replanned via --reviews — 5 plans updated for Codex findings (1 HIGH dist/client build-path fix + 5 MEDIUM + 3 LOW); plan-check passed
 progress:
   total_phases: 5
   completed_phases: 1
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 22 — Experience Page & Holloway Case Study
-Plan: 5 plans ready (3 waves)
+Plan: 5 plans ready (3 waves) — revised for cross-AI review feedback
 Status: Ready to execute
-Last activity: 2026-07-09 — Phase 22 planned (5 plans, 3 waves)
+Last activity: 2026-07-09 — Phase 22 replanned via --reviews (5 plans, 3 waves)
 Progress: [██░░░░░░░░] 20% (1/5 phases)
 
 ### v1.4 phase map
@@ -99,8 +99,8 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-09T13:59:51.610Z
-**Stopped at:** Phase 22 planned (5 plans, 3 waves)
+**Last session:** 2026-07-09T15:55:23.487Z
+**Stopped at:** Phase 22 replanned (5 plans, 3 waves) — cross-AI review feedback incorporated
 **Resume file:** .planning/phases/22-experience-page-holloway-case-study/22-01-PLAN.md
 
 ## Performance Metrics
