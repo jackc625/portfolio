@@ -5,27 +5,57 @@ import Container from "../components/primitives/Container.astro";
 import SectionHeader from "../components/primitives/SectionHeader.astro";
 import WorkRow from "../components/primitives/WorkRow.astro";
 
-// IDENTICAL sort as index.astro -- deterministic order across pages
-const projects = (await getCollection("projects")).sort(
+// D-12 single distinction: one collection read, sort by `order`, then partition
+// by the `featured` boolean. Both tiers number continuously off the order field
+// (featured 01-03, rest 04-07), so the numbered-ledger grammar stays honest.
+const all = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order
 );
+const featured = all.filter((p) => p.data.featured);
+const rest = all.filter((p) => !p.data.featured);
 ---
 
 <BaseLayout title="Projects" description="Engineering projects by Jack Cutrara.">
   <section class="section works" aria-labelledby="section-work">
     <Container>
+      {/* D-09: single page-level numbered section; the tier markers below are
+          sub-labels, not numbered SectionHeaders. */}
       <SectionHeader
         number="01"
         title="WORK"
         id="section-work"
-        count={`${projects.length} / ${projects.length}`}
+        count={`${all.length} / ${all.length}`}
       />
+
       <div class="work-list">
-        {projects.map((p, i) => (
+        {/* FEATURED tier -- sits tight under the SectionHeader rule (D-07/D-08) */}
+        <div class="tier-divider tier-featured">
+          <span class="label-mono tier-label">Featured</span>
+          <span class="tier-rule" aria-hidden="true"></span>
+        </div>
+
+        {featured.map((p) => (
           <WorkRow
-            number={String(i + 1).padStart(2, "0")}
+            number={String(p.data.order).padStart(2, "0")}
             title={p.data.title}
-            stack={p.data.techStack.join(" \u00B7 ").toUpperCase()}
+            stack={p.data.techStack.join(" · ").toUpperCase()}
+            year={p.data.year}
+            href={`/projects/${p.id}`}
+            tagline={p.data.tagline}
+          />
+        ))}
+
+        {/* MORE WORK tier -- 48px break, same divider idiom, compact rows (D-08) */}
+        <div class="tier-divider tier-more">
+          <span class="label-mono tier-label">More work</span>
+          <span class="tier-rule" aria-hidden="true"></span>
+        </div>
+
+        {rest.map((p) => (
+          <WorkRow
+            number={String(p.data.order).padStart(2, "0")}
+            title={p.data.title}
+            stack={p.data.techStack.join(" · ").toUpperCase()}
             year={p.data.year}
             href={`/projects/${p.id}`}
           />
@@ -34,3 +64,37 @@ const projects = (await getCollection("projects")).sort(
     </Container>
   </section>
 </BaseLayout>
+
+<style>
+  /* Tier sub-label + trailing hairline -- mirrors the Phase 22 experience.astro
+     `earlier-divider` idiom exactly (frontend-design call, SC5): a quiet mono
+     label in --ink-faint next to a 1px --rule hairline that fills the row. These
+     read as sub-tier markers, never as duplicate section headers (D-09). */
+  .tier-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  /* FEATURED opens directly under the SectionHeader rule (tight top gap). */
+  .tier-featured {
+    margin-top: 0;
+  }
+
+  /* MORE WORK opens the tier break (mirrors experience.astro's 48px). */
+  .tier-more {
+    margin-top: 48px;
+  }
+
+  .tier-label {
+    color: var(--ink-faint);
+    flex: 0 0 auto;
+  }
+
+  .tier-rule {
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--rule);
+  }
+</style>
