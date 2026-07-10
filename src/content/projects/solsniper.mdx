@@ -5,10 +5,10 @@ description: "A high-speed Solana trading system with multi-source token detecti
 chatSummary: "Jack designed SolSniper as a single Node.js process in TypeScript strict mode, with eight subsystems initialized in dependency order: Config, Detection, Safety, Execution, Position, Persistence, Recovery, Dashboard. Detection draws from three independent sources (PumpPortal WebSocket plus a single onLogs subscription covering Raydium V4 and PumpSwap). The safety pipeline runs eight checks across three tiers — Tier 1 hard blocks fire in parallel, Tier 2 scoring degrades gracefully on RPC timeouts, and Tier 3 queries Helius DAS for creator history. Execution hinges on a synchronous duplicate-buy guard backed by better-sqlite3. The six-step sell ladder ends at 49% slippage with a 10× priority fee. Vitest coverage spans 39 test files."
 techStack:
   ["TypeScript", "Solana/web3.js", "Preact", "SQLite", "Fastify", "Jupiter API"]
-featured: true
+featured: false
 status: "completed"
 category: "other"
-order: 3
+order: 4
 year: "2025"
 source: "Projects/3 - SOLSNIPER.md"
 ---
