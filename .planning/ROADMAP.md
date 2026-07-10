@@ -58,7 +58,7 @@
 
 - [x] **Phase 21: Experience Content Pipeline & Collection** — Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline (completed 2026-07-09)
 - [x] **Phase 22: Experience Page & Holloway Case Study** — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry (completed 2026-07-09)
-- [ ] **Phase 23: Projects Reconciliation & Featured Tier** — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below
+- [x] **Phase 23: Projects Reconciliation & Featured Tier** — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below (completed 2026-07-10)
 - [ ] **Phase 24: Positioning Shift & Home Teaser** — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser
 - [ ] **Phase 25: Chat Knowledge Refresh & Milestone Verification** — Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates
 
@@ -133,7 +133,7 @@
   4. A single data-model distinction (`featured` flag / `order` field) drives the same featured-then-rest ordering on both the Projects page and the Home work list.
   5. The featured-tier visual treatment was routed through the frontend-design skill; `astro check` stays 0/0/0 and no new runtime dependencies are added.
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **UI hint**: yes
 
 **Wave 1**
@@ -147,7 +147,7 @@
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 23-04-PLAN.md — Phase gate: full `pnpm build` + `pnpm test` + drift + dep lock (QA-02) + human sign-off (#7 copy D-02/D-03 + frontend-design SC5)
+- [x] 23-04-PLAN.md — Phase gate: full `pnpm build` + `pnpm test` + drift + dep lock (QA-02) + human sign-off (#7 copy D-02/D-03 + frontend-design SC5)
 
 ### Phase 24: Positioning Shift & Home Teaser
 
@@ -208,6 +208,6 @@ Phases execute in numeric order within each milestone.
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
-| 23. Projects Reconciliation & Featured Tier | v1.4 | 3/4 | In Progress|  |
+| 23. Projects Reconciliation & Featured Tier | v1.4 | 4/4 | Complete   | 2026-07-10 |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |

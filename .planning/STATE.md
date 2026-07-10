@@ -4,17 +4,17 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 23
 current_phase_name: Projects Reconciliation & Featured Tier
-status: executing
-stopped_at: "Phase 23 Plan 03 complete — two-tier FEATURED / MORE WORK on /projects + Home taglines & See all work"
-last_updated: "2026-07-10T13:22:35.000Z"
+status: verifying
+stopped_at: Phase 23 Plan 04 complete — capstone gate green + both human sign-offs approved; phase 23 ready for verification
+last_updated: "2026-07-10T14:03:05.607Z"
 last_activity: 2026-07-10
-last_activity_desc: Completed 23-03 (two-tier featured layout on /projects + Home teaser taglines & See all work link)
+last_activity_desc: Completed 23-04 (phase capstone gate green end-to-end + both human sign-offs approved; phase 23 all plans done, ready for verification)
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 13
-  completed_plans: 12
-  percent: 40
+  completed_plans: 13
+  percent: 60
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 ## Current Position
 
-Phase: 23 (Projects Reconciliation & Featured Tier) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-07-10 — Completed 23-03 (two-tier featured layout on /projects + Home teaser taglines & See all work link)
-Progress: [████░░░░░░] 40% (2/5 phases)
+Phase: 23 (Projects Reconciliation & Featured Tier) — ALL PLANS COMPLETE (ready for verification)
+Plan: 4 of 4 (complete)
+Status: Phase complete — ready for verification
+Last activity: 2026-07-10 — Completed 23-04 (phase capstone gate green end-to-end + both human sign-offs approved)
+Progress: [██████░░░░] 60% (3/5 phases)
 
 ### v1.4 phase map
 
@@ -79,6 +79,7 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase ?]: 23-02: multi-chain-evm added to all six site-side content gates (D-16 exhaustiveness); chat-side pins untouched so chat stays 6 until Phase 25
 - [Phase 23]: 23-03: WorkRow extended with optional tagline (structural title:has(+ .work-tagline) 8px override → byte-identical when absent, no modifier class, no fork); /projects two-tier FEATURED/MORE WORK via featured-partition, tier sub-labels mirror experience.astro earlier-divider (48px break), rows numbered off order 01-07
 - [Phase 23]: 23-03: Home teaser gains taglines (same primitive) + a See all work link mirroring .read-more with the deep-link arrow reveal; all page/primitive-scoped CSS — global.css & BaseLayout.astro untouched (T-23-03 mitigated); SC2 render gate parses built HTML for exactly 3 .work-tagline elements (F7 DOM count, not substring)
+- [Phase 23]: 23-04: capstone gate green end-to-end (build 0/0/0 + dist/, 637 pass/2 skip, F3 no-drift, dep-lock exit 0, no schema change); both human sign-offs APPROVED (#7 copy D-02/D-03, frontend-design 6-pillar SC5); re-run over two scoped fix(23) cleanups e1796ed+517f6b5
 
 ### Open Blockers
 
@@ -111,9 +112,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-10T13:22:35.000Z
-**Stopped at:** Phase 23 Plan 03 complete — two-tier featured layout on /projects + Home teaser taglines & See all work
-**Resume file:** .planning/phases/23-projects-reconciliation-featured-tier/23-04-PLAN.md
+**Last session:** 2026-07-10T14:03:05.593Z
+**Stopped at:** Phase 23 Plan 04 complete — capstone gate green + both human sign-offs approved; phase 23 ready for verification
+**Resume file:** None
 
 ## Performance Metrics
 
@@ -131,3 +132,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 23 P01 | 14min | 3 tasks | 11 files |
 | Phase 23 P02 | 2min | 2 tasks | 6 files |
 | Phase 23 P03 | ~9min | 3 tasks | 4 files |
+| Phase 23 P04 | ~6min | 2 tasks | 0 files (verification-only capstone gate) |
