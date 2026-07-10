@@ -1,10 +1,11 @@
 ---
 phase: 22
 slug: experience-page-holloway-case-study
-status: draft
+status: validated
 nyquist_compliant: true
-wave_0_complete: false
+wave_0_complete: true
 created: 2026-07-09
+validated: 2026-07-09
 ---
 
 # Phase 22 — Validation Strategy
@@ -42,18 +43,18 @@ Additional gates:
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 22-01-01 | 01 | 1 | EXP-02 | T-22-01 | Nav-shape test discriminates (RED pre-impl) | unit (source-shape) | `pnpm exec vitest run tests/build/experience-nav.test.ts` | ❌ W0 (this task creates it) | ⬜ pending |
-| 22-01-02 | 01 | 1 | EXP-03 | T-22-01 | Summary/D-08 contract encoded | unit (content+source) | `pnpm exec vitest run tests/content/experience-summary.test.ts` | ❌ W0 (this task creates it) | ⬜ pending |
-| 22-01-03 | 01 | 1 | EXP-04, EXP-05 | T-22-01 | hasCaseStudy filter contract + Balfour exclusion | unit (content+source) | `pnpm exec vitest run tests/content/experience-detail.test.ts` | ❌ W0 (this task creates it) | ⬜ pending |
-| 22-01-04 | 01 | 1 | EXP-03 | T-22-01 | Em-dash guard on experience mdx + new page copy | unit (content) | `pnpm exec vitest run tests/content/experience-voice-em-dash.test.ts` | ❌ W0 (this task creates it) | ⬜ pending |
-| 22-02-01 | 02 | 2 | EXP-02 | T-22-04 | Header nav experience-first; chat script untouched | source-shape + type | `pnpm exec astro check` | ✅ (22-01) | ⬜ pending |
-| 22-02-02 | 02 | 2 | EXP-02 | T-22-04 | MobileMenu nav mirrored; focus-trap/inert `<script>` byte-identical | source-shape | `pnpm exec vitest run tests/build/experience-nav.test.ts` | ✅ (22-01) | ⬜ pending |
-| 22-03-01 | 03 | 2 | EXP-03 | T-22-01 | D-08 company normalized; no body drift | content/drift | `pnpm sync:experience:check` | ✅ (command) | ⬜ pending |
-| 22-03-02 | 03 | 2 | EXP-02, EXP-03, EXP-05 | T-22-05 | Listing two-tier; page-scoped CSS; zero em dashes | content+source | `pnpm exec vitest run tests/content/experience-summary.test.ts tests/content/experience-voice-em-dash.test.ts` | ✅ (22-01) | ⬜ pending |
-| 22-04-01 | 04 | 2 | EXP-04, EXP-05 | T-22-06 | getStaticPaths filters hasCaseStudy; dateRange/company/summary header, no links row | type + source | `pnpm exec astro check` | ✅ (22-01) | ⬜ pending |
-| 22-04-02 | 04 | 2 | EXP-04, EXP-05 | T-22-05 | MDX body + top/bottom back links + scroll sentinels; global.css untouched | content+source | `pnpm exec vitest run tests/content/experience-detail.test.ts` | ✅ (22-01) | ⬜ pending |
-| 22-05-01 | 05 | 3 | EXP-02, EXP-03, EXP-04, EXP-05 | T-22-04, T-22-07 | Full suite (D-26 battery) + build route set + drift + dep lock | build + regression gate | `pnpm exec astro check && pnpm test && pnpm sync:experience:check && pnpm build` | ✅ (commands) | ⬜ pending |
-| 22-05-02 | 05 | 3 | EXP-02..05 | T-22-03 | Visual sign-off (frontend-design / MASTER) | manual (human-verify) | `checkpoint:human-verify` | manual | ⬜ pending |
+| 22-01-01 | 01 | 1 | EXP-02 | T-22-01 | Nav-shape test discriminates (RED pre-impl) | unit (source-shape) | `pnpm exec vitest run tests/build/experience-nav.test.ts` | ✅ created | ✅ green |
+| 22-01-02 | 01 | 1 | EXP-03 | T-22-01 | Summary/D-08 contract encoded | unit (content+source) | `pnpm exec vitest run tests/content/experience-summary.test.ts` | ✅ created | ✅ green |
+| 22-01-03 | 01 | 1 | EXP-04, EXP-05 | T-22-01 | hasCaseStudy filter contract + Balfour exclusion | unit (content+source) | `pnpm exec vitest run tests/content/experience-detail.test.ts` | ✅ created | ✅ green |
+| 22-01-04 | 01 | 1 | EXP-03 | T-22-01 | Em-dash guard on experience mdx + new page copy | unit (content) | `pnpm exec vitest run tests/content/experience-voice-em-dash.test.ts` | ✅ created | ✅ green |
+| 22-02-01 | 02 | 2 | EXP-02 | T-22-04 | Header nav experience-first; chat script untouched | source-shape + type | `pnpm exec astro check` | ✅ (22-01) | ✅ green |
+| 22-02-02 | 02 | 2 | EXP-02 | T-22-04 | MobileMenu nav mirrored; focus-trap/inert `<script>` byte-identical | source-shape | `pnpm exec vitest run tests/build/experience-nav.test.ts` | ✅ (22-01) | ✅ green |
+| 22-03-01 | 03 | 2 | EXP-03 | T-22-01 | D-08 company normalized; no body drift | content/drift | `pnpm sync:experience:check` | ✅ (command) | ✅ green |
+| 22-03-02 | 03 | 2 | EXP-02, EXP-03, EXP-05 | T-22-05 | Listing two-tier; page-scoped CSS; zero em dashes | content+source | `pnpm exec vitest run tests/content/experience-summary.test.ts tests/content/experience-voice-em-dash.test.ts` | ✅ (22-01) | ✅ green |
+| 22-04-01 | 04 | 2 | EXP-04, EXP-05 | T-22-06 | getStaticPaths filters hasCaseStudy; dateRange/company/summary header, no links row | type + source | `pnpm exec astro check` | ✅ (22-01) | ✅ green |
+| 22-04-02 | 04 | 2 | EXP-04, EXP-05 | T-22-05 | MDX body + top/bottom back links + scroll sentinels; global.css untouched | content+source | `pnpm exec vitest run tests/content/experience-detail.test.ts` | ✅ (22-01) | ✅ green |
+| 22-05-01 | 05 | 3 | EXP-02, EXP-03, EXP-04, EXP-05 | T-22-04, T-22-07 | Full suite (D-26 battery) + build route set + drift + dep lock | build + regression gate | `pnpm exec astro check && pnpm test && pnpm sync:experience:check && pnpm build` | ✅ (commands) | ✅ green |
+| 22-05-02 | 05 | 3 | EXP-02..05 | T-22-03 | Visual sign-off (frontend-design / MASTER) | manual (human-verify) | `checkpoint:human-verify` | manual | ✅ approved |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -63,10 +64,10 @@ Additional gates:
 
 Created by plan 22-01 (Wave 1, tests-first). No framework install needed — Vitest + the content/build test patterns already exist; each new file mirrors a named analog.
 
-- [ ] `tests/build/experience-nav.test.ts` — asserts `/experience` is FIRST in both `Header.astro` and `MobileMenu.astro` `navLinks`, and each has a `startsWith("/experience")` `isActive` branch (SC1 / EXP-02). Analog: `tests/content/case-studies-shape.test.ts`.
-- [ ] `tests/content/experience-summary.test.ts` — asserts `holloway.mdx` company === `"Holloway Company"` (D-08), role/dateRange/non-empty techStack present, `highlights.length === 5`; and `experience.astro` uses `sortExperienceEntries` + links to `/experience/` (SC2 / EXP-03). Analog: `case-studies-shape.test.ts`.
-- [ ] `tests/content/experience-detail.test.ts` — asserts the `hasCaseStudy` id set === `["holloway"]` (excludes `balfour-beatty`), and `experience/[id].astro` filters on `hasCaseStudy` + carries a `href="/experience"` back link (SC3 + SC4 / EXP-04, EXP-05). Analog: `tests/content/projects-collection.test.ts` frontmatter-regex idiom.
-- [ ] `tests/content/experience-voice-em-dash.test.ts` — NEW file (does not edit the locked `voice-em-dash.test.ts`); asserts zero `—` in both experience mdx bodies and in the two new page files' source once they exist (SC5e). Analog: `tests/content/voice-em-dash.test.ts`.
+- [x] `tests/build/experience-nav.test.ts` — asserts `/experience` is FIRST in both `Header.astro` and `MobileMenu.astro` `navLinks`, and each has a `startsWith("/experience")` `isActive` branch (SC1 / EXP-02). Analog: `tests/content/case-studies-shape.test.ts`. **Created, green (4 tests).**
+- [x] `tests/content/experience-summary.test.ts` — asserts `holloway.mdx` company === `"Holloway Company"` (D-08), role/dateRange/non-empty techStack present, `highlights.length === 5`; and `experience.astro` uses `sortExperienceEntries` + links to `/experience/` (SC2 / EXP-03). Analog: `case-studies-shape.test.ts`. **Created, green.**
+- [x] `tests/content/experience-detail.test.ts` — asserts the `hasCaseStudy` id set === `["holloway"]` (excludes `balfour-beatty`), and `experience/[id].astro` filters on `hasCaseStudy` + carries a `href="/experience"` back link (SC3 + SC4 / EXP-04, EXP-05). Analog: `tests/content/projects-collection.test.ts` frontmatter-regex idiom. **Created, green.**
+- [x] `tests/content/experience-voice-em-dash.test.ts` — NEW file (does not edit the locked `voice-em-dash.test.ts`); asserts zero `—` in both experience mdx bodies and in the two new page files' source once they exist (SC5e). Analog: `tests/content/voice-em-dash.test.ts`. **Created, green.**
 
 ---
 
@@ -88,3 +89,22 @@ Created by plan 22-01 (Wave 1, tests-first). No framework install needed — Vit
 - [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** approved 2026-07-09
+
+---
+
+## Validation Audit 2026-07-09
+
+Retroactive audit of the pre-execution validation contract against executed reality (`/gsd-validate-phase 22`). All 11 automated Per-Task rows re-run live by the auditor and confirmed green; the 1 manual row (22-05-02 visual sign-off) confirmed approved. No test generation or auditor spawn required — zero gaps found.
+
+| Metric | Count |
+|--------|-------|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
+
+**Live re-run evidence (this audit):**
+- `pnpm exec vitest run tests/build/experience-nav.test.ts tests/content/experience-summary.test.ts tests/content/experience-detail.test.ts tests/content/experience-voice-em-dash.test.ts` → **4 files / 14 tests passed**
+- `pnpm sync:experience:check` → `balfour-beatty.mdx: unchanged`, `holloway.mdx: unchanged` (exit 0)
+- File existence: all 4 Wave 0 test files present (62 / 111 / 82 / 82 lines)
+
+Frontmatter reconciled to executed state: `status: draft → validated`, `wave_0_complete: false → true`. `nyquist_compliant: true` **confirmed by execution** (was previously an unverified pre-execution claim).
