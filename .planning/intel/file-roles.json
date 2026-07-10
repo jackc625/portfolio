@@ -1,5 +1,5 @@
 {
-  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "_meta": { "updated_at": "2026-07-10T01:22:08Z", "version": 2 },
   "entries": {
     "astro.config.mjs": {
       "exports": ["default"],
@@ -36,6 +36,16 @@
       "imports": ["astro:content", "../../layouts/BaseLayout.astro", "../../components/primitives/Container.astro", "../../components/NextProject.astro", "../../components/ArticleImage.astro"],
       "type": "entry-point"
     },
+    "src/pages/experience.astro": {
+      "exports": [],
+      "imports": ["astro:content", "../layouts/BaseLayout.astro", "../components/primitives/Container.astro", "../components/primitives/SectionHeader.astro", "../lib/experience"],
+      "type": "entry-point"
+    },
+    "src/pages/experience/[id].astro": {
+      "exports": ["getStaticPaths", "Props"],
+      "imports": ["astro:content", "../../layouts/BaseLayout.astro", "../../components/primitives/Container.astro", "../../components/ArticleImage.astro", "../../lib/experience"],
+      "type": "entry-point"
+    },
     "src/pages/about.astro": {
       "exports": [],
       "imports": ["../layouts/BaseLayout.astro", "../data/about"],
@@ -55,6 +65,11 @@
       "exports": ["prerender", "POST"],
       "imports": ["astro", "@anthropic-ai/sdk", "cloudflare:workers", "../../data/portfolio-context.json", "../../prompts/chat-request-shape", "../../lib/validation", "../../lib/chat-transcripts"],
       "type": "entry-point"
+    },
+    "src/lib/experience.ts": {
+      "exports": ["sortExperienceEntries"],
+      "imports": [],
+      "type": "module"
     },
     "src/lib/validation.ts": {
       "exports": ["MessageSchema", "RequestSchema", "ValidatedMessage", "ValidatedRequest", "validateRequest", "sanitizeMessages", "isAllowedOrigin", "MAX_BODY_SIZE"],
@@ -96,11 +111,6 @@
       "imports": [],
       "type": "type-def"
     },
-    "src/prompts/chat-request-shape.ts:messages": {
-      "exports": [],
-      "imports": [],
-      "type": "module"
-    },
     "src/scripts/chat.ts": {
       "exports": [],
       "imports": ["marked", "dompurify"],
@@ -131,13 +141,28 @@
       "imports": ["../../scripts/chat.ts"],
       "type": "module"
     },
+    "src/components/primitives/Header.astro": {
+      "exports": [],
+      "imports": [],
+      "type": "module"
+    },
+    "src/components/primitives/MobileMenu.astro": {
+      "exports": [],
+      "imports": [],
+      "type": "module"
+    },
     "src/data/contact.ts": {
       "exports": ["CONTACT"],
       "imports": [],
       "type": "data"
     },
     "src/data/about.ts": {
-      "exports": ["ABOUT_INTRO", "ABOUT_P1"],
+      "exports": ["ABOUT_INTRO", "ABOUT_P1", "ABOUT_P2", "ABOUT_P3"],
+      "imports": [],
+      "type": "data"
+    },
+    "src/data/about-chat.ts": {
+      "exports": ["ABOUT_CHAT_INTRO", "ABOUT_CHAT_P1", "ABOUT_CHAT_P2", "ABOUT_CHAT_P3"],
       "imports": [],
       "type": "data"
     },
@@ -155,6 +180,26 @@
       "exports": [],
       "imports": [],
       "type": "script"
+    },
+    "scripts/sync-experience.mjs": {
+      "exports": ["normalize", "readSourceField", "sliceFrontmatter", "extractFence"],
+      "imports": ["node:fs/promises", "node:path", "node:url"],
+      "type": "script"
+    },
+    "scripts/resend-warmup.mjs": {
+      "exports": [],
+      "imports": [],
+      "type": "script"
+    },
+    "src/content/experience/holloway.mdx": {
+      "exports": [],
+      "imports": [],
+      "type": "data"
+    },
+    "src/content/experience/balfour-beatty.mdx": {
+      "exports": [],
+      "imports": [],
+      "type": "data"
     },
     "src/content/projects/seatwatch.mdx": {
       "exports": [],

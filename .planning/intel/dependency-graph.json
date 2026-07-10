@@ -1,5 +1,5 @@
 {
-  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "_meta": { "updated_at": "2026-07-10T01:22:08Z", "version": 2 },
   "entries": {
     "astro": {
       "version": "^6.0.8",
@@ -17,7 +17,7 @@
       "version": "^5.0.2",
       "type": "production",
       "invocation": "require",
-      "used_by": ["astro.config.mjs", "src/content/projects/"]
+      "used_by": ["astro.config.mjs", "src/content/projects/", "src/content/experience/"]
     },
     "@astrojs/sitemap": {
       "version": "^3.7.1",
@@ -91,10 +91,28 @@
       "invocation": "npm run lint",
       "used_by": ["lint"]
     },
+    "typescript-eslint": {
+      "version": "^8.58.0",
+      "type": "development",
+      "invocation": "npm run lint",
+      "used_by": ["lint"]
+    },
+    "eslint-plugin-astro": {
+      "version": "^1.6.0",
+      "type": "development",
+      "invocation": "npm run lint",
+      "used_by": ["lint"]
+    },
     "prettier": {
       "version": "^3.8.1",
       "type": "development",
       "invocation": "npm run format",
+      "used_by": ["format", "format:check"]
+    },
+    "prettier-plugin-astro": {
+      "version": "^0.14.1",
+      "type": "development",
+      "invocation": "implicit",
       "used_by": ["format", "format:check"]
     },
     "@astrojs/check": {

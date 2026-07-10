@@ -1,34 +1,54 @@
 {
-  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "_meta": { "updated_at": "2026-07-10T01:22:08Z", "version": 2 },
   "entries": {
     "overview": {
       "pattern": "Astro 6 islands architecture with per-route SSR on Cloudflare",
       "description": "Static-first personal portfolio site. Pages are pure HTML built at compile time; only the chat widget and small vanilla-JS scripts hydrate on the client. A single API route opts into SSR (prerender=false) to stream LLM responses. Deployed to Cloudflare Pages (static) + Cloudflare Workers (SSR route + cron) at jackcutrara.com."
     },
     "data-flow": {
-      "flow": "MDX content collections -> Zod-validated frontmatter -> getStaticPaths -> static HTML pages; chat: browser widget -> POST /api/chat (SSE) -> Anthropic Haiku stream -> KV transcript -> cron deliverDue -> Resend email",
-      "description": "Content is authored as MDX in src/content/projects/, validated by Zod schemas at build, and rendered to static pages ordered by project.order. The chat surface streams via SSE and persists transcripts to Cloudflare KV, later swept by a scheduled Worker into email delivery."
+      "flow": "MDX content collections (projects + experience) -> Zod-validated frontmatter -> getStaticPaths -> static HTML pages; chat: browser widget -> POST /api/chat (SSE) -> Anthropic Haiku stream -> KV transcript -> cron deliverDue -> Resend email",
+      "description": "Content is authored as MDX in src/content/projects/ and src/content/experience/, validated by Zod schemas at build. Projects order by project.order ascending; experience orders reverse-chronologically by startDate via sortExperienceEntries. The chat surface streams via SSE and persists transcripts to Cloudflare KV, later swept by a scheduled Worker into email delivery."
     },
     "conventions": {
-      "naming": "Decision IDs (D-xx), review gaps (WR-xx, CR-xx), and phase tags annotate load-bearing code in comments. Design tokens are six CSS hex custom properties.",
-      "file-organization": "src/pages (routes), src/layouts (BaseLayout wrapper), src/components/primitives (scoped-style building blocks), src/lib (pure server modules), src/prompts (LLM prompt builders), src/scripts (client vanilla JS), src/data (typed content constants), src/content/projects (MDX case studies).",
-      "imports": "Pure server lib modules avoid cross-coupling to Anthropic SDK, cloudflare:workers, prompts, and browser scripts (D-26 isolation anchor). Client scripts share an IntersectionObserver factory (scripts/lib/observer.ts)."
+      "naming": "Decision IDs (D-xx), review gaps (WR-xx, CR-xx, EXP-xx), and phase tags annotate load-bearing code in comments. Design tokens are six CSS hex custom properties.",
+      "file-organization": "src/pages (routes), src/layouts (BaseLayout wrapper), src/components/primitives (scoped-style building blocks), src/lib (pure server/shared modules incl. experience ordering helper), src/prompts (LLM prompt builders), src/scripts (client vanilla JS), src/data (typed content constants), src/content/projects + src/content/experience (MDX case studies).",
+      "imports": "Pure server lib modules avoid cross-coupling to Anthropic SDK, cloudflare:workers, prompts, and browser scripts (D-26 isolation anchor). src/lib/experience.ts is a structural generic importing nothing from astro:content so it stays Vitest-testable. Client scripts share an IntersectionObserver factory (scripts/lib/observer.ts)."
     },
     "styling": {
       "system": "Tailwind CSS v4 (Oxide engine) via @tailwindcss/vite plus CSS custom-property design tokens in src/styles/global.css",
-      "description": "Locked editorial design system per design-system/MASTER.md. Six hex tokens only (--bg, --ink, --ink-muted, --ink-faint, --rule, --accent). Geist + Geist Mono self-hosted via Astro 6 Fonts API. Single light theme, restrained motion. Type role classes (.display, .h1-section, etc.) in global.css."
+      "description": "Locked editorial design system per design-system/MASTER.md. Six hex tokens only (--bg, --ink, --ink-muted, --ink-faint, --rule, --accent). Geist + Geist Mono self-hosted via Astro 6 Fonts API. Single light theme, restrained motion. Type role classes (.display, .h1-section, etc.) in global.css. Experience detail route reuses projects/[id] header + .prose-editorial CSS verbatim."
     },
     "chat-architecture": {
       "pattern": "SSE streaming chat widget with hardened Workers SSR backend",
       "description": "Client widget (src/scripts/chat.ts) renders markdown via marked + DOMPurify XSS sanitization. Backend (src/pages/api/chat.ts) enforces exact-origin CORS whitelist, 32KB body cap, Cloudflare rate limiter binding, Zod validation, and prompt-cached Anthropic Claude Haiku 4.5 streaming. Transcripts persist to KV (chat-transcripts.ts) fire-and-forget via ctx.waitUntil, with a scheduled cron (chat-delivery.ts) delivering via Resend."
     },
     "content-collections": {
-      "pattern": "Astro Content Layer with Zod schemas + MDX",
-      "description": "projects collection defined in src/content.config.ts via glob loader over src/content/projects/**/*.mdx. Zod schema validates title, tagline, techStack, status enum, category enum, order, year, and source at build time. Six project case studies present."
+      "pattern": "Astro Content Layer with Zod schemas + MDX (two collections)",
+      "description": "projects and experience collections defined in src/content.config.ts via glob loaders. projects: six MDX case studies, schema validates title, tagline, techStack, status/category enums, order, year, source. experience: two MDX entries (Holloway + Balfour), schema validates role, company, location, startDate/endDate (coerced dates; endDate omission => present), dateRange (display, decoupled from sort), techStack (no min so Balfour [] validates), summary, optional description, highlights (max 5), engagementType enum, hasCaseStudy, optional chatSummary, source."
+    },
+    "content-sync": {
+      "pattern": "Fence-extraction source-of-truth sync with CI drift gate",
+      "description": "scripts/sync-projects.mjs and scripts/sync-experience.mjs extract fenced case-study prose (CASE-STUDY-START/END) from authored Markdown into MDX collection bodies, preserving frontmatter byte-for-byte. Idempotent diff-then-write; --check mode (sync:check, sync:experience:check) is the CI drift gate. sync-experience exports normalize/readSourceField/sliceFrontmatter/extractFence as Vitest-testable helpers with a path-traversal guard."
+    },
+    "experience-tiering": {
+      "pattern": "Two-tier experience listing with structural build-time invariants",
+      "description": "D-04/D-05/D-06: /experience renders exactly one hasCaseStudy entry (Holloway) as a rich featured tier-1 summary with a deep-dive link, and non-linked tier-2 'Earlier' entries. /experience/[id] getStaticPaths builds detail routes ONLY for hasCaseStudy entries (Balfour yields no route). Build fails loudly if invariants break (no case-study entry, featured id != 'holloway', no earlier entries)."
+    },
+    "analytics": {
+      "pattern": "Umami event tracking with pageType attribution",
+      "description": "src/scripts/scroll-depth.ts fires umami scroll_depth events at 25/50/75/100% of <article> height on long-form routes (/projects/[id] AND /experience/holloway), carrying pageType (first path segment: 'projects' | 'experience') so scroll depth is attributed per route type. Analytics PROD-gated via BaseLayout."
     },
     "component:BaseLayout": {
       "path": "src/layouts/BaseLayout.astro",
       "responsibility": "Wraps every page: SEO meta (astro-seo), OG/Twitter cards, JSON-LD, self-hosted fonts, Umami analytics (PROD-gated), header/footer/mobile menu, chat widget, and client script bootstrap."
+    },
+    "component:Header": {
+      "path": "src/components/primitives/Header.astro",
+      "responsibility": "Top nav with mono links (experience / works / about / contact). /experience active-state matches any /experience/[id] sub-route. Mirrored in MobileMenu.astro."
+    },
+    "component:experience-lib": {
+      "path": "src/lib/experience.ts",
+      "responsibility": "sortExperienceEntries: pure reverse-chronological (startDate desc) ordering helper shared by both experience routes; structural generic, Vitest-testable."
     },
     "component:ChatAPI": {
       "path": "src/pages/api/chat.ts",

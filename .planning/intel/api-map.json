@@ -1,5 +1,5 @@
 {
-  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "_meta": { "updated_at": "2026-07-10T01:22:08Z", "version": 2 },
   "entries": {
     "POST /api/chat": {
       "method": "POST",
@@ -36,6 +36,20 @@
       "file": "src/pages/projects/[id].astro",
       "description": "Static project case study pages generated via getStaticPaths from the projects content collection. Renders MDX Content plus wrap-around NextProject navigation."
     },
+    "GET /experience": {
+      "method": "GET",
+      "path": "/experience",
+      "params": [],
+      "file": "src/pages/experience.astro",
+      "description": "Static two-tier experience listing. Tier 1 renders the single hasCaseStudy entry (Holloway) as a rich featured summary with highlights and a deep-dive link; tier 2 lists the non-linked 'Earlier' entries. Ordered reverse-chronologically (startDate desc) via sortExperienceEntries. Build fails loudly if the collection invariants (exactly one hasCaseStudy entry with id 'holloway', at least one earlier entry) are violated."
+    },
+    "GET /experience/[id]": {
+      "method": "GET",
+      "path": "/experience/[id]",
+      "params": ["id"],
+      "file": "src/pages/experience/[id].astro",
+      "description": "Static experience case-study detail route. getStaticPaths builds a path ONLY for hasCaseStudy entries (yields just /experience/holloway; Balfour generates no route). Renders MDX Content in a .prose-editorial wrapper with top/bottom back-links and scroll-depth sentinels. Meta description falls back to summary when frontmatter description is absent."
+    },
     "GET /contact": {
       "method": "GET",
       "path": "/contact",
@@ -56,6 +70,20 @@
       "params": ["controller", "env", "ctx"],
       "file": "src/worker.ts",
       "description": "Cloudflare Workers scheduled() handler dispatching deliverDue for the transcript delivery cron sweep (live: -> delivered: keyspace partition, DRY_RUN-gated Resend email)."
+    },
+    "sortExperienceEntries()": {
+      "method": "EXPORT",
+      "path": "src/lib/experience.ts",
+      "params": ["entries"],
+      "file": "src/lib/experience.ts",
+      "description": "Reusable reverse-chronological ordering helper. Returns a new array of experience entries sorted by data.startDate descending. Structural generic, imports nothing from astro:content so it stays Vitest-testable. Consumed by both experience.astro and experience/[id].astro."
+    },
+    "sync-experience exports": {
+      "method": "EXPORT",
+      "path": "scripts/sync-experience.mjs",
+      "params": [],
+      "file": "scripts/sync-experience.mjs",
+      "description": "Source-of-truth sync CLI + testable helpers: normalize (CRLF->LF), readSourceField (parse frontmatter source:), sliceFrontmatter (split frontmatter/body), extractFence (pull CASE-STUDY fenced block). Extracts fenced case-study prose from Experience/*.md into src/content/experience/*.mdx bodies; --check mode is the CI drift gate."
     }
   }
 }

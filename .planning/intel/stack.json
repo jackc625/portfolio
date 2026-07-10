@@ -1,5 +1,5 @@
 {
-  "_meta": { "updated_at": "2026-07-08T00:00:00Z", "version": 1 },
+  "_meta": { "updated_at": "2026-07-10T01:22:08Z", "version": 2 },
   "languages": ["TypeScript", "JavaScript", "Astro", "CSS"],
   "frameworks": ["Astro 6", "Tailwind CSS v4"],
   "tools": ["Vite 7", "ESLint", "Prettier", "Vitest", "Wrangler", "Shiki", "astro-check"],
@@ -23,5 +23,5 @@
     "vitest": "^4.1.0",
     "wrangler": "^4.83.0"
   },
-  "content_formats": ["MDX (project case studies)", "Markdown (content collections)", "Astro components (.astro)", "JSON (portfolio-context, config)", "CSS custom properties (design tokens)"]
+  "content_formats": ["MDX (project case studies + experience case studies)", "Markdown (content collections)", "Astro components (.astro)", "JSON (portfolio-context, config)", "CSS custom properties (design tokens)"]
 }
