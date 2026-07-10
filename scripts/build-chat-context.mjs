@@ -8,9 +8,13 @@
  *   3. src/data/about.ts                       — ABOUT_INTRO, ABOUT_P1..P3 (D-03)
  *   4. src/data/portfolio-context.static.json  — hand-curated identity (D-08)
  *
- * Projects/7 MULTI-DEX CRYPTO TRADER.md is EXCLUDED (D-04) — the MDX
- * `source:` allow-list is the exclusion mechanism: any Projects/*.md not
- * referenced by an MDX source: field is ignored.
+ * Projects/7 MULTI-DEX CRYPTO TRADER.md is EXCLUDED (D-04 / D-15) — as of
+ * Phase 23 the #7 case study now has its own MDX (slug `multi-chain-evm`),
+ * so the old "unreferenced source is ignored" mechanism no longer applies.
+ * Exclusion is now an explicit slug-skip at the top of the main() MDX loop:
+ * the `multi-chain-evm` slug is `continue`d before either hard-fail runs, so
+ * it never reaches portfolio-context.json. Phase 25 / CHAT-10 lifts this skip
+ * and ingests #7 into the chat corpus (third-person voice split).
  *
  * Resume PDF text is NOT extracted (D-05) — persona prompt directs
  * visitors to /jack-cutrara-resume.pdf for resume-level questions.
@@ -436,6 +440,13 @@ async function main() {
   let errorCount = 0;
   let totalWords = 0;
   for (const mdxPath of mdxFiles) {
+    // D-15 (Phase 23): the #7 case study (slug `multi-chain-evm`) now has its
+    // own MDX, but it stays OUT of the chat corpus until Phase 25 / CHAT-10.
+    // Skip it BEFORE the try/buildProjectBlock so neither hard-fail fires:
+    // (a) #7 has no chatSummary: (D-05) — buildProjectBlock would throw exit 2;
+    // (b) its source: points at Projects/7 — the defensive MULTI-DEX regex
+    //     below would also throw. Skipping the slug sidesteps both cleanly.
+    if (basename(mdxPath, ".mdx") === "multi-chain-evm") continue;
     try {
       const mdxRaw = normalize(await readFile(mdxPath, "utf8"));
       const { frontmatterBlock } = sliceFrontmatter(mdxRaw);
