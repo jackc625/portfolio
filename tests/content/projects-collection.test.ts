@@ -7,6 +7,7 @@ const PROJECTS_DIR = join("src", "content", "projects");
 const EXPECTED_SLUGS = [
   "clipify",
   "daytrade",
+  "multi-chain-evm",
   "nfl-predict",
   "optimize-ai",
   "seatwatch",
@@ -14,7 +15,7 @@ const EXPECTED_SLUGS = [
 ];
 
 describe("Projects content collection (CONT-04)", () => {
-  it("contains exactly 6 MDX entries with expected slugs", async () => {
+  it("contains exactly 7 MDX entries with expected slugs", async () => {
     const files = (await readdir(PROJECTS_DIR)).filter((f) =>
       f.endsWith(".mdx"),
     );

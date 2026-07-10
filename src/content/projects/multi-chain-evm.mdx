@@ -1,0 +1,44 @@
+---
+title: "Multi-Chain EVM Trader"
+tagline: "Automated multi-chain DEX sniping with volatility-adaptive exits"
+description: "A multi-chain EVM sniping and automated trading engine in TypeScript, with an eight-stage token-safety pipeline, pluggable per-chain MEV transport, and restart-safe volatility-adaptive exits persisted to SQLite."
+techStack:
+  [
+    "TypeScript",
+    "Ethers.js",
+    "SQLite",
+    "Express",
+    "WebSocket",
+    "React",
+  ]
+featured: true
+status: "completed"
+category: "other"
+order: 2
+year: "2026"
+source: "Projects/7 - MULTI-DEX CRYPTO TRADER.md"
+---
+
+## Problem
+
+I wanted to trade newly launched tokens across several EVM chains fast enough to matter, which meant reacting to a pool-creation event and submitting a buy inside the same block window. The hard part was not the buying. It was doing it safely with real capital on the line. New token contracts are frequently hostile: honeypots that let you buy but never sell, hidden transfer taxes, max-wallet traps, and liquidity that gets pulled seconds after launch. A naive sniper that skips validation loses money on the first malicious contract it touches. On top of that, running one process across Ethereum, BSC, Base, and Arbitrum meant every chain had different mempool economics, different DEX conventions, and different private-relay options. I needed a single engine that could discover, vet, execute, and then babysit an exit for each position without me watching a screen, and that could survive a crash mid-trade without losing track of what it had already sold.
+
+## Approach & Architecture
+
+I built the bot as a single long-lived Node.js process driven by a typed per-chain registry. Turning on a chain is a matter of setting ENABLED_CHAINS; each chain then carries its own RPC and WebSocket endpoints, wallet, DEX list, MEV strategy, safety-provider stack, and gas policy. Discovery listens to V2 PairCreated and V3 PoolCreated factory events over WebSocket, with an HTTP polling fallback and an auto-reconnecting provider that backs off from one second to a sixty-second cap.
+
+Every candidate runs an eight-stage safety pipeline before a single wei is committed: honeypot checks, liquidity-lock verification, reserve-floor checks, swap and sell simulation, transfer-tax probing, metadata sanity, and bytecode heuristics for anti-bot patterns. A sell simulation runs as a hard gate: if the token cannot be sold in simulation, the buy aborts. After safety, five portfolio-level risk gates apply: per-snipe size cap, open-position count, per-chain cooldown, total deployed-capital cap, and a rolling 24-hour realized-loss circuit breaker.
+
+Execution is where the chains diverge, so I put transaction dispatch behind a two-method MevStrategy interface. Ethereum sends a Flashbots bundle, BSC posts a bloXroute private transaction, and Base and Arbitrum fall through to public RPC because neither has a mainstream private relay. Selection is declarative on the chain config; the caller branches on nothing. Once a position is open, a five-second exit loop maintains a high-water mark and a circular buffer of price samples. The trailing stop is not fixed: a coefficient-of-variation calculation over recent samples scales the pullback within configured bounds, and an age-based urgency escalator tightens the stop and eventually hard-exits stale positions. Every exit-relevant field is persisted to SQLite in WAL mode, so on restart the bot rebuilds live monitors without re-selling tiers that already settled.
+
+## Tradeoffs
+
+The safety pipeline costs latency, and in sniping latency is the whole game. I chose to run the checks anyway, in a deliberate order with the cheapest and most decisive ones first, because a single honeypot loss outweighs the marginal tokens I would win by skipping validation. Persisting exit state to SQLite on every meaningful transition adds a synchronous write to the hot path, but it is what lets the process crash and resume without double-selling or abandoning a position. The pluggable MEV layer is more code than a single hardcoded relay, yet it keeps chain-specific quirks out of the execution path and made adding Base and Arbitrum a matter of registering a passthrough rather than rewriting the dispatcher. I kept the dashboard bound to localhost by default, trading remote convenience for a smaller attack surface on a process that holds a funded key.
+
+## Outcome
+
+The bot runs as a single process against real wallets on live chains, discovering pools, validating tokens, executing through chain-appropriate relays, and managing exits automatically. It is not a backtest or a paper-trading simulation. The parts I am most confident in are the ones the test suite pins structurally: the exit engine's ordered, idempotent triggers, the schema migrations, the MEV strategy contracts, and a negative test that fails the build if any ethers v5 pattern reappears. I deliberately make no claims about returns here. What I can say is that the engineering invariants hold. The bot does not double-sell under concurrent triggers, does not re-execute settled tiers after a restart, and does not commit capital to a token that fails sell simulation.
+
+## Learnings
+
+The biggest lesson was that correctness under concurrency matters more than raw speed. My first exit logic could fire two triggers in the same tick and try to sell the same position twice; the fix was a per-position sell-lock mutex so exactly one sell leaves the process. The second lesson was about restart safety. Early versions kept exit state in memory, and a crash meant losing the high-water mark and re-running partial sells on reboot, so I moved every transition into a persisted table with additive migrations. The third was that a safety pipeline is only as good as its fallback: external honeypot and lock APIs go down, so the simulation-based sell check had to work as a last-resort gate when every provider is unreachable. Building this taught me to treat an automated trader as a systems problem, a set of structural invariants enforced by tests, rather than a single clever script.
