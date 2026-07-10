@@ -14,7 +14,7 @@ import { ABOUT_INTRO, ABOUT_P1 } from "../data/about";
 const allProjects = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order
 );
-// D-02: Homepage shows exactly 3 featured:true projects (SeatWatch, NFL Prediction, SolSniper)
+// D-02: Homepage shows exactly 3 featured:true projects (SeatWatch, Multi-Chain EVM Trader, NFL Prediction)
 const featured = allProjects.filter((p) => p.data.featured);
 
 // Person schema using CONTACT constants (D-23)
@@ -66,8 +66,13 @@ const personSchema = {
             stack={p.data.techStack.join(" \u00B7 ").toUpperCase()}
             year={p.data.year}
             href={`/projects/${p.id}`}
+            tagline={p.data.tagline}
           />
         ))}
+        <a class="label-mono see-all-work" href="/projects">
+          See all work
+          <span class="see-all-arrow" aria-hidden="true">&rarr;</span>
+        </a>
       </div>
     </Container>
   </section>
@@ -105,6 +110,23 @@ const personSchema = {
   .about-body p:not(.about-intro) { font-weight: 400; font-size: 1.125rem; line-height: 1.6; color: var(--ink); margin-bottom: 16px; }
   .read-more { display: inline-block; margin-top: 24px; color: var(--ink-muted); text-decoration: none; }
   .read-more:hover { color: var(--accent); }
+
+  /* "See all work" -- mirrors the .read-more idiom (label-mono, inline-block,
+     24px top, muted -> accent) and adds the experience.astro deep-link arrow
+     opacity reveal. Frontend-design routed (SC5). Accent stays on the only
+     clickable affordance (MASTER §7). */
+  .see-all-work { display: inline-block; margin-top: 24px; color: var(--ink-muted); text-decoration: none; transition: color 120ms ease; }
+  .see-all-arrow { color: var(--accent); opacity: 0; transition: opacity 120ms ease; }
+  .see-all-work:hover, .see-all-work:focus-visible { color: var(--accent); }
+  .see-all-work:hover .see-all-arrow, .see-all-work:focus-visible .see-all-arrow { opacity: 1; }
+  .see-all-work:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Reduced motion: keep the accent color change (affordance), drop the arrow
+     reveal -- matches the WorkRow / experience.astro deep-link reduce contract. */
+  @media (prefers-reduced-motion: reduce) {
+    .see-all-work, .see-all-arrow { transition: none; }
+    .see-all-work:hover .see-all-arrow, .see-all-work:focus-visible .see-all-arrow { opacity: 0; }
+  }
 
   /* Responsive */
   @media (max-width: 1023px) {
