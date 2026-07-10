@@ -5,7 +5,7 @@
  */
 /* Verified: 2026-04-19 */
 export const ABOUT_INTRO =
-  "I'm Jack \u2014 a junior software engineer who likes building systems that don't break at 3\u00a0a.m.";
+  "I'm Jack, a junior software engineer who likes building systems that don't break at 3\u00a0a.m.";
 
 /* Verified: 2026-04-19 */
 export const ABOUT_P1 =
@@ -17,4 +17,4 @@ export const ABOUT_P2 =
 
 /* Verified: 2026-04-19 */
 export const ABOUT_P3 =
-  "Right now I\u2019m looking for a junior or entry-level role on a team that cares about correctness, reliability, and performance \u2014 ideally one that will push me to get better at the parts of the stack I haven\u2019t touched yet.";
+  "Right now I\u2019m looking for a junior or entry-level role on a team that cares about correctness, reliability, and performance, ideally one that will push me to get better at the parts of the stack I haven\u2019t touched yet.";
