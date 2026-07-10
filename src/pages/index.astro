@@ -59,9 +59,9 @@ const personSchema = {
     <Container>
       <SectionHeader number="01" title="WORK" id="section-work" count={`${featured.length} / ${allProjects.length}`} />
       <div class="work-list">
-        {featured.map((p, i) => (
+        {featured.map((p) => (
           <WorkRow
-            number={String(i + 1).padStart(2, "0")}
+            number={String(p.data.order).padStart(2, "0")}
             title={p.data.title}
             stack={p.data.techStack.join(" \u00B7 ").toUpperCase()}
             year={p.data.year}

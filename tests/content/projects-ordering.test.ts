@@ -65,6 +65,23 @@ describe("Projects ordering property gate (SC4 / PROJ-04)", () => {
     expect(slugs).toEqual(EXPECTED_SLUGS);
   });
 
+  it("featured slugs occupy the lowest contiguous order values (guards Home 01-03 ledger, WR-01)", async () => {
+    const entries = await readProjectFrontmatter();
+    const featuredOrders = entries
+      .filter((e) => e.featured)
+      .map((e) => e.order)
+      .sort((a, b) => a - b);
+    // Featured projects must hold orders 1..N so the homepage's canonical
+    // `order`-derived numbering renders 01, 02, 03 with no gaps. If a future
+    // edit features a higher-order project, this fails loudly rather than
+    // silently desyncing Home from /projects.
+    const expectedContiguous = Array.from(
+      { length: featuredOrders.length },
+      (_, k) => k + 1,
+    );
+    expect(featuredOrders).toEqual(expectedContiguous);
+  });
+
   it("partitioning by featured then sorting by order yields one clean distinction (D-12)", async () => {
     const entries = await readProjectFrontmatter();
     const featured = entries
