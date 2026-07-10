@@ -443,8 +443,8 @@ const rest = all.filter((p) => !p.data.featured);      // 04..07
 
 ## Open Questions
 
-1. **Exact tier-divider selector for the 8px title→tagline override.** UI-SPEC specifies 8px (with tagline) vs 12px (without). Recommendation: a modifier or `:has(.work-tagline)` on `.work-body`; frontend-design finalizes. Not a blocker.
-2. **Whether to also remove the now-dormant MULTI-DEX regex.** Recommendation: keep it (defense-in-depth); it never fires post-skip. Planner/reviewer discretion.
+1. **Exact tier-divider selector for the 8px title→tagline override.** UI-SPEC specifies 8px (with tagline) vs 12px (without). Recommendation: a modifier or `:has(.work-tagline)` on `.work-body`; frontend-design finalizes. Not a blocker. **(RESOLVED — routed to the frontend-design skill at implementation time; Plan 23-03 delegates the selector choice to that skill, so no value needs to be fixed at plan time.)**
+2. **Whether to also remove the now-dormant MULTI-DEX regex.** Recommendation: keep it (defense-in-depth); it never fires post-skip. Planner/reviewer discretion. **(RESOLVED — Plan 23-01 keeps the regex as dormant defense-in-depth; the D-15 fix is the top-of-loop slug skip, which neutralizes both hard-fail sites before the regex is reached.)**
 
 ## Environment Availability
 
