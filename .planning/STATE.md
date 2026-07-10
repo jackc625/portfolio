@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
-current_phase: 23
-current_phase_name: Projects Reconciliation & Featured Tier
+current_phase: 24
+current_phase_name: Positioning Shift & Home Teaser
 status: verifying
 stopped_at: Phase 23 Plan 04 complete — capstone gate green + both human sign-offs approved; phase 23 ready for verification
-last_updated: "2026-07-10T14:03:05.607Z"
+last_updated: "2026-07-10T14:20:51.873Z"
 last_activity: 2026-07-10
-last_activity_desc: Completed 23-04 (phase capstone gate green end-to-end + both human sign-offs approved; phase 23 all plans done, ready for verification)
+last_activity_desc: Phase 23 complete, transitioned to Phase 24
 progress:
   total_phases: 5
   completed_phases: 3
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 ## Current Position
 
-Phase: 23 (Projects Reconciliation & Featured Tier) — ALL PLANS COMPLETE (ready for verification)
-Plan: 4 of 4 (complete)
+Phase: 24 — Positioning Shift & Home Teaser
+Plan: Not started
 Status: Phase complete — ready for verification
-Last activity: 2026-07-10 — Completed 23-04 (phase capstone gate green end-to-end + both human sign-offs approved)
+Last activity: 2026-07-10 — Phase 23 complete, transitioned to Phase 24
 Progress: [██████░░░░] 60% (3/5 phases)
 
 ### v1.4 phase map
