@@ -4,8 +4,8 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 24
 current_phase_name: Positioning Shift & Home Teaser
-status: verifying
-stopped_at: Phase 23 Plan 04 complete — capstone gate green + both human sign-offs approved; phase 23 ready for verification
+status: in-progress
+stopped_at: Phase 23 complete and verified (6/6 must-haves passed); code review clean (0 blockers, 2 advisory warnings); two scoped fix(23) commits (chat.ts unused-param hint, about.ts em dashes); ready to plan Phase 24
 last_updated: "2026-07-10T14:20:51.873Z"
 last_activity: 2026-07-10
 last_activity_desc: Phase 23 complete, transitioned to Phase 24
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 23 — Projects Reconciliation & Featured Tier
+**Current focus:** Phase 24 — Positioning Shift & Home Teaser (Phase 23 complete + verified)
 
 ## Current Position
 
 Phase: 24 — Positioning Shift & Home Teaser
 Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-07-10 — Phase 23 complete, transitioned to Phase 24
+Status: Phase 23 complete and verified; Phase 24 not started (no CONTEXT.md yet — ready to discuss/plan)
+Last activity: 2026-07-10 — Phase 23 complete and verified, transitioned to Phase 24
 Progress: [██████░░░░] 60% (3/5 phases)
 
 ### v1.4 phase map
@@ -113,7 +113,7 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 ## Session
 
 **Last session:** 2026-07-10T14:03:05.593Z
-**Stopped at:** Phase 23 Plan 04 complete — capstone gate green + both human sign-offs approved; phase 23 ready for verification
+**Stopped at:** Phase 23 complete and verified (6/6 must-haves passed, code review clean); two scoped fix(23) commits landed (chat.ts hint, about.ts em dashes); ready to plan Phase 24
 **Resume file:** None
 
 ## Performance Metrics
@@ -129,6 +129,10 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 22 P03 | 9min | 2 tasks | 2 files |
 | Phase 22 P04 | 12 min | 2 tasks | 1 files |
 | Phase 22 P05 | ~9 min | 2 tasks | 0 files (verification-only gate) |
+| Phase 23 P01 | ~14 min | 3 tasks | ~13 files (#7 sync + featured/order + D-15 chat-skip) |
+| Phase 23 P02 | ~2 min | 2 tasks | 6 files (site-side content gates) |
+| Phase 23 P03 | ~9 min | 3 tasks | 4 files (two-tier featured UI) |
+| Phase 23 P04 | ~6 min | 2 tasks | 0 files (capstone gate + human sign-offs) |
 | Phase 23 P01 | 14min | 3 tasks | 11 files |
 | Phase 23 P02 | 2min | 2 tasks | 6 files |
 | Phase 23 P03 | ~9min | 3 tasks | 4 files |
