@@ -5,15 +5,15 @@ milestone_name: Professional Experience
 current_phase: 23
 current_phase_name: Projects Reconciliation & Featured Tier
 status: executing
-stopped_at: "Phase 23 Plan 02 complete — #7 under all six site-side content gates, chat stays at 6"
-last_updated: "2026-07-10T13:11:14.829Z"
+stopped_at: "Phase 23 Plan 03 complete — two-tier FEATURED / MORE WORK on /projects + Home taglines & See all work"
+last_updated: "2026-07-10T13:22:35.000Z"
 last_activity: 2026-07-10
-last_activity_desc: Completed 23-02 (projects content gates — #7 under all six site-side gates)
+last_activity_desc: Completed 23-03 (two-tier featured layout on /projects + Home teaser taglines & See all work link)
 progress:
   total_phases: 5
   completed_phases: 2
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
   percent: 40
 ---
 
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 23 (Projects Reconciliation & Featured Tier) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
-Last activity: 2026-07-10 — Completed 23-02 (projects content gates — #7 under all six site-side gates)
+Last activity: 2026-07-10 — Completed 23-03 (two-tier featured layout on /projects + Home teaser taglines & See all work link)
 Progress: [████░░░░░░] 40% (2/5 phases)
 
 ### v1.4 phase map
@@ -77,6 +77,8 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase ?]: Phase 23-01: D-15 chat exclusion re-plumbed as an explicit multi-chain-evm slug-continue at the top of build-chat-context.mjs before both hard-fails; defensive MULTI-DEX regex retained dormant; Phase 25 lifts it
 - [Phase ?]: Phase 23-01: SolSniper demoted to featured:false (kept, order 4); exactly 3 featured (seatwatch/multi-chain-evm/nfl-predict), order contiguous 1-7, proven by tests/content/projects-ordering.test.ts
 - [Phase ?]: 23-02: multi-chain-evm added to all six site-side content gates (D-16 exhaustiveness); chat-side pins untouched so chat stays 6 until Phase 25
+- [Phase 23]: 23-03: WorkRow extended with optional tagline (structural title:has(+ .work-tagline) 8px override → byte-identical when absent, no modifier class, no fork); /projects two-tier FEATURED/MORE WORK via featured-partition, tier sub-labels mirror experience.astro earlier-divider (48px break), rows numbered off order 01-07
+- [Phase 23]: 23-03: Home teaser gains taglines (same primitive) + a See all work link mirroring .read-more with the deep-link arrow reveal; all page/primitive-scoped CSS — global.css & BaseLayout.astro untouched (T-23-03 mitigated); SC2 render gate parses built HTML for exactly 3 .work-tagline elements (F7 DOM count, not substring)
 
 ### Open Blockers
 
@@ -109,9 +111,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-10T13:09:56.440Z
-**Stopped at:** Phase 23 Plan 01 complete — #7 synced, featured tier applied, chat stays at 6
-**Resume file:** .planning/phases/23-projects-reconciliation-featured-tier/23-02-PLAN.md
+**Last session:** 2026-07-10T13:22:35.000Z
+**Stopped at:** Phase 23 Plan 03 complete — two-tier featured layout on /projects + Home teaser taglines & See all work
+**Resume file:** .planning/phases/23-projects-reconciliation-featured-tier/23-04-PLAN.md
 
 ## Performance Metrics
 
@@ -128,3 +130,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 22 P05 | ~9 min | 2 tasks | 0 files (verification-only gate) |
 | Phase 23 P01 | 14min | 3 tasks | 11 files |
 | Phase 23 P02 | 2min | 2 tasks | 6 files |
+| Phase 23 P03 | ~9min | 3 tasks | 4 files |

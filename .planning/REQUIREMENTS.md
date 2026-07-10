@@ -31,7 +31,7 @@ Requirements for the v1.4 Professional Experience milestone. Each maps to a road
 ### Projects Reconciliation (PROJ)
 
 - [x] **PROJ-01**: The Multi-Chain EVM / Multi-Dex Crypto Trader project (`Projects/7 - MULTI-DEX CRYPTO TRADER.md`) is synced onto the site as a case study through the existing sync pipeline
-- [ ] **PROJ-02**: SeatWatch, Multi-Chain EVM, and NFL Prediction render in a featured tier at the top of the project listing(s)
+- [x] **PROJ-02**: SeatWatch, Multi-Chain EVM, and NFL Prediction render in a featured tier at the top of the project listing(s)
 - [x] **PROJ-03**: The remaining projects (SolSniper, Optimize-AI, Clipify, DayTrade) remain accessible below the featured tier — nothing is deleted
 - [x] **PROJ-04**: The project data model supports the featured/ordering distinction (schema field or explicit ordering) applied consistently across the Projects page and the Home work list
 
@@ -87,7 +87,7 @@ Which phases cover which requirements. Populated during roadmap creation.
 | POS-03 | Phase 24 | Pending |
 | POS-04 | Phase 24 | Pending |
 | PROJ-01 | Phase 23 | Complete |
-| PROJ-02 | Phase 23 | Pending |
+| PROJ-02 | Phase 23 | Complete |
 | PROJ-03 | Phase 23 | Complete |
 | PROJ-04 | Phase 23 | Complete |
 | CHAT-10 | Phase 25 | Pending |
