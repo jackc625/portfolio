@@ -44,7 +44,12 @@ describe("Case-study MDX word count soft band 600-900 (CONT-02 / D-16)", () => {
           `${slug}: ${words} words (out of ${MIN_WORDS}-${MAX_WORDS} band)`,
         );
       }
-      expect(true).toBe(true);
+      // D-16 keeps the 600-900 band a soft warn (above). But a hard, very-loose
+      // floor/ceiling replaces the former tautology so the spec provides real
+      // regression protection: a case study collapsing to a stub or ballooning
+      // into an essay fails the suite instead of passing vacuously.
+      expect(words, `${slug}: ${words} words`).toBeGreaterThan(300);
+      expect(words, `${slug}: ${words} words`).toBeLessThan(1500);
     });
   }
 });
