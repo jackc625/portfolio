@@ -133,12 +133,12 @@
   4. A single data-model distinction (`featured` flag / `order` field) drives the same featured-then-rest ordering on both the Projects page and the Home work list.
   5. The featured-tier visual treatment was routed through the frontend-design skill; `astro check` stays 0/0/0 and no new runtime dependencies are added.
 
-**Plans**: 4 plans
+**Plans**: 1/4 plans executed
 **UI hint**: yes
 
 **Wave 1**
 
-- [ ] 23-01-PLAN.md — #7 sync + fenced case study + D-15 chat-skip + featured/order reconciliation + SC4 ordering gate
+- [x] 23-01-PLAN.md — #7 sync + fenced case study + D-15 chat-skip + featured/order reconciliation + SC4 ordering gate
 
 **Wave 2** *(blocked on Wave 1; parallel — zero file overlap)*
 
@@ -208,6 +208,6 @@ Phases execute in numeric order within each milestone.
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
-| 23. Projects Reconciliation & Featured Tier | v1.4 | 0/4 | Planned | - |
+| 23. Projects Reconciliation & Featured Tier | v1.4 | 1/4 | In Progress|  |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |

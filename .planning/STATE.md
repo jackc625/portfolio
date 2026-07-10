@@ -4,16 +4,16 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 23
 current_phase_name: Projects Reconciliation & Featured Tier
-status: planned
-stopped_at: Phase 23 planned + cross-AI review incorporated (4 plans, 3 waves)
-last_updated: "2026-07-10T12:45:49.000Z"
+status: executing
+stopped_at: Phase 23 Plan 01 complete — #7 synced, featured tier applied, chat stays at 6
+last_updated: "2026-07-10T13:04:08.658Z"
 last_activity: 2026-07-10
-last_activity_desc: Phase 23 replanned — Codex cross-AI review folded in (4 plans, 3 waves)
+last_activity_desc: Completed 23-01 (projects reconciliation + featured/order distinction)
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 13
+  completed_plans: 10
   percent: 40
 ---
 
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 ## Current Position
 
-Phase: 23 — Projects Reconciliation & Featured Tier
-Plan: 4 plans ready across 3 waves (W1: 01 · W2: 02, 03 · W3: 04 sign-off)
-Status: Ready to execute
-Last activity: 2026-07-10 — Phase 23 planned + cross-AI review incorporated (4 plans, 3 waves)
+Phase: 23 (Projects Reconciliation & Featured Tier) — EXECUTING
+Plan: 2 of 4
+Status: Executing Phase 23 (23-01 complete)
+Last activity: 2026-07-10 — Completed 23-01 (projects reconciliation + featured tier)
 Progress: [████░░░░░░] 40% (2/5 phases)
 
 ### v1.4 phase map
@@ -74,6 +74,8 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase ?]: 22-04: D-02 back link uses a persistent leading arrow (color-only hover, no reveal, no translate) per frontend-design ruling
 - [Phase ?]: 22-04: getStaticPaths filters hasCaseStudy so only /experience/holloway builds; balfour structurally excluded (EXP-05)
 - [Phase 22]: 22-05: capstone gate green — astro check 0/0, pnpm test 623 pass/2 skip (incl D-26 chat battery), sync drift 0, build route set correct (dist/client, balfour absent), QA-02 dep-lock exit 0; SC5d visual sign-off APPROVED (nav no-wrap at 768/1024px, 404 on balfour route, zero em dashes)
+- [Phase ?]: Phase 23-01: D-15 chat exclusion re-plumbed as an explicit multi-chain-evm slug-continue at the top of build-chat-context.mjs before both hard-fails; defensive MULTI-DEX regex retained dormant; Phase 25 lifts it
+- [Phase ?]: Phase 23-01: SolSniper demoted to featured:false (kept, order 4); exactly 3 featured (seatwatch/multi-chain-evm/nfl-predict), order contiguous 1-7, proven by tests/content/projects-ordering.test.ts
 
 ### Open Blockers
 
@@ -106,9 +108,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-10T12:45:49.000Z
-**Stopped at:** Phase 23 planned + cross-AI review incorporated (4 plans, 3 waves)
-**Resume file:** .planning/phases/23-projects-reconciliation-featured-tier/23-01-PLAN.md
+**Last session:** 2026-07-10T13:04:08.642Z
+**Stopped at:** Phase 23 Plan 01 complete — #7 synced, featured tier applied, chat stays at 6
+**Resume file:** .planning/phases/23-projects-reconciliation-featured-tier/23-02-PLAN.md
 
 ## Performance Metrics
 
@@ -123,3 +125,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 22 P03 | 9min | 2 tasks | 2 files |
 | Phase 22 P04 | 12 min | 2 tasks | 1 files |
 | Phase 22 P05 | ~9 min | 2 tasks | 0 files (verification-only gate) |
+| Phase 23 P01 | 14min | 3 tasks | 11 files |
