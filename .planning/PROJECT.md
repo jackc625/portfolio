@@ -26,7 +26,7 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 ## Current State
 
 **Shipped:** v1.3 Chat Visibility (2026-05-13)
-**In flight:** v1.4 Professional Experience (2/5 phases complete — Phase 21 Experience pipeline + Phase 22 Experience page & Holloway case study shipped; Phases 23–25 remaining)
+**In flight:** v1.4 Professional Experience (3/5 phases complete — Phase 21 Experience pipeline + Phase 22 Experience page & Holloway case study + Phase 23 Projects reconciliation & featured tier shipped; Phases 24–25 remaining)
 **Live at:** jackcutrara.com (single Cloudflare Worker `jack-cutrara-portfolio`, version `ede1431f-e92a-4fda-af54-4f8f57781d3b`; hourly cron `["0 * * * *"]` ACTIVE; Pages project retired 2026-05-13)
 **Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets (`src/worker.ts` re-exports Astro `handle()` for `fetch` + adds `scheduled()` delegating to `deliverDue`) + Cloudflare KV (`CHAT_KV`) + Resend REST + Geist/Geist Mono typography
 **Source LOC:** ~6,802 (src/ — astro, ts, css, mdx, md; +44% from v1.2 close)
@@ -199,4 +199,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-09 — Phase 22 (Experience Page & Holloway Case Study) complete and verified: `/experience` two-tier listing + experience-first nav, Holloway scannable summary → `/experience/holloway` deep-dive, Balfour lightweight entry (structurally route-excluded), D-08 company normalization; EXP-02..05 closed. v1.4 now 2/5 phases complete (21 + 22). Next: Phase 23 Projects Reconciliation & Featured Tier. Previous: v1.3 Chat Visibility shipped 2026-05-13 (4 phases 17-20, 36/36 requirements).*
+*Last updated: 2026-07-10 — Phase 23 (Projects Reconciliation & Featured Tier) complete and verified: Multi-Chain EVM (#7) synced as a full case study through `sync-projects.mjs`, three projects featured (SeatWatch / Multi-Chain EVM / NFL Prediction) in a two-tier FEATURED/MORE WORK layout on `/projects` + Home, remaining four kept accessible below, a single `featured`/`order` data-model distinction driving both surfaces; #7 held out of the chat corpus until Phase 25 (D-15, corpus stays at 6 projects); PROJ-01..04 closed. v1.4 now 3/5 phases complete (21 + 22 + 23). Next: Phase 24 Positioning Shift & Home Teaser. Previous: v1.3 Chat Visibility shipped 2026-05-13 (4 phases 17-20, 36/36 requirements).*
