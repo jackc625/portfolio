@@ -16,6 +16,13 @@
  * Per D-03: no Tailwind utilities inside primitive markup
  * Per D-04: props stay as MASTER §5.5 specifies (number/title/stack/year/href)
  * Per D-14: layout scoped here
+ *
+ * Phase 23 D-08/D-14: optional `tagline` renders a single .body line between the
+ * title and stack (featured tier on /projects + Home teaser). When absent the row
+ * is byte-identical to the pre-Phase-23 primitive (the tagline element and the
+ * title 8px override both drop out), so the rest tier and the motion/focus tests
+ * are untouched. The tagline takes NO hover state — only the title carries the
+ * accent underline affordance (MASTER §7 single-signal rule).
  */
 interface Props {
   number: string;
@@ -23,15 +30,17 @@ interface Props {
   stack: string;
   year: string;
   href: string;
+  tagline?: string;
 }
 
-const { number, title, stack, year, href } = Astro.props;
+const { number, title, stack, year, href, tagline } = Astro.props;
 ---
 
 <a class="work-row" href={href}>
   <span class="work-num meta-mono tabular">{number}</span>
   <div class="work-body">
     <h2 class="h2-project work-title">{title}</h2>
+    {tagline && <p class="body work-tagline">{tagline}</p>}
     <div class="work-stack">{stack}</div>
   </div>
   <div class="work-meta">
@@ -62,6 +71,19 @@ const { number, title, stack, year, href } = Astro.props;
   .work-title {
     color: var(--ink);
     margin-bottom: 12px;
+  }
+
+  /* Phase 23 D-08: featured-row tagline (one .body line, muted, no hover state).
+     Structural next-sibling :has() tightens the title→tagline gap to 8px only
+     when a tagline follows; a tagline-less row never matches, so it keeps the
+     12px title→stack rhythm byte-identical to the pre-Phase-23 primitive. */
+  .work-tagline {
+    color: var(--ink-muted);
+    margin-bottom: 12px;
+  }
+
+  .work-title:has(+ .work-tagline) {
+    margin-bottom: 8px;
   }
 
   .work-stack {
