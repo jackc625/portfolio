@@ -381,7 +381,7 @@ const COPY_FEEDBACK_MS = 1500;
 // The `.copy-success` class is driven exclusively by createCopyButton's click
 // handler now, so the success indicator renders regardless of clipboard outcome
 // (non-HTTPS preview, denied permission, focus loss). See 17-REVIEW-GAPS.md WR-01.
-async function copyToClipboard(text: string, button: HTMLElement): Promise<void> {
+async function copyToClipboard(text: string, _button: HTMLElement): Promise<void> {
   try {
     await navigator.clipboard.writeText(text);
   } catch {
