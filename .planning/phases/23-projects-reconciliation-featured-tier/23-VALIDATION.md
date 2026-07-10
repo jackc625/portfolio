@@ -51,7 +51,7 @@ created: 2026-07-10
 | 23-01-03 | 01 | 1 | PROJ-03, PROJ-04 | — | N/A | property | `vitest run tests/content` (projects-collection 7 / exactly-3-featured + projects-ordering {1..7} unique) | ❌ W0 | ⬜ pending |
 | 23-02-01 | 02 | 2 | PROJ-01 | — | N/A | unit | `vitest run tests/content/case-studies-{have-content,shape,wordcount}.test.ts` | ✅ | ⬜ pending |
 | 23-02-02 | 02 | 2 | PROJ-01 | — | N/A | unit | `vitest run tests/content/voice-banlist.test.ts tests/content/voice-em-dash.test.ts` | ✅ | ⬜ pending |
-| 23-03-01 | 03 | 2 | PROJ-02 | — | N/A | unit | `pnpm exec astro check` + `vitest run tests/motion` (WorkRow byte-identical sans tagline) | ✅ | ⬜ pending |
+| 23-03-01 | 03 | 2 | PROJ-02 | — | N/A | unit | `pnpm exec astro check` + `vitest run tests/build/work-arrow-motion.test.ts tests/build/motion-css-rules.test.ts tests/client/focus-visible.test.ts` (WorkRow byte-identical sans tagline) | ✅ | ⬜ pending |
 | 23-03-02 | 03 | 2 | PROJ-02, PROJ-04 | — | N/A | build-output | `pnpm exec astro check` (+ `featured-tier-render` at Plan 04 `pnpm build`) | ❌ W0 | ⬜ pending |
 | 23-03-03 | 03 | 2 | PROJ-03 | — | N/A | unit | `pnpm exec astro check` + `vitest run tests/content` | ✅ | ⬜ pending |
 | 23-04-01 | 04 | 3 | PROJ-01..04 | D-15 | full build validates skip; chat 6 | build/integration | `pnpm build` + `pnpm test` + `pnpm sync:check` + `pnpm build:chat-context:check` | ✅ | ⬜ pending |

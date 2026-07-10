@@ -189,7 +189,7 @@ techStack:
 | `tests/content/projects-collection.test.ts` | `EXPECTED_SLUGS` | 7 | Test title "exactly 6 MDX entries" → 7 (line 17); **"exactly 3 featured" stays 3** (lines 25-34 count `featured: true` across files — still 3 after solsniper flips false) |
 | `tests/content/case-studies-have-content.test.ts` | `PROJECTS` | 5 | — |
 | `tests/content/case-studies-shape.test.ts` | `PROJECTS` | 5 | (hard-asserts the 5-H2 shape via `EXPECTED_H2S` line 14) |
-| `tests/content/case-studies-wordcount.test.ts` | `PROJECTS` | 5 | (`MIN_WORDS = 600`, so #7 must be ≥600w) |
+| `tests/content/case-studies-wordcount.test.ts` | `PROJECTS` | 5 | (SOFT WARN only per D-16 — the test `console.warn`s outside 600–900 and always passes via `expect(true).toBe(true)`; it does NOT hard-fail below 600. The 600–900 floor is enforced by the Plan 04 human sign-off, D-02. Corrected per review F2.) |
 | `tests/content/voice-banlist.test.ts` | `PROJECTS` | 5 | (#7 case study must avoid banned words: revolutionary, seamless, leverage, robust, …) |
 | `tests/content/voice-em-dash.test.ts` | `PROJECTS` | 5 | (`MAX_EM_DASHES_PER_PARAGRAPH = 0` — the synced MDX body must be em-dash-free) |
 | `tests/build/no-mdx-in-worker-bundle.test.ts` | `mdxStems` | 48 | (requires `dist/` from `pnpm build`) |
@@ -436,7 +436,7 @@ const rest = all.filter((p) => !p.data.featured);      // 04..07
 |---|-------|---------|---------------|
 | A1 | `year: "2026"` for #7 (D-05 says "confirm with Jack") | Priority 3 | Wrong year in a 4-digit-validated field; cosmetic, caught in review |
 | A2 | Draft tagline "Automated multi-chain DEX sniping with volatility-adaptive exits" (54 chars, ≤80) | Priority 3 / User Constraints | Final wording is Jack's call; length verified safe |
-| A3 | The #7 case study will meet the 600-word floor (`MIN_WORDS = 600`) once authored | Priority 4 | If under 600, `case-studies-wordcount` fails — mitigated by D-02's 600–900 target |
+| A3 | The #7 case study will meet the 600–900 word target once authored | Priority 4 | `case-studies-wordcount` only soft-warns below 600 (F2) — the 600–900 floor is enforced by the Plan 04 human sign-off (D-02), not an automated gate |
 | A4 | `techStack` derived from the README stack section satisfies `.min(1)` | Priority 3 | Trivially satisfied; content is Jack-reviewed |
 
 **All structural/pipeline claims are `[VERIFIED]` against live code — the only assumptions are unauthored content values (year, tagline, prose), which D-02/D-05 explicitly route through Jack's review.**
@@ -485,7 +485,7 @@ No external services, tools, or network dependencies. Purely local content/code 
 | SC5 / D-16 | #7 under shape/voice/em-dash/no-worker-MDX gates | unit/build | 7 site-side arrays include `multi-chain-evm` | ✅ (extend) |
 
 ### Directly assertable vs. held-out
-- **Directly assertable (existing gates):** slug count (7), featured count (3), 5-H2 shape, ≥600 words, voice banlist, zero em dashes, no-MDX-in-worker, chat-still-6, astro-check 0/0/0, sync/chat-context drift. These are the backbone — Phase 23 mostly *extends the arrays* so #7 rides them.
+- **Directly assertable (existing gates):** slug count (7), featured count (3), 5-H2 shape, voice banlist, zero em dashes, no-MDX-in-worker, chat-still-6, astro-check 0/0/0, sync/chat-context drift. (Word count is NOT an automated gate — the wordcount test soft-warns only per D-16/F2; the 600–900 floor is enforced by the Plan 04 human sign-off, D-02.) These are the backbone — Phase 23 mostly *extends the arrays* so #7 rides them.
 - **Recommended net-new property test (Wave 0):** an ordering/partition invariant — assert across `src/content/projects/*.mdx` that `order` values are exactly `{1,2,3,4,5,6,7}` (contiguous, unique) and `featured: true` ⟺ slug ∈ {seatwatch, multi-chain-evm, nfl-predict}. This directly proves SC4 (the "single distinction") independent of page rendering.
 - **Optional build-output check (Wave 0):** parse built `/projects` HTML — Featured group renders `work-tagline` exactly 3× and 7 rows total numbered 01–07. Proves SC2/SC4 rendering.
 - **Manual / frontend-design (SC5):** visual tier distinctness, divider styling, type ladder — 6-pillar UI checker sign-off (UI-SPEC §Checker Sign-Off) + Jack's review of the tagline/prose. Not automatable.
