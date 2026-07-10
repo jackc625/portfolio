@@ -133,7 +133,7 @@
   4. A single data-model distinction (`featured` flag / `order` field) drives the same featured-then-rest ordering on both the Projects page and the Home work list.
   5. The featured-tier visual treatment was routed through the frontend-design skill; `astro check` stays 0/0/0 and no new runtime dependencies are added.
 
-**Plans**: 1/4 plans executed
+**Plans**: 2/4 plans executed
 **UI hint**: yes
 
 **Wave 1**
@@ -142,7 +142,7 @@
 
 **Wave 2** *(blocked on Wave 1; parallel — zero file overlap)*
 
-- [ ] 23-02-PLAN.md — Content-gate coverage: add #7 to the six site-side pinned arrays (D-16); chat-side pins left unchanged
+- [x] 23-02-PLAN.md — Content-gate coverage: add #7 to the six site-side pinned arrays (D-16); chat-side pins left unchanged
 - [ ] 23-03-PLAN.md — Two-tier featured UI (WorkRow tagline prop, projects.astro FEATURED/MORE WORK, Home taglines + See all work link), frontend-design routed + SC2 render gate
 
 **Wave 3** *(blocked on Wave 2)*
@@ -208,6 +208,6 @@ Phases execute in numeric order within each milestone.
 | 20. Email Render + Resend Integration | v1.3 | 4/4 | Complete | 2026-05-13 |
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
-| 23. Projects Reconciliation & Featured Tier | v1.4 | 1/4 | In Progress|  |
+| 23. Projects Reconciliation & Featured Tier | v1.4 | 2/4 | In Progress|  |
 | 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |
