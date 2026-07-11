@@ -162,8 +162,21 @@
   4. Site metadata (SEO title/description and the JSON-LD Person schema) reflects the updated positioning and job title.
   5. The Home page surfaces a concise Holloway experience teaser that links through to the Experience page.
 
-**Plans**: TBD
+**Plans**: 4 plans
 **UI hint**: yes
+
+**Wave 1** *(foundation — education module + Nyquist Wave 0 gates)*
+
+- [ ] 24-01-PLAN.md — `src/data/education.ts` SSoT (facts + alumniOf/hasCredential schema fragments) + Wave 0 gates A (site-copy em-dash/register), B/C (home-teaser render + JSON-LD parse), D (education module), E (chat-surface tripwire)
+
+**Wave 2** *(blocked on 24-01; parallel — zero file overlap)*
+
+- [ ] 24-02-PLAN.md — Home `index.astro`: 01 EXPERIENCE Holloway teaser (frontend-design) + renumber 01/02/03/04 (incl `ContactSection.astro` literal) + enrich personSchema (jobTitle/alumniOf/hasCredential) + sharpen SEO description
+- [ ] 24-03-PLAN.md — About: `about.ts` copy revision (intro/P1/P3, P2 verbatim) + `/about` Education block (frontend-design) fed by `education.ts` + description sharpen
+
+**Wave 3** *(blocked on 24-02, 24-03)*
+
+- [ ] 24-04-PLAN.md — Real 1200x630 `og-default.png` (frontend-design) + capstone gate (build + full suite incl D-26/sse-snapshot + astro-check 0/0/0 + dep-lock + D-17/D-19 tripwires) + human sign-off (copy review + 6-pillar + Google Rich Results)
 
 ### Phase 25: Chat Knowledge Refresh & Milestone Verification
 
@@ -209,5 +222,5 @@ Phases execute in numeric order within each milestone.
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 4/4 | Complete    | 2026-07-10 |
-| 24. Positioning Shift & Home Teaser | v1.4 | 0/TBD | Not started | - |
+| 24. Positioning Shift & Home Teaser | v1.4 | 0/4 | Not started | - |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |
