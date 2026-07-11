@@ -5,10 +5,10 @@ milestone_name: Professional Experience
 current_phase: 24
 current_phase_name: Positioning Shift & Home Teaser
 status: in-progress
-stopped_at: Phase 24 context gathered
-last_updated: "2026-07-11T03:36:21.992Z"
+stopped_at: Phase 24 UI-SPEC approved
+last_updated: "2026-07-11T03:44:52.471Z"
 last_activity: 2026-07-10
-last_activity_desc: Phase 24 context gathered (24-CONTEXT.md) — ready to plan
+last_activity_desc: Phase 24 UI-SPEC approved (ui-phase complete)
 progress:
   total_phases: 5
   completed_phases: 3
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 24 — Positioning Shift & Home Teaser (context gathered, ready to plan)
+**Current focus:** Phase 24 — Positioning Shift & Home Teaser (UI-SPEC approved, ready to plan)
 
 ## Current Position
 
 Phase: 24 — Positioning Shift & Home Teaser
 Plan: Not started
-Status: Phase 24 context gathered (24-CONTEXT.md + 24-DISCUSSION-LOG.md); ready to plan
-Last activity: 2026-07-10 — Phase 24 context gathered (discuss-phase complete)
+Status: Phase 24 UI-SPEC approved (24-UI-SPEC.md); ready to plan
+Last activity: 2026-07-10 — Phase 24 UI-SPEC approved (ui-phase complete)
 Progress: [██████░░░░] 60% (3/5 phases)
 
 ### v1.4 phase map
@@ -112,9 +112,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-11T03:36:21.981Z
-**Stopped at:** Phase 24 context gathered
-**Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-CONTEXT.md
+**Last session:** 2026-07-11T03:44:52.461Z
+**Stopped at:** Phase 24 UI-SPEC approved
+**Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-UI-SPEC.md
 
 ## Performance Metrics
 
