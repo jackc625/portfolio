@@ -1,10 +1,11 @@
 ---
 phase: 23
 slug: projects-reconciliation-featured-tier
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: validated
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-07-10
+validated: 2026-07-10
 ---
 
 # Phase 23 — Validation Strategy
@@ -46,28 +47,28 @@ created: 2026-07-10
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 23-01-01 | 01 | 1 | PROJ-01 | D-15 | chat corpus stays 6 (#7 excluded) | integration | `pnpm build:chat-context:check` + `vitest run tests/build/chat-context-integrity.test.ts` | ✅ | ⬜ pending |
-| 23-01-02 | 01 | 1 | PROJ-01 | — | N/A | integration | `pnpm sync:check` + `pnpm exec astro check` + `vitest run tests/content/source-files-exist.test.ts` | ✅ | ⬜ pending |
-| 23-01-03 | 01 | 1 | PROJ-03, PROJ-04 | — | N/A | property | `vitest run tests/content` (projects-collection 7 / exactly-3-featured + projects-ordering {1..7} unique) | ❌ W0 | ⬜ pending |
-| 23-02-01 | 02 | 2 | PROJ-01 | — | N/A | unit | `vitest run tests/content/case-studies-{have-content,shape,wordcount}.test.ts` | ✅ | ⬜ pending |
-| 23-02-02 | 02 | 2 | PROJ-01 | — | N/A | unit | `vitest run tests/content/voice-banlist.test.ts tests/content/voice-em-dash.test.ts` | ✅ | ⬜ pending |
-| 23-03-01 | 03 | 2 | PROJ-02 | — | N/A | unit | `pnpm exec astro check` + `vitest run tests/build/work-arrow-motion.test.ts tests/build/motion-css-rules.test.ts tests/client/focus-visible.test.ts` (WorkRow byte-identical sans tagline) | ✅ | ⬜ pending |
-| 23-03-02 | 03 | 2 | PROJ-02, PROJ-04 | — | N/A | build-output | `pnpm exec astro check` (+ `featured-tier-render` at Plan 04 `pnpm build`) | ❌ W0 | ⬜ pending |
-| 23-03-03 | 03 | 2 | PROJ-03 | — | N/A | unit | `pnpm exec astro check` + `vitest run tests/content` | ✅ | ⬜ pending |
-| 23-04-01 | 04 | 3 | PROJ-01..04 | D-15 | full build validates skip; chat 6 | build/integration | `pnpm build` + `pnpm test` + `pnpm sync:check` + `pnpm build:chat-context:check` | ✅ | ⬜ pending |
-| 23-04-02 | 04 | 3 | PROJ-01, PROJ-02 | — | content honesty (D-03, no P&L) | manual | human sign-off: content review (D-02/D-03) + 6-pillar UI (UI-SPEC § Checker Sign-Off) | — | ⬜ pending |
+| 23-01-01 | 01 | 1 | PROJ-01 | D-15 | chat corpus stays 6 (#7 excluded) | integration | `pnpm build:chat-context:check` + `vitest run tests/build/chat-context-integrity.test.ts` | ✅ | ✅ green |
+| 23-01-02 | 01 | 1 | PROJ-01 | — | N/A | integration | `pnpm sync:check` + `pnpm exec astro check` + `vitest run tests/content/source-files-exist.test.ts` | ✅ | ✅ green |
+| 23-01-03 | 01 | 1 | PROJ-03, PROJ-04 | — | N/A | property | `vitest run tests/content` (projects-collection 7 / exactly-3-featured + projects-ordering {1..7} unique) | ✅ | ✅ green |
+| 23-02-01 | 02 | 2 | PROJ-01 | — | N/A | unit | `vitest run tests/content/case-studies-{have-content,shape,wordcount}.test.ts` | ✅ | ✅ green |
+| 23-02-02 | 02 | 2 | PROJ-01 | — | N/A | unit | `vitest run tests/content/voice-banlist.test.ts tests/content/voice-em-dash.test.ts` | ✅ | ✅ green |
+| 23-03-01 | 03 | 2 | PROJ-02 | — | N/A | unit | `pnpm exec astro check` + `vitest run tests/build/work-arrow-motion.test.ts tests/build/motion-css-rules.test.ts tests/client/focus-visible.test.ts` (WorkRow byte-identical sans tagline) | ✅ | ✅ green |
+| 23-03-02 | 03 | 2 | PROJ-02, PROJ-04 | — | N/A | build-output | `pnpm exec astro check` + `vitest run tests/build/featured-tier-render.test.ts` (against fresh `dist/`) | ✅ | ✅ green |
+| 23-03-03 | 03 | 2 | PROJ-03 | — | N/A | unit | `pnpm exec astro check` + `vitest run tests/content` | ✅ | ✅ green |
+| 23-04-01 | 04 | 3 | PROJ-01..04 | D-15 | full build validates skip; chat 6 | build/integration | `pnpm build` + `pnpm test` + `pnpm sync:check` + `pnpm build:chat-context:check` | ✅ | ✅ green |
+| 23-04-02 | 04 | 3 | PROJ-01, PROJ-02 | — | content honesty (D-03, no P&L) | manual | human sign-off: content review (D-02/D-03) + 6-pillar UI (UI-SPEC § Checker Sign-Off) | — | 🔵 manual (approved) |
 
-*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky · File Exists: ✅ existing gate · ❌ W0 net-new test authored this phase*
+*Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky · 🔵 manual · File Exists: ✅ existing gate · ❌ W0 net-new test authored this phase*
 
-> **Frontmatter note:** `nyquist_compliant` and `wave_0_complete` stay `false` at plan time by design — they flip `true` at execution sign-off once the map above is all-green and the two Wave 0 tests exist. Not a plan-time staleness defect.
+> **Frontmatter note:** `nyquist_compliant` and `wave_0_complete` were `false` at plan time by design and flipped `true` at this validation audit (2026-07-10) once the map above went all-green and the two Wave 0 tests were confirmed to exist and pass. Both W0 File-Exists cells flipped ❌ → ✅.
 
 ---
 
 ## Wave 0 Requirements
 
-- [ ] `tests/content/projects-ordering.test.ts` — **authored by Task 23-01-03.** Property test: `order` values across all 7 project MDX are exactly `{1..7}` (contiguous, unique) and `featured: true` ⟺ slug ∈ {seatwatch, multi-chain-evm, nfl-predict}. Directly proves SC4 / PROJ-04 (the "single distinction") independent of page rendering.
-- [ ] `tests/build/featured-tier-render.test.ts` — **authored by Task 23-03-02, validated at the Plan 04 `pnpm build`.** Build-output check: `/projects` HTML renders `work-tagline` exactly 3× on the featured group and 7 rows numbered 01–07. Proves SC2 rendering.
-- [ ] Framework install: **none** — Vitest already present.
+- [x] `tests/content/projects-ordering.test.ts` — **authored by Task 23-01-03 (commit 9280c81).** Property test: `order` values across all 7 project MDX are exactly `{1..7}` (contiguous, unique) and `featured: true` ⟺ slug ∈ {seatwatch, multi-chain-evm, nfl-predict}. Directly proves SC4 / PROJ-04 (the "single distinction") independent of page rendering. **Exists + green** (in `tests/content`, 67 pass / 2 skip).
+- [x] `tests/build/featured-tier-render.test.ts` — **authored by Task 23-03-02 (commit a046206), validated at the Plan 04 `pnpm build`.** Build-output check: `/projects` HTML (`dist/client/projects/index.html`) renders `work-tagline` exactly 3× on the featured group and 7 rows numbered 01–07. Proves SC2 rendering. **Exists + green** (4/4 against fresh `dist/`).
+- [x] Framework install: **none** — Vitest already present.
 
 *Both Wave 0 tests are planned (not optional) — the planner promoted them into concrete tasks. They run against a fresh `dist/` at the single Plan 04 `pnpm build`, avoiding a shared-`dist/` race between the two parallel Wave 2 plans.*
 
@@ -84,11 +85,36 @@ created: 2026-07-10
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies (9/10 automated; 23-04-02 legitimately manual)
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (both W0 tests authored, exist, green)
+- [x] No watch-mode flags (`vitest run` / `--check` throughout)
+- [x] Feedback latency < 30s (content gates ~0.7s)
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** validated 2026-07-10 — Nyquist-compliant. All four requirements (PROJ-01..04) have green automated verification; the sole manual item (content honesty + 6-pillar visual) was approved by Jack at the 23-04 capstone.
+
+---
+
+## Validation Audit 2026-07-10
+
+State A audit of the plan-time VALIDATION.md against execution reality (4 SUMMARY files, all `status: complete`).
+
+| Metric | Count |
+|--------|-------|
+| Requirements | 4 (PROJ-01..04) |
+| Tasks mapped | 10 |
+| Automated (green) | 9 |
+| Manual-only (approved) | 1 (23-04-02) |
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
+
+**Wave 0 tests:** both authored and green — `tests/content/projects-ordering.test.ts` (SC4 property gate) and `tests/build/featured-tier-render.test.ts` (SC2 render gate).
+
+**Re-run evidence (this audit):**
+- `pnpm exec vitest run tests/content` → 67 pass / 2 skip (14 files)
+- `pnpm exec vitest run` over build-output + motion/focus + chat-pin gates → 60 pass (7 files)
+- Capstone (23-04) full suite of record: `pnpm test` 637 pass / 2 skip / 0 fail; `pnpm build` astro check 0/0/0.
+
+**Outcome:** no gaps → no auditor spawned, no new tests generated. Frontmatter flipped `nyquist_compliant: true`, `wave_0_complete: true`, `status: validated`.
