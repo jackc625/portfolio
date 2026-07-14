@@ -4,8 +4,8 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 25
 status: completed
-stopped_at: Phase 25 UAT complete (25-UAT.md — 6/6 pass, 0 issues); all v1.4 execution gates verified, ready for /gsd-ship
-last_updated: "2026-07-14T21:12:36.626Z"
+stopped_at: v1.4 Professional Experience milestone completed and archived (5/5 phases, 22 plans, 19/19 requirements); tagged v1.4
+last_updated: "2026-07-14T22:15:00.000Z"
 last_activity: 2026-07-14
 progress:
   total_phases: 5
@@ -20,18 +20,18 @@ current_phase_name: Chat Knowledge Refresh & Milestone Verification
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-08)
+See: .planning/PROJECT.md (updated 2026-07-14)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 25 — Chat Knowledge Refresh & Milestone Verification
+**Current focus:** Milestone v1.4 shipped and archived — awaiting next milestone (`/gsd-new-milestone`)
 
 ## Current Position
 
-Phase: 25
-Plan: Not started
-Status: Phase 25 shipped — pushed all 158 commits to origin/main (v1.4 complete, branching_strategy: none)
-Last activity: 2026-07-14
-Progress: [██████████] 100% (5/5 phases)
+Phase: Milestone v1.4 complete
+Plan: —
+Status: v1.4 Professional Experience completed and archived — ROADMAP collapsed, REQUIREMENTS archived + reset, MILESTONES entry written, PROJECT.md evolved, RETROSPECTIVE appended, tagged v1.4 (branching_strategy: none). Awaiting next milestone.
+Last activity: 2026-07-14 — v1.4 milestone completed and archived
+Progress: [██████████] 100% (5/5 phases) — milestone shipped
 
 ### v1.4 phase map
 
@@ -107,14 +107,24 @@ v1.4 roadmap-level notes carried into planning:
 
 ### Deferred Items (carried into next milestone or organic-evidence wait)
 
-- **SC4 organic-traffic idempotency-in-the-wild closure** — pending 2026-05-20 (7-day soft cap from Phase 20 deploy). Layer 1 `delivered:{sid}` cursor + Layer 2 Resend `Idempotency-Key` 24h window structurally unit-locked at both layers; first organic visitor session post-deploy closes SC4. Soft-cap proxy path: `node scripts/resend-warmup.mjs`. Result block: `.planning/milestones/v1.3-phases/20-email-render-resend-integration/20-UAT.md` Step 6.
+_v1.4 milestone-close deferrals (2026-07-14):_
+
+- **QA-02 production-edge Lighthouse** — the one outstanding v1.4 ship-time gate; fires during `/gsd-ship` (needs a live production Cloudflare edge), per D-11.
+- **Mobile-menu breakpoint 380→768px** (`.planning/todos/pending/`) — Jack-approved UX change awaiting a frontend-design pass; carried into the next milestone backlog. Reverses the v1.1 D-06 container-query decision (wrap-driven → viewport-driven), so it needs a design review, not a value swap.
+- **Chat cache-hit-rate observability** (`.planning/todos/pending/`, low) — 1–2 plan enhancement; touches the D-26-gated chat surface (`api/chat.ts` + `chat.ts`) so it re-triggers the full regression battery + UAT. Carried forward.
+- **CHAT_RATE_LIMITER binding** — reclassified WON'T-FIX at close (Free-tier accepted; moved to `.planning/todos/completed/`); revisit on a Workers Paid plan.
+- **EXP-FUT-01 / EXP-FUT-02** — Balfour full case-study treatment + experience metrics/impact visualizations; deferred by decision.
+
+_Carried from v1.3 (operational / organic-evidence):_
+
+- **SC4 organic-traffic idempotency-in-the-wild** — 7-day soft cap elapsed 2026-05-20 (Phase 20 deploy). Layer 1 `delivered:{sid}` cursor + Layer 2 Resend `Idempotency-Key` 24h window structurally unit-locked at both layers; treat as closed absent a duplicate-email signal (none observed). Soft-cap proxy path: `node scripts/resend-warmup.mjs`. Result block: `.planning/milestones/v1.3-phases/20-email-render-resend-integration/20-UAT.md` Step 6.
 - **Cross-phase test fragility** — `tests/build/worker-scheduled-call-site.test.ts` Invariant F regex `/DRY_RUN\s*:\s*(?:"1"|string)/` now passes via comment match after Phase 20 DRY_RUN flip. Functional wiring unaffected; lock fidelity degraded. Fix: broaden regex to accept `"0"` literal. Low-priority `/gsd-quick`.
 - **Dashboard-only secrets** — `CHAT_SENDER_EMAIL` + `CHAT_RECIPIENT_EMAIL` live exclusively as Wrangler dashboard secrets with no in-repo `.dev.vars` fallback documented. Operationally correct but invisible deployment dependency. Document or add `.dev.vars.example` in v1.4+.
 - **Frontmatter attribution gaps** — Phase 17 plans 17-07/08/09/10 + Phase 19 plans 19-01..04 omit `requirements-completed:` field. Requirements still covered by VERIFICATION.md + traceability table — documentation hygiene only.
 - **Pre-existing Resend DNS dust on `send.*` + root** — no conflict with `mail.*` scope; scheduled as low-priority `/gsd-quick` cleanup.
 - **KV probe key** `live:00000000-0000-4000-8000-000000000001` in PROD — 30-day TTL expires ~2026-06-10; safe to leave or delete.
 - **WR-04 `pnpm dev:worker` 403 cliff** — Vite production build inlines `process.env.NODE_ENV → "production"`; three-signal `ALLOW_LOOPBACK` was designed for astro dev, not for wrangler dev serving a prod-built bundle. Real blind spot, documented but not patched (out of phase scope).
-- **`CHAT_RATE_LIMITER` Workers Paid binding** — documented + Free-tier acceptable. v1.4+ trigger if Anthropic spend or chat volume crosses thresholds that justify $60/yr.
+- **`CHAT_RATE_LIMITER` Workers Paid binding** — reclassified WON'T-FIX at v1.4 close (see v1.4 deferrals above). Free-tier accepted; code path ready, needs only the binding on a Workers Paid plan (~$60/yr).
 
 ### Resolved Blockers
 
@@ -132,9 +142,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T20:52:34.000Z
-**Stopped at:** Phase 25 UAT complete (25-UAT.md — 6/6 pass, 0 issues; 5 auto-verified gates re-run green + CHAT-11 live chat re-confirmed by Jack). v1.4 execution verified end-to-end
-**Resume file:** None — ready for /gsd-ship (production Lighthouse + /gsd-complete-milestone owned there per D-11)
+**Last session:** 2026-07-14 — v1.4 milestone close
+**Stopped at:** v1.4 Professional Experience completed and archived via /gsd-complete-milestone — archives written (v1.4-ROADMAP / v1.4-REQUIREMENTS / v1.4-MILESTONE-AUDIT), ROADMAP collapsed to a shipped `<details>` block, REQUIREMENTS.md reset for the next milestone, PROJECT.md fully evolved, RETROSPECTIVE appended, git-tagged v1.4. Pre-close audit: 14 stale pre-v1.4 artifacts resolved + 1 (rate-limiter) reclassified won't-fix; 2 UI/observability todos carried forward.
+**Resume file:** None — run /gsd-new-milestone to scope the next milestone. One ship-time gate (production-edge Lighthouse) fires at /gsd-ship per D-11.
 
 ## Performance Metrics
 

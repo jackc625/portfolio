@@ -227,6 +227,62 @@
 
 ---
 
+## Milestone: v1.4 — Professional Experience
+
+**Shipped:** 2026-07-14
+**Phases:** 5 (21-25) | **Plans:** 22 | **Tasks:** 53 | **Commits:** 204 since `v1.3` over ~7 days
+
+### What Was Built
+
+- **Phase 21 — Experience Content Pipeline & Collection:** Zod-validated `experience` collection fed from `Experience/*.md` via `sync-experience.mjs` (fenced-block extraction mirroring `sync-projects.mjs`, idempotent `--check` drift gate wired into CI); `sortExperienceEntries` reverse-chron ordering + field contract; two entries double as schema-optionality fixtures (Holloway present-role/no endDate, Balfour empty techStack); zero new deps
+- **Phase 22 — Experience Page & Holloway Case Study:** experience-first primary nav → `/experience` two-tier listing (Holloway scannable summary → `/experience/holloway` deep-dive with dual back-links; Balfour lightweight "Earlier" entry structurally excluded from any detail route via `getStaticPaths` `hasCaseStudy` filter); D-08 company normalization; tests-first suite (623 green incl. D-26 battery); frontend-design SC5d visual sign-off
+- **Phase 23 — Projects Reconciliation & Featured Tier:** Multi-Chain EVM (#7) synced as a full case study; exactly 3 featured (SeatWatch / Multi-Chain EVM / NFL Prediction) in a two-tier FEATURED/MORE WORK layout on `/projects` + Home, remaining 4 accessible below; single `featured`/`order` distinction drives both surfaces; #7 held out of the chat corpus until Phase 25 (D-15); WorkRow optional `tagline` prop byte-identical when absent
+- **Phase 24 — Positioning Shift & Home Teaser:** new-grad-with-production-experience framing across Core Value / About / education / metadata; `education.ts` SSoT feeding both the JSON-LD Person schema + the `/about` Education block; Home `01 EXPERIENCE` Holloway teaser (deep-link + 0→~1,400 test metric, sections renumbered 01–04); enriched Person schema (jobTitle / alumniOf / hasCredential); real 1200×630 true-Geist `og-default.png`; Gate A em-dash/register banlist across all five copy surfaces
+- **Phase 25 — Chat Knowledge Refresh & Milestone Verification:** `portfolio-context.json` regenerated with the Experience content + #7 in third person (D-04 exclusion lifted, corpus 6→7 untruncated, education single-sourced), CHAT-06 leak guard green; capstone gate green (build 0, 692 pass / 2 skip, astro check 0/0/0, four D-14 gated files + deps byte-identical phase-wide via `verify-phase25-invariants.mjs`); live chat UAT approved incl. exfiltration + PII probes
+
+### What Worked
+
+- **Pipeline reuse over reinvention (EXP-01):** building `sync-experience.mjs` as a mirror of the proven `sync-projects.mjs` gave the Experience surface a battle-tested content workflow for near-zero design cost. Clone the established sync pipeline when a new content type appears rather than inventing a parallel mechanism
+- **Structural exclusion over convention (D-01 `hasCaseStudy`):** Balfour's "no full case study" (EXP-05) is enforced at the `getStaticPaths` layer — the route literally doesn't build — rather than by a soft convention or a hidden flag. The build output IS the proof
+- **Per-phase committed-drift invariant baselines (`24-BASELINE.json` / `25-BASELINE.json`):** hashing the D-14 gated files + normalized deps at phase start let the capstone prove phase-wide byte-identity against COMMITTED drift, not just a working-tree diff — closing the gap where a mid-phase commit could touch a gated file that a working-tree-only check would miss
+- **Typed SSoT with DERIVED fragments for cross-surface facts (`education.ts`, D-10):** deriving both the Person-schema fragments AND the chat education object from one module made WGU/VT/LPI desync across the Person schema, `/about`, and the chat corpus impossible
+- **Deliberate staged corpus lift (D-15 → D-04, Phases 23→25):** #7 was synced to the site in Phase 23 but explicitly held OUT of the chat corpus (slug-continue guard) until Phase 25's atomic build-engine migration lifted the exclusion — keeping the corpus byte-stable through the UI phases and confining the shape change to one reviewable atomic plan
+- **Gate A closed the voice-gate scope gap:** the em-dash/banlist gate had only ever scanned MDX; v1.4 surfaced that `about.ts` / `education.ts` / `ContactSection.astro` literals were unscanned. Authoring Gate A at the Phase 24 capstone boundary — where all five copy surfaces were simultaneously clean — closed it
+
+### What Was Inefficient
+
+- **Frontmatter attribution gaps recurred (Phase 22 EXP-03/04/05, Phase 23 PROJ-01..04):** the `requirements-completed:` SUMMARY frontmatter was under-populated again — the FOURTH milestone with this pattern (v1.1/v1.2/v1.3/v1.4). Coverage was still proven by each VERIFICATION.md + the integration check, but the 3-source cross-reference flagged it every time. The mechanical-enforcement lesson from v1.3 is now overdue
+- **About P2 churned across two phases (24 → 25):** `ABOUT_P2` was kept verbatim at plan time (D-06), then CUT at the Phase 24 UAT per Jack's copy review — reversing D-06 and forcing coupled edits in `about.ts` + `about.astro` + `about-data.test.ts`, then again in Phase 25's chat copy. A copy-review pass BEFORE locking D-06 would have avoided the two-phase reversal
+- **OG card font fell back to Arial on first render (24-04):** librsvg/sharp ignore `@font-face` and can't read the Geist woff2, so the first `og-default.png` rendered in Arial and had to be re-rendered via a browser-screenshot mechanism to get true Geist. The toolchain's font limitation should have been verified before the first render
+- **Stale pre-milestone artifacts accumulated until close:** the pre-close audit surfaced 16 open items — 8 diagnosed debug sessions (3 obsoleted by v1.1 feature removals), 4 completed-but-unmarked quick tasks, 4 pending todos (1 already delivered in Phase 24). None were v1.4 work; all were v1.0–v1.3 bookkeeping never closed at the time
+
+### Patterns Established
+
+- **Clone-the-sync-pipeline for new content types:** new collection + a sync script mirroring the established pipeline (fenced extraction, Zod, idempotent `--check`, CI drift gate). Generalizes to any "author in Markdown, validate + render as a typed collection" need
+- **Structural absence as the enforcement mechanism:** "this route / case study must not exist" encoded as a `getStaticPaths` filter so the build output is the proof, not a convention or a soft flag
+- **Per-phase committed-drift invariant baseline:** hash protected files + normalized deps at phase start into `NN-BASELINE.json`; `verify-phaseNN-invariants.mjs` compares at the capstone to prove phase-wide byte-identity against committed history
+- **Typed SSoT with DERIVED fragments for cross-surface facts:** one module owns the facts; schema / JSON-LD / prose / chat all consume DERIVED fragments; re-hardcoding is banned
+- **Staged data lift behind an explicit guard:** land a data change on the low-risk surface first, hold it off the high-risk surface behind a named guard, lift it in a dedicated atomic plan with its own review
+
+### Key Lessons
+
+1. **Clone the proven sync pipeline for new content types** — `sync-experience.mjs` mirroring `sync-projects.mjs` delivered a battle-tested content workflow for near-zero design cost
+2. **Encode "must not exist" as structural absence the build enforces** — Balfour's no-case-study (EXP-05) lives at the `getStaticPaths` layer; the un-built route IS the proof. Structural guarantees beat conventions
+3. **Baseline invariants against committed history, not the working tree** — hashing gated files + deps at phase start (`NN-BASELINE.json`) closes the gap where a mid-phase commit touches a protected file that a working-tree-only diff would miss
+4. **Extract cross-surface facts to a typed SSoT with DERIVED fragments** — `education.ts` feeding the Person schema + `/about` + chat corpus made the WGU/VT/LPI facts impossible to desync. Re-hardcoding the same fact on 3+ surfaces is the bug waiting to happen
+5. **Stage risky data changes behind an explicit guard and lift them atomically** — #7 on the site (Phase 23) but out of the chat corpus until Phase 25's atomic migration kept the corpus byte-stable through the UI phases
+6. **Run human copy review BEFORE locking "keep verbatim" decisions** — the About P2 keep→cut reversal churned two phases because the copy review came after D-06 was locked
+7. **Verify a headless-render toolchain's font support before brand-critical assets** — librsvg/sharp silently fell back to Arial on the Geist OG card
+8. **Close bookkeeping artifacts when the work lands, not at the next audit** — 16 stale debug/quick/todo items accumulated from v1.0–v1.3; combined with the four-milestone-deep frontmatter-attribution gap, both point to mechanical close-out enforcement over discipline
+
+### Cost Observations
+
+- Model mix: Opus for execution + plan authoring + research + the milestone audit; lighter models for verification/doc agents
+- Sessions: spread across ~7 days (2026-07-08 → 2026-07-14); lower daily density than v1.3's 4-day sprint
+- Notable: Phase 25 was the highest-stakes (chat-surface corpus migration under the D-14/D-26 byte-identical gate) but landed cleanly via the atomic-migration + committed-drift-baseline pattern; the UI phases (22/23/24) each carried a frontend-design human sign-off
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -237,15 +293,21 @@
 | v1.1 | ~15 | 4 | 27 | Added phased rebuild shape (Foundation→Primitives→Pages→Polish) and design-contract-first discipline |
 | v1.2 | ~20+ | 5 | 34 | Added Wave 0 RED stubs every phase, named cross-phase gates (D-15/D-26), wave-based plan dependency graphs, source-of-truth → sync-pipeline content workflow |
 | v1.3 | ~15 | 4 | 26 | Added build-time source-text forward-defense as first-class test type, D-03 rollback runway preserved byte-identical in source, M-iter2 serial-chain for D-26 attribution discipline, DEPLOY-GATE.md as canonical human-only deploy gate artifact, spike-before-implement for binding-access uncertainty |
+| v1.4 | n/a | 5 | 22 | Added clone-the-sync-pipeline for new content types, structural absence (`getStaticPaths`) as the enforcement mechanism, per-phase committed-drift invariant baselines (`NN-BASELINE.json` + verifier), typed SSoT with DERIVED fragments for cross-surface facts, staged data-lift behind an explicit guard |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. Always provide a visual design reference — blind AI design iterations waste time (v1.0 + v1.1)
-2. Milestone-level audit catches cross-phase gaps that per-phase verification misses (v1.0 + v1.1 + v1.2 + v1.3 — caught FOUND-03 partial + SC4 deferred + traceability staleness this milestone)
+2. Milestone-level audit catches cross-phase gaps that per-phase verification misses (v1.0 + v1.1 + v1.2 + v1.3 + v1.4 — v1.4's pre-close audit also surfaced 16 stale pre-milestone bookkeeping artifacts from v1.0–v1.3 that per-phase work never closed)
 3. Write the design contract / gate contracts before writing code — MASTER.md-as-task-1 eliminates per-phase drift (v1.1); D-15/D-26 gate naming generalizes the pattern (v1.2); D-03 rollback runway extends it to feature flips (v1.3)
 4. Phase rebuilds as foundation → primitives → pages → polish (v1.1) — generalized in v1.2 to: stable foundation → instrumented baseline → bold change; v1.3 added: migration foundation → identity layer → mechanism (DRY_RUN) → delivery flip
 5. Wave 0 RED stubs as the nyquist insertion point (v1.2, new) — confirmed in v1.3 (every phase opened with build-time + unit tests before implementation)
-6. Requirement-tier checkbox mutation must be part of plan close-out, not deferred (v1.1 mild + v1.2 strong + v1.3 strong) — pattern is now THREE milestones deep, suggests mechanical enforcement via `gsd-audit-milestone --fix` rather than discipline
+6. Requirement-tier checkbox mutation + `requirements-completed:` frontmatter must be part of plan close-out, not deferred (v1.1 mild + v1.2 strong + v1.3 strong + v1.4 strong) — the pattern is now FOUR milestones deep (v1.4 under-populated Phase 22/23 frontmatter), which decisively suggests mechanical enforcement via a `gsd-audit-milestone --fix` mode rather than discipline
+10. Clone the proven sync pipeline for new content types rather than inventing a parallel mechanism (v1.4, new) — `sync-experience.mjs` mirrored `sync-projects.mjs` for near-zero design cost
+11. Encode "must not exist" as a structural absence the build enforces (v1.4, new) — EXP-05's Balfour no-case-study lives at the `getStaticPaths` layer; the un-built route IS the proof, beating any convention or soft flag
+12. Baseline phase invariants against committed history, not just the working tree (v1.4, new) — `NN-BASELINE.json` hashing gated files + deps at phase start closes the mid-phase-commit blind spot a working-tree diff would miss
+13. Extract cross-surface facts to a typed SSoT with DERIVED fragments (v1.4, new) — `education.ts` made the WGU/VT/LPI facts impossible to desync across the Person schema, `/about`, and the chat corpus
+14. Close bookkeeping artifacts (debug sessions, quick tasks, todos) when the work lands, not at the next milestone's audit (v1.4, new) — 16 stale items accumulated across v1.0–v1.3
 7. Pre-existing carry-forward items need backlog promotion at milestone START (v1.2, new) — v1.3 absorbed all 5 v1.2 chat carry-forward items (DEBT-01..05) in Phase 17 Wave 4, validating the pattern
 8. Build-time source-text forward-defense catches regressions that pass behavioral tests (v1.3, new) — pattern emerged in Phase 17 Plan 17-03 / 17-04 / 17-05 / 17-08, generalized across Phase 19 / 20
 9. D-03 rollback runway preserved byte-identical in source (v1.3, new) — every feature flip keeps the off-path alive as the rollback target, locked by build guard. Single-line revert at any moment

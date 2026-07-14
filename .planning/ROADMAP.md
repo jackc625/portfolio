@@ -6,7 +6,7 @@
 - ✅ **v1.1 Editorial Redesign** — Phases 8-11 (shipped 2026-04-15) | [Archive](milestones/v1.1-ROADMAP.md)
 - ✅ **v1.2 Polish** — Phases 12-16 (shipped 2026-04-27) | [Archive](milestones/v1.2-ROADMAP.md)
 - ✅ **v1.3 Chat Visibility** — Phases 17-20 (shipped 2026-05-13) | [Archive](milestones/v1.3-ROADMAP.md)
-- 🚧 **v1.4 Professional Experience** — Phases 21-25 (in progress, started 2026-07-08)
+- ✅ **v1.4 Professional Experience** — Phases 21-25 (shipped 2026-07-14) | [Archive](milestones/v1.4-ROADMAP.md)
 
 ## Phases
 
@@ -54,157 +54,16 @@
 
 </details>
 
-### 🚧 v1.4 Professional Experience (Phases 21-25) — IN PROGRESS
+<details>
+<summary>✅ v1.4 Professional Experience (Phases 21-25) — SHIPPED 2026-07-14</summary>
 
-- [x] **Phase 21: Experience Content Pipeline & Collection** — Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline (completed 2026-07-09)
-- [x] **Phase 22: Experience Page & Holloway Case Study** — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry (completed 2026-07-09)
-- [x] **Phase 23: Projects Reconciliation & Featured Tier** — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below (completed 2026-07-10)
-- [x] **Phase 24: Positioning Shift & Home Teaser** — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser (completed 2026-07-14)
-- [x] **Phase 25: Chat Knowledge Refresh & Milestone Verification** — Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates (completed 2026-07-14)
+- [x] Phase 21: Experience Content Pipeline & Collection (4/4 plans) — completed 2026-07-09 — Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline
+- [x] Phase 22: Experience Page & Holloway Case Study (5/5 plans) — completed 2026-07-09 — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry
+- [x] Phase 23: Projects Reconciliation & Featured Tier (4/4 plans) — completed 2026-07-10 — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below
+- [x] Phase 24: Positioning Shift & Home Teaser (4/4 plans) — completed 2026-07-14 — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser
+- [x] Phase 25: Chat Knowledge Refresh & Milestone Verification (5/5 plans) — completed 2026-07-14 — Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates
 
-## Phase Details
-
-### Phase 21: Experience Content Pipeline & Collection
-
-**Goal**: A typed, Zod-validated `experience` content collection exists, fed from `Experience/*.md` through a sync pipeline mirroring `scripts/sync-projects.mjs`, carrying the fields and ordering contract the Experience surface will render.
-**Depends on**: Nothing new (builds on the live v1.3 site and its established content-collection + sync-pipeline pattern)
-**Requirements**: EXP-01, EXP-06
-**Success Criteria** (what must be TRUE):
-
-  1. `Experience/*.md` sources (Holloway, Balfour Beatty) sync into a Zod-validated `experience` collection through a script that mirrors `scripts/sync-projects.mjs`; the sync is idempotent (a `--check` re-run reports no drift).
-  2. Each experience entry exposes role, company, dates, and tech/skills as typed frontmatter validated at build time (`astro check` passes on the new collection).
-  3. Querying the collection returns entries in reverse-chronological order (most recent engagement first), establishing the ordering + field contract the Experience page renders against.
-  4. `pnpm build` succeeds with the new collection wired in and no new runtime dependencies are added.
-
-**Plans**: 4/4 plans complete
-**Wave 1**
-
-- [x] 21-01-PLAN.md — Sync mechanism: `sync-experience.mjs` (lift + D-07 strip) + Wave 0 tests-first suite + npm scripts
-- [x] 21-02-PLAN.md — `experience` Zod schema registered in `content.config.ts` (D-01 fields, A1 highlights bound)
-
-**Wave 2** *(blocked on Wave 1 completion)*
-
-- [x] 21-03-PLAN.md — Author fenced sources (Holloway fence + new Balfour) + both MDX entries + run sync + build gate
-
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 21-04-PLAN.md — CI drift gate step + `docs/CONTENT-SCHEMA.md` experience documentation
-
-### Phase 22: Experience Page & Holloway Case Study
-
-**Goal**: Visitors can reach a dedicated Experience page from the primary nav that presents Holloway as a scannable summary opening into a full deep-dive, alongside a lightweight Balfour Beatty entry — all rendered from the Phase 21 collection.
-**Depends on**: Phase 21
-**Requirements**: EXP-02, EXP-03, EXP-04, EXP-05
-**Success Criteria** (what must be TRUE):
-
-  1. A visitor can navigate to a dedicated Experience page from the primary navigation (new route + nav entry present site-wide).
-  2. The Experience page shows the Holloway engagement as a scannable summary of headline highlights, with role, company, dates, and stack visible at a glance.
-  3. A visitor can open a full Holloway deep-dive case study in its own detail view (Problem→Approach→Outcome depth drawn from `HOLLOWAY_EXPERIENCE.md`) and navigate back to the summary.
-  4. The Balfour Beatty 2023 internship appears as a lightweight earlier-work-history entry (role, dates, 1–2 lines) with no full case study.
-  5. All visual/layout decisions were routed through the frontend-design skill against `design-system/MASTER.md`; `astro check` stays 0/0/0 and the D-26 chat-surface battery holds through any `BaseLayout.astro`/`global.css` change.
-
-**Plans**: 5/5 plans complete
-**UI hint**: yes
-
-**Wave 1** *(tests-first)*
-
-- [x] 22-01-PLAN.md — Wave 0 validation suite: experience-nav / experience-summary / experience-detail / experience-voice-em-dash tests (mirror case-studies-shape / voice-em-dash / projects-collection)
-
-**Wave 2** *(blocked on Wave 1; no file overlap — parallel)*
-
-- [x] 22-02-PLAN.md — Primary nav entry `experience` FIRST in Header.astro + MobileMenu.astro (D-03); focus-trap/inert script untouched (D-26)
-- [x] 22-03-PLAN.md — `/experience` listing page (asymmetric two-tier D-04/D-05/D-06, frontend-design-composed) + D-08 company normalization in holloway.mdx
-- [x] 22-04-PLAN.md — `/experience/[id]` Holloway deep-dive (hasCaseStudy filter D-01, D-07 header, D-02 back links, D-11 scroll sentinels, page-scoped prose CSS)
-
-**Wave 3** *(blocked on Wave 2)*
-
-- [x] 22-05-PLAN.md — Phase gate: full suite (D-26 battery) + build route set + drift + QA-02 dep lock + frontend-design human visual sign-off (SC5d)
-
-### Phase 23: Projects Reconciliation & Featured Tier
-
-**Goal**: The résumé-aligned project set is reconciled — the Multi-Chain EVM trader is synced onto the site, three projects are featured in a top tier, and the remaining four stay accessible below, with one data-model distinction driving ordering everywhere.
-**Depends on**: Nothing new (reuses the existing `sync-projects.mjs` pipeline and the `featured`/`order` schema fields already in `src/content.config.ts`)
-**Requirements**: PROJ-01, PROJ-02, PROJ-03, PROJ-04
-**Success Criteria** (what must be TRUE):
-
-  1. The Multi-Chain EVM / Multi-Dex Crypto Trader project (`Projects/7 - MULTI-DEX CRYPTO TRADER.md`) renders as a full case-study page, synced through the existing `sync-projects.mjs` pipeline.
-  2. SeatWatch, Multi-Chain EVM, and NFL Prediction appear in a visually distinct featured tier at the top of the project listing(s).
-  3. The remaining four projects (SolSniper, Optimize-AI, Clipify, DayTrade) stay reachable below the featured tier — nothing is deleted.
-  4. A single data-model distinction (`featured` flag / `order` field) drives the same featured-then-rest ordering on both the Projects page and the Home work list.
-  5. The featured-tier visual treatment was routed through the frontend-design skill; `astro check` stays 0/0/0 and no new runtime dependencies are added.
-
-**Plans**: 4/4 plans complete
-**UI hint**: yes
-
-**Wave 1**
-
-- [x] 23-01-PLAN.md — #7 sync + fenced case study + D-15 chat-skip + featured/order reconciliation + SC4 ordering gate
-
-**Wave 2** *(blocked on Wave 1; parallel — zero file overlap)*
-
-- [x] 23-02-PLAN.md — Content-gate coverage: add #7 to the six site-side pinned arrays (D-16); chat-side pins left unchanged
-- [x] 23-03-PLAN.md — Two-tier featured UI (WorkRow tagline prop, projects.astro FEATURED/MORE WORK, Home taglines + See all work link), frontend-design routed + SC2 render gate
-
-**Wave 3** *(blocked on Wave 2)*
-
-- [x] 23-04-PLAN.md — Phase gate: full `pnpm build` + `pnpm test` + drift + dep lock (QA-02) + human sign-off (#7 copy D-02/D-03 + frontend-design SC5)
-
-### Phase 24: Positioning Shift & Home Teaser
-
-**Goal**: The site reads as a new-grad engineer with shipped production experience — Core Value framing, About narrative, education status, and metadata all updated in an honest new-grad (not senior) register — with a Home teaser surfacing the Holloway highlight for the 30-second recruiter scan.
-**Depends on**: Phase 22 (the Home teaser links through to the Experience page)
-**Requirements**: POS-01, POS-02, POS-03, POS-04, HOME-01
-**Success Criteria** (what must be TRUE):
-
-  1. Home and About copy present Jack as a new-grad engineer with production experience (first-person site voice), no longer "a student building side projects."
-  2. The About narrative reflects the professional experience and graduation while keeping an honest new-grad (not senior) register.
-  3. Education status shows the completed WGU B.S. Computer Science (May 2026), the Virginia Tech transfer, and the LPI Linux Essentials certification wherever education is surfaced.
-  4. Site metadata (SEO title/description and the JSON-LD Person schema) reflects the updated positioning and job title.
-  5. The Home page surfaces a concise Holloway experience teaser that links through to the Experience page.
-
-**Plans**: 4/4 plans complete
-**UI hint**: yes
-
-**Wave 1** *(foundation — education module + Nyquist Wave 0 gates)*
-
-- [x] 24-01-PLAN.md — `src/data/education.ts` SSoT (facts + DERIVED alumniOf/hasCredential fragments) + Gate D (education module) + strengthened Gate E (chat-surface tripwire) + phase-start invariant baseline (protected-file hashes + deps + og placeholder) for the capstone; both gates GREEN at this boundary (review: Gate A→24-04, Gate B/C→24-02)
-
-**Wave 2** *(blocked on 24-01; parallel — zero file overlap)*
-
-- [x] 24-02-PLAN.md — Home `index.astro`: 01 EXPERIENCE Holloway teaser (frontend-design, id-guarded query) + renumber 01/02/03/04 (incl `ContactSection.astro` literal + strip its em-dash comments) + enrich personSchema (jobTitle/alumniOf/hasCredential) + sharpen SEO description + author Gate B/C (home-teaser render + JSON-LD parse), GREEN at this boundary
-- [x] 24-03-PLAN.md — About: `about.ts` copy revision (intro/P1/P3, P2 verbatim) + `/about` Education block (frontend-design) fed by `education.ts` + description sharpen + author `about-education-render` POS-03 regression test
-
-**Wave 3** *(blocked on 24-02, 24-03)*
-
-- [x] 24-04-PLAN.md — Real 1200x630 `og-default.png` (frontend-design, ONE deterministic fail-closed path + PNG-signature/size/hash-diff verifier) + author Gate A (site-copy em-dash/register) + capstone gate (build + full suite incl D-26/sse-snapshot + astro-check 0/0/0 + phase-start baseline comparison for protected files/deps) + human sign-off (copy review + 6-pillar at 375px/1440px with focus/reduced-motion/overflow + Schema Markup Validator)
-
-### Phase 25: Chat Knowledge Refresh & Milestone Verification
-
-**Goal**: The chat's grounded knowledge includes the new Experience content and project #7 in third-person voice, and the milestone's cross-cutting quality gates are verified green end-to-end before ship.
-**Depends on**: Phase 22, Phase 23, Phase 24 (needs the Experience content, the synced project #7, and the finalized positioning in place before regenerating chat knowledge and running the milestone verification pass)
-**Requirements**: CHAT-10, CHAT-11, QA-01, QA-02
-**Success Criteria** (what must be TRUE):
-
-  1. Build-time `portfolio-context.json` regeneration ingests the Experience content and the synced project #7 (the `Projects/7` D-04 exclusion in `build-chat-context.mjs` is lifted deliberately), so the chat's grounded knowledge includes the Holloway engagement and the Multi-Chain EVM trader.
-  2. The chat widget accurately answers questions about the Holloway engagement and the updated positioning in third person, with the CHAT-06 voice-split leak guard passing (the build hard-fails on any first-person leakage into chat-bound fields).
-  3. The D-26 chat-surface regression battery and the D-15 SSE byte-identical anchor hold across every change touching `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts`.
-  4. `pnpm exec astro check` is 0/0/0, Lighthouse holds at or above prior scores on the production-on-Cloudflare-edge canonical gate, and no new runtime dependencies were added across the milestone.
-
-**Plans**: 5/5 plans complete
-
-**Wave 1** *(baseline-first, then tests + copy authoring; with worktrees off, same-wave plans serialize in plan-number order so 25-00 runs first)*
-
-- [x] 25-00-PLAN.md — Phase-25 invariant baseline: `verify-phase25-invariants.mjs` + `25-BASELINE.json` hashing the four D-14 gated files + normalized deps at phase start, so 25-04 proves phase-wide untouched against committed drift (QA-01/QA-02) — added in the --reviews replan per Codex mandatory correction #4
-- [x] 25-01-PLAN.md — Wave-0 test retargets: 7 slugs + 4-field array-experience walk + Balfour B1 leak samples + SSoT education + #7 ban-invert + `<security>` byte-intact snapshot + fixture rename (CHAT-10/CHAT-11)
-- [x] 25-02-PLAN.md — Chat copy authoring + human review: Holloway/#7/Balfour chatSummary, about-chat + static.json positioning, system-prompt.ts #7-ban lift (CHAT-10/CHAT-11)
-
-**Wave 2** *(blocked on Wave 1)*
-
-- [x] 25-03-PLAN.md — ATOMIC build-engine migration: lift #7 exclusion + recursive fail-closed experience array + parseEducation (unit-tested) + 4-field leak-walk + regex extension ×3; regenerate corpus (CHAT-10/CHAT-11/QA-02)
-
-**Wave 3** *(blocked on Wave 2)*
-
-- [x] 25-04-PLAN.md — Milestone verification capstone (build/test/astro-check/drift + the 25-00 hash verifier for the phase-wide untouched proof + D-26/D-15) + live chat UAT incl. security probe (QA-01/QA-02/CHAT-11)
+</details>
 
 ## Progress
 

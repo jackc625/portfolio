@@ -1,5 +1,42 @@
 # Milestones
 
+## v1.4 Professional Experience (Shipped: 2026-07-14)
+
+**Phases completed:** 5 phases (21-25), 22 plans, 53 tasks
+
+**Stats:**
+
+- 204 commits since `v1.3` tag (2026-07-08 → 2026-07-14, ~7 days)
+- 214 files changed repo-wide (+22,805 / −520 LOC); src/ alone 28 files (+1,124 / −88)
+- Source LOC src/: ~6,802 → ~7,805 (+~15%)
+- `pnpm test` 692 PASS / 2 SKIP (incl. the D-26 chat-surface battery + D-15 SSE byte-identical anchor); `pnpm exec astro check` 0/0/0 (140 files)
+- `package.json dependencies` byte-identical phase-wide (zero-new-runtime-dep held); the four D-14 chat-surface files (`BaseLayout.astro`/`global.css`/`chat.ts`/`api/chat.ts`) byte-identical phase-wide — QA-01/QA-02 proven committed-drift-safe via `verify-phase25-invariants.mjs`
+- Chat corpus regenerated: projects 6 → 7 (Multi-Chain EVM untruncated), est_tokens=48735; two-entry reverse-chron `experience` array [Holloway, Balfour]
+- Milestone audit `status: passed` — 19/19 requirements · 5/5 phases verified · 6/6 integration flows · 5/5 Nyquist-compliant
+
+**Key accomplishments:**
+
+- Built a typed `experience` content pipeline — a Zod-validated `experience` collection fed from `Experience/*.md` through `sync-experience.mjs` (fenced-block extraction, idempotent `--check` drift gate) mirroring the projects pipeline; `sortExperienceEntries` establishes the reverse-chronological ordering + field contract the surface renders against; zero new deps (Phase 21)
+- Shipped a dedicated Experience surface — an experience-first primary nav entry opens `/experience`, a two-tier listing presenting the Holloway contract engagement as a scannable highlight summary that links to a full `/experience/holloway` deep-dive (dual back-links), with the Balfour Beatty 2023 internship as a lightweight "Earlier" entry structurally excluded from any detail route via the `getStaticPaths` `hasCaseStudy` filter; layout routed through frontend-design, SC5d visual sign-off approved (Phase 22)
+- Reconciled the project set with a featured tier — synced the Multi-Chain EVM / Multi-Dex Crypto Trader (#7) as a full case study through `sync-projects.mjs`, featured exactly three projects (SeatWatch / Multi-Chain EVM / NFL Prediction) in a two-tier FEATURED/MORE WORK layout on both `/projects` and Home, kept the remaining four accessible below (nothing deleted), all driven by a single `featured`/`order` data-model distinction; both human sign-offs approved (Phase 23)
+- Shifted positioning to an honest new-grad-with-production-experience register — updated Core Value, About narrative, education status, and site metadata (no seniority cosplay; Gate A em-dash/register banlist enforced across all five copy surfaces); Home opens with the `01 EXPERIENCE` Holloway teaser (deep-link + 0→~1,400 test-suite metric, sections renumbered 01–04); enriched the Person JSON-LD (jobTitle + alumniOf WGU/Virginia Tech + hasCredential); `/about` Education block driven by an `education.ts` single source of truth; shipped a real 1200×630 true-Geist `og-default.png` (Phase 24)
+- Refreshed the chat's grounded knowledge and verified every cross-cutting gate — regenerated `portfolio-context.json` with the Experience content and project #7 in third person (D-04 exclusion lifted, corpus projects=7 untruncated, education single-sourced from `education.ts`), CHAT-06 voice split held with the `checkFirstPersonLeaks` 4-field guard green; capstone gate green (build 0, 692 pass/2 skip, astro check 0/0/0, drift 0, four D-14 gated files + deps byte-identical phase-wide), live chat UAT approved by Jack including exfiltration + PII security probes (Phase 25)
+
+**Known deferred / carry-forward items at close:** 3 (all documented, non-blocking)
+
+- **QA-02 production-edge Lighthouse** — the one outstanding ship-time gate; fires during `/gsd-ship` (needs a live production Cloudflare edge), per D-11
+- **Mobile-menu breakpoint 380→768px** (`todos/pending`) — Jack-approved UX change awaiting a frontend-design pass; not v1.4 scope
+- **Chat cache-hit-rate observability** (`todos/pending`, low) — 1–2 plan enhancement touching the D-26-gated chat surface; deferred since v1.3
+- (reclassified won't-fix at close: **CHAT_RATE_LIMITER binding** — Free-tier accepted, revisit on Workers Paid)
+
+**Deferred by decision:** EXP-FUT-01 (Balfour full case-study treatment), EXP-FUT-02 (experience metrics/impact visualizations)
+
+**Pre-close housekeeping:** resolved 14 stale pre-v1.4 artifacts surfaced by the open-artifact audit (8 diagnosed/obsolete debug sessions archived, 4 completed quick tasks marked complete, og-default todo closed by Phase 24, rate-limiter reclassified won't-fix)
+
+**Archive:** [milestones/v1.4-ROADMAP.md](milestones/v1.4-ROADMAP.md) | [milestones/v1.4-REQUIREMENTS.md](milestones/v1.4-REQUIREMENTS.md) | [milestones/v1.4-MILESTONE-AUDIT.md](milestones/v1.4-MILESTONE-AUDIT.md)
+
+---
+
 ## v1.3 Chat Visibility (Shipped: 2026-05-13)
 
 **Phases completed:** 4 phases (17-20), 26 plans
