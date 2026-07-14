@@ -122,6 +122,12 @@ None. The P2 cut applied cleanly; verification behaved exactly as the plan predi
 - **25-03 (corpus regen)** reads these locked sources to rebuild `portfolio-context.json` — and must (a) emit the corpus WITHOUT `about.p2`, updating the `chat-context-integrity` p2-property assertion accordingly, and (b) turn the enumerated RED set green (7 projects + #7 untruncated + structured experience array + education from education.ts + additive skills + extended first-person-leak regex).
 - No gated D-14 chat-surface file touched (BaseLayout.astro / global.css / chat.ts / api/chat.ts untouched). No packages installed (QA-02 holds).
 
+## Self-Check: PASSED
+
+- Modified files exist: `src/data/about-chat.ts`, `scripts/build-chat-context.mjs` (P2 cut), plus the six Task 1-2 source files.
+- Commits verified present: `b2b35b7` (Task 1), `5a7fd89` (Task 2), `e874728` (Task 3 / P2 cut), `05a0f79` (SUMMARY).
+- `pnpm exec astro check` 0/0/0; no NEW test failures beyond 25-01's known RED-until-25-03 set.
+
 ---
 *Phase: 25-chat-knowledge-refresh-milestone-verification*
 *Completed: 2026-07-14*
