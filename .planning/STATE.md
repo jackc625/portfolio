@@ -5,15 +5,15 @@ milestone_name: Professional Experience
 current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
 status: executing
-stopped_at: Phase 25 replanned (--reviews) — 5 plans, 3 waves
-last_updated: "2026-07-14T18:40:01.033Z"
+stopped_at: Completed 25-01-PLAN.md (Wave-0 chat test retarget, RED-by-design)
+last_updated: "2026-07-14T18:53:47.462Z"
 last_activity: 2026-07-14
-last_activity_desc: Phase 25 execution started
+last_activity_desc: Completed Phase 25 Plan 01 (chat test retarget — 14 RED-by-design / 77 GREEN)
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 22
-  completed_plans: 18
+  completed_plans: 19
   percent: 80
 ---
 
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 25 (Chat Knowledge Refresh & Milestone Verification) — EXECUTING
-Plan: 2 of 5
-Status: Ready to execute
-Last activity: 2026-07-14 — Phase 25 execution started
+Plan: 3 of 5
+Status: 25-01 complete (Wave-0 tests-first gate authored RED) — ready for the Wave-2 copy (25-02) + build-script (25-03) plans that turn the suite green
+Last activity: 2026-07-14 — Completed Phase 25 Plan 01 (chat test retarget)
 Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
@@ -96,6 +96,8 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 24]: 24-UAT: verify-work 14/14 pass (11 auto-verified via Playwright + live DOM + verifier scripts + gate tests; 3 human checkpoints APPROVED — Home teaser/positioning, /about register, OG card); full suite 676 pass/2 skip after the P2 fix
 - [Phase 24]: 24-SECURITY: retroactive secure-phase — 7 threats CLOSED / 0 open (ASVS L1 short-circuit; register authored at plan time). OG card + supply-chain accepted risks logged; no new surface from the copy phase or the P2 fix (commit d6d1696)
 - [Phase 25]: Phase 25-00: captured phase-start invariant baseline (25-BASELINE.json: 4 gated-file hashes + 11 deps) + verify-phase25-invariants.mjs (Node built-ins only); PROTECTED_FILES narrowed to the four D-14 chat-surface files ONLY (excludes chat-knowledge sources edited this phase) so 25-04 proves phase-wide D-14/QA-02 across committed tasks without false-failing
+- [Phase 25]: 25-01: education.ts imported extension-less (repo convention) not the plan's .ts spelling, to avoid a TS import-extension error under the 25-04 astro-check gate; same SSoT-import intent
+- [Phase 25]: 25-01: authored the Phase 25 Wave-0 tests-first contract (14 RED-by-design / 77 GREEN across 3 chat suites); byte-intact <security> snapshot bounds 25-02's edit to exactly the one #7-ban sentence; RED set enumerated in SUMMARY as 25-03's green target
 
 ### Open Blockers
 
@@ -128,7 +130,7 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T18:38:58.056Z
+**Last session:** 2026-07-14T18:52:33.892Z
 **Stopped at:** Phase 25 replanned via --reviews (ready to execute)
 **Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-00-PLAN.md
 
@@ -158,3 +160,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 24 P03 | 6min | 2 tasks | 3 files |
 | Phase 24 P04 | 1min | 3 tasks | 5 files |
 | Phase 25 P00 | 3min | 2 tasks | 2 files |
+| Phase 25 P01 | 12min | 3 tasks | 4 files |

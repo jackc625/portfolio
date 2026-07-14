@@ -190,12 +190,12 @@
   3. The D-26 chat-surface regression battery and the D-15 SSE byte-identical anchor hold across every change touching `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts`.
   4. `pnpm exec astro check` is 0/0/0, Lighthouse holds at or above prior scores on the production-on-Cloudflare-edge canonical gate, and no new runtime dependencies were added across the milestone.
 
-**Plans**: 1/5 plans executed
+**Plans**: 2/5 plans executed
 
 **Wave 1** *(baseline-first, then tests + copy authoring; with worktrees off, same-wave plans serialize in plan-number order so 25-00 runs first)*
 
 - [x] 25-00-PLAN.md — Phase-25 invariant baseline: `verify-phase25-invariants.mjs` + `25-BASELINE.json` hashing the four D-14 gated files + normalized deps at phase start, so 25-04 proves phase-wide untouched against committed drift (QA-01/QA-02) — added in the --reviews replan per Codex mandatory correction #4
-- [ ] 25-01-PLAN.md — Wave-0 test retargets: 7 slugs + 4-field array-experience walk + Balfour B1 leak samples + SSoT education + #7 ban-invert + `<security>` byte-intact snapshot + fixture rename (CHAT-10/CHAT-11)
+- [x] 25-01-PLAN.md — Wave-0 test retargets: 7 slugs + 4-field array-experience walk + Balfour B1 leak samples + SSoT education + #7 ban-invert + `<security>` byte-intact snapshot + fixture rename (CHAT-10/CHAT-11)
 - [ ] 25-02-PLAN.md — Chat copy authoring + human review: Holloway/#7/Balfour chatSummary, about-chat + static.json positioning, system-prompt.ts #7-ban lift (CHAT-10/CHAT-11)
 
 **Wave 2** *(blocked on Wave 1)*
@@ -237,4 +237,4 @@ Phases execute in numeric order within each milestone.
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 4/4 | Complete    | 2026-07-10 |
 | 24. Positioning Shift & Home Teaser | v1.4 | 4/4 | Complete    | 2026-07-14 |
-| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 1/5 | In Progress|  |
+| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 2/5 | In Progress|  |
