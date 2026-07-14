@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
-current_phase: 24
-current_phase_name: Positioning Shift & Home Teaser
+current_phase: 25
+current_phase_name: Chat Knowledge Refresh & Milestone Verification
 status: verifying
-stopped_at: 24-04 complete (real 1200x630 true-Geist og-default.png + Gate A GREEN across all five voice-gate-unscanned files + capstone gate green; all four human sign-offs APPROVED). Phase 24 all 4 plans done — ready for verification.
-last_updated: "2026-07-14T12:16:24.968Z"
+stopped_at: 24-04 complete (real 1200x630 true-Geist og-default.png + Gate A GREEN across all five voice-gate-unscanned files + capstone gate green 677 pass/2 skip; astro check 0/0/0; OG + invariant verifiers exit 0; all four human sign-offs APPROVED). Phase 24 all 4 plans done — ready for verification.
+last_updated: "2026-07-14T12:35:18.443Z"
 last_activity: 2026-07-14
-last_activity_desc: Completed 24-04 (OG card + Gate A + capstone gate); Phase 24 all 4 plans done
+last_activity_desc: Phase 24 complete, transitioned to Phase 25
 progress:
   total_phases: 5
   completed_phases: 4
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 24 — Positioning Shift & Home Teaser
+**Current focus:** Phase 25 — Chat Knowledge Refresh & Milestone Verification (Phase 24 complete)
 
 ## Current Position
 
-Phase: 24 (Positioning Shift & Home Teaser) — COMPLETE (ready for verification)
-Plan: 4 of 4 — all plans complete
+Phase: 25 — Chat Knowledge Refresh & Milestone Verification
+Plan: Not started
 Status: Phase complete — ready for verification
-Last activity: 2026-07-14 — Completed 24-04 (OG card + Gate A + capstone gate); Phase 24 all 4 plans done
+Last activity: 2026-07-14 — Phase 24 complete, transitioned to Phase 25
 Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
