@@ -26,7 +26,7 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 ## Current State
 
 **Shipped:** v1.3 Chat Visibility (2026-05-13)
-**In flight:** v1.4 Professional Experience (3/5 phases complete — Phase 21 Experience pipeline + Phase 22 Experience page & Holloway case study + Phase 23 Projects reconciliation & featured tier shipped; Phases 24–25 remaining)
+**In flight:** v1.4 Professional Experience (4/5 phases complete — Phase 21 Experience pipeline + Phase 22 Experience page & Holloway case study + Phase 23 Projects reconciliation & featured tier + Phase 24 Positioning shift & Home teaser shipped; Phase 25 remaining)
 **Live at:** jackcutrara.com (single Cloudflare Worker `jack-cutrara-portfolio`, version `ede1431f-e92a-4fda-af54-4f8f57781d3b`; hourly cron `["0 * * * *"]` ACTIVE; Pages project retired 2026-05-13)
 **Tech stack:** Astro 6 + Tailwind CSS v4 + TypeScript (strict) + MDX + Cloudflare Workers Static Assets (`src/worker.ts` re-exports Astro `handle()` for `fetch` + adds `scheduled()` delegating to `deliverDue`) + Cloudflare KV (`CHAT_KV`) + Resend REST + Geist/Geist Mono typography
 **Source LOC:** ~6,802 (src/ — astro, ts, css, mdx, md; +44% from v1.2 close)
@@ -94,12 +94,12 @@ Recruiters and hiring managers who visit this site should immediately see Jack a
 
 - ✓ Dedicated Experience page + Holloway case study + Balfour entry — `/experience` two-tier listing reachable from an experience-first nav (Holloway rich scannable summary → `/experience/holloway` deep-dive with dual back links; Balfour lightweight non-linked "Earlier" entry structurally excluded from any detail route via `getStaticPaths` `hasCaseStudy` filter); D-08 company normalized to "Holloway Company"; tests-first validation suite (623 tests green incl. D-26 chat battery); astro check 0/0; zero new deps; SC5d human visual sign-off approved — EXP-02..05 closed — v1.4 (Phase 22)
 
+- ✓ Positioning shift + Home experience teaser — new-grad-with-production-experience framing across Core Value / About / education / site metadata; Home opens with the `01 EXPERIENCE` Holloway teaser (deep-link + 0→~1,400 test-suite metric, sections renumbered 01–04); enriched standalone Person JSON-LD (jobTitle + alumniOf WGU/Virginia Tech + hasCredential, VT alumni-only per D-10); `/about` Education block driven by an `education.ts` single-source-of-truth; real 1200×630 true-Geist OG card; Gate A closes the MDX-only em-dash scope gap across all five data/page copy surfaces; chat corpus + dependencies byte-identical (D-17/D-19/QA-02); phase goal verified 5/5, human sign-offs approved — POS-01..04, HOME-01 closed — v1.4 (Phase 24)
+
 ### Active
 
 <!-- v1.4 Professional Experience — high-level scope; detailed REQ-IDs in REQUIREMENTS.md -->
 
-- [ ] Home page experience teaser for the 30-second recruiter scan
-- [ ] Positioning shift to new-grad-with-production-experience (Core Value, About narrative, education status)
 - [ ] Sync Multi-Chain EVM / Multi-Dex Crypto Trader project (#7) to the site
 - [ ] Reconcile projects — featured tier (SeatWatch, Multi-Chain EVM, NFL Prediction) with the rest accessible below
 - [ ] Refresh chat knowledge base with experience + new project, preserving CHAT-06 voice split
@@ -199,4 +199,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-10 — Phase 23 (Projects Reconciliation & Featured Tier) complete and verified: Multi-Chain EVM (#7) synced as a full case study through `sync-projects.mjs`, three projects featured (SeatWatch / Multi-Chain EVM / NFL Prediction) in a two-tier FEATURED/MORE WORK layout on `/projects` + Home, remaining four kept accessible below, a single `featured`/`order` data-model distinction driving both surfaces; #7 held out of the chat corpus until Phase 25 (D-15, corpus stays at 6 projects); PROJ-01..04 closed. v1.4 now 3/5 phases complete (21 + 22 + 23). Next: Phase 24 Positioning Shift & Home Teaser. Previous: v1.3 Chat Visibility shipped 2026-05-13 (4 phases 17-20, 36/36 requirements).*
+*Last updated: 2026-07-14 — Phase 24 (Positioning Shift & Home Teaser) complete and verified 5/5: new-grad-with-production-experience framing across Core Value / About / education / site metadata; Home opens with the `01 EXPERIENCE` Holloway teaser (deep-link + 0→~1,400 metric), sections renumbered 01–04; enriched standalone Person JSON-LD (jobTitle + alumniOf WGU/Virginia Tech + hasCredential, VT alumni-only per D-10); `/about` Education block from an `education.ts` SSoT; real 1200×630 true-Geist `og-default.png`; Gate A closes the MDX-only em-dash scope gap across all five data/page copy surfaces; chat corpus + `dependencies` byte-identical (D-17/D-19/QA-02); capstone gate green (build 0, 677 pass/2 skip, astro check 0/0/0), both human sign-offs approved; POS-01..04 + HOME-01 closed. v1.4 now 4/5 phases complete (21 + 22 + 23 + 24). Next: Phase 25 Chat Knowledge Refresh & Milestone Verification. Previous: Phase 23 (Projects Reconciliation & Featured Tier) complete and verified: Multi-Chain EVM (#7) synced as a full case study through `sync-projects.mjs`, three projects featured (SeatWatch / Multi-Chain EVM / NFL Prediction) in a two-tier FEATURED/MORE WORK layout on `/projects` + Home, remaining four kept accessible below, a single `featured`/`order` data-model distinction driving both surfaces; #7 held out of the chat corpus until Phase 25 (D-15, corpus stays at 6 projects); PROJ-01..04 closed. v1.4 now 3/5 phases complete (21 + 22 + 23). Next: Phase 24 Positioning Shift & Home Teaser. Previous: v1.3 Chat Visibility shipped 2026-05-13 (4 phases 17-20, 36/36 requirements).*
