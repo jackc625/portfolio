@@ -1,11 +1,11 @@
 /**
  * About page copy -- single source of truth.
- * Consumed by: index.astro (ABOUT_INTRO + ABOUT_P1), about.astro (all four).
- * ABOUT_P2 matches mockup.html verbatim (D-06). ABOUT_INTRO / ABOUT_P1 /
- * ABOUT_P3 revised for the Phase 24 positioning shift (POS-01/02): honest
- * new-grad register with shipped production experience, no self-applied
- * seniority qualifier. Revised strings are drafts pending Jack's copy review
- * at the 24-04 gate. Voice: first person. Zero em dashes (U+2014).
+ * Consumed by: index.astro (ABOUT_INTRO + ABOUT_P1), about.astro (INTRO + P1 + P3).
+ * ABOUT_INTRO / ABOUT_P1 / ABOUT_P3 revised for the Phase 24 positioning shift
+ * (POS-01/02): honest new-grad register with shipped production experience, no
+ * self-applied seniority qualifier. The former ABOUT_P2 ("boring tool first")
+ * was removed at the Phase 24 UAT gate per owner copy review (reverses D-06).
+ * Voice: first person. Zero em dashes (U+2014).
  */
 /* Phase 24 draft: positioning shift (POS-01/02) */
 export const ABOUT_INTRO =
@@ -14,10 +14,6 @@ export const ABOUT_INTRO =
 /* Phase 24 draft: positioning shift (POS-01/02/D-12) */
 export const ABOUT_P1 =
   "These days I build and stabilize production systems for real users. I’m currently the solo contract engineer on Holloway Connect, a live operations platform, and I recently finished my B.S. in Computer Science. Most of my projects start as “I wonder how that actually works” and end as something I’d be comfortable handing off to a team.";
-
-/* Verified: 2026-04-19 */
-export const ABOUT_P2 =
-  "I reach for the boring tool first. I read the spec before I read the blog post. I like tests that fail loudly and code review comments that start with “why.” My favorite bug reports are the ones that come with a reproduction.";
 
 /* Phase 24 draft: positioning shift (POS-02/D-13) */
 export const ABOUT_P3 =
