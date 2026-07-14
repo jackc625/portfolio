@@ -52,6 +52,16 @@ export function verifyOgCard() {
     );
   }
 
+  // Length guard: a truncated/corrupt file must yield a clean failure entry,
+  // not an uncaught RangeError from the readUInt32BE calls below (which read
+  // the IHDR width/height at offsets 16/20, i.e. require >= 24 bytes).
+  if (buf.length < 24) {
+    failures.push(
+      `file too small (${buf.length} bytes) to be a valid PNG`,
+    );
+    return { ok: false, failures };
+  }
+
   // 2. IHDR geometry (width at offset 16, height at offset 20).
   const width = buf.readUInt32BE(16);
   const height = buf.readUInt32BE(20);
