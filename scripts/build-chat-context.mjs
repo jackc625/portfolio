@@ -100,6 +100,23 @@ export const estimateTokens = (str) => Math.ceil(str.length / 4);
 const FIRST_PERSON_LEAK_RE = /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested|interned|coordinated)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
 
 /**
+ * WR-02 (25-REVIEW) structural backstop for the finite FIRST_PERSON_LEAK_RE
+ * allowlist. Flags ANY sentence that BEGINS with a standalone first-person
+ * clause (I / My / We / Our) — at string start OR after sentence-ending
+ * punctuation — regardless of the following verb. This closes the allowlist's
+ * coverage gaps for verbs it does not enumerate (e.g. "I fixed", "I traced",
+ * "I recovered", "I re-scoped", "I stood up"), which appear verbatim in this
+ * project's first-person source prose and could otherwise slip into a
+ * chat-bound field via a future hand-edit and silently pass the guard.
+ *
+ * Case-sensitive by design: third-person prose ("Jack built…") never opens a
+ * sentence with a capitalized I/My/We/Our, so this does not false-positive on
+ * the current corpus. Unlike FIRST_PERSON_LEAK_RE this is build-guard-only and
+ * is intentionally NOT part of the triplicated byte-identical regex contract.
+ */
+const NEVER_BEGINS_FIRST_PERSON = /(?:^|[.!?]\s+)(I|My|We|Our)\b/;
+
+/**
  * First-person leak guard — exits 2 if any chat-bound field contains a
  * first-person leading clause. Closes UAT Gap #1 root cause.
  *
@@ -137,7 +154,9 @@ function checkFirstPersonLeaks(merged) {
   const leaks = [];
   for (const [field, value] of targets) {
     if (typeof value !== "string") continue;
-    const m = FIRST_PERSON_LEAK_RE.exec(value);
+    // Two-layer guard (WR-02): the finite verb allowlist first, then the
+    // structural sentence-initial backstop for verbs the allowlist omits.
+    const m = FIRST_PERSON_LEAK_RE.exec(value) || NEVER_BEGINS_FIRST_PERSON.exec(value);
     if (m) {
       leaks.push({
         field,
