@@ -5,15 +5,15 @@ milestone_name: Professional Experience
 current_phase: 24
 current_phase_name: Positioning Shift & Home Teaser
 status: executing
-stopped_at: 24-01 complete (education.ts SSoT + Gate D/E + invariant baseline); 24-02 next
-last_updated: "2026-07-14T04:00:08.401Z"
+stopped_at: 24-02 complete (Home 01 EXPERIENCE teaser + 01/02/03/04 renumber + personSchema/SEO enrichment + em-dash-clean ContactSection + Gate B/C GREEN); 24-03 next
+last_updated: "2026-07-14T04:13:00.517Z"
 last_activity: 2026-07-14
-last_activity_desc: Completed 24-01 (positioning foundation)
+last_activity_desc: Completed 24-02 (Home teaser + positioning shift)
 progress:
   total_phases: 5
   completed_phases: 3
   total_plans: 17
-  completed_plans: 14
+  completed_plans: 15
   percent: 60
 ---
 
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 24 (Positioning Shift & Home Teaser) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
-Last activity: 2026-07-14 — Completed 24-01 (positioning foundation)
+Last activity: 2026-07-14 — Completed 24-02 (Home teaser + positioning shift)
 Progress: [██████░░░░] 60% (3/5 phases)
 
 ### v1.4 phase map
@@ -83,6 +83,9 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 24]: 24-01: education.ts is SSoT; alumniOfSchema+hasCredentialSchema DERIVED from EDUCATION/CREDENTIALS (no re-hardcoded WGU/VT); Gate D asserts derivation linkage + VT alumniOf-only (D-10)
 - [Phase 24]: 24-01: captured phase-start invariant baseline (24-BASELINE.json: 8 protected-file hashes + deps) + verify-phase24-invariants.mjs (Node built-ins only) so 24-04 proves phase-wide D-19/D-17 across committed tasks (review fix #4)
 - [Phase 24]: 24-01: Gate E strengthened to 11 anchors (SEO + ChatWidget import/render + pageswap .finished?.catch + 3 client-script imports; review fix #6)
+- [Phase 24]: 24-02: Home opens with the 01 EXPERIENCE Holloway teaser reusing the SAME id-guarded experience query (hasCaseStudy find + holloway.id throw, index.astro-prefixed) as experience.astro; no data duplication (D-05); teaser CSS page-scoped, global.css/BaseLayout untouched (D-19)
+- [Phase 24]: 24-02: sections renumbered 01/02/03/04 (WORK/ABOUT via SectionHeader props, CONTACT via ContactSection literal); ContactSection doc comments stripped of 3 em dashes closing the non-MDX voice-gate scope gap before 24-04 Gate A
+- [Phase 24]: 24-02: personSchema enriched with jobTitle + DERIVED alumniOf/hasCredential from education.ts (POS-04, no re-hardcoded literals); SEO description sharpened + distinct from unchanged hero lead (D-08/D-15); Gate B/C (home-teaser-render) authored HERE + GREEN (6/6), JSON.parses ld+json + verbatim hero-lead regression guard
 
 ### Open Blockers
 
@@ -115,9 +118,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T03:59:46.128Z
-**Stopped at:** 24-01 complete (education.ts SSoT + Gate D/E + invariant baseline); 24-02 next
-**Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-02-PLAN.md
+**Last session:** 2026-07-14T04:11:55.830Z
+**Stopped at:** 24-02 complete (Home teaser + 01/02/03/04 renumber + personSchema/SEO enrichment + em-dash-clean ContactSection + Gate B/C GREEN); 24-03 next
+**Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-03-PLAN.md
 
 ## Performance Metrics
 
@@ -141,3 +144,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 23 P03 | ~9min | 3 tasks | 4 files |
 | Phase 23 P04 | ~6min | 2 tasks | 0 files (verification-only capstone gate) |
 | Phase Phase 24 PP01 | 4min | 2 tasks tasks | 5 files files |
+| Phase 24 P02 | 8min | 3 tasks | 3 files |
