@@ -1,20 +1,24 @@
 /**
  * About page copy -- single source of truth.
  * Consumed by: index.astro (ABOUT_INTRO + ABOUT_P1), about.astro (all four).
- * Text matches mockup.html lines 445-448 verbatim per D-26.
+ * ABOUT_P2 matches mockup.html verbatim (D-06). ABOUT_INTRO / ABOUT_P1 /
+ * ABOUT_P3 revised for the Phase 24 positioning shift (POS-01/02): honest
+ * new-grad register with shipped production experience, no self-applied
+ * seniority qualifier. Revised strings are drafts pending Jack's copy review
+ * at the 24-04 gate. Voice: first person. Zero em dashes (U+2014).
  */
-/* Verified: 2026-04-19 */
+/* Phase 24 draft: positioning shift (POS-01/02) */
 export const ABOUT_INTRO =
-  "I'm Jack, a junior software engineer who likes building systems that don't break at 3\u00a0a.m.";
+  "I'm Jack, a software engineer who likes building systems that don't break at 3 a.m.";
 
-/* Verified: 2026-04-19 */
+/* Phase 24 draft: positioning shift (POS-01/02/D-12) */
 export const ABOUT_P1 =
-  "I build small, production-grade services and the plumbing around them: caches, compilers, sync engines, APIs. Most of my projects start as \u201cI wonder how that actually works\u201d and end as something I\u2019d be comfortable handing off to a team.";
+  "These days I build and stabilize production systems for real users. I’m currently the solo contract engineer on Holloway Connect, a live operations platform, and I recently finished my B.S. in Computer Science. Most of my projects start as “I wonder how that actually works” and end as something I’d be comfortable handing off to a team.";
 
 /* Verified: 2026-04-19 */
 export const ABOUT_P2 =
-  "I reach for the boring tool first. I read the spec before I read the blog post. I like tests that fail loudly and code review comments that start with \u201cwhy.\u201d My favorite bug reports are the ones that come with a reproduction.";
+  "I reach for the boring tool first. I read the spec before I read the blog post. I like tests that fail loudly and code review comments that start with “why.” My favorite bug reports are the ones that come with a reproduction.";
 
-/* Verified: 2026-04-19 */
+/* Phase 24 draft: positioning shift (POS-02/D-13) */
 export const ABOUT_P3 =
-  "Right now I\u2019m looking for a junior or entry-level role on a team that cares about correctness, reliability, and performance, ideally one that will push me to get better at the parts of the stack I haven\u2019t touched yet.";
+  "Alongside the contract work, I’m looking for a full-time software engineering role on a team that cares about correctness, reliability, and performance, ideally one that will push me to get better at the parts of the stack I haven’t touched yet.";
