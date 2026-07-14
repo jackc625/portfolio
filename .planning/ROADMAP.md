@@ -167,16 +167,16 @@
 
 **Wave 1** *(foundation — education module + Nyquist Wave 0 gates)*
 
-- [ ] 24-01-PLAN.md — `src/data/education.ts` SSoT (facts + alumniOf/hasCredential schema fragments) + Wave 0 gates A (site-copy em-dash/register), B/C (home-teaser render + JSON-LD parse), D (education module), E (chat-surface tripwire)
+- [ ] 24-01-PLAN.md — `src/data/education.ts` SSoT (facts + DERIVED alumniOf/hasCredential fragments) + Gate D (education module) + strengthened Gate E (chat-surface tripwire) + phase-start invariant baseline (protected-file hashes + deps + og placeholder) for the capstone; both gates GREEN at this boundary (review: Gate A→24-04, Gate B/C→24-02)
 
 **Wave 2** *(blocked on 24-01; parallel — zero file overlap)*
 
-- [ ] 24-02-PLAN.md — Home `index.astro`: 01 EXPERIENCE Holloway teaser (frontend-design) + renumber 01/02/03/04 (incl `ContactSection.astro` literal) + enrich personSchema (jobTitle/alumniOf/hasCredential) + sharpen SEO description
-- [ ] 24-03-PLAN.md — About: `about.ts` copy revision (intro/P1/P3, P2 verbatim) + `/about` Education block (frontend-design) fed by `education.ts` + description sharpen
+- [ ] 24-02-PLAN.md — Home `index.astro`: 01 EXPERIENCE Holloway teaser (frontend-design, id-guarded query) + renumber 01/02/03/04 (incl `ContactSection.astro` literal + strip its em-dash comments) + enrich personSchema (jobTitle/alumniOf/hasCredential) + sharpen SEO description + author Gate B/C (home-teaser render + JSON-LD parse), GREEN at this boundary
+- [ ] 24-03-PLAN.md — About: `about.ts` copy revision (intro/P1/P3, P2 verbatim) + `/about` Education block (frontend-design) fed by `education.ts` + description sharpen + author `about-education-render` POS-03 regression test
 
 **Wave 3** *(blocked on 24-02, 24-03)*
 
-- [ ] 24-04-PLAN.md — Real 1200x630 `og-default.png` (frontend-design) + capstone gate (build + full suite incl D-26/sse-snapshot + astro-check 0/0/0 + dep-lock + D-17/D-19 tripwires) + human sign-off (copy review + 6-pillar + Google Rich Results)
+- [ ] 24-04-PLAN.md — Real 1200x630 `og-default.png` (frontend-design, ONE deterministic fail-closed path + PNG-signature/size/hash-diff verifier) + author Gate A (site-copy em-dash/register) + capstone gate (build + full suite incl D-26/sse-snapshot + astro-check 0/0/0 + phase-start baseline comparison for protected files/deps) + human sign-off (copy review + 6-pillar at 375px/1440px with focus/reduced-motion/overflow + Schema Markup Validator)
 
 ### Phase 25: Chat Knowledge Refresh & Milestone Verification
 

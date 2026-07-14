@@ -5,10 +5,10 @@ milestone_name: Professional Experience
 current_phase: 24
 current_phase_name: Positioning Shift & Home Teaser
 status: in-progress
-stopped_at: Phase 24 planned (4 plans, 3 waves)
-last_updated: "2026-07-11T05:09:30.000Z"
-last_activity: 2026-07-11
-last_activity_desc: Phase 24 planned (4 plans, 3 waves); plan-checker + coverage gates passed
+stopped_at: Phase 24 replanned incorporating cross-AI review (codex); 4 plans, 3 waves
+last_updated: "2026-07-14T02:40:00.000Z"
+last_activity: 2026-07-13
+last_activity_desc: "Phase 24 replanned (--reviews): codex findings incorporated + 3 plan-checker warnings fixed; plan-checker PASSED, requirements 5/5 + decisions 20/20 covered"
 progress:
   total_phases: 5
   completed_phases: 3
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 24 - Positioning Shift & Home Teaser (planned - 4 plans, ready to execute)
+**Current focus:** Phase 24 - Positioning Shift & Home Teaser (replanned w/ codex review feedback - 4 plans, ready to execute)
 
 ## Current Position
 
 Phase: 24 — Positioning Shift & Home Teaser
 Plan: 4 plans (24-01..24-04) across 3 waves - ready to execute
-Status: Phase 24 planned; plan-checker passed, requirements 5/5 + decisions 20/20 covered; ready to execute
-Last activity: 2026-07-11 - Phase 24 planned (4 plans, 3 waves)
+Status: Phase 24 replanned incorporating cross-AI review (codex gpt-5.6-sol); plan-checker PASSED, requirements 5/5 + decisions 20/20 covered; ready to execute
+Last activity: 2026-07-13 - Phase 24 replanned incorporating codex review feedback
 Progress: [██████░░░░] 60% (3/5 phases)
 
 ### v1.4 phase map
@@ -112,8 +112,8 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-11T05:09:30.000Z
-**Stopped at:** Phase 24 planned (4 plans, 3 waves)
+**Last session:** 2026-07-14T02:40:00.000Z
+**Stopped at:** Phase 24 replanned incorporating cross-AI review (codex); 4 plans, 3 waves
 **Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-01-PLAN.md
 
 ## Performance Metrics
