@@ -3,11 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 25
-status: complete
+status: completed
 stopped_at: Phase 25 UAT complete (25-UAT.md — 6/6 pass, 0 issues); all v1.4 execution gates verified, ready for /gsd-ship
-last_updated: "2026-07-14T20:52:34.000Z"
+last_updated: "2026-07-14T21:12:36.626Z"
 last_activity: 2026-07-14
-last_activity_desc: Phase 25 UAT passed — v1.4 verified, ready to ship
 progress:
   total_phases: 5
   completed_phases: 5
@@ -30,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 Phase: 25
 Plan: Not started
-Status: Phase 25 UAT PASSED (25-UAT.md — 6/6, 0 issues). 5 deliverables auto-verified this session (hash verifier exit 0 → 4 D-14 gated files + deps byte-identical; drift check exit 0; corpus contract 7 projects incl. Multi-Chain EVM untruncated + reverse-chron experience array + SSoT education + 4 additive skills; vitest 692 pass/2 skip; astro check 0/0/0 140 files) + the CHAT-11 live-chat accuracy checkpoint re-confirmed by Jack (re-confirms the 25-04 sign-off). v1.4 execution COMPLETE + verified — ready for /gsd-ship (production Lighthouse + /gsd-complete-milestone deferred there per D-11)
-Last activity: 2026-07-14 — Phase 25 UAT passed
+Status: Phase 25 shipped — pushed all 158 commits to origin/main (v1.4 complete, branching_strategy: none)
+Last activity: 2026-07-14
 Progress: [██████████] 100% (5/5 phases)
 
 ### v1.4 phase map
