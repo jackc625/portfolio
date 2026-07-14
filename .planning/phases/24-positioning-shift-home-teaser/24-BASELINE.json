@@ -1,0 +1,28 @@
+{
+  "_comment": "Phase 24 phase-start invariant fingerprint. Consumed by scripts/verify-phase24-invariants.mjs at the 24-04 capstone (review fix #4). Do not hand-edit.",
+  "phase_base_sha": "8647202514979281c13be4dfb934b0a982550cab",
+  "protected_file_hashes": {
+    "src/layouts/BaseLayout.astro": "38973d84a7ad0780981df5630b6d9396dec36ea67293c3806bb74c980169c020",
+    "src/styles/global.css": "d923fdc85e5cd893bd5a72b407651121f07781e472d23818d9e55a7ef46ad33e",
+    "src/scripts/chat.ts": "d4b7b2a1c89b89b1d7281b3a4111c58bfa41677c2673e2b107fb3b809a04c87f",
+    "src/pages/api/chat.ts": "6b59a02b0b60701dda53ae0953be311bc4702be55e7cf2091df63ab8dff7dd6f",
+    "src/data/about-chat.ts": "ee3a8cf62820fcceaa850cba9fb97b02c9108f0e6045cbca222dd570b8f27c59",
+    "src/data/portfolio-context.json": "4807f33871233759d38b3eadc8a584201770dc596da5bd77ba3ef764a2a8f383",
+    "src/data/portfolio-context.static.json": "bb1beda8531407a389f3626d07be34b1d4fec5f09560f0389a8041ca90e0bb31",
+    "scripts/build-chat-context.mjs": "7ec754978dc4d1ce784308fae879f820fd9ff9a1eef54e598c90750bf4b50e05"
+  },
+  "og_placeholder_hash": "b3f4794c0e5fc2360c18e9af27bdd871ceedefa7de21c9a648aec1b9ab770eba",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/mdx": "^5.0.2",
+    "@astrojs/sitemap": "^3.7.1",
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.0.8",
+    "astro-seo": "^1.1.0",
+    "dompurify": "^3.3.3",
+    "marked": "^17.0.5",
+    "tailwindcss": "^4.2.2",
+    "zod": "^4.3.6"
+  }
+}
