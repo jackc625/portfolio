@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 25
-status: verifying
-stopped_at: Completed 25-04 (v1.4 capstone verification gate — all gates green + live chat UAT APPROVED); Phase 25 + v1.4 execution complete
-last_updated: "2026-07-14T20:12:13.884Z"
+status: complete
+stopped_at: Phase 25 UAT complete (25-UAT.md — 6/6 pass, 0 issues); all v1.4 execution gates verified, ready for /gsd-ship
+last_updated: "2026-07-14T20:52:34.000Z"
 last_activity: 2026-07-14
-last_activity_desc: Phase 25 complete
+last_activity_desc: Phase 25 UAT passed — v1.4 verified, ready to ship
 progress:
   total_phases: 5
   completed_phases: 5
@@ -30,8 +30,8 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 Phase: 25
 Plan: Not started
-Status: 25-04 complete (v1.4 capstone verification gate GREEN — pnpm build 4 stages exit 0, pnpm test 692 pass/2 skip, astro check 0/0/0, drift check exit 0, verify-phase25-invariants.mjs exit 0 with 4 gated files + deps byte-identical phase-wide; live chat UAT APPROVED by Jack — Holloway + Multi-Chain EVM third-person accurate, no returns claims, no first-person leak, security probes refused cleanly). Phase 25 execution complete — ready for /gsd-ship (production Lighthouse + /gsd-complete-milestone deferred there per D-11)
-Last activity: 2026-07-14 — Phase 25 complete
+Status: Phase 25 UAT PASSED (25-UAT.md — 6/6, 0 issues). 5 deliverables auto-verified this session (hash verifier exit 0 → 4 D-14 gated files + deps byte-identical; drift check exit 0; corpus contract 7 projects incl. Multi-Chain EVM untruncated + reverse-chron experience array + SSoT education + 4 additive skills; vitest 692 pass/2 skip; astro check 0/0/0 140 files) + the CHAT-11 live-chat accuracy checkpoint re-confirmed by Jack (re-confirms the 25-04 sign-off). v1.4 execution COMPLETE + verified — ready for /gsd-ship (production Lighthouse + /gsd-complete-milestone deferred there per D-11)
+Last activity: 2026-07-14 — Phase 25 UAT passed
 Progress: [██████████] 100% (5/5 phases)
 
 ### v1.4 phase map
@@ -133,9 +133,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T20:00:05.000Z
-**Stopped at:** Completed 25-04 (v1.4 capstone verification gate — all gates green + live chat UAT APPROVED); Phase 25 + v1.4 execution complete
-**Resume file:** None — ready for /gsd-ship
+**Last session:** 2026-07-14T20:52:34.000Z
+**Stopped at:** Phase 25 UAT complete (25-UAT.md — 6/6 pass, 0 issues; 5 auto-verified gates re-run green + CHAT-11 live chat re-confirmed by Jack). v1.4 execution verified end-to-end
+**Resume file:** None — ready for /gsd-ship (production Lighthouse + /gsd-complete-milestone owned there per D-11)
 
 ## Performance Metrics
 
