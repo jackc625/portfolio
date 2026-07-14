@@ -24,7 +24,7 @@ Requirements for the v1.4 Professional Experience milestone. Each maps to a road
 ### Positioning (POS)
 
 - [x] **POS-01**: Core Value framing and site copy present Jack as a new-grad engineer with shipped production experience (first-person voice on the site), no longer "a student building side projects"
-- [ ] **POS-02**: About page narrative is updated to reflect professional experience and graduation, keeping the honest new-grad (not senior) register
+- [x] **POS-02**: About page narrative is updated to reflect professional experience and graduation, keeping the honest new-grad (not senior) register
 - [x] **POS-03**: Education status reflects the completed WGU B.S. Computer Science (May 2026), the Virginia Tech transfer, and the LPI Linux Essentials certification wherever education is surfaced
 - [x] **POS-04**: Site metadata (SEO title/description, JSON-LD Person schema) reflects the updated positioning and job-title
 
@@ -83,7 +83,7 @@ Which phases cover which requirements. Populated during roadmap creation.
 | EXP-06 | Phase 21 | Complete |
 | HOME-01 | Phase 24 | Complete |
 | POS-01 | Phase 24 | Complete |
-| POS-02 | Phase 24 | Pending |
+| POS-02 | Phase 24 | Complete |
 | POS-03 | Phase 24 | Complete |
 | POS-04 | Phase 24 | Complete |
 | PROJ-01 | Phase 23 | Complete |
