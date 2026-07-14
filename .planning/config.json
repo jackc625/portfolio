@@ -43,7 +43,12 @@
   },
   "review": {
     "models": {
-      "codex": "gpt-5.6-sol"
-    }
+      "codex": "gpt-5.6-sol",
+      "agy": "Gemini 3.1 Pro (High)"
+    },
+    "default_reviewers": [
+      "antigravity",
+      "codex"
+    ]
   }
 }
