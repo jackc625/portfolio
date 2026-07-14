@@ -4,16 +4,16 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
-status: ready
+status: executing
 stopped_at: Phase 25 replanned (--reviews) — 5 plans, 3 waves
-last_updated: "2026-07-14T18:18:27.000Z"
+last_updated: "2026-07-14T18:40:01.033Z"
 last_activity: 2026-07-14
-last_activity_desc: Phase 25 replanned via --reviews — cross-AI review feedback (Codex 4 mandatory + Antigravity) incorporated into 5 plans; plan-checker VERIFICATION PASSED; ready to execute
+last_activity_desc: Phase 25 execution started
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 22
-  completed_plans: 17
+  completed_plans: 18
   percent: 80
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 25 — Chat Knowledge Refresh & Milestone Verification (Phase 24 complete)
+**Current focus:** Phase 25 — Chat Knowledge Refresh & Milestone Verification
 
 ## Current Position
 
-Phase: 25 — Chat Knowledge Refresh & Milestone Verification
-Plan: 5 plans across 3 waves (Wave 1: 25-00 baseline + 25-01 + 25-02 · Wave 2: 25-03 · Wave 3: 25-04)
-Status: Phase 25 replanned (--reviews); plan-checker VERIFICATION PASSED (14/14 decisions + 4/4 requirements covered; all review findings incorporated); ready to execute
-Last activity: 2026-07-14 — Phase 25 replanned via --reviews (Codex 4 mandatory corrections + Antigravity concerns into 5 PLANs incl new 25-00 baseline; plan-checker PASSED)
+Phase: 25 (Chat Knowledge Refresh & Milestone Verification) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-07-14 — Phase 25 execution started
 Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
@@ -95,6 +95,7 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 24]: 24-UAT: removed About ABOUT_P2 ("I reach for the boring tool first...") per Jack's copy review — REVERSES D-06 (P2 was kept verbatim). Coupled edits: about.ts export + about.astro import/render + about-data.test.ts (P2 import/assertion/word-count). build-chat-context.mjs left untouched (24-01 protected file; its dead parseAboutExports still lists ABOUT_P2); chat about block sourced from about-chat.ts so portfolio-context.json stayed byte-identical (commit c1c2022)
 - [Phase 24]: 24-UAT: verify-work 14/14 pass (11 auto-verified via Playwright + live DOM + verifier scripts + gate tests; 3 human checkpoints APPROVED — Home teaser/positioning, /about register, OG card); full suite 676 pass/2 skip after the P2 fix
 - [Phase 24]: 24-SECURITY: retroactive secure-phase — 7 threats CLOSED / 0 open (ASVS L1 short-circuit; register authored at plan time). OG card + supply-chain accepted risks logged; no new surface from the copy phase or the P2 fix (commit d6d1696)
+- [Phase 25]: Phase 25-00: captured phase-start invariant baseline (25-BASELINE.json: 4 gated-file hashes + 11 deps) + verify-phase25-invariants.mjs (Node built-ins only); PROTECTED_FILES narrowed to the four D-14 chat-surface files ONLY (excludes chat-knowledge sources edited this phase) so 25-04 proves phase-wide D-14/QA-02 across committed tasks without false-failing
 
 ### Open Blockers
 
@@ -127,7 +128,7 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T18:18:27.000Z
+**Last session:** 2026-07-14T18:38:58.056Z
 **Stopped at:** Phase 25 replanned via --reviews (ready to execute)
 **Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-00-PLAN.md
 
@@ -156,3 +157,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 24 P02 | 8min | 3 tasks | 3 files |
 | Phase 24 P03 | 6min | 2 tasks | 3 files |
 | Phase 24 P04 | 1min | 3 tasks | 5 files |
+| Phase 25 P00 | 3min | 2 tasks | 2 files |

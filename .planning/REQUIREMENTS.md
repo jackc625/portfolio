@@ -42,8 +42,8 @@ Requirements for the v1.4 Professional Experience milestone. Each maps to a road
 
 ### Quality Gates (QA)
 
-- [ ] **QA-01**: The D-26 chat-surface regression battery and the D-15 SSE byte-identical anchor hold across any change that touches `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts`
-- [ ] **QA-02**: `pnpm exec astro check` stays 0/0/0, Lighthouse holds at or above prior scores on the production-on-Cloudflare-edge canonical gate, and no new runtime dependencies are added
+- [x] **QA-01**: The D-26 chat-surface regression battery and the D-15 SSE byte-identical anchor hold across any change that touches `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts`
+- [x] **QA-02**: `pnpm exec astro check` stays 0/0/0, Lighthouse holds at or above prior scores on the production-on-Cloudflare-edge canonical gate, and no new runtime dependencies are added
 
 ## Future Requirements
 
@@ -92,8 +92,8 @@ Which phases cover which requirements. Populated during roadmap creation.
 | PROJ-04 | Phase 23 | Complete |
 | CHAT-10 | Phase 25 | Pending |
 | CHAT-11 | Phase 25 | Pending |
-| QA-01 | Phase 25 | Pending |
-| QA-02 | Phase 25 | Pending |
+| QA-01 | Phase 25 | Complete |
+| QA-02 | Phase 25 | Complete |
 
 **Coverage:**
 
