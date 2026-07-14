@@ -5,14 +5,14 @@ milestone_name: Professional Experience
 current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
 status: ready
-stopped_at: Phase 25 context gathered
-last_updated: "2026-07-14T15:47:35.851Z"
+stopped_at: Phase 25 planned — 4 plans, 3 waves
+last_updated: "2026-07-14T16:40:45.000Z"
 last_activity: 2026-07-14
-last_activity_desc: Phase 25 context gathered — 9 decisions locked, ready to plan
+last_activity_desc: Phase 25 planned — 4 plans across 3 waves; plan-checker VERIFICATION PASSED; ready to execute
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 17
+  total_plans: 21
   completed_plans: 17
   percent: 80
 ---
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 25 — Chat Knowledge Refresh & Milestone Verification
-Plan: Not started
-Status: Phase 25 context gathered (9 decisions locked); ready to plan
-Last activity: 2026-07-14 — Phase 25 discuss-phase complete (25-CONTEXT.md committed)
+Plan: 4 plans across 3 waves (Wave 1: 25-01 + 25-02 parallel · Wave 2: 25-03 · Wave 3: 25-04)
+Status: Phase 25 planned; plan-checker VERIFICATION PASSED (14/14 decisions + 4/4 requirements covered); ready to execute
+Last activity: 2026-07-14 — Phase 25 planned (RESEARCH + VALIDATION + PATTERNS + 4 PLANs committed; plan-checker PASSED)
 Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
@@ -127,9 +127,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T15:47:35.841Z
-**Stopped at:** Phase 25 context gathered
-**Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-CONTEXT.md
+**Last session:** 2026-07-14T16:40:45.000Z
+**Stopped at:** Phase 25 planned (ready to execute)
+**Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-01-PLAN.md
 
 ## Performance Metrics
 

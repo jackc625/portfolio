@@ -466,11 +466,12 @@ Actual below-fence is 2,807 words / ~6,829 tokens. Still no truncation (<5,000 c
 
 **Not applicable — this phase installs ZERO external packages (QA-02 zero-new-runtime-dependency lock).** All work uses existing deps (Vitest, Astro, the Node built-ins the `.mjs` scripts already use). No `npm install` occurs. The dep-lock gate (§7) verifies `package.json` `dependencies` stays byte-identical.
 
-## Open Questions
+## Open Questions (both RESOLVED by the plans)
 
 1. **Exact new positioning wording for `ABOUT_CHAT_P3` + `personal.summary` + `system-prompt.ts` line 5** — Claude drafts, Jack reviews (D-05/D-06 human checkpoint). The groundedQA anchor update (§7.3) must use the EXACT chosen words (e.g. if the copy says "full-time software engineering role", the anchor should be `"full-time"`, not a guess).
    - Recommendation: draft all four surfaces (about-chat P3, personal.summary, system-prompt audience line, groundedQA anchor) in one review pass so they stay mutually consistent.
-2. **Keep or delete `static.json` `education` object** — see A4; low-stakes, planner's call.
+   - **(RESOLVED IN PLANS: the 25-02 human copy-review checkpoint owns final wording; 25-01 sets the groundedQA anchor to the chosen words in the same pass.)**
+2. **Keep or delete `static.json` `education` object** — see A4; low-stakes, planner's call. **(RESOLVED IN PLANS: decided in 25-02 Task 2B.)**
 
 ## Environment Availability
 
