@@ -1,6 +1,7 @@
 ---
 phase: quick-260513-hqk-v1-3-closeout
 plan: 01
+status: complete
 subsystem: testing
 tags: [chat-widget, copy-button, voice-split, view-transitions, regex-hardening, structural-locks]
 

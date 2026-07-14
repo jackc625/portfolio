@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Theme selection doesn't persist when navigating between pages. Works on reload but resets during View Transitions navigation."
 created: 2026-03-30T00:00:00Z
 updated: 2026-03-30T00:00:00Z
@@ -81,3 +81,11 @@ root_cause: |
 fix:
 verification:
 files_changed: []
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Obsolete — the dark/light theme toggle was removed in v1.1 (single light theme). There is no theme state to persist.
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._

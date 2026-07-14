@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "No, it never changes to 'COPIED'"
 created: 2026-05-10T00:00:00Z
 updated: 2026-05-10T00:00:00Z
@@ -213,3 +213,11 @@ files_changed: []
 `typescript` (TypeScript / DOM / CSS — bug is in the interaction between TS click
 handler in chat.ts and CSS opacity gating in global.css; both files are TS-tooled
 and the fix touches both layers).
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Fixed in v1.3 Phase 17 (UAT-GAP-03) — added the .copy-success CSS rule + COPY_FEEDBACK_MS=1500; COPIED label now shows for the full feedback window.
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._

@@ -62,3 +62,13 @@ After configuring:
   so `env.CHAT_RATE_LIMITER` is strongly typed instead of the current `(env as unknown as ...)` cast.
 - Low urgency (no abuse observed at portfolio traffic levels) but should land before Phase 15
   Analytics Instrumentation ships — public analytics may surface the endpoint to broader traffic.
+
+---
+
+## Disposition: WON'T FIX — accepted at v1.4 milestone close (2026-07-14)
+
+Formally accepted as won't-fix on the free tier, per Jack's decision at the v1.4 pre-close audit.
+
+- The `/api/chat` rate-limiter code (5 msg / 60s per IP) is byte-identical from Phase 7 (v1.0) and defensively no-ops via the `if (rateLimiter)` guard when the `CHAT_RATE_LIMITER` binding is absent.
+- Configuring the binding requires a Cloudflare **Workers Paid** plan (~$60/yr). At current portfolio scale this is 'Free-tier acceptable' (already documented in PROJECT.md Known issues).
+- **Revisit trigger:** Anthropic spend or chat volume crossing the threshold that justifies Workers Paid. Re-open this todo then; the code path is ready and needs only the binding.

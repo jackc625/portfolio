@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Investigate why the canvas hero particles don't respond to mouse cursor movement"
 created: 2026-03-30T00:00:00Z
 updated: 2026-03-30T00:00:00Z
@@ -50,3 +50,11 @@ root_cause: The mousemove listener is attached to the canvas element (line 62), 
 fix:
 verification:
 files_changed: []
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Obsolete — the canvas hero was removed in v1.1 (replaced by the editorial display hero). No canvas feature remains; the mouse-influence bug is moot.
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._

@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Chat bot greets visitors as 'Jack' and answers 'who am i' with 'You're Jack Cutrara' — assumes the visitor IS Jack instead of speaking ABOUT Jack to a visitor. Violates CHAT-06 voice-split contract."
 created: 2026-05-10
 updated: 2026-05-10
@@ -90,3 +90,11 @@ A fix plan would, in order:
 2. **Enforcement:** Extend `scripts/build-chat-context.mjs` with a first-person-leak guard (regex sweep over chat-bound fields, exit 2 on match) and a regression test against a synthetic visitor message that asserts the response does not address the user as Jack.
 
 3. **Defense in depth:** Add an explicit anti-pattern callout in `src/prompts/system-prompt.ts` `<role>` so even if a future first-person string slips through, the model has an explicit instruction to translate ("knowledge below was authored by Jack in first person; rewrite as third person when citing").
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Fixed in v1.3 Phase 17 (UAT-GAP-01) — CHAT-06 voice split holds at the chat surface; third-person persona guard green.
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._

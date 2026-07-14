@@ -1,5 +1,5 @@
 ---
-status: investigating
+status: resolved
 trigger: "Canvas hero particles don't respond to cursor — previous fix (395c456) moved listener to section but user reports particles still don't respond"
 created: 2026-03-30T00:00:00Z
 updated: 2026-03-30T00:00:00Z
@@ -117,3 +117,11 @@ root_cause: The mouse influence formula in the draw loop (line 137) is mathemati
 fix: 
 verification: 
 files_changed: []
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Obsolete — same canvas hero, removed in v1.1. The feature no longer exists in the codebase.
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._

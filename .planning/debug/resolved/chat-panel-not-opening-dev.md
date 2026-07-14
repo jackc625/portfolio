@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "the chatbot sidebar isnt even popping up"
 created: 2026-05-10T00:00:00Z
 updated: 2026-05-10T00:00:00Z
@@ -108,3 +108,11 @@ verification: (NOT applied — diagnosis-only) Manual verification path once a f
 files_changed: []
 
 verdict: ROOT CAUSE FOUND. Returning structured diagnosis to caller. NO FIX APPLIED — diagnosis-only mode per task scope.
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Fixed in v1.3 Phase 17 (UAT-GAP-02) — inline display:none removed from ChatWidget.astro so the CSS #chat-panel.is-open state machine is authoritative.
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._

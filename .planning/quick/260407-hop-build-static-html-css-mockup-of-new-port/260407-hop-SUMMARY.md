@@ -1,6 +1,7 @@
 ---
 phase: quick/260407-hop
 plan: 01
+status: complete
 subsystem: design-mockup
 tags: [mockup, html, css, design-validation, portfolio]
 one_liner: "Standalone static HTML+CSS mockup of the locked portfolio design for pre-implementation visual review"

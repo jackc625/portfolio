@@ -1,6 +1,7 @@
 ---
 phase: quick
 plan: 260404-egk
+status: complete
 subsystem: content
 tags: [astro, mdx, content-collections, rebrand]
 

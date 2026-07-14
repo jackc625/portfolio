@@ -32,3 +32,9 @@ Surfaced during Phase 12 UAT Test 5 (OG preview verification). Jack's words: "Ev
 - Phase 12 DEBT-03 verified og:url resolution (5/5 PASS in 12-VALIDATION.md); this todo is strictly about image asset quality, not URL plumbing.
 - BaseLayout's `resolveOg()` guard already handles absolute-vs-relative image URLs; no code change needed for overrides.
 - Social platforms aggressively cache OG images — after replacement, use Facebook Debugger's "Scrape Again" to force refresh on Facebook/Instagram, and test a fresh URL (or cache-busting query param) on Slack/Discord.
+
+---
+
+## Completed (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolved by Phase 24 (24-04).** A real 1200x630 true-Geist editorial `og-default.png` (38,160 bytes, up from the 3,631-byte placeholder) was designed via the frontend-design skill and shipped in commit 6bbfb8b (`fix(24-04): re-render OG card in true Geist`), superseding 36fa440. A deterministic PNG-signature/size/hash-diff verifier guards it. Social unfurls now show the editorial card.

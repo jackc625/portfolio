@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "Got this error message in the console: Uncaught (in promise) AbortError: Transition was skipped"
 created: 2026-05-10T00:00:00Z
 updated: 2026-05-10T00:00:00Z
@@ -103,3 +103,11 @@ root_cause: |
 fix:
 verification:
 files_changed: []
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Fixed in v1.3 Phase 17 (UAT-GAP-04) — head-level inline pageswap handler swallows the native cross-document AbortError (MOTION.md MOTN-01 rejection-handling spec).
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._

@@ -1,5 +1,5 @@
 ---
-status: diagnosed
+status: resolved
 trigger: "On fresh pnpm dev, Vite dep optimizer throws 'file does not exist in optimize deps directory' errors on first requests before settling. Site still renders. Production builds clean."
 created: 2026-04-15T17:50:00Z
 updated: 2026-04-15T17:55:00Z
@@ -86,3 +86,11 @@ risk:
 files_changed: []
 
 verdict: **Ship the fix this session.** It is a 6-line config change with zero production impact, zero behavior change, and directly addresses the root cause. The alternative (document as benign) leaves a noisy dev experience that will cause confusion on every fresh clone. Fix cost < documentation cost over project lifetime.
+
+---
+
+## Closeout (v1.4 milestone pre-close audit, 2026-07-14)
+
+**Resolution:** Diagnosed benign — dev-only Vite dep-optimizer cold-start race; production builds are single clean builds with no optimizer. No fix warranted (do NOT use optimizeDeps.exclude, per diagnosis).
+
+_Status flipped diagnosed/investigating → resolved and archived to debug/resolved/ during the v1.4 milestone close. No open work remains._
