@@ -1,0 +1,21 @@
+{
+  "protected_file_hashes": {
+    "src/layouts/BaseLayout.astro": "38973d84a7ad0780981df5630b6d9396dec36ea67293c3806bb74c980169c020",
+    "src/styles/global.css": "d923fdc85e5cd893bd5a72b407651121f07781e472d23818d9e55a7ef46ad33e",
+    "src/scripts/chat.ts": "d4b7b2a1c89b89b1d7281b3a4111c58bfa41677c2673e2b107fb3b809a04c87f",
+    "src/pages/api/chat.ts": "6b59a02b0b60701dda53ae0953be311bc4702be55e7cf2091df63ab8dff7dd6f"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/mdx": "^5.0.2",
+    "@astrojs/sitemap": "^3.7.1",
+    "@tailwindcss/vite": "^4.2.2",
+    "astro": "^6.0.8",
+    "astro-seo": "^1.1.0",
+    "dompurify": "^3.3.3",
+    "marked": "^17.0.5",
+    "tailwindcss": "^4.2.2",
+    "zod": "^4.3.6"
+  }
+}
