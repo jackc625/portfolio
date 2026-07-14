@@ -4,16 +4,16 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 24
 current_phase_name: Positioning Shift & Home Teaser
-status: in-progress
-stopped_at: Phase 24 replanned incorporating cross-AI review (codex); 4 plans, 3 waves
-last_updated: "2026-07-14T02:40:00.000Z"
-last_activity: 2026-07-13
-last_activity_desc: "Phase 24 replanned (--reviews): codex findings incorporated + 3 plan-checker warnings fixed; plan-checker PASSED, requirements 5/5 + decisions 20/20 covered"
+status: executing
+stopped_at: 24-01 complete (education.ts SSoT + Gate D/E + invariant baseline); 24-02 next
+last_updated: "2026-07-14T04:00:08.401Z"
+last_activity: 2026-07-14
+last_activity_desc: Completed 24-01 (positioning foundation)
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
+  total_plans: 17
+  completed_plans: 14
   percent: 60
 ---
 
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-08)
 
 **Core value:** Recruiters and hiring managers who visit this site should immediately see Jack as someone worth interviewing
-**Current focus:** Phase 24 - Positioning Shift & Home Teaser (replanned w/ codex review feedback - 4 plans, ready to execute)
+**Current focus:** Phase 24 — Positioning Shift & Home Teaser
 
 ## Current Position
 
-Phase: 24 — Positioning Shift & Home Teaser
-Plan: 4 plans (24-01..24-04) across 3 waves - ready to execute
-Status: Phase 24 replanned incorporating cross-AI review (codex gpt-5.6-sol); plan-checker PASSED, requirements 5/5 + decisions 20/20 covered; ready to execute
-Last activity: 2026-07-13 - Phase 24 replanned incorporating codex review feedback
+Phase: 24 (Positioning Shift & Home Teaser) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-07-14 — Completed 24-01 (positioning foundation)
 Progress: [██████░░░░] 60% (3/5 phases)
 
 ### v1.4 phase map
@@ -80,6 +80,9 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 23]: 23-03: WorkRow extended with optional tagline (structural title:has(+ .work-tagline) 8px override → byte-identical when absent, no modifier class, no fork); /projects two-tier FEATURED/MORE WORK via featured-partition, tier sub-labels mirror experience.astro earlier-divider (48px break), rows numbered off order 01-07
 - [Phase 23]: 23-03: Home teaser gains taglines (same primitive) + a See all work link mirroring .read-more with the deep-link arrow reveal; all page/primitive-scoped CSS — global.css & BaseLayout.astro untouched (T-23-03 mitigated); SC2 render gate parses built HTML for exactly 3 .work-tagline elements (F7 DOM count, not substring)
 - [Phase 23]: 23-04: capstone gate green end-to-end (build 0/0/0 + dist/, 637 pass/2 skip, F3 no-drift, dep-lock exit 0, no schema change); both human sign-offs APPROVED (#7 copy D-02/D-03, frontend-design 6-pillar SC5); re-run over two scoped fix(23) cleanups e1796ed+517f6b5
+- [Phase 24]: 24-01: education.ts is SSoT; alumniOfSchema+hasCredentialSchema DERIVED from EDUCATION/CREDENTIALS (no re-hardcoded WGU/VT); Gate D asserts derivation linkage + VT alumniOf-only (D-10)
+- [Phase 24]: 24-01: captured phase-start invariant baseline (24-BASELINE.json: 8 protected-file hashes + deps) + verify-phase24-invariants.mjs (Node built-ins only) so 24-04 proves phase-wide D-19/D-17 across committed tasks (review fix #4)
+- [Phase 24]: 24-01: Gate E strengthened to 11 anchors (SEO + ChatWidget import/render + pageswap .finished?.catch + 3 client-script imports; review fix #6)
 
 ### Open Blockers
 
@@ -112,9 +115,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T02:40:00.000Z
-**Stopped at:** Phase 24 replanned incorporating cross-AI review (codex); 4 plans, 3 waves
-**Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-01-PLAN.md
+**Last session:** 2026-07-14T03:59:46.128Z
+**Stopped at:** 24-01 complete (education.ts SSoT + Gate D/E + invariant baseline); 24-02 next
+**Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-02-PLAN.md
 
 ## Performance Metrics
 
@@ -137,3 +140,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 23 P02 | 2min | 2 tasks | 6 files |
 | Phase 23 P03 | ~9min | 3 tasks | 4 files |
 | Phase 23 P04 | ~6min | 2 tasks | 0 files (verification-only capstone gate) |
+| Phase Phase 24 PP01 | 4min | 2 tasks tasks | 5 files files |
