@@ -84,6 +84,12 @@ describe("UAT Gap #1: B1 self-test — regex catches known first-person tokens",
     "I’m Jack",
     "I’d like to ship",
     "I’ve added tests",
+    // Phase 25 B1 (Codex HIGH) — real Balfour first-person counterexamples the
+    // finite allowlist currently MISSES. EXPECTED RED until 25-03 extends
+    // FIRST_PERSON_LEAK byte-identically across all three sites with
+    // interned/coordinated. Their presence guarantees the extension lands.
+    "I interned in project management",
+    "I coordinated deliverables",
   ];
 
   for (const sample of KNOWN_LEAKS) {
@@ -114,20 +120,55 @@ describe("UAT Gap #1: chat-knowledge JSON voice contract (CHAT-06)", () => {
     expect(ctx.about.intro).toMatch(/^Jack/);
   });
 
-  it("no first-person leak in about.{intro,p1,p2,p3} or experience", () => {
+  it("no first-person leak in about.{intro,p1,p2,p3} or any experience field", () => {
+    // After D-09 ctx.experience is an ARRAY of {role,company,dateRange,summary}.
+    // RED until 25-03 emits the array (current corpus ships a string experience).
+    expect(Array.isArray(ctx.experience), "ctx.experience should be an array").toBe(
+      true
+    );
+
     const fields: Array<[string, string | undefined]> = [
       ["about.intro", ctx.about?.intro],
       ["about.p1", ctx.about?.p1],
       ["about.p2", ctx.about?.p2],
       ["about.p3", ctx.about?.p3],
-      ["experience", ctx.experience],
     ];
+
+    // Push ALL FOUR serialized experience fields (Codex MEDIUM): role, company,
+    // and dateRange also enter the prompt via wholesale JSON.stringify, not just
+    // summary/role.
+    const experience: Array<{
+      role?: string;
+      company?: string;
+      dateRange?: string;
+      summary?: string;
+    }> = Array.isArray(ctx.experience) ? ctx.experience : [];
+    experience.forEach((e, i) => {
+      fields.push([`experience[${i}].role`, e.role]);
+      fields.push([`experience[${i}].company`, e.company]);
+      fields.push([`experience[${i}].dateRange`, e.dateRange]);
+      fields.push([`experience[${i}].summary`, e.summary]);
+    });
+
     for (const [name, value] of fields) {
       expect(value, `${name} should be a string`).toBeTypeOf("string");
       expect(value, `${name} contains first-person leak`).not.toMatch(
         FIRST_PERSON_LEAK
       );
     }
+
+    // Defense-in-depth (Codex option B): no experience field may BEGIN with a
+    // first-person pronoun clause, catching any first-person lead even if it uses
+    // a verb the finite FIRST_PERSON_LEAK regex misses.
+    const NEVER_BEGINS_FIRST_PERSON = /^\s*(I|My|We|Our)\b/;
+    experience.forEach((e, i) => {
+      for (const key of ["role", "company", "dateRange", "summary"] as const) {
+        expect(
+          e[key],
+          `experience[${i}].${key} begins with a first-person pronoun`
+        ).not.toMatch(NEVER_BEGINS_FIRST_PERSON);
+      }
+    });
   });
 
   it("every project has a non-empty caseStudy and no first-person leak", () => {
