@@ -5,10 +5,10 @@ milestone_name: Professional Experience
 current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
 status: ready
-stopped_at: Phase 24 complete + verified — UAT 14/14 pass (1 issue found + fixed inline: removed About P2 per Jack's copy review, commit c1c2022) and 24-SECURITY.md 7 threats closed / 0 open. Full suite 676 pass/2 skip; astro check 0/0/0; OG + invariant verifiers exit 0; chat surface byte-identical. Ready to plan Phase 25.
-last_updated: "2026-07-14T13:37:04.192Z"
+stopped_at: Phase 25 context gathered
+last_updated: "2026-07-14T15:47:35.851Z"
 last_activity: 2026-07-14
-last_activity_desc: Phase 24 complete, transitioned to Phase 25
+last_activity_desc: Phase 25 context gathered — 9 decisions locked, ready to plan
 progress:
   total_phases: 5
   completed_phases: 4
@@ -30,8 +30,8 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 Phase: 25 — Chat Knowledge Refresh & Milestone Verification
 Plan: Not started
-Status: Ready to plan Phase 25 (Phase 24 complete + verified)
-Last activity: 2026-07-14 — Phase 24 complete + UAT/security verified, transitioned to Phase 25
+Status: Phase 25 context gathered (9 decisions locked); ready to plan
+Last activity: 2026-07-14 — Phase 25 discuss-phase complete (25-CONTEXT.md committed)
 Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
@@ -127,9 +127,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T13:37:04.192Z
-**Stopped at:** Phase 24 complete + verified. /gsd-verify-work 24 → UAT 14/14 (Test 2 issue: Jack asked to remove About P2 "boring tool first"; applied + verified inline, commit c1c2022). Secure-phase → 24-SECURITY.md 7 closed/0 open. Transitioned to Phase 25. Full suite 676 pass/2 skip; invariants + OG verifiers exit 0; portfolio-context.json byte-identical (chat surface untouched).
-**Resume file:** none (Phase 24 complete + verified; ready to plan Phase 25)
+**Last session:** 2026-07-14T15:47:35.841Z
+**Stopped at:** Phase 25 context gathered
+**Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-CONTEXT.md
 
 ## Performance Metrics
 
