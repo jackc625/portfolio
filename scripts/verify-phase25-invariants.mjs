@@ -66,9 +66,15 @@ export function currentDependencies() {
 
 /**
  * Normalize a dependencies object by sorting keys so a benign reordering of the
- * package.json `dependencies` block (formatter/tooling rewrite) with no
- * additions or removals does not trip the no-new-deps invariant. QA-02 / D-14 is
- * about detecting ADDED dependencies, not key order.
+ * package.json `dependencies` block (formatter/tooling rewrite) does not trip
+ * the invariant. Key ORDER is normalized away; everything else is compared.
+ *
+ * Note (IN-02, 25-REVIEW): this is deliberately stricter (fail-safe) than the
+ * QA-02 / D-14 "no ADDED dependencies" intent — because the full normalized
+ * object is compared, ANY add, removal, OR version-string change is treated as
+ * drift, not only additions. A legitimate patch bump in a later phase task will
+ * false-fail the capstone until the baseline is re-recorded, which is
+ * acceptable for a one-phase invariant gate.
  */
 function normDeps(deps) {
   return JSON.stringify(
