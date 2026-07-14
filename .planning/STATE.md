@@ -4,17 +4,17 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
-status: executing
-stopped_at: Completed 25-03-PLAN.md (corpus regen — #7 ingested, experience array, SSoT education; 25-01 RED set green)
-last_updated: "2026-07-14T19:37:41.385Z"
+status: complete
+stopped_at: Completed 25-04-PLAN.md (v1.4 capstone verification gate — all gates green + live chat UAT APPROVED; Phase 25 execution complete)
+last_updated: "2026-07-14T20:00:05.000Z"
 last_activity: 2026-07-14
-last_activity_desc: Completed Phase 25 Plan 03 (corpus engine migration)
+last_activity_desc: Completed Phase 25 Plan 04 (v1.4 capstone verification gate + human chat sign-off)
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 22
-  completed_plans: 22
-  percent: 80
+  completed_phases: 5
+  total_plans: 23
+  completed_plans: 23
+  percent: 100
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 ## Current Position
 
-Phase: 25 (Chat Knowledge Refresh & Milestone Verification) — EXECUTING
-Plan: 5 of 5
-Status: 25-03 complete (corpus regenerated — #7 ingested untruncated, experience reverse-chron array, education single-sourced from education.ts; 25-01 RED set green; astro check 0/0/0; full suite 692 pass/2 skip) — ready for 25-04 (milestone verification gate)
-Last activity: 2026-07-14 — Completed Phase 25 Plan 03 (corpus engine migration)
-Progress: [████████░░] 80% (4/5 phases)
+Phase: 25 (Chat Knowledge Refresh & Milestone Verification) — COMPLETE
+Plan: 5 of 5 (all complete)
+Status: 25-04 complete (v1.4 capstone verification gate GREEN — pnpm build 4 stages exit 0, pnpm test 692 pass/2 skip, astro check 0/0/0, drift check exit 0, verify-phase25-invariants.mjs exit 0 with 4 gated files + deps byte-identical phase-wide; live chat UAT APPROVED by Jack — Holloway + Multi-Chain EVM third-person accurate, no returns claims, no first-person leak, security probes refused cleanly). Phase 25 execution complete — ready for /gsd-ship (production Lighthouse + /gsd-complete-milestone deferred there per D-11)
+Last activity: 2026-07-14 — Completed Phase 25 Plan 04 (capstone gate + human chat sign-off)
+Progress: [██████████] 100% (5/5 phases)
 
 ### v1.4 phase map
 
@@ -99,11 +99,12 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 25]: 25-01: education.ts imported extension-less (repo convention) not the plan's .ts spelling, to avoid a TS import-extension error under the 25-04 astro-check gate; same SSoT-import intent
 - [Phase 25]: 25-01: authored the Phase 25 Wave-0 tests-first contract (14 RED-by-design / 77 GREEN across 3 chat suites); byte-intact <security> snapshot bounds 25-02's edit to exactly the one #7-ban sentence; RED set enumerated in SUMMARY as 25-03's green target
 - [Phase 25]: 25-03: corpus engine migration — lifted the #7 slug-skip (single reused slug binding + isReservedProjects7Source guard), recursive fail-closed experience reader emitting a reverse-chron {role,company,dateRange,summary} array, education single-sourced from education.ts via dep-free parseEducation, 4-field first-person leak-walk, FIRST_PERSON_LEAK_RE +interned/+coordinated byte-identical ×3. Regenerated portfolio-context.json: projects=7 (#7 untruncated), est_tokens=48735, about intro/p1/p3 (no p2). Coupled p2-assertion retirement in portfolio-context-types about sub-type + chat-context-integrity + chat-knowledge-voice (pre-flagged by plan). astro check 0/0/0; drift clean; full suite 692 pass/2 skip. CHAT-10/CHAT-11/QA-02 marked complete (commits d85a38e, 30975ad)
+- [Phase 25]: 25-04: v1.4 capstone verification gate — all pre-deploy gates GREEN (pnpm build 4 stages exit 0 → 14 static routes; pnpm test 692 pass/2 skip incl D-26 battery + D-15 SSE anchor; astro check 0/0/0 140 files; build:chat-context:check exit 0, est_tokens=48735; verify-phase25-invariants.mjs exit 0 — 4 D-14 gated files + normalized deps byte-identical to phase-start baseline, committed-drift-proof → QA-01/QA-02). Live chat UAT APPROVED by Jack against local astro dev: Holloway + Multi-Chain EVM (#7 ban lifted, now answers) accurate in THIRD person, no returns/profit claims, full-time positioning, no first-person leak, exfiltration + PII probes refused cleanly (CHAT-11/D-12). Production-edge Lighthouse + /gsd-complete-milestone correctly DEFERRED to /gsd-ship (D-11). Verification-only plan — SUMMARY commit is the artifact. Phase 25 + v1.4 execution complete
 - [Phase 25]: 25-02: authored + copy-review-locked all third-person chat copy (Holloway/#7/Balfour chatSummaries, about-chat identity drops 'junior' with P3 anchors 'looking for'/'full-time', portfolio-context.static.json +4 skills / education removed, system-prompt #7-ban lifted with <security> byte-intact). At Jack's checkpoint approval CUT chat ABOUT_CHAT_P2 ('boring tool first') to match the Phase 24 site /about P2 removal; coupled build-chat-context.mjs about-extractor to 3 paragraphs (INTRO/P1/P3) so the tree stays green (Rule 3 blocking coupled edit — 25-03 owns the corpus-engine rewrite). portfolio-context.json NOT regenerated (25-03's job; corpus retains about.p2 — deliberate cross-wave drift). CHAT-10/11 only PARTIALLY advanced — complete when 25-03/25-04 turn the suite green. astro check 0/0/0; only the known RED-until-25-03 failures remain (commit e874728)
 
 ### Open Blockers
 
-(none — Phases 21–24 complete and verified; Phase 25 not started)
+(none — Phases 21–25 complete and verified; v1.4 execution finished, ready for /gsd-ship)
 
 ### Deferred Items (carried into next milestone or organic-evidence wait)
 
@@ -132,9 +133,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T00:00:00.000Z
-**Stopped at:** Completed 25-03 (corpus regen — #7 ingested, experience array, SSoT education); ready for 25-04 milestone verification gate
-**Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-04-PLAN.md
+**Last session:** 2026-07-14T20:00:05.000Z
+**Stopped at:** Completed 25-04 (v1.4 capstone verification gate — all gates green + live chat UAT APPROVED); Phase 25 + v1.4 execution complete
+**Resume file:** None — ready for /gsd-ship
 
 ## Performance Metrics
 
@@ -165,3 +166,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 25 P01 | 12min | 3 tasks | 4 files |
 | Phase 25 P02 | ~15min | 3 tasks | 7 files (6 copy/identity sources + build-script coupled edit) |
 | Phase 25 P03 | ~20min | 2 tasks | 6 files (corpus engine migration + regen; 1 new test file) |
+| Phase 25 P04 | ~10min | 2 tasks | 0 files (verification-only capstone gate + human chat sign-off) |

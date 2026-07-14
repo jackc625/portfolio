@@ -60,7 +60,7 @@
 - [x] **Phase 22: Experience Page & Holloway Case Study** — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry (completed 2026-07-09)
 - [x] **Phase 23: Projects Reconciliation & Featured Tier** — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below (completed 2026-07-10)
 - [x] **Phase 24: Positioning Shift & Home Teaser** — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser (completed 2026-07-14)
-- [ ] **Phase 25: Chat Knowledge Refresh & Milestone Verification** — Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates
+- [x] **Phase 25: Chat Knowledge Refresh & Milestone Verification** — Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates (completed 2026-07-14)
 
 ## Phase Details
 
@@ -190,7 +190,7 @@
   3. The D-26 chat-surface regression battery and the D-15 SSE byte-identical anchor hold across every change touching `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts`.
   4. `pnpm exec astro check` is 0/0/0, Lighthouse holds at or above prior scores on the production-on-Cloudflare-edge canonical gate, and no new runtime dependencies were added across the milestone.
 
-**Plans**: 4/5 plans executed
+**Plans**: 5/5 plans complete
 
 **Wave 1** *(baseline-first, then tests + copy authoring; with worktrees off, same-wave plans serialize in plan-number order so 25-00 runs first)*
 
@@ -204,7 +204,7 @@
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 25-04-PLAN.md — Milestone verification capstone (build/test/astro-check/drift + the 25-00 hash verifier for the phase-wide untouched proof + D-26/D-15) + live chat UAT incl. security probe (QA-01/QA-02/CHAT-11)
+- [x] 25-04-PLAN.md — Milestone verification capstone (build/test/astro-check/drift + the 25-00 hash verifier for the phase-wide untouched proof + D-26/D-15) + live chat UAT incl. security probe (QA-01/QA-02/CHAT-11)
 
 ## Progress
 
@@ -237,4 +237,4 @@ Phases execute in numeric order within each milestone.
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 4/4 | Complete    | 2026-07-10 |
 | 24. Positioning Shift & Home Teaser | v1.4 | 4/4 | Complete    | 2026-07-14 |
-| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 4/5 | In Progress|  |
+| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 5/5 | Complete   | 2026-07-14 |
