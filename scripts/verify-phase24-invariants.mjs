@@ -83,7 +83,15 @@ export function verifyInvariants() {
       mismatches.push(`baseline missing hash for protected file: ${rel}`);
       continue;
     }
-    const current = sha256File(rel);
+    let current;
+    try {
+      current = sha256File(rel);
+    } catch (err) {
+      mismatches.push(
+        `protected file missing or unreadable: ${rel} (${err.code ?? err.message})`,
+      );
+      continue;
+    }
     if (current !== recorded) {
       mismatches.push(
         `protected file drifted: ${rel}\n    baseline ${recorded}\n    current  ${current}`,
@@ -91,8 +99,18 @@ export function verifyInvariants() {
     }
   }
 
-  const currentDeps = JSON.stringify(currentDependencies());
-  const baselineDeps = JSON.stringify(baseline.dependencies ?? {});
+  // Normalize by sorting keys so a benign reordering of the package.json
+  // `dependencies` block (formatter/tooling rewrite) with no additions or
+  // removals does not trip the no-new-deps invariant. QA-02 / D-19 is about
+  // detecting ADDED dependencies, not key order.
+  const normDeps = (deps) =>
+    JSON.stringify(
+      Object.fromEntries(
+        Object.entries(deps).sort(([a], [b]) => a.localeCompare(b)),
+      ),
+    );
+  const currentDeps = normDeps(currentDependencies());
+  const baselineDeps = normDeps(baseline.dependencies ?? {});
   if (currentDeps !== baselineDeps) {
     mismatches.push(
       `package.json dependencies changed (QA-02 no-new-deps)\n    baseline ${baselineDeps}\n    current  ${currentDeps}`,
