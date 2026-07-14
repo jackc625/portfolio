@@ -17,11 +17,11 @@
 
 /* Verified: 2026-05-11 */
 export const ABOUT_CHAT_INTRO =
-  "Jack is a junior software engineer who enjoys building systems that don't break at 3 a.m.";
+  "Jack is a software engineer who enjoys building systems that don't break at 3 a.m.";
 
 /* Verified: 2026-05-11 */
 export const ABOUT_CHAT_P1 =
-  "Jack builds small, production-grade services and the plumbing around them: caches, compilers, sync engines, APIs. Most of his projects start as “how does that actually work?” and end as something he would be comfortable handing off to a team.";
+  "Jack builds and stabilizes production systems for real users. He is currently the solo contract engineer on Holloway Connect, a live operations platform, and recently finished his B.S. in Computer Science. Most of his projects start as “how does that actually work?” and end as something he would be comfortable handing off to a team.";
 
 /* Verified: 2026-05-11 */
 export const ABOUT_CHAT_P2 =
@@ -29,4 +29,4 @@ export const ABOUT_CHAT_P2 =
 
 /* Verified: 2026-05-11 */
 export const ABOUT_CHAT_P3 =
-  "Jack is currently looking for a junior or entry-level role on a team that values correctness, reliability, and performance — ideally one that will push him to get better at the parts of the stack he has not touched yet.";
+  "Alongside the contract work, Jack is looking for a full-time software engineering role on a team that values correctness, reliability, and performance, ideally one that will push him to get better at the parts of the stack he has not touched yet.";
