@@ -2,11 +2,13 @@
 /**
  * @fileoverview Build-time knowledge generator for the chat widget.
  *
- * Reads 4 sources and writes a single merged JSON the chat API consumes:
- *   1. src/content/projects/*.mdx              — case-study bodies (D-01)
+ * Reads these sources and writes a single merged JSON the chat API consumes:
+ *   1. src/content/projects/*.mdx              — third-person chatSummary frontmatter (D-01, CHAT-06 voice-split)
  *   2. Projects/<n> - <NAME>.md                — below-fence extended references (D-02)
- *   3. src/data/about.ts                       — ABOUT_INTRO, ABOUT_P1..P3 (D-03)
- *   4. src/data/portfolio-context.static.json  — hand-curated identity (D-08)
+ *   3. src/data/about-chat.ts                  — ABOUT_CHAT_INTRO, ABOUT_CHAT_P1/P3 (third-person variant, D-03)
+ *   4. src/data/education.ts                   — single-sourced education object (D-07)
+ *   5. src/content/experience/**\/*.mdx        — reverse-chron {role,company,dateRange,summary} array (D-09)
+ *   6. src/data/portfolio-context.static.json  — hand-curated identity (D-08)
  *
  * Projects/7 MULTI-DEX CRYPTO TRADER.md is now INGESTED (Phase 25 / CHAT-10
  * lifted the former D-04 / D-15 exclusion). The #7 case study has its own MDX
