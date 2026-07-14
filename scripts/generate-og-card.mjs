@@ -13,7 +13,7 @@
 //
 // Usage: node scripts/generate-og-card.mjs   ->  writes scripts/og-card.html
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
@@ -21,11 +21,37 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const fontsDir = join(root, ".astro", "fonts");
 
-// The exact self-hosted Geist files the site serves (Astro Fonts API output).
+// Resolve each self-hosted Geist face by its STABLE Astro Fonts API prefix
+// rather than a pinned content-hash filename. Astro emits multiple content-hash
+// variants per weight and those hashes change whenever the font set/config
+// changes, so a hardcoded hash goes stale silently and throws an opaque ENOENT.
+// Fail with a clear, actionable message instead.
+function findFont(prefix) {
+  let entries;
+  try {
+    entries = readdirSync(fontsDir);
+  } catch (err) {
+    throw new Error(
+      `OG generator: cannot read fonts dir ${fontsDir} (${err.code ?? err.message}); run a build first?`,
+    );
+  }
+  const hit = entries.find(
+    (f) => f.startsWith(prefix) && f.endsWith(".woff2"),
+  );
+  if (!hit) {
+    throw new Error(
+      `OG generator: no woff2 matching "${prefix}" in ${fontsDir} (run a build first?)`,
+    );
+  }
+  return hit;
+}
+
+// The self-hosted Geist faces the site serves (Astro Fonts API output),
+// resolved by stable prefix.
 const FONTS = {
-  display700: "font-display-src-700-normal-latin-502b9851e13aed9b.woff2",
-  body400: "font-body-src-400-normal-latin-502b9851e13aed9b.woff2",
-  mono400: "font-mono-src-400-normal-latin-181a29443484632f.woff2",
+  display700: findFont("font-display-src-700-normal-latin-"),
+  body400: findFont("font-body-src-400-normal-latin-"),
+  mono400: findFont("font-mono-src-400-normal-latin-"),
 };
 
 function b64(file) {
