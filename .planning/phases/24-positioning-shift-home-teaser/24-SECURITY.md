@@ -67,6 +67,7 @@ surface. The chat pipeline is explicitly out of scope (D-17) and provably untouc
 | Audit Date | Threats Total | Closed | Open | Run By |
 |------------|---------------|--------|------|--------|
 | 2026-07-14 | 7 | 7 | 0 | gsd-secure-phase (ASVS L1 grep-depth, Opus) — register authored at plan time, short-circuit verified against GREEN phase-24 gates + this session's re-run |
+| 2026-07-14 | 7 | 7 | 0 | gsd-secure-phase re-run (ASVS L1, Opus) — re-executed `verify-phase24-invariants.mjs` (exit 0, 8 protected files + deps match baseline) and `verify-phase24-og.mjs` (exit 0, real 1200×630 PNG distinct from placeholder) live; confirmed `JsonLd.astro` `<`/`>`/`&`/U+2028/U+2029 escaping + all 7 mitigation artifacts present. `register_authored_at_plan_time: true`, `threats_open: 0` → short-circuit (no deeper auditor pass required at L1) |
 
 ---
 
