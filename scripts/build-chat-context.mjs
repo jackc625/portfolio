@@ -46,7 +46,6 @@ const CHECK_MODE = process.argv.includes("--check");
 const PROJECT_ROOT = process.cwd();
 const MDX_GLOB = "src/content/projects/*.mdx";
 const STATIC_JSON_PATH = "src/data/portfolio-context.static.json";
-const ABOUT_TS_PATH = "src/data/about.ts";
 const ABOUT_CHAT_TS_PATH = "src/data/about-chat.ts";
 const EDUCATION_TS_PATH = "src/data/education.ts"; // D-07 SSoT (Phase 25 / CHAT-10)
 const OUTPUT_JSON_PATH = "src/data/portfolio-context.json";
@@ -314,47 +313,8 @@ export function truncateReadme(readmeText, wordCap) {
 }
 
 /**
- * Extract ABOUT_INTRO, ABOUT_P1, ABOUT_P2, ABOUT_P3 string values from about.ts source.
- * Uses regex because about.ts is TypeScript and we don't want to spin up a TS loader.
- * Preserves Unicode escapes (\\u2014 etc.) by eval-style string decoding via JSON.parse.
- *
- * Throws on any missing export with a named, actionable error:
- *   "about.ts: export const ABOUT_P1 not in single-line double-quoted form —
- *    either normalize the export OR extend parseAboutExports() to handle template literals"
- */
-export function parseAboutExports(sourceContent) {
-  const names = ["ABOUT_INTRO", "ABOUT_P1", "ABOUT_P2", "ABOUT_P3"];
-  const result = {};
-  for (const name of names) {
-    // Match `export const NAME = "..."` (single-line double-quoted string only).
-    // The RHS may span onto the next line after `=` (common style: `export const NAME =\n  "..."`).
-    const re = new RegExp(
-      `export const ${name}\\s*=\\s*("(?:[^"\\\\]|\\\\.)*")`,
-      "m"
-    );
-    const m = re.exec(sourceContent);
-    if (!m) {
-      // Check whether the export exists at all (was the name renamed?) vs exists in a form we don't support.
-      const existsAtAll = new RegExp(`export const ${name}\\b`, "m").test(sourceContent);
-      if (!existsAtAll) {
-        throw new Error(
-          `${ABOUT_TS_PATH}: missing export const ${name} — add it to about.ts`
-        );
-      }
-      throw new Error(
-        `${ABOUT_TS_PATH}: export const ${name} not in single-line double-quoted form — ` +
-          `either normalize back to a \`"..."\` literal OR extend parseAboutExports() to handle template literals`
-      );
-    }
-    // JSON.parse decodes —, \n, etc.
-    result[name] = JSON.parse(m[1]);
-  }
-  return result;
-}
-
-/**
  * Extract ABOUT_CHAT_INTRO, ABOUT_CHAT_P1..P3 from src/data/about-chat.ts.
- * Mirrors parseAboutExports — same regex shape, same error contract.
+ * Same regex shape and error contract as the education/experience readers below.
  * The source file is the third-person variant the chat widget consumes;
  * the first-person originals in about.ts continue to feed the website
  * surface (homepage, about page).
