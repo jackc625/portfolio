@@ -4,17 +4,17 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 24
 current_phase_name: Positioning Shift & Home Teaser
-status: executing
-stopped_at: 24-03 complete (About INTRO/P1/P3 revised to new-grad-with-production register + P2 verbatim; /about Education block fed by education.ts; POS-03 render gate GREEN); 24-04 next
-last_updated: "2026-07-14T04:22:56.172Z"
+status: verifying
+stopped_at: 24-04 complete (real 1200x630 true-Geist og-default.png + Gate A GREEN across all five voice-gate-unscanned files + capstone gate green; all four human sign-offs APPROVED). Phase 24 all 4 plans done — ready for verification.
+last_updated: "2026-07-14T12:16:24.968Z"
 last_activity: 2026-07-14
-last_activity_desc: Completed 24-03 (About positioning + /about Education block)
+last_activity_desc: Completed 24-04 (OG card + Gate A + capstone gate); Phase 24 all 4 plans done
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 17
-  completed_plans: 16
-  percent: 60
+  completed_plans: 17
+  percent: 80
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 ## Current Position
 
-Phase: 24 (Positioning Shift & Home Teaser) — EXECUTING
-Plan: 4 of 4
-Status: Ready to execute
-Last activity: 2026-07-14 — Completed 24-03 (About positioning + /about Education block)
-Progress: [██████░░░░] 60% (3/5 phases)
+Phase: 24 (Positioning Shift & Home Teaser) — COMPLETE (ready for verification)
+Plan: 4 of 4 — all plans complete
+Status: Phase complete — ready for verification
+Last activity: 2026-07-14 — Completed 24-04 (OG card + Gate A + capstone gate); Phase 24 all 4 plans done
+Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
 
@@ -89,6 +89,9 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 24]: 24-03: About INTRO/P1/P3 revised to honest new-grad-with-production-experience register (dropped self-applied seniority qualifier, D-07); ABOUT_P2 kept byte-identical (D-06); revision propagates to Home via about.ts SSoT with no index.astro edit
 - [Phase 24]: 24-03: /about Education block leads with the completed WGU B.S. CS (May 2026); VT rendered only as a 'Transferred from Virginia Tech' sub-note composed from EDUCATION.transferredFrom (never a credential, D-10); all four visible facts read from education.ts; middot (U+00B7) separators hold the zero-em-dash rule; page-scoped CSS only (global.css/BaseLayout untouched, D-19)
 - [Phase 24]: 24-03: POS-03 covered by tests/build/about-education-render.test.ts (jsdom dist render: four facts + no-accent + POS-01/02 positive body claims, review fix #6); astro check 0/0/0
+- [Phase ?]: [Phase 24]: 24-04: OG card re-rendered in TRUE Geist per the human checkpoint (librsvg/sharp ignores @font-face + cannot read Geist woff2, fell back to Arial); regenerated dep-free via the plan's sanctioned page-scoped HTML card screenshot through a browser (QA-02 holds); commit 6bbfb8b supersedes 36fa440
+- [Phase ?]: [Phase 24]: 24-04: Gate A (tests/content/site-copy-em-dash.test.ts) authored at the capstone boundary where all five voice-gate-unscanned files are simultaneously clean — GREEN at its own boundary + register banlist junior/senior/5+ years (review fix #1, D-18)
+- [Phase ?]: [Phase 24]: 24-04: capstone gate green (build 0, test 677 pass/2 skip incl D-26 battery + sse-snapshot, astro check 0/0/0, OG verifier 0, invariant verifier 0, portfolio-context.json byte-identical); all four human sign-offs APPROVED; POS-04 complete — Phase 24 done
 
 ### Open Blockers
 
@@ -121,9 +124,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T04:21:48Z
-**Stopped at:** 24-03 complete (About INTRO/P1/P3 revised + P2 verbatim; /about Education block fed by education.ts; POS-03 render gate GREEN 4/4; astro check 0/0/0); 24-04 next
-**Resume file:** .planning/phases/24-positioning-shift-home-teaser/24-04-PLAN.md
+**Last session:** 2026-07-14T12:15:18.942Z
+**Stopped at:** 24-04 complete (real 1200x630 true-Geist og-default.png + Gate A GREEN across all five voice-gate-unscanned files + capstone gate green 677 pass/2 skip; astro check 0/0/0; OG + invariant verifiers exit 0; all four human sign-offs APPROVED). Phase 24 all 4 plans done — ready for verification.
+**Resume file:** none (Phase 24 complete; run /gsd-verify-work or advance to Phase 25)
 
 ## Performance Metrics
 
@@ -149,3 +152,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase Phase 24 PP01 | 4min | 2 tasks tasks | 5 files files |
 | Phase 24 P02 | 8min | 3 tasks | 3 files |
 | Phase 24 P03 | 6min | 2 tasks | 3 files |
+| Phase 24 P04 | 1min | 3 tasks | 5 files |

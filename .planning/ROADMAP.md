@@ -59,7 +59,7 @@
 - [x] **Phase 21: Experience Content Pipeline & Collection** — Typed `experience` collection fed from `Experience/*.md` via a sync script mirroring the projects pipeline (completed 2026-07-09)
 - [x] **Phase 22: Experience Page & Holloway Case Study** — Dedicated Experience page + nav; Holloway scannable summary → full deep-dive; Balfour Beatty lightweight entry (completed 2026-07-09)
 - [x] **Phase 23: Projects Reconciliation & Featured Tier** — Sync Multi-Chain EVM (#7); feature SeatWatch / Multi-Chain EVM / NFL Prediction; keep the rest accessible below (completed 2026-07-10)
-- [ ] **Phase 24: Positioning Shift & Home Teaser** — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser
+- [x] **Phase 24: Positioning Shift & Home Teaser** — New-grad-with-production-experience framing across Core Value, About, education status, metadata; Home Holloway teaser (completed 2026-07-14)
 - [ ] **Phase 25: Chat Knowledge Refresh & Milestone Verification** — Regenerate `portfolio-context.json` with experience + project #7 (third-person voice split); hold D-26/D-15/astro-check/Lighthouse gates
 
 ## Phase Details
@@ -162,7 +162,7 @@
   4. Site metadata (SEO title/description and the JSON-LD Person schema) reflects the updated positioning and job title.
   5. The Home page surfaces a concise Holloway experience teaser that links through to the Experience page.
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 **UI hint**: yes
 
 **Wave 1** *(foundation — education module + Nyquist Wave 0 gates)*
@@ -176,7 +176,7 @@
 
 **Wave 3** *(blocked on 24-02, 24-03)*
 
-- [ ] 24-04-PLAN.md — Real 1200x630 `og-default.png` (frontend-design, ONE deterministic fail-closed path + PNG-signature/size/hash-diff verifier) + author Gate A (site-copy em-dash/register) + capstone gate (build + full suite incl D-26/sse-snapshot + astro-check 0/0/0 + phase-start baseline comparison for protected files/deps) + human sign-off (copy review + 6-pillar at 375px/1440px with focus/reduced-motion/overflow + Schema Markup Validator)
+- [x] 24-04-PLAN.md — Real 1200x630 `og-default.png` (frontend-design, ONE deterministic fail-closed path + PNG-signature/size/hash-diff verifier) + author Gate A (site-copy em-dash/register) + capstone gate (build + full suite incl D-26/sse-snapshot + astro-check 0/0/0 + phase-start baseline comparison for protected files/deps) + human sign-off (copy review + 6-pillar at 375px/1440px with focus/reduced-motion/overflow + Schema Markup Validator)
 
 ### Phase 25: Chat Knowledge Refresh & Milestone Verification
 
@@ -222,5 +222,5 @@ Phases execute in numeric order within each milestone.
 | 21. Experience Content Pipeline & Collection | v1.4 | 4/4 | Complete    | 2026-07-09 |
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 4/4 | Complete    | 2026-07-10 |
-| 24. Positioning Shift & Home Teaser | v1.4 | 3/4 | In Progress|  |
+| 24. Positioning Shift & Home Teaser | v1.4 | 4/4 | Complete   | 2026-07-14 |
 | 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 0/TBD | Not started | - |
