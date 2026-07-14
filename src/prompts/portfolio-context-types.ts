@@ -14,6 +14,9 @@
 export interface PortfolioContext {
   // STATIC keys (from portfolio-context.static.json -- D-08)
   personal: { name: string; title: string; location: string; summary: string };
+  // GENERATED / single-sourced from src/data/education.ts (D-07) via
+  // parseEducation, injected during the shallow merge. As of Phase 25 the
+  // static JSON no longer carries an education object.
   education: {
     degree: string;
     school: string;
