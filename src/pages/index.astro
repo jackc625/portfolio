@@ -10,12 +10,31 @@ import ContactSection from "../components/ContactSection.astro";
 import JsonLd from "../components/JsonLd.astro";
 import { CONTACT } from "../data/contact";
 import { ABOUT_INTRO, ABOUT_P1 } from "../data/about";
+import { sortExperienceEntries } from "../lib/experience";
 
 const allProjects = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order
 );
 // D-02: Homepage shows exactly 3 featured:true projects (SeatWatch, Multi-Chain EVM Trader, NFL Prediction)
 const featured = allProjects.filter((p) => p.data.featured);
+
+// HOME-01: the 01 EXPERIENCE teaser reuses the SAME collection query experience.astro
+// uses -- the shared ordering helper + the hasCaseStudy Holloway entry (no data
+// duplication, D-05). Do NOT inline a .sort() (experience orders by startDate desc).
+// The two guards mirror experience.astro verbatim so the teaser can never point at a
+// route the build did not generate (fail loudly if the invariant breaks).
+const experienceEntries = sortExperienceEntries(await getCollection("experience"));
+const holloway = experienceEntries.find((e) => e.data.hasCaseStudy);
+if (!holloway) {
+  throw new Error(
+    "index.astro: no experience entry has hasCaseStudy: true -- expected the Holloway featured summary for the Home teaser.",
+  );
+}
+if (holloway.id !== "holloway") {
+  throw new Error(
+    `index.astro: featured entry id "${holloway.id}" != "holloway"; the Home teaser /experience link would point at an unbuilt route.`,
+  );
+}
 
 // Person schema using CONTACT constants (D-23)
 const personSchema = {
@@ -52,6 +71,35 @@ const personSchema = {
           <MetaLabel text="EST. 2026 · NORTHERN VA" color="ink-muted" />
         </aside>
       </div>
+    </Container>
+  </section>
+
+  <section class="section experience-teaser" aria-labelledby="section-experience">
+    <Container>
+      <SectionHeader number="01" title="EXPERIENCE" id="section-experience" />
+
+      {/* HOME-01: compact mirror of experience.astro .featured -- eyebrow / title /
+          summary / ONE metric highlight / deep-link. Stack line OMITTED (D-05). */}
+      <article class="teaser">
+        <p class="meta-mono teaser-eyebrow">
+          {holloway.data.role} &middot; {holloway.data.dateRange}
+        </p>
+        <h2 class="h2-project teaser-title">{holloway.data.company}</h2>
+        <p class="lead teaser-summary">
+          I&rsquo;m the solo contract engineer on Holloway Connect, a live production operations platform.
+        </p>
+
+        <ul class="teaser-highlights">
+          <li class="body teaser-highlight">
+            Grew the test suite from 0 to ~1,400 passing checks, pinning money and payroll math to the penny.
+          </li>
+        </ul>
+
+        <a class="label-mono experience-link" href="/experience">
+          See the experience
+          <span class="experience-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
     </Container>
   </section>
 
@@ -103,6 +151,30 @@ const personSchema = {
   .hero-meta { grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 8px; }
   .hero-lead { margin-top: 32px; max-width: 40ch; color: var(--ink); }
   .accent-dot { color: var(--accent); }
+
+  /* 01 EXPERIENCE teaser -- compact mirror of experience.astro .featured
+     (eyebrow / title / summary / one hairline highlight / deep-link). Stack line
+     omitted (D-05). Page-scoped; global.css & BaseLayout.astro untouched (D-19).
+     Accent stays on the only clickable affordance -- the deep-link (MASTER §7). */
+  .teaser { margin-top: 24px; }
+  .teaser-eyebrow { color: var(--ink-muted); margin-bottom: 12px; }
+  .teaser-title { color: var(--ink); margin-bottom: 8px; }
+  .teaser-summary { color: var(--ink); max-width: 68ch; margin-bottom: 28px; }
+  .teaser-highlights { list-style: none; margin: 0 0 24px; padding: 0; max-width: 68ch; }
+  .teaser-highlight { color: var(--ink); border-top: 1px solid var(--rule); padding: 16px 0; }
+
+  .experience-link { display: inline-flex; align-items: baseline; gap: 8px; color: var(--ink-muted); text-decoration: none; transition: color 120ms ease; }
+  .experience-arrow { color: var(--accent); opacity: 0; transition: opacity 120ms ease; }
+  .experience-link:hover, .experience-link:focus-visible { color: var(--accent); }
+  .experience-link:hover .experience-arrow, .experience-link:focus-visible .experience-arrow { opacity: 1; }
+  .experience-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Reduced motion: keep the accent color change (affordance), drop the arrow
+     reveal -- matches the experience.astro .deep-link / .see-all-work contract. */
+  @media (prefers-reduced-motion: reduce) {
+    .experience-link, .experience-arrow { transition: none; }
+    .experience-link:hover .experience-arrow, .experience-link:focus-visible .experience-arrow { opacity: 0; }
+  }
 
   /* About preview */
   .about-body { max-width: 68ch; margin-top: 24px; }
