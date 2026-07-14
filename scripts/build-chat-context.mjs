@@ -8,13 +8,17 @@
  *   3. src/data/about.ts                       — ABOUT_INTRO, ABOUT_P1..P3 (D-03)
  *   4. src/data/portfolio-context.static.json  — hand-curated identity (D-08)
  *
- * Projects/7 MULTI-DEX CRYPTO TRADER.md is EXCLUDED (D-04 / D-15) — as of
- * Phase 23 the #7 case study now has its own MDX (slug `multi-chain-evm`),
- * so the old "unreferenced source is ignored" mechanism no longer applies.
- * Exclusion is now an explicit slug-skip at the top of the main() MDX loop:
- * the `multi-chain-evm` slug is `continue`d before either hard-fail runs, so
- * it never reaches portfolio-context.json. Phase 25 / CHAT-10 lifts this skip
- * and ingests #7 into the chat corpus (third-person voice split).
+ * Projects/7 MULTI-DEX CRYPTO TRADER.md is now INGESTED (Phase 25 / CHAT-10
+ * lifted the former D-04 / D-15 exclusion). The #7 case study has its own MDX
+ * (slug `multi-chain-evm`) with a third-person chatSummary, so it enters the
+ * chat corpus as the 7th project block (voice-split, untruncated below-fence
+ * reference). The former slug-skip is gone; a belt-and-suspenders reservation
+ * (isReservedProjects7Source) still hard-fails if some OTHER slug tries to
+ * claim the Projects/7 source.
+ *
+ * Experience is read recursively from src/content/experience/**\/*.mdx into a
+ * reverse-chron {role,company,dateRange,summary} array, and education is
+ * single-sourced from src/data/education.ts (D-07) via parseEducation.
  *
  * Resume PDF text is NOT extracted (D-05) — persona prompt directs
  * visitors to /jack-cutrara-resume.pdf for resume-level questions.
@@ -94,7 +98,7 @@ export const estimateTokens = (str) => Math.ceil(str.length / 4);
  * accepted per 17-REVIEW-GAPS.md WR-02 (shared-module extraction deferred).
  * See .planning/debug/chat-voice-split-regression.md.
  */
-const FIRST_PERSON_LEAK_RE = /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
+const FIRST_PERSON_LEAK_RE = /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested|interned|coordinated)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
 
 /**
  * First-person leak guard — exits 2 if any chat-bound field contains a
@@ -106,12 +110,26 @@ const FIRST_PERSON_LEAK_RE = /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I
  * surface, and the chat <role> handles voice translation when citing it.
  */
 function checkFirstPersonLeaks(merged) {
+  // D-09: experience is now an ARRAY of {role,company,dateRange,summary}. Walk
+  // ALL FOUR serialized string fields of every entry (Codex MEDIUM) — each one
+  // enters the model-visible prompt via wholesale JSON.stringify, not just the
+  // summary. Fall back to a single string entry if some future shape reverts.
+  const experienceTargets = Array.isArray(merged.experience)
+    ? merged.experience.flatMap((e, i) => {
+        const label = e && e.company ? ` (${e.company})` : "";
+        return [
+          [`experience[${i}].role${label}`, e?.role],
+          [`experience[${i}].company`, e?.company],
+          [`experience[${i}].dateRange`, e?.dateRange],
+          [`experience[${i}].summary${label}`, e?.summary],
+        ];
+      })
+    : [["experience", merged.experience]];
   const targets = [
     ["about.intro", merged.about?.intro],
     ["about.p1", merged.about?.p1],
-    ["about.p2", merged.about?.p2],
     ["about.p3", merged.about?.p3],
-    ["experience", merged.experience],
+    ...experienceTargets,
     ...merged.projects.map((p, i) => [
       `projects[${i}].caseStudy (${p.page})`,
       p.caseStudy,
@@ -555,14 +573,8 @@ async function main() {
   let errorCount = 0;
   let totalWords = 0;
   for (const mdxPath of mdxFiles) {
-    // D-15 (Phase 23): the #7 case study (slug `multi-chain-evm`) now has its
-    // own MDX, but it stays OUT of the chat corpus until Phase 25 / CHAT-10.
-    // Skip it BEFORE the try/buildProjectBlock so neither hard-fail fires:
-    // (a) #7 has no chatSummary: (D-05) — buildProjectBlock would throw exit 2;
-    // (b) its source: points at Projects/7 — the defensive MULTI-DEX regex
-    //     below would also throw. Skipping the slug sidesteps both cleanly.
-    if (basename(mdxPath, ".mdx") === "multi-chain-evm") continue;
     try {
+      const slug = basename(mdxPath, ".mdx");
       const mdxRaw = normalize(await readFile(mdxPath, "utf8"));
       const { frontmatterBlock } = sliceFrontmatter(mdxRaw);
       const sourceRel = readSourceField(frontmatterBlock);
@@ -578,16 +590,17 @@ async function main() {
           `${basename(mdxPath)}: source path escapes project root: ${sourceRel}`
         );
       }
-      // Defensive regex — D-04 reinforcement. Even if a contributor adds
-      // a multi-dex-trader.mdx with source: "Projects/7 ...", refuse.
-      if (/MULTI[- ]?DEX|multi[- ]?dex/i.test(sourceRel)) {
+      // Belt-and-suspenders #7 reservation (Phase 25 / CHAT-10): the canonical
+      // `multi-chain-evm` slug is now ingested, but if some OTHER slug tries to
+      // claim the Projects/7 MULTI-DEX source, refuse (reuses the single `slug`
+      // binding above).
+      if (isReservedProjects7Source(sourceRel, slug)) {
         throw new Error(
-          `${basename(mdxPath)}: Projects/7 excluded per D-04 — remove MDX or change source:`
+          `${basename(mdxPath)}: Projects/7 source is reserved for the multi-chain-evm slug — change source: or rename the slug`
         );
       }
 
       // Duplicate detection (REVIEWS.md MEDIUM — duplicate slug or duplicate source: must hard-fail)
-      const slug = basename(mdxPath, ".mdx");
       if (seenSlugs.has(slug)) {
         throw new Error(`duplicate slug: ${slug} appeared in multiple MDX files`);
       }
@@ -657,21 +670,49 @@ async function main() {
     process.exit(2);
   }
 
-  // 5. Compose experience summary from about.ts.
-  //    REVIEWS.md LOW — role + rationale for this field going forward:
-  //    - `experience` stays as a backward-compat one-liner. Every call site today expects
-  //      a string here (current portfolio-context.json ships one). Dropping it would be a
-  //      breaking change — the TypeScript interface still types it and chat.ts still
-  //      reads it via JSON.stringify(context).
-  //    - The NEW `about` object is the canonical structured source (intro + p1 + p2 + p3).
-  //      Future phases that want richer "experience" content should read `about.*`, not
-  //      extend this one-liner. No follow-up work needed in Phase 14 — just documentation
-  //      so future contributors don't confuse the two fields.
-  //    - Synthesis formula is deterministic (same inputs → same output) so it does not
-  //      break the cache-stability invariant above the cache breakpoint.
-  const experience = `${aboutBlock.intro} ${aboutBlock.p1} ${aboutBlock.p3}`
-    .replace(/\s+/g, " ")
-    .trim();
+  // 5. Read the experience collection recursively into a reverse-chron array
+  //    (D-09). Each entry is validated by parseExperienceEntry (fail-closed on
+  //    any missing required field) and FAILS CLOSED via the same catch/errorCount/
+  //    exit-2 mechanism as the projects loop — a raw throw would not guarantee
+  //    exit 2. summary = the third-person chatSummary (CHAT-06 voice-split).
+  const experienceFiles = [];
+  for await (const f of glob(EXPERIENCE_GLOB)) experienceFiles.push(f);
+  experienceFiles.sort();
+  const experienceEntries = [];
+  let expErrorCount = 0;
+  for (const expPath of experienceFiles) {
+    const slug = basename(expPath, ".mdx");
+    try {
+      const expRaw = normalize(await readFile(expPath, "utf8"));
+      const { frontmatterBlock } = sliceFrontmatter(expRaw);
+      experienceEntries.push(parseExperienceEntry(frontmatterBlock, slug));
+    } catch (err) {
+      process.stderr.write(`ERROR ${basename(expPath)}: ${err.message}\n`);
+      expErrorCount += 1;
+    }
+  }
+  if (expErrorCount > 0) process.exit(2);
+  // Reverse-chronological: most recent startDate first (Holloway before Balfour).
+  experienceEntries.sort((a, b) => b.startDate.localeCompare(a.startDate));
+  // Emit only the chat-bound fields; startDate was sort-only.
+  const experience = experienceEntries.map(({ role, company, dateRange, summary }) => ({
+    role,
+    company,
+    dateRange,
+    summary,
+  }));
+
+  // 5b. Education — single-sourced from src/data/education.ts (D-07). The static
+  //     identity file no longer carries an education object; parseEducation is
+  //     the sole source. REJECTS the --experimental-strip-types import path.
+  let educationBlock;
+  try {
+    const educationRaw = normalize(await readFile(EDUCATION_TS_PATH, "utf8"));
+    educationBlock = parseEducation(educationRaw);
+  } catch (err) {
+    process.stderr.write(`ERROR ${EDUCATION_TS_PATH}: ${err.message}\n`);
+    process.exit(2);
+  }
 
   // 6. Shallow merge (static wins for static keys; generated wins for generated keys — D-08)
   //    Deterministic alphabetical project ordering for stable cache keys + diff review (REVIEWS.md MEDIUM).
@@ -680,6 +721,7 @@ async function main() {
     ...staticJson,
     projects,
     experience,
+    education: educationBlock,
     about: aboutBlock,
   };
 

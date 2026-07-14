@@ -37,7 +37,7 @@ const ctx = JSON.parse(
 // MUST stay BYTE-IDENTICAL to FIRST_PERSON_LEAK_RE in scripts/build-chat-context.mjs
 // AND FIRST_PERSON_LEAK in tests/api/chat-voice-split.test.ts.
 const FIRST_PERSON_LEAK =
-  /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
+  /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested|interned|coordinated)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
 
 describe("UAT Gap #1: B1 self-test — regex catches known first-person tokens", () => {
   // SELF-TEST: prove the regex catches what it SHOULD catch, not just whatever
@@ -120,17 +120,18 @@ describe("UAT Gap #1: chat-knowledge JSON voice contract (CHAT-06)", () => {
     expect(ctx.about.intro).toMatch(/^Jack/);
   });
 
-  it("no first-person leak in about.{intro,p1,p2,p3} or any experience field", () => {
+  it("no first-person leak in about.{intro,p1,p3} or any experience field", () => {
     // After D-09 ctx.experience is an ARRAY of {role,company,dateRange,summary}.
     // RED until 25-03 emits the array (current corpus ships a string experience).
     expect(Array.isArray(ctx.experience), "ctx.experience should be an array").toBe(
       true
     );
 
+    // about block is INTRO/P1/P3 (chat P2 was cut in 25-02 to match the site
+    // /about); the regenerated corpus has no about.p2.
     const fields: Array<[string, string | undefined]> = [
       ["about.intro", ctx.about?.intro],
       ["about.p1", ctx.about?.p1],
-      ["about.p2", ctx.about?.p2],
       ["about.p3", ctx.about?.p3],
     ];
 

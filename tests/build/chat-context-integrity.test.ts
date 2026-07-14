@@ -104,10 +104,14 @@ describe("Chat Context Integrity (CHAT-03 / §5.6)", () => {
       | Record<string, unknown>
       | undefined;
     expect(about).toBeDefined();
-    expect(about).toHaveProperty("intro");
-    expect(about).toHaveProperty("p1");
-    expect(about).toHaveProperty("p2");
-    expect(about).toHaveProperty("p3");
+    // Chat about block is INTRO/P1/P3 (25-02 cut the chat P2 "boring tool first"
+    // paragraph to match the Phase 24 site /about; 25-03 regenerated the corpus
+    // without it). Assert EXACTLY intro/p1/p3 — no p2.
+    expect(Object.keys(about as Record<string, unknown>).sort()).toEqual([
+      "intro",
+      "p1",
+      "p3",
+    ]);
   });
 
   it("Daytrade extendedReference.truncated is true (D-06 — Daytrade 7,246 words exceeds 5k cap)", () => {

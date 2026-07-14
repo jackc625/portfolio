@@ -14,7 +14,13 @@
 export interface PortfolioContext {
   // STATIC keys (from portfolio-context.static.json -- D-08)
   personal: { name: string; title: string; location: string; summary: string };
-  education: { degree: string; school: string; graduation: string };
+  education: {
+    degree: string;
+    school: string;
+    graduation: string;
+    transferredFrom: string;
+    certifications: string[];
+  };
   skills: {
     languages: string[];
     frameworks: string[];
@@ -44,14 +50,19 @@ export interface PortfolioContext {
     };
   }>;
   /**
-   * Short one-liner composed from about.ts (backward-compat for today's shape).
-   * Future callers should prefer the structured `about` field below.
+   * Reverse-chronological (most-recent-first) array of professional roles,
+   * read from src/content/experience/**\/*.mdx (D-09). summary is each entry's
+   * third-person chatSummary (CHAT-06 voice-split).
    */
-  experience: string;
+  experience: Array<{
+    role: string;
+    company: string;
+    dateRange: string;
+    summary: string;
+  }>;
   about: {
     intro: string;
     p1: string;
-    p2: string;
     p3: string;
   };
 }

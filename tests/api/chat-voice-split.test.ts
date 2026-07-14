@@ -30,7 +30,7 @@ const portfolioContext = JSON.parse(
 // BYTE-IDENTICAL in sync. Plan 17-07 revision B1, hardened by WR-02
 // quick-260513-hqk (curly apostrophe + extra verbs/possessives + British "favourite").
 const FIRST_PERSON_LEAK =
-  /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
+  /\b(I(?:['’]|\s)(?:m\b|d\b|ll\b|ve\b|re\b|am\b)|I\s+(?:build|built|like|liked|wonder|wanted|reach|reached|read|architected|chose|haven|wrote|run|set|shipped|added|prefer|care|watch|track|love|hate|made|created|developed|implemented|designed|think|learned|noticed|tried|tested|interned|coordinated)|My\s+(?:approach|favorite|favourite|projects|code|work|background|stack|version|first|implementation|solution|design|team|experience))\b/i;
 
 describe("UAT Gap #1: chat-API system block voice-split tripwire (CHAT-06)", () => {
   const args = buildChatRequestArgs(portfolioContext, [
