@@ -120,7 +120,10 @@ const NEVER_BEGINS_FIRST_PERSON = /(?:^|[.!?]\s+)(I|My|We|Our)\b/;
  * First-person leak guard — exits 2 if any chat-bound field contains a
  * first-person leading clause. Closes UAT Gap #1 root cause.
  *
- * Scope: about.intro/p1/p2/p3, experience, projects[].caseStudy. Does NOT
+ * Scope: personal.summary, about.intro/p1/p3, experience[], and
+ * projects[].caseStudy. personal.summary (from portfolio-context.static.json)
+ * is hand-curated identity prose serialized verbatim into <knowledge>, so it is
+ * covered by the same guard (WR-03). Does NOT
  * walk extendedReference.content — that's technical reference material from
  * below-the-fence Projects/*.md, not voice-bearing prose authored for either
  * surface, and the chat <role> handles voice translation when citing it.
@@ -142,6 +145,9 @@ function checkFirstPersonLeaks(merged) {
       })
     : [["experience", merged.experience]];
   const targets = [
+    // WR-03: hand-curated identity prose from portfolio-context.static.json is
+    // serialized verbatim into <knowledge>, so guard it too.
+    ["personal.summary", merged.personal?.summary],
     ["about.intro", merged.about?.intro],
     ["about.p1", merged.about?.p1],
     ["about.p3", merged.about?.p3],
