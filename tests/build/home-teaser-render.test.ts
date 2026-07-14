@@ -87,8 +87,18 @@ describe("Gate B/C (HOME-01 + POS-04): Home teaser + numbering + JSON-LD render 
     // Exactly ONE metric highlight line.
     expect(sec.querySelectorAll(".teaser-highlight").length).toBe(1);
 
-    // ZERO tech-stack elements render inside the teaser (D-05).
+    // ZERO tech-stack elements render inside the teaser (D-05). Assert both the
+    // known stack-markup classes AND that no known stack token leaks into the
+    // teaser text, so a stack line reintroduced under ANY markup is caught (not
+    // just the .featured-stack/.teaser-stack classes).
     expect(sec.querySelectorAll(".featured-stack, .teaser-stack").length).toBe(0);
+    const teaserText = norm(sec.textContent);
+    for (const stackToken of ["TypeScript", "React", "Astro", "Node", "Postgres", "Tailwind"]) {
+      expect(
+        teaserText,
+        `teaser text must not reintroduce a tech-stack token (found "${stackToken}")`,
+      ).not.toContain(stackToken);
+    }
 
     // Eyebrow carries role + dates; title carries the company.
     const eyebrow = norm(sec.querySelector(".teaser-eyebrow")?.textContent ?? "");
