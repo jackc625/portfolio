@@ -44,7 +44,11 @@ const MDX_GLOB = "src/content/projects/*.mdx";
 const STATIC_JSON_PATH = "src/data/portfolio-context.static.json";
 const ABOUT_TS_PATH = "src/data/about.ts";
 const ABOUT_CHAT_TS_PATH = "src/data/about-chat.ts";
+const EDUCATION_TS_PATH = "src/data/education.ts"; // D-07 SSoT (Phase 25 / CHAT-10)
 const OUTPUT_JSON_PATH = "src/data/portfolio-context.json";
+// Recursive glob — parity with content.config.ts:26 + sync-experience.mjs:35.
+// A single-level `*.mdx` would silently skip a nested entry from the corpus.
+const EXPERIENCE_GLOB = "src/content/experience/**/*.mdx";
 const FENCE_END = "<!-- CASE-STUDY-END -->";
 const README_WORD_CAP = 5000; // D-06
 const MIN_TOKEN_FLOOR = 4096; // AI-SPEC §3 pitfall #1 (Haiku 4.5 cache minimum)
@@ -364,6 +368,117 @@ export function parseAboutChatExports(sourceContent) {
     result[name] = JSON.parse(m[1]);
   }
   return result;
+}
+
+/**
+ * Read the chat-education object from src/data/education.ts source (D-07 SSoT).
+ *
+ * Dep-free per-key regex reader (mirrors parseAboutChatExports): rather than
+ * spin up a TS loader or the rejected --experimental-strip-types path, slice
+ * the `export const EDUCATION = { … } as const;` and `export const CREDENTIALS
+ * … ];` blocks first, then run per-key `m`-flag regexes BOUNDED to those blocks
+ * so they never match comments or fragments elsewhere in the file (Antigravity
+ * LOW). Throws a NAMED error per missing key.
+ *
+ * Returns { degree, school, graduation, transferredFrom, certifications } where
+ *   degree          = EDUCATION.degree
+ *   school          = EDUCATION.institution
+ *   graduation      = EDUCATION.date
+ *   transferredFrom = EDUCATION.transferredFrom
+ *   certifications  = CREDENTIALS.map(c => c.name)
+ */
+export function parseEducation(sourceContent) {
+  const eduBlockMatch =
+    /export const EDUCATION\s*=\s*\{([\s\S]*?)\}\s*as const;/m.exec(
+      sourceContent
+    );
+  if (!eduBlockMatch) {
+    throw new Error(
+      `${EDUCATION_TS_PATH}: missing \`export const EDUCATION = { … } as const;\` block`
+    );
+  }
+  const eduBlock = eduBlockMatch[1];
+  const readEduKey = (key) => {
+    const m = new RegExp(`^\\s*${key}:\\s*"([^"\\n]+)"`, "m").exec(eduBlock);
+    if (!m) {
+      throw new Error(
+        `${EDUCATION_TS_PATH}: missing key \`${key}\` in the EDUCATION block`
+      );
+    }
+    return m[1];
+  };
+  const degree = readEduKey("degree");
+  const institution = readEduKey("institution");
+  const date = readEduKey("date");
+  const transferredFrom = readEduKey("transferredFrom");
+
+  const credBlockMatch =
+    /export const CREDENTIALS[^=]*=\s*\[([\s\S]*?)\];/m.exec(sourceContent);
+  if (!credBlockMatch) {
+    throw new Error(
+      `${EDUCATION_TS_PATH}: missing \`export const CREDENTIALS … ];\` block`
+    );
+  }
+  const certifications = [];
+  const nameRe = /name:\s*"([^"\n]+)"/g;
+  let cm;
+  while ((cm = nameRe.exec(credBlockMatch[1])) !== null) {
+    certifications.push(cm[1]);
+  }
+  if (certifications.length === 0) {
+    throw new Error(
+      `${EDUCATION_TS_PATH}: no \`name:\` entries found in the CREDENTIALS block`
+    );
+  }
+
+  return {
+    degree,
+    school: institution,
+    graduation: date,
+    transferredFrom,
+    certifications,
+  };
+}
+
+/**
+ * Validate + read one experience entry's frontmatter into the chat-corpus shape
+ * (D-09). Fail-closed: throws a NAMED error on ANY missing schema-required field
+ * (role/company/dateRange/chatSummary/startDate) so the build hard-fails (exit 2
+ * via the caller's errorCount mechanism) rather than silently emitting undefined.
+ *
+ * summary is the third-person chatSummary (CHAT-06 voice-split), NOT the
+ * first-person `summary` field that feeds the /experience site surface.
+ * startDate is returned for reverse-chron sorting and dropped from the emitted
+ * object by the caller.
+ */
+export function parseExperienceEntry(frontmatterBlock, slug) {
+  const role = readStringField(frontmatterBlock, "role");
+  const company = readStringField(frontmatterBlock, "company");
+  const dateRange = readStringField(frontmatterBlock, "dateRange");
+  const chatSummary = readStringField(frontmatterBlock, "chatSummary");
+  const startDate = readStringField(frontmatterBlock, "startDate");
+  for (const [field, value] of [
+    ["role", role],
+    ["company", company],
+    ["dateRange", dateRange],
+    ["chatSummary", chatSummary],
+    ["startDate", startDate],
+  ]) {
+    if (!value) throw new Error(`${slug}.mdx: missing ${field}`);
+  }
+  return { role, company, dateRange, summary: chatSummary, startDate };
+}
+
+/**
+ * Belt-and-suspenders #7 reservation predicate (D-04). True when a MDX `source:`
+ * points at the Projects/7 MULTI-DEX file AND the slug is NOT the canonical
+ * `multi-chain-evm` — i.e. some OTHER slug is trying to claim #7's source, which
+ * must still hard-fail. The canonical slug is now ingested (Phase 25 / CHAT-10).
+ */
+export function isReservedProjects7Source(sourceRel, slug) {
+  return (
+    /MULTI[- ]?DEX|multi[- ]?dex/i.test(sourceRel) && slug !== "multi-chain-evm"
+  );
 }
 
 /**
