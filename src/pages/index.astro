@@ -11,6 +11,7 @@ import JsonLd from "../components/JsonLd.astro";
 import { CONTACT } from "../data/contact";
 import { ABOUT_INTRO, ABOUT_P1 } from "../data/about";
 import { sortExperienceEntries } from "../lib/experience";
+import { alumniOfSchema, hasCredentialSchema } from "../data/education";
 
 const allProjects = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order
@@ -36,22 +37,28 @@ if (holloway.id !== "holloway") {
   );
 }
 
-// Person schema using CONTACT constants (D-23)
+// Person schema using CONTACT constants (D-23). The job title + alumniOf +
+// hasCredential fields enrich the software-engineer-with-production-experience
+// positioning (POS-04, D-14); alumniOf/hasCredential fragments are DERIVED
+// in education.ts (24-01) -- no re-hardcoded institution literals here.
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "Jack Cutrara",
   url: "https://jackcutrara.com",
+  jobTitle: "Software Engineer",
   email: CONTACT.email,
   sameAs: [
     CONTACT.github,
     CONTACT.linkedin,
     CONTACT.x,
   ].filter(Boolean),
+  alumniOf: alumniOfSchema,
+  hasCredential: hasCredentialSchema,
 };
 ---
 
-<BaseLayout title="" description="Software engineer building reliable, production-grade systems.">
+<BaseLayout title="" description="Software engineer shipping reliable, production-grade systems, currently the solo contract engineer on a live operations platform.">
   <Fragment slot="head">
     <JsonLd schema={personSchema} />
   </Fragment>
@@ -105,7 +112,7 @@ const personSchema = {
 
   <section class="section works" aria-labelledby="section-work">
     <Container>
-      <SectionHeader number="01" title="WORK" id="section-work" count={`${featured.length} / ${allProjects.length}`} />
+      <SectionHeader number="02" title="WORK" id="section-work" count={`${featured.length} / ${allProjects.length}`} />
       <div class="work-list">
         {featured.map((p) => (
           <WorkRow
@@ -127,7 +134,7 @@ const personSchema = {
 
   <section class="section about" aria-labelledby="section-about">
     <Container>
-      <SectionHeader number="02" title="ABOUT" id="section-about" />
+      <SectionHeader number="03" title="ABOUT" id="section-about" />
       <div class="about-body">
         <p class="about-intro">{ABOUT_INTRO}</p>
         <p class="body">{ABOUT_P1}</p>

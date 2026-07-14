@@ -1,12 +1,12 @@
 ---
 /**
- * ContactSection — shared contact composite for homepage (§ 03) and /contact page.
+ * ContactSection - shared contact composite for homepage (§ 04) and /contact page.
  *
- * NOT inside primitives/ — this is a composite that composes data from contact.ts.
+ * NOT inside primitives/; this is a composite that composes data from contact.ts.
  * Renders NO heading elements (no h1/h2/h3/h4). Heading hierarchy is always
  * controlled by the consuming page.
  *
- * Per D-24: showSectionHeader controls the § 03 — CONTACT label (homepage uses true,
+ * Per D-24: showSectionHeader controls the § 04 · CONTACT label (homepage uses true,
  *           /contact page uses false since it owns its own page-level heading).
  * Per D-28: Replaces the dead ContactChannel.astro (v1.0 SVG-icon component).
  */
@@ -25,7 +25,7 @@ const { showSectionHeader = false } = Astro.props;
 
 {showSectionHeader && (
   <>
-    <div class="section-header"><span id="section-contact" class="label-mono">&sect; 03 &middot; CONTACT</span></div>
+    <div class="section-header"><span id="section-contact" class="label-mono">&sect; 04 &middot; CONTACT</span></div>
     <div class="section-rule"></div>
   </>
 )}
