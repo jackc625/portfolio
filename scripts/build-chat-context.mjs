@@ -341,7 +341,7 @@ export function parseAboutExports(sourceContent) {
  * (UAT Gap #1, Plan 17-07).
  */
 export function parseAboutChatExports(sourceContent) {
-  const names = ["ABOUT_CHAT_INTRO", "ABOUT_CHAT_P1", "ABOUT_CHAT_P2", "ABOUT_CHAT_P3"];
+  const names = ["ABOUT_CHAT_INTRO", "ABOUT_CHAT_P1", "ABOUT_CHAT_P3"];
   const result = {};
   for (const name of names) {
     const re = new RegExp(
@@ -535,7 +535,6 @@ async function main() {
     aboutBlock = {
       intro: parsed.ABOUT_CHAT_INTRO,
       p1: parsed.ABOUT_CHAT_P1,
-      p2: parsed.ABOUT_CHAT_P2,
       p3: parsed.ABOUT_CHAT_P3,
     };
   } catch (err) {

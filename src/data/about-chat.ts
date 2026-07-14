@@ -24,9 +24,5 @@ export const ABOUT_CHAT_P1 =
   "Jack builds and stabilizes production systems for real users. He is currently the solo contract engineer on Holloway Connect, a live operations platform, and recently finished his B.S. in Computer Science. Most of his projects start as “how does that actually work?” and end as something he would be comfortable handing off to a team.";
 
 /* Verified: 2026-05-11 */
-export const ABOUT_CHAT_P2 =
-  "Jack reaches for the boring tool first. He reads the spec before the blog post. He gravitates toward tests that fail loudly and code-review comments that start with “why.” His favourite bug reports are the ones that come with a reproduction.";
-
-/* Verified: 2026-05-11 */
 export const ABOUT_CHAT_P3 =
   "Alongside the contract work, Jack is looking for a full-time software engineering role on a team that values correctness, reliability, and performance, ideally one that will push him to get better at the parts of the stack he has not touched yet.";
