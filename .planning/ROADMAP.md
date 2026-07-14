@@ -190,7 +190,7 @@
   3. The D-26 chat-surface regression battery and the D-15 SSE byte-identical anchor hold across every change touching `BaseLayout.astro` / `global.css` / `chat.ts` / `api/chat.ts`.
   4. `pnpm exec astro check` is 0/0/0, Lighthouse holds at or above prior scores on the production-on-Cloudflare-edge canonical gate, and no new runtime dependencies were added across the milestone.
 
-**Plans**: 3/5 plans executed
+**Plans**: 4/5 plans executed
 
 **Wave 1** *(baseline-first, then tests + copy authoring; with worktrees off, same-wave plans serialize in plan-number order so 25-00 runs first)*
 
@@ -200,7 +200,7 @@
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 25-03-PLAN.md — ATOMIC build-engine migration: lift #7 exclusion + recursive fail-closed experience array + parseEducation (unit-tested) + 4-field leak-walk + regex extension ×3; regenerate corpus (CHAT-10/CHAT-11/QA-02)
+- [x] 25-03-PLAN.md — ATOMIC build-engine migration: lift #7 exclusion + recursive fail-closed experience array + parseEducation (unit-tested) + 4-field leak-walk + regex extension ×3; regenerate corpus (CHAT-10/CHAT-11/QA-02)
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -237,4 +237,4 @@ Phases execute in numeric order within each milestone.
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 4/4 | Complete    | 2026-07-10 |
 | 24. Positioning Shift & Home Teaser | v1.4 | 4/4 | Complete    | 2026-07-14 |
-| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 3/5 | In Progress|  |
+| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 4/5 | In Progress|  |

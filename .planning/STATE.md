@@ -5,15 +5,15 @@ milestone_name: Professional Experience
 current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
 status: executing
-stopped_at: Completed 25-02-PLAN.md (chat copy lock + P2 cut at copy-review checkpoint)
-last_updated: "2026-07-14T00:00:00.000Z"
+stopped_at: Completed 25-03-PLAN.md (corpus regen — #7 ingested, experience array, SSoT education; 25-01 RED set green)
+last_updated: "2026-07-14T19:37:41.385Z"
 last_activity: 2026-07-14
-last_activity_desc: Completed Phase 25 Plan 02 (third-person chat copy locked; chat ABOUT_CHAT_P2 cut to match site /about)
+last_activity_desc: Completed Phase 25 Plan 03 (corpus engine migration)
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 22
-  completed_plans: 20
+  completed_plans: 22
   percent: 80
 ---
 
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 ## Current Position
 
 Phase: 25 (Chat Knowledge Refresh & Milestone Verification) — EXECUTING
-Plan: 4 of 5
-Status: 25-02 complete (all third-person chat copy authored + copy-review-locked; chat ABOUT_CHAT_P2 cut to match site /about) — ready for 25-03 (corpus regen turns the RED suite green)
-Last activity: 2026-07-14 — Completed Phase 25 Plan 02 (chat copy lock + P2 cut)
+Plan: 5 of 5
+Status: 25-03 complete (corpus regenerated — #7 ingested untruncated, experience reverse-chron array, education single-sourced from education.ts; 25-01 RED set green; astro check 0/0/0; full suite 692 pass/2 skip) — ready for 25-04 (milestone verification gate)
+Last activity: 2026-07-14 — Completed Phase 25 Plan 03 (corpus engine migration)
 Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
@@ -98,6 +98,7 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase 25]: Phase 25-00: captured phase-start invariant baseline (25-BASELINE.json: 4 gated-file hashes + 11 deps) + verify-phase25-invariants.mjs (Node built-ins only); PROTECTED_FILES narrowed to the four D-14 chat-surface files ONLY (excludes chat-knowledge sources edited this phase) so 25-04 proves phase-wide D-14/QA-02 across committed tasks without false-failing
 - [Phase 25]: 25-01: education.ts imported extension-less (repo convention) not the plan's .ts spelling, to avoid a TS import-extension error under the 25-04 astro-check gate; same SSoT-import intent
 - [Phase 25]: 25-01: authored the Phase 25 Wave-0 tests-first contract (14 RED-by-design / 77 GREEN across 3 chat suites); byte-intact <security> snapshot bounds 25-02's edit to exactly the one #7-ban sentence; RED set enumerated in SUMMARY as 25-03's green target
+- [Phase 25]: 25-03: corpus engine migration — lifted the #7 slug-skip (single reused slug binding + isReservedProjects7Source guard), recursive fail-closed experience reader emitting a reverse-chron {role,company,dateRange,summary} array, education single-sourced from education.ts via dep-free parseEducation, 4-field first-person leak-walk, FIRST_PERSON_LEAK_RE +interned/+coordinated byte-identical ×3. Regenerated portfolio-context.json: projects=7 (#7 untruncated), est_tokens=48735, about intro/p1/p3 (no p2). Coupled p2-assertion retirement in portfolio-context-types about sub-type + chat-context-integrity + chat-knowledge-voice (pre-flagged by plan). astro check 0/0/0; drift clean; full suite 692 pass/2 skip. CHAT-10/CHAT-11/QA-02 marked complete (commits d85a38e, 30975ad)
 - [Phase 25]: 25-02: authored + copy-review-locked all third-person chat copy (Holloway/#7/Balfour chatSummaries, about-chat identity drops 'junior' with P3 anchors 'looking for'/'full-time', portfolio-context.static.json +4 skills / education removed, system-prompt #7-ban lifted with <security> byte-intact). At Jack's checkpoint approval CUT chat ABOUT_CHAT_P2 ('boring tool first') to match the Phase 24 site /about P2 removal; coupled build-chat-context.mjs about-extractor to 3 paragraphs (INTRO/P1/P3) so the tree stays green (Rule 3 blocking coupled edit — 25-03 owns the corpus-engine rewrite). portfolio-context.json NOT regenerated (25-03's job; corpus retains about.p2 — deliberate cross-wave drift). CHAT-10/11 only PARTIALLY advanced — complete when 25-03/25-04 turn the suite green. astro check 0/0/0; only the known RED-until-25-03 failures remain (commit e874728)
 
 ### Open Blockers
@@ -132,8 +133,8 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 ## Session
 
 **Last session:** 2026-07-14T00:00:00.000Z
-**Stopped at:** Completed 25-02 (chat copy lock + P2 cut); ready for 25-03 corpus regen
-**Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-03-PLAN.md
+**Stopped at:** Completed 25-03 (corpus regen — #7 ingested, experience array, SSoT education); ready for 25-04 milestone verification gate
+**Resume file:** .planning/phases/25-chat-knowledge-refresh-milestone-verification/25-04-PLAN.md
 
 ## Performance Metrics
 
@@ -163,3 +164,4 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 | Phase 25 P00 | 3min | 2 tasks | 2 files |
 | Phase 25 P01 | 12min | 3 tasks | 4 files |
 | Phase 25 P02 | ~15min | 3 tasks | 7 files (6 copy/identity sources + build-script coupled edit) |
+| Phase 25 P03 | ~20min | 2 tasks | 6 files (corpus engine migration + regen; 1 new test file) |

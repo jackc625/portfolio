@@ -37,8 +37,8 @@ Requirements for the v1.4 Professional Experience milestone. Each maps to a road
 
 ### Chat Knowledge (CHAT)
 
-- [ ] **CHAT-10**: Build-time `portfolio-context.json` generation ingests the new Experience content and the synced project so the chat's grounded knowledge includes the Holloway engagement and project #7
-- [ ] **CHAT-11**: The chat widget can accurately answer questions about the Holloway engagement and updated positioning in third person, preserving the CHAT-06 voice-split contract
+- [x] **CHAT-10**: Build-time `portfolio-context.json` generation ingests the new Experience content and the synced project so the chat's grounded knowledge includes the Holloway engagement and project #7
+- [x] **CHAT-11**: The chat widget can accurately answer questions about the Holloway engagement and updated positioning in third person, preserving the CHAT-06 voice-split contract
 
 ### Quality Gates (QA)
 
@@ -90,8 +90,8 @@ Which phases cover which requirements. Populated during roadmap creation.
 | PROJ-02 | Phase 23 | Complete |
 | PROJ-03 | Phase 23 | Complete |
 | PROJ-04 | Phase 23 | Complete |
-| CHAT-10 | Phase 25 | Pending |
-| CHAT-11 | Phase 25 | Pending |
+| CHAT-10 | Phase 25 | Complete |
+| CHAT-11 | Phase 25 | Complete |
 | QA-01 | Phase 25 | Complete |
 | QA-02 | Phase 25 | Complete |
 
