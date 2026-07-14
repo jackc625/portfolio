@@ -4,9 +4,9 @@ milestone: v1.4
 milestone_name: Professional Experience
 current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
-status: verifying
-stopped_at: 24-04 complete (real 1200x630 true-Geist og-default.png + Gate A GREEN across all five voice-gate-unscanned files + capstone gate green 677 pass/2 skip; astro check 0/0/0; OG + invariant verifiers exit 0; all four human sign-offs APPROVED). Phase 24 all 4 plans done — ready for verification.
-last_updated: "2026-07-14T12:35:18.443Z"
+status: ready
+stopped_at: Phase 24 complete + verified — UAT 14/14 pass (1 issue found + fixed inline: removed About P2 per Jack's copy review, commit c1c2022) and 24-SECURITY.md 7 threats closed / 0 open. Full suite 676 pass/2 skip; astro check 0/0/0; OG + invariant verifiers exit 0; chat surface byte-identical. Ready to plan Phase 25.
+last_updated: "2026-07-14T13:37:04.192Z"
 last_activity: 2026-07-14
 last_activity_desc: Phase 24 complete, transitioned to Phase 25
 progress:
@@ -30,8 +30,8 @@ See: .planning/PROJECT.md (updated 2026-07-08)
 
 Phase: 25 — Chat Knowledge Refresh & Milestone Verification
 Plan: Not started
-Status: Phase complete — ready for verification
-Last activity: 2026-07-14 — Phase 24 complete, transitioned to Phase 25
+Status: Ready to plan Phase 25 (Phase 24 complete + verified)
+Last activity: 2026-07-14 — Phase 24 complete + UAT/security verified, transitioned to Phase 25
 Progress: [████████░░] 80% (4/5 phases)
 
 ### v1.4 phase map
@@ -92,10 +92,13 @@ v1.4 roadmap-level notes carried into planning:
 - [Phase ?]: [Phase 24]: 24-04: OG card re-rendered in TRUE Geist per the human checkpoint (librsvg/sharp ignores @font-face + cannot read Geist woff2, fell back to Arial); regenerated dep-free via the plan's sanctioned page-scoped HTML card screenshot through a browser (QA-02 holds); commit 6bbfb8b supersedes 36fa440
 - [Phase ?]: [Phase 24]: 24-04: Gate A (tests/content/site-copy-em-dash.test.ts) authored at the capstone boundary where all five voice-gate-unscanned files are simultaneously clean — GREEN at its own boundary + register banlist junior/senior/5+ years (review fix #1, D-18)
 - [Phase ?]: [Phase 24]: 24-04: capstone gate green (build 0, test 677 pass/2 skip incl D-26 battery + sse-snapshot, astro check 0/0/0, OG verifier 0, invariant verifier 0, portfolio-context.json byte-identical); all four human sign-offs APPROVED; POS-04 complete — Phase 24 done
+- [Phase 24]: 24-UAT: removed About ABOUT_P2 ("I reach for the boring tool first...") per Jack's copy review — REVERSES D-06 (P2 was kept verbatim). Coupled edits: about.ts export + about.astro import/render + about-data.test.ts (P2 import/assertion/word-count). build-chat-context.mjs left untouched (24-01 protected file; its dead parseAboutExports still lists ABOUT_P2); chat about block sourced from about-chat.ts so portfolio-context.json stayed byte-identical (commit c1c2022)
+- [Phase 24]: 24-UAT: verify-work 14/14 pass (11 auto-verified via Playwright + live DOM + verifier scripts + gate tests; 3 human checkpoints APPROVED — Home teaser/positioning, /about register, OG card); full suite 676 pass/2 skip after the P2 fix
+- [Phase 24]: 24-SECURITY: retroactive secure-phase — 7 threats CLOSED / 0 open (ASVS L1 short-circuit; register authored at plan time). OG card + supply-chain accepted risks logged; no new surface from the copy phase or the P2 fix (commit d6d1696)
 
 ### Open Blockers
 
-(none — Phase 22 complete and verified; Phase 23 not started)
+(none — Phases 21–24 complete and verified; Phase 25 not started)
 
 ### Deferred Items (carried into next milestone or organic-evidence wait)
 
@@ -124,9 +127,9 @@ v1.3 phases (17-20) shipped and archived — see `.planning/milestones/v1.3-ROAD
 
 ## Session
 
-**Last session:** 2026-07-14T12:15:18.942Z
-**Stopped at:** 24-04 complete (real 1200x630 true-Geist og-default.png + Gate A GREEN across all five voice-gate-unscanned files + capstone gate green 677 pass/2 skip; astro check 0/0/0; OG + invariant verifiers exit 0; all four human sign-offs APPROVED). Phase 24 all 4 plans done — ready for verification.
-**Resume file:** none (Phase 24 complete; run /gsd-verify-work or advance to Phase 25)
+**Last session:** 2026-07-14T13:37:04.192Z
+**Stopped at:** Phase 24 complete + verified. /gsd-verify-work 24 → UAT 14/14 (Test 2 issue: Jack asked to remove About P2 "boring tool first"; applied + verified inline, commit c1c2022). Secure-phase → 24-SECURITY.md 7 closed/0 open. Transitioned to Phase 25. Full suite 676 pass/2 skip; invariants + OG verifiers exit 0; portfolio-context.json byte-identical (chat surface untouched).
+**Resume file:** none (Phase 24 complete + verified; ready to plan Phase 25)
 
 ## Performance Metrics
 
