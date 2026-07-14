@@ -3,9 +3,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/primitives/Container.astro";
 import SectionHeader from "../components/primitives/SectionHeader.astro";
 import { ABOUT_INTRO, ABOUT_P1, ABOUT_P2, ABOUT_P3 } from "../data/about";
+import { EDUCATION, CREDENTIALS } from "../data/education";
 ---
 
-<BaseLayout title="About" description="Jack Cutrara -- junior software engineer building production-grade systems.">
+<BaseLayout title="About" description="Jack Cutrara, a software engineer building and stabilizing production-grade systems.">
   <section class="section about" aria-labelledby="section-about">
     <Container>
       <SectionHeader number="01" title="ABOUT" id="section-about" />
@@ -14,6 +15,19 @@ import { ABOUT_INTRO, ABOUT_P1, ABOUT_P2, ABOUT_P3 } from "../data/about";
         <p>{ABOUT_P1}</p>
         <p>{ABOUT_P2}</p>
         <p>{ABOUT_P3}</p>
+      </div>
+
+      <div class="education" aria-labelledby="education-label">
+        <p class="education-label label-mono" id="education-label">EDUCATION</p>
+        <div class="education-rule" role="presentation"></div>
+        <p class="education-degree">{EDUCATION.degree}</p>
+        <p class="education-meta meta-mono">{EDUCATION.institution} · {EDUCATION.date}</p>
+        <p class="education-transfer meta-mono">Transferred from {EDUCATION.transferredFrom}</p>
+        {
+          CREDENTIALS.map((credential) => (
+            <p class="education-cred meta-mono">{credential.name}</p>
+          ))
+        }
       </div>
     </Container>
   </section>
@@ -24,4 +38,13 @@ import { ABOUT_INTRO, ABOUT_P1, ABOUT_P2, ABOUT_P3 } from "../data/about";
   .about-intro { font-weight: 500; font-size: 1.375rem; line-height: 1.4; color: var(--ink); margin-bottom: 24px; }
   .about-body p:not(.about-intro) { font-weight: 400; font-size: 1.125rem; line-height: 1.6; color: var(--ink); margin-bottom: 16px; }
   .about-body p:not(.about-intro):last-child { margin-bottom: 0; }
+
+  /* -- Education / credentials block: quiet mono register, no accent (MASTER 7/8) -- */
+  .education { max-width: 68ch; margin-top: 48px; }
+  .education-label { color: var(--ink); }
+  .education-rule { height: 1px; background: var(--rule); margin-top: 16px; margin-bottom: 24px; }
+  .education-degree { font-weight: 500; font-size: 1.125rem; line-height: 1.4; color: var(--ink); margin-bottom: 8px; }
+  .education-meta { color: var(--ink-muted); }
+  .education-transfer { color: var(--ink-faint); margin-top: 4px; }
+  .education-cred { color: var(--ink-muted); margin-top: 16px; }
 </style>
