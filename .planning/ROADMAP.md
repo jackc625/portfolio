@@ -237,4 +237,4 @@ Phases execute in numeric order within each milestone.
 | 22. Experience Page & Holloway Case Study | v1.4 | 5/5 | Complete    | 2026-07-09 |
 | 23. Projects Reconciliation & Featured Tier | v1.4 | 4/4 | Complete    | 2026-07-10 |
 | 24. Positioning Shift & Home Teaser | v1.4 | 4/4 | Complete    | 2026-07-14 |
-| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 5/5 | Complete   | 2026-07-14 |
+| 25. Chat Knowledge Refresh & Milestone Verification | v1.4 | 5/5 | Complete    | 2026-07-14 |
