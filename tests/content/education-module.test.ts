@@ -24,7 +24,7 @@ describe("education.ts display facts (POS-03, POS-04)", () => {
   it("EDUCATION carries the exact display facts", () => {
     expect(EDUCATION.degree).toBe("B.S. Computer Science");
     expect(EDUCATION.institution).toBe("Western Governors University");
-    expect(EDUCATION.date).toBe("May 2026");
+    expect(EDUCATION.date).toBe("Expected September 2026");
     expect(EDUCATION.transferredFrom).toBe("Virginia Tech");
   });
 
@@ -32,7 +32,7 @@ describe("education.ts display facts (POS-03, POS-04)", () => {
     expect(EDUCATION.degreeSchemaName).toBe(
       "Bachelor of Science in Computer Science",
     );
-    expect(EDUCATION.dateISO).toBe("2026-05");
+    expect(EDUCATION.dateISO).toBe("2026-09");
   });
 
   it("CREDENTIALS contains LPI Linux Essentials issued by Linux Professional Institute", () => {

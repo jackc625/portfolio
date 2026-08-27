@@ -27,14 +27,14 @@ export const EDUCATION = {
   degree: "B.S. Computer Science",
   /** Display + schema recognizedBy: the degree-granting institution. */
   institution: "Western Governors University",
-  /** Display: "May 2026" (human-readable graduation date). */
-  date: "May 2026",
+  /** Display: "Expected September 2026" (human-readable expected graduation date). */
+  date: "Expected September 2026",
   /** Display: prior institution; attended = honest (D-10). alumniOf only. */
   transferredFrom: "Virginia Tech",
   /** Schema-only: unabbreviated degree name for hasCredential.name. */
   degreeSchemaName: "Bachelor of Science in Computer Science",
   /** Schema-only: ISO 8601 (YYYY-MM) for hasCredential.validFrom. */
-  dateISO: "2026-05",
+  dateISO: "2026-09",
 } as const;
 
 export const CREDENTIALS: Credential[] = [
