@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
 /**
  * POS-03 render regression gate (Phase 24) — the built /about HTML must present
- * the dedicated Education/credentials block with all four visible education
+ * the dedicated Education/credentials block with all three visible education
  * facts, and the block must carry no accent affordance (it is non-interactive
  * content, MASTER 7). Also asserts two positive POS-01/02 register claims in
- * the rendered About body (completed degree + full-time search) so the
+ * the rendered About body (in-progress degree + full-time search) so the
  * positioning shift is proven at rendered output, not just a source-copy gate
  * (review fix #6 + LOW positive assertions).
  *
@@ -47,12 +47,11 @@ describe("POS-03: /about Education block render gate", () => {
     ).toBe(true);
   });
 
-  it("renders all four visible education facts", () => {
+  it("renders all three visible education facts", () => {
     if (!distExists) return;
     for (const fact of [
       "Western Governors University",
-      "May 2026",
-      "Transferred from Virginia Tech",
+      "Expected September 2026",
       "LPI Linux Essentials",
     ]) {
       expect(bodyText, `expected /about to render "${fact}"`).toContain(fact);
@@ -70,7 +69,7 @@ describe("POS-03: /about Education block render gate", () => {
 
   it("renders the POS-01/02 positive claims in the About body", () => {
     if (!distExists) return;
-    expect(bodyText).toContain("finished my B.S. in Computer Science");
+    expect(bodyText).toContain("finishing my B.S. in Computer Science");
     expect(bodyText).toContain("full-time software engineering role");
   });
 });

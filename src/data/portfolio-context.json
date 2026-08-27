@@ -3,7 +3,7 @@
     "name": "Jack Cutrara",
     "title": "Software Engineer",
     "location": "Virginia, USA",
-    "summary": "Software engineer who builds and stabilizes real production systems, not tutorials. Jack is the solo contract engineer on Holloway Connect, a live operations platform, and recently finished his B.S. in Computer Science. Every project in this portfolio exists because he saw a problem and decided to solve it, with a bias toward clean architecture, strong fundamentals, and code that works."
+    "summary": "Software engineer who builds and stabilizes real production systems, not tutorials. Jack is the solo contract engineer on Holloway Connect, a live operations platform, and is finishing his B.S. in Computer Science. Every project in this portfolio exists because he saw a problem and decided to solve it, with a bias toward clean architecture, strong fundamentals, and code that works."
   },
   "skills": {
     "languages": [
@@ -217,7 +217,7 @@
   },
   "about": {
     "intro": "Jack is a software engineer who enjoys building systems that don't break at 3 a.m.",
-    "p1": "Jack builds and stabilizes production systems for real users. He is currently the solo contract engineer on Holloway Connect, a live operations platform, and recently finished his B.S. in Computer Science. Most of his projects start as “how does that actually work?” and end as something he would be comfortable handing off to a team.",
+    "p1": "Jack builds and stabilizes production systems for real users. He is currently the solo contract engineer on Holloway Connect, a live operations platform, and is finishing his B.S. in Computer Science. Most of his projects start as “how does that actually work?” and end as something he would be comfortable handing off to a team.",
     "p3": "Alongside the contract work, Jack is looking for a full-time software engineering role on a team that values correctness, reliability, and performance, ideally one that will push him to get better at the parts of the stack he has not touched yet."
   }
 }

@@ -21,7 +21,6 @@ import { EDUCATION, CREDENTIALS } from "../data/education";
         <div class="education-rule" role="presentation"></div>
         <p class="education-degree">{EDUCATION.degree}</p>
         <p class="education-meta meta-mono">{EDUCATION.institution} · {EDUCATION.date}</p>
-        <p class="education-transfer meta-mono">Transferred from {EDUCATION.transferredFrom}</p>
         {
           CREDENTIALS.map((credential) => (
             <p class="education-cred meta-mono">{credential.name}</p>
@@ -44,6 +43,5 @@ import { EDUCATION, CREDENTIALS } from "../data/education";
   .education-rule { height: 1px; background: var(--rule); margin-top: 16px; margin-bottom: 24px; }
   .education-degree { font-weight: 500; font-size: 1.125rem; line-height: 1.4; color: var(--ink); margin-bottom: 8px; }
   .education-meta { color: var(--ink-muted); }
-  .education-transfer { color: var(--ink-faint); margin-top: 4px; }
   .education-cred { color: var(--ink-muted); margin-top: 16px; }
 </style>

@@ -13,7 +13,7 @@ export const ABOUT_INTRO =
 
 /* Phase 24 draft: positioning shift (POS-01/02/D-12) */
 export const ABOUT_P1 =
-  "These days I build and stabilize production systems for real users. I’m currently the solo contract engineer on Holloway Connect, a live operations platform, and I recently finished my B.S. in Computer Science. Most of my projects start as “I wonder how that actually works” and end as something I’d be comfortable handing off to a team.";
+  "These days I build and stabilize production systems for real users. I’m currently the solo contract engineer on Holloway Connect, a live operations platform, and I’m finishing my B.S. in Computer Science. Most of my projects start as “I wonder how that actually works” and end as something I’d be comfortable handing off to a team.";
 
 /* Phase 24 draft: positioning shift (POS-02/D-13) */
 export const ABOUT_P3 =

@@ -21,7 +21,7 @@ export const ABOUT_CHAT_INTRO =
 
 /* Verified: 2026-05-11 */
 export const ABOUT_CHAT_P1 =
-  "Jack builds and stabilizes production systems for real users. He is currently the solo contract engineer on Holloway Connect, a live operations platform, and recently finished his B.S. in Computer Science. Most of his projects start as “how does that actually work?” and end as something he would be comfortable handing off to a team.";
+  "Jack builds and stabilizes production systems for real users. He is currently the solo contract engineer on Holloway Connect, a live operations platform, and is finishing his B.S. in Computer Science. Most of his projects start as “how does that actually work?” and end as something he would be comfortable handing off to a team.";
 
 /* Verified: 2026-05-11 */
 export const ABOUT_CHAT_P3 =
