@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 Phase: Milestone v1.4 complete
 Plan: —
 Status: v1.4 Professional Experience completed and archived — ROADMAP collapsed, REQUIREMENTS archived + reset, MILESTONES entry written, PROJECT.md evolved, RETROSPECTIVE appended, tagged v1.4 (branching_strategy: none). Awaiting next milestone.
-Last activity: 2026-07-14 — v1.4 milestone completed and archived
+Last activity: 2026-08-27 — Completed quick task 260827-o01: Fix outdated education status (homepage bio, About page, chat corpus)
 Progress: [██████████] 100% (5/5 phases) — milestone shipped
 
 ### v1.4 phase map
@@ -129,6 +129,12 @@ _Carried from v1.3 (operational / organic-evidence):_
 ### Resolved Blockers
 
 (cleared at v1.3 milestone close — all v1.3-era blockers resolved)
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Status | Directory |
+|---|-------------|------|--------|--------|-----------|
+| 260827-o01 | Fix outdated education status (homepage bio "finishing" not "finished", About block "Expected September 2026", drop rendered VT transfer line, regenerate chat corpus) | 2026-08-27 | b020247 | Needs Review | [260827-o01-fix-outdated-education-status-homepage-b](./quick/260827-o01-fix-outdated-education-status-homepage-b/) |
 
 ---
 
