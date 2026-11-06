@@ -1,18 +1,20 @@
 ---
-gsd_state_version: 1.0
+gsd_state_version: "1.0"
 milestone: v1.4
-milestone_name: Professional Experience
-current_phase: 25
 status: completed
 stopped_at: v1.4 Professional Experience milestone completed and archived (5/5 phases, 22 plans, 19/19 requirements); tagged v1.4
-last_updated: "2026-07-14T22:15:00.000Z"
-last_activity: 2026-07-14
+last_updated: "2026-11-06T17:11:34.739Z"
+last_activity: 2026-11-06
+last_activity_desc: "Completed quick task 261106-gky: Remove the retired Daytrade project from the site: case study, source, chat context, and tests"
+state_head: bdc43d9a4a4e9d4f3a8efeab5958da98cb0daf4e
 progress:
   total_phases: 5
   completed_phases: 5
   total_plans: 22
   completed_plans: 22
   percent: 100
+milestone_name: Professional Experience
+current_phase: 25
 current_phase_name: Chat Knowledge Refresh & Milestone Verification
 ---
 
@@ -30,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-07-14)
 Phase: Milestone v1.4 complete
 Plan: —
 Status: v1.4 Professional Experience completed and archived — ROADMAP collapsed, REQUIREMENTS archived + reset, MILESTONES entry written, PROJECT.md evolved, RETROSPECTIVE appended, tagged v1.4 (branching_strategy: none). Awaiting next milestone.
-Last activity: 2026-08-27 — Completed quick task 260827-o01: Fix outdated education status (homepage bio, About page, chat corpus)
+Last activity: 2026-11-06 - Completed quick task 261106-gky: Remove the retired Daytrade project from the site: case study, source, chat context, and tests
 Progress: [██████████] 100% (5/5 phases) — milestone shipped
 
 ### v1.4 phase map
@@ -135,6 +137,7 @@ _Carried from v1.3 (operational / organic-evidence):_
 | # | Description | Date | Commit | Status | Directory |
 |---|-------------|------|--------|--------|-----------|
 | 260827-o01 | Fix outdated education status (homepage bio "finishing" not "finished", About block "Expected September 2026", drop rendered VT transfer line, regenerate chat corpus) | 2026-08-27 | b020247 | Needs Review | [260827-o01-fix-outdated-education-status-homepage-b](./quick/260827-o01-fix-outdated-education-status-homepage-b/) |
+| 261106-gky | Remove the retired Daytrade project from the site: case study, source, chat context, and tests | 2026-11-06 | bdc43d9 | Complete (local, not pushed) | [261106-gky-remove-the-retired-daytrade-project-from](./quick/261106-gky-remove-the-retired-daytrade-project-from/) |
 
 ---
 
