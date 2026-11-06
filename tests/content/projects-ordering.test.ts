@@ -11,7 +11,6 @@ const PROJECTS_DIR = join("src", "content", "projects");
 
 const EXPECTED_SLUGS = [
   "clipify",
-  "daytrade",
   "multi-chain-evm",
   "nfl-predict",
   "optimize-ai",
@@ -41,10 +40,10 @@ async function readProjectFrontmatter() {
 }
 
 describe("Projects ordering property gate (SC4 / PROJ-04)", () => {
-  it("order values are exactly {1,2,3,4,5,6} — six, contiguous, unique", async () => {
+  it("order values are exactly {1,2,3,4,5} — five, contiguous, unique", async () => {
     const entries = await readProjectFrontmatter();
     const orders = entries.map((e) => e.order).sort((a, b) => a - b);
-    expect(orders).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(orders).toEqual([1, 2, 3, 4, 5]);
     // Uniqueness: no duplicate order values.
     expect(new Set(orders).size).toBe(orders.length);
   });
@@ -58,7 +57,7 @@ describe("Projects ordering property gate (SC4 / PROJ-04)", () => {
     expect(featured).toEqual([...FEATURED_SLUGS].sort());
   });
 
-  it("every file slug is one of the six expected slugs", async () => {
+  it("every file slug is one of the five expected slugs", async () => {
     const entries = await readProjectFrontmatter();
     const slugs = entries.map((e) => e.slug).sort();
     expect(slugs).toEqual(EXPECTED_SLUGS);
@@ -92,6 +91,6 @@ describe("Projects ordering property gate (SC4 / PROJ-04)", () => {
       .sort((a, b) => a.order - b.order)
       .map((e) => e.slug);
     expect(featured).toEqual(["seatwatch", "multi-chain-evm", "nfl-predict"]);
-    expect(rest).toEqual(["optimize-ai", "clipify", "daytrade"]);
+    expect(rest).toEqual(["optimize-ai", "clipify"]);
   });
 });

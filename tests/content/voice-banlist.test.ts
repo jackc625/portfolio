@@ -4,7 +4,6 @@ import { join } from "node:path";
 
 const PROJECTS = [
   "clipify",
-  "daytrade",
   "multi-chain-evm",
   "nfl-predict",
   "optimize-ai",

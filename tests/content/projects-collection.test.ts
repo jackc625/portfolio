@@ -6,7 +6,6 @@ const PROJECTS_DIR = join("src", "content", "projects");
 
 const EXPECTED_SLUGS = [
   "clipify",
-  "daytrade",
   "multi-chain-evm",
   "nfl-predict",
   "optimize-ai",

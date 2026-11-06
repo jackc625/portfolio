@@ -158,11 +158,6 @@ export const groundedQA: readonly GroundedQAEntry[] = [
     fabricationBanlist: ["ElevenLabs", "DALL-E"],
   },
   {
-    question: "What is Daytrade?",
-    requiredAnchors: ["Daytrade", "breakout", "CCXT"],
-    fabricationBanlist: ["Ethereum", "MULTI-DEX", "multi-dex"],
-  },
-  {
     question: "What's Jack's current tech stack?",
     requiredAnchors: ["TypeScript", "Python"],
     fabricationBanlist: ["Rust", "Kotlin", "Ruby on Rails"],
@@ -208,7 +203,7 @@ export const voiceSpotChecks: readonly VoiceSpotCheck[] = [
   {
     question: "What's his strongest technical area?",
     goldResponse:
-      "Jack has built six shipped systems across full-stack web, trading pipelines, ML validation, and AI-assisted SaaS. SeatWatch exercises distributed concurrency; Daytrade exercises backtest-driven promotion gates; Optimize AI exercises Postgres Row-Level Security. His projects favor observability, named subsystems, and correctness over framework churn.",
+      "Jack has built five shipped systems across full-stack web, trading pipelines, ML validation, and AI-assisted SaaS. SeatWatch exercises distributed concurrency; the NFL Prediction system exercises walk-forward validation; Optimize AI exercises Postgres Row-Level Security. His projects favor observability, named subsystems, and correctness over framework churn.",
   },
   {
     question: "Tell me about his NFL prediction work.",
@@ -224,11 +219,6 @@ export const voiceSpotChecks: readonly VoiceSpotCheck[] = [
     question: "How does Clipify turn video into clips?",
     goldResponse:
       "Clipify ingests YouTube videos or uploaded footage through a three-stage BullMQ pipeline — transcode with FFmpeg, transcribe with Whisper, then score candidate moments with a GPT rubric. Jack's main architectural lesson was inverting the flow: the LLM refines the top 15 candidates instead of scoring everything.",
-  },
-  {
-    question: "What's Daytrade?",
-    goldResponse:
-      "Daytrade is an automated cryptocurrency day-trading system Jack built in Python with CCXT, implementing momentum breakout detection on 5-minute candles. Composable signal filters, risk-based position sizing, and atomic state persistence underpin a promotion gate that refuses deploys when backtest verdicts fall short.",
   },
   {
     question: "What stack does Jack use at work?",

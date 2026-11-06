@@ -345,7 +345,7 @@ describe("Drift-guard: fixture ↔ prompt bidirectional consistency (Phase 14 cl
     expect(injectionVectors.length).toBe(10);
   });
 
-  it("exactly 6 generated-context projects exercised by groundedQA (one-per-project coverage)", () => {
+  it("exactly 5 generated-context projects exercised by groundedQA (one-per-project coverage)", () => {
     const projectPages = new Set(
       (portfolioContext.projects as Array<{ page: string }>).map(
         (p) => p.page
@@ -354,17 +354,17 @@ describe("Drift-guard: fixture ↔ prompt bidirectional consistency (Phase 14 cl
     const referencedProjects = groundedQA
       .flatMap((qa) => qa.requiredAnchors)
       .filter((anchor) =>
-        ["SeatWatch", "NFL", "Optimize AI", "Clipify", "Daytrade"].some((p) =>
+        ["SeatWatch", "NFL", "Optimize AI", "Clipify"].some((p) =>
           anchor.includes(p)
         )
       );
-    // We don't assert exact matching, just that the 5 original projects are
+    // We don't assert exact matching, just that the 4 original projects are
     // collectively represented (Multi-Chain EVM is covered by its own
     // groundedQA entry).
-    expect(projectPages.size).toBe(6);
+    expect(projectPages.size).toBe(5);
     expect(
       referencedProjects.length,
-      "groundedQA should cite at least one anchor per project (5+ hits)"
-    ).toBeGreaterThanOrEqual(5);
+      "groundedQA should cite at least one anchor per project (4+ hits)"
+    ).toBeGreaterThanOrEqual(4);
   });
 });

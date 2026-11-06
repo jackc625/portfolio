@@ -17,13 +17,20 @@
  * the skills + positioning and 25-03 regenerates the corpus (7 projects +
  * structured experience array + education from education.ts). Mirrors 22-01.
  */
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import portfolioContext from "../../src/data/portfolio-context.json";
 import { EDUCATION, CREDENTIALS } from "../../src/data/education";
+import {
+  truncateReadme,
+  buildProjectBlock,
+} from "../../scripts/build-chat-context.mjs";
+import { wordCount } from "../../scripts/sync-projects.mjs";
 
 const EXPECTED_SLUGS = [
   "clipify",
-  "daytrade",
   "multi-chain-evm",
   "nfl-predict",
   "optimize-ai",
@@ -35,15 +42,15 @@ const EXPECTED_SLUGS = [
 const MIN_TOKENS = 4096;
 
 describe("Chat Context Integrity (CHAT-03 / §5.6)", () => {
-  it("contains the 6 expected project slugs (D-04 exclusion lifted)", () => {
+  it("contains the 5 expected project slugs (D-04 exclusion lifted)", () => {
     const slugs = (portfolioContext.projects as Array<{ page: string }>)
       .map((p) => p.page.replace("/projects/", ""))
       .sort();
     expect(slugs).toEqual(EXPECTED_SLUGS);
   });
 
-  it("projects[] has exactly 6 entries (Projects/7 now ingested)", () => {
-    expect((portfolioContext.projects as unknown[]).length).toBe(6);
+  it("projects[] has exactly 5 entries (Projects/7 now ingested)", () => {
+    expect((portfolioContext.projects as unknown[]).length).toBe(5);
   });
 
   it("every project has a non-empty caseStudy field (D-01 MDX body)", () => {
@@ -111,20 +118,6 @@ describe("Chat Context Integrity (CHAT-03 / §5.6)", () => {
       "p1",
       "p3",
     ]);
-  });
-
-  it("Daytrade extendedReference.truncated is true (D-06 — Daytrade 7,246 words exceeds 5k cap)", () => {
-    const daytrade = (
-      portfolioContext.projects as Array<{
-        page: string;
-        extendedReference?: { truncated?: boolean; truncationMarker?: string };
-      }>
-    ).find((p) => p.page === "/projects/daytrade");
-    expect(daytrade).toBeDefined();
-    expect(daytrade?.extendedReference?.truncated).toBe(true);
-    expect(daytrade?.extendedReference?.truncationMarker).toContain(
-      "see /projects/daytrade"
-    );
   });
 
   it("education is wired to src/data/education.ts SSoT, not hard-pinned literals (D-07)", () => {
@@ -199,5 +192,113 @@ describe("Chat Context Integrity (CHAT-03 / §5.6)", () => {
     for (const skill of ["Deno", "TanStack Query", "Vitest", "Ethers.js"]) {
       expect(flat).toContain(skill);
     }
+  });
+});
+
+// No live project currently exceeds README_WORD_CAP (5,000 words), so the
+// D-06 truncation path is exercised here with synthetic input. These cases
+// call the already-exported helpers directly; they bound per-project corpus
+// size, so a regression here would ship an unbounded chat context.
+describe("D-06 README truncation path (synthetic fixtures)", () => {
+  const CAP = 5000;
+  const FENCE = "\n\n<!-- CASE-STUDY-END -->\n\n";
+
+  /** N space-separated unique tokens for a prefix: p0 p1 ... p(N-1). */
+  const words = (prefix: string, n: number): string =>
+    Array.from({ length: n }, (_, i) => `${prefix}${i}`).join(" ");
+
+  const synthMdx = (title: string): string =>
+    [
+      "---",
+      `title: "${title}"`,
+      'description: "Synthetic fixture for the D-06 truncation path"',
+      'chatSummary: "Synthetic third-person summary for the truncation fixture."',
+      "---",
+      "Synthetic case-study body.",
+    ].join("\n");
+
+  let dir: string;
+  let overPath: string;
+  let underPath: string;
+
+  beforeAll(() => {
+    dir = mkdtempSync(join(tmpdir(), "chat-trunc-"));
+    overPath = join(dir, "over.md");
+    underPath = join(dir, "under.md");
+    writeFileSync(
+      overPath,
+      "Case study body." +
+        FENCE +
+        words("a", 3000) +
+        "\n\n" +
+        words("b", 3000) +
+        "\n\n" +
+        words("c", 50),
+    );
+    writeFileSync(underPath, "Case study body." + FENCE + words("u", 100));
+  });
+
+  afterAll(() => {
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  it("over cap: cuts at the first paragraph break PAST the cap, not mid-paragraph", () => {
+    const kept = words("a", 3000) + "\n\n" + words("b", 3000);
+    const input = kept + "\n\n" + words("c", 50);
+    const result = truncateReadme(input, CAP);
+    expect(result).toEqual({ truncated: true, content: kept });
+    expect(input.slice(result.content.length).startsWith("\n\n")).toBe(true);
+    expect(wordCount(result.content)).toBeGreaterThan(CAP);
+  });
+
+  it("over cap with no paragraph break left: falls back to an exact-cap cut", () => {
+    const input = words("z", 6000);
+    const result = truncateReadme(input, CAP);
+    expect(result).toEqual({ truncated: true, content: words("z", CAP) });
+  });
+
+  it("exactly at cap: returns the input unchanged with truncated:false", () => {
+    const input = words("e", CAP);
+    const result = truncateReadme(input, CAP);
+    expect(result.truncated).toBe(false);
+    expect(result.content).toBe(input);
+  });
+
+  it("under cap (multi-paragraph): returns the input unchanged with truncated:false", () => {
+    const input = words("p", 10) + "\n\n" + words("q", 10);
+    const result = truncateReadme(input, CAP);
+    expect(result.truncated).toBe(false);
+    expect(result.content).toBe(input);
+  });
+
+  it("buildProjectBlock attaches a truncationMarker pointing at the case study when over cap", async () => {
+    const block = await buildProjectBlock({
+      mdxPath: "src/content/projects/synthetic-overcap.mdx",
+      mdxRaw: synthMdx("Synthetic Overcap"),
+      sourceAbs: overPath,
+      sourceRel: "Projects/synthetic-overcap.md",
+    });
+    // truncationMarker is attached conditionally, so TS's inferred JS return
+    // type omits it; widen the type locally to read it.
+    const ext = block.extendedReference as {
+      truncated: boolean;
+      truncationMarker?: string;
+    };
+    expect(block.page).toBe("/projects/synthetic-overcap");
+    expect(ext.truncated).toBe(true);
+    expect(ext.truncationMarker).toContain(
+      "see /projects/synthetic-overcap",
+    );
+  });
+
+  it("buildProjectBlock attaches no truncationMarker when under cap", async () => {
+    const block = await buildProjectBlock({
+      mdxPath: "src/content/projects/synthetic-undercap.mdx",
+      mdxRaw: synthMdx("Synthetic Undercap"),
+      sourceAbs: underPath,
+      sourceRel: "Projects/synthetic-undercap.md",
+    });
+    expect(block.extendedReference.truncated).toBe(false);
+    expect("truncationMarker" in block.extendedReference).toBe(false);
   });
 });

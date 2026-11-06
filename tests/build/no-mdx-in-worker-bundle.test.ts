@@ -47,7 +47,6 @@ describe("FOUND-04: MDX content does not bundle into the Worker bundle", () => {
   // with src/content/projects/.
   const mdxStems = [
     "clipify",
-    "daytrade",
     "multi-chain-evm",
     "nfl-predict",
     "optimize-ai",

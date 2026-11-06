@@ -48,19 +48,19 @@ describe("SC2 (PROJ-02): /projects two-tier featured render gate", () => {
     expect(taglines.length).toBe(3);
   });
 
-  it("renders exactly 6 work rows numbered continuously 01 through 06", () => {
+  it("renders exactly 5 work rows numbered continuously 01 through 05", () => {
     if (!distExists) return;
     const nums = Array.from(doc.querySelectorAll(".work-row .work-num")).map(
       (el) => (el.textContent ?? "").trim(),
     );
-    expect(nums).toEqual(["01", "02", "03", "04", "05", "06"]);
+    expect(nums).toEqual(["01", "02", "03", "04", "05"]);
   });
 
   it("the 3 tagged rows are the first 3 (featured 01-03) and the rest carry no tagline", () => {
     if (!distExists) return;
     const rows = Array.from(doc.querySelectorAll("a.work-row"));
-    expect(rows.length).toBe(6);
+    expect(rows.length).toBe(5);
     const tagged = rows.map((row) => row.querySelector("p.work-tagline") !== null);
-    expect(tagged).toEqual([true, true, true, false, false, false]);
+    expect(tagged).toEqual([true, true, true, false, false]);
   });
 });
