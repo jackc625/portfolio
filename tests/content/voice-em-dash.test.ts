@@ -9,7 +9,6 @@ const PROJECTS = [
   "nfl-predict",
   "optimize-ai",
   "seatwatch",
-  "solsniper",
 ];
 
 const MAX_EM_DASHES_PER_PARAGRAPH = 0;

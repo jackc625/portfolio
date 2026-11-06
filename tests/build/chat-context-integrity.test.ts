@@ -28,7 +28,6 @@ const EXPECTED_SLUGS = [
   "nfl-predict",
   "optimize-ai",
   "seatwatch",
-  "solsniper",
 ];
 
 // Cheap char-based token estimator (matches generator's estimateTokens helper).
@@ -36,15 +35,15 @@ const EXPECTED_SLUGS = [
 const MIN_TOKENS = 4096;
 
 describe("Chat Context Integrity (CHAT-03 / §5.6)", () => {
-  it("contains the 7 expected project slugs (D-04 exclusion lifted)", () => {
+  it("contains the 6 expected project slugs (D-04 exclusion lifted)", () => {
     const slugs = (portfolioContext.projects as Array<{ page: string }>)
       .map((p) => p.page.replace("/projects/", ""))
       .sort();
     expect(slugs).toEqual(EXPECTED_SLUGS);
   });
 
-  it("projects[] has exactly 7 entries (Projects/7 now ingested)", () => {
-    expect((portfolioContext.projects as unknown[]).length).toBe(7);
+  it("projects[] has exactly 6 entries (Projects/7 now ingested)", () => {
+    expect((portfolioContext.projects as unknown[]).length).toBe(6);
   });
 
   it("every project has a non-empty caseStudy field (D-01 MDX body)", () => {

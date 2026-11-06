@@ -9,7 +9,6 @@ const PROJECTS = [
   "nfl-predict",
   "optimize-ai",
   "seatwatch",
-  "solsniper",
 ];
 
 const EXPECTED_H2S = [

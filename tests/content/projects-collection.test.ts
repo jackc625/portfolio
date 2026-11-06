@@ -11,7 +11,6 @@ const EXPECTED_SLUGS = [
   "nfl-predict",
   "optimize-ai",
   "seatwatch",
-  "solsniper",
 ];
 
 describe("Projects content collection (CONT-04)", () => {

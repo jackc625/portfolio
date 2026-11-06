@@ -9,7 +9,6 @@ const PROJECTS = [
   "nfl-predict",
   "optimize-ai",
   "seatwatch",
-  "solsniper",
 ];
 
 const BANLIST: Array<{ name: string; pattern: RegExp }> = [

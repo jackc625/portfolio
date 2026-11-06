@@ -9,7 +9,6 @@ const PROJECTS = [
   "nfl-predict",
   "optimize-ai",
   "seatwatch",
-  "solsniper",
 ];
 
 describe("Case-study MDX bodies have real content (CONT-01)", () => {

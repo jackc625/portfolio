@@ -148,11 +148,6 @@ export const groundedQA: readonly GroundedQAEntry[] = [
     fabricationBanlist: ["TensorFlow", "PyTorch"],
   },
   {
-    question: "What is SolSniper?",
-    requiredAnchors: ["SolSniper", "Solana", "Preact"],
-    fabricationBanlist: ["Ethereum", "Rust"],
-  },
-  {
     question: "What did Jack build with Optimize AI?",
     requiredAnchors: ["Optimize AI", "Supabase", "Row-Level Security"],
     fabricationBanlist: ["MongoDB", "Firebase"],
@@ -219,11 +214,6 @@ export const voiceSpotChecks: readonly VoiceSpotCheck[] = [
     question: "Tell me about his NFL prediction work.",
     goldResponse:
       "Jack shipped a walk-forward-validated NFL prediction engine generating win probability, spread, and over/under forecasts. The system blends a gradient-boosted model with live market lines and exposes a FastAPI dashboard for inspecting every prediction back to its feature trace.",
-  },
-  {
-    question: "Describe SolSniper.",
-    goldResponse:
-      "SolSniper is a high-speed Solana trading system Jack designed around three-tier safety validation, six-step sell escalation, and crash-safe state persistence. A Preact dashboard surfaces positions and events in real time. The Token-2022 balance-accounting lesson is the one Jack calls out in the writeup.",
   },
   {
     question: "What does Optimize AI do?",

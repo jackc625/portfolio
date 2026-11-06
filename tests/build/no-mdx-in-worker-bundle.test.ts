@@ -52,7 +52,6 @@ describe("FOUND-04: MDX content does not bundle into the Worker bundle", () => {
     "nfl-predict",
     "optimize-ai",
     "seatwatch",
-    "solsniper",
   ];
 
   // @mdx-js/mdx runtime signature emitted into every compiled MDX module.
